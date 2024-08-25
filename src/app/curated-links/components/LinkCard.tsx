@@ -1,23 +1,36 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import { ExternalLink, Leaf, Flower, Trees, TentTree } from "lucide-react";
 import { LinkData } from "../utils/discordApi";
+import { TiltedCard } from "./card-themes/TiltedCard";
+import { LayeredCard } from "./card-themes/LayeredCard";
+import { PolaroidCard } from "./card-themes/PolaroidCard";
+import { NotebookCard } from "./card-themes/NotebookCard";
+import { PostcardCard } from "./card-themes/PostcardCard";
+import { MinimalistCard } from "./card-themes/MinimalistCard";
+import { RetroTechCard } from "./card-themes/RetroTechCard";
+import { NatureCard } from "./card-themes/NatureCard";
+
+import { BlueprintCard } from "./card-themes/BlueprintCard";
+import { TypewriterCard } from "./card-themes/TypewriterCard";
 
 interface LinkCardProps {
   link: LinkData;
-  design: "tilted" | "layered" | "polaroid";
+  design:
+    | "tilted"
+    | "layered"
+    | "polaroid"
+    | "notebook"
+    | "postcard"
+    | "minimalist"
+    | "retro-tech"
+    | "nature"
+    | "blueprint"
+    | "sticker"
+    | "typewriter";
   gradientStart: string;
   gradientEnd: string;
 }
-
-const plantTypes = [
-  { icon: Leaf, color: "text-emerald-600" },
-  { icon: Flower, color: "text-pink-600" },
-  { icon: Trees, color: "text-blue-600" },
-  { icon: TentTree, color: "text-red-600" },
-];
 
 export default function LinkCard({
   link,
@@ -25,78 +38,57 @@ export default function LinkCard({
   gradientStart,
   gradientEnd,
 }: LinkCardProps) {
-  const { icon: PlantIcon, color } =
-    plantTypes[Math.floor(Math.random() * plantTypes.length)];
+  switch (design) {
+    case "tilted":
+      return (
+        <TiltedCard
+          title={link.title}
+          url={link.url}
+          gradientStart={gradientStart}
+          gradientEnd={gradientEnd}
+        />
+      );
+    case "layered":
+      return (
+        <LayeredCard
+          title={link.title}
+          url={link.url}
+          gradientStart={gradientStart}
+          gradientEnd={gradientEnd}
+        />
+      );
+    case "polaroid":
+      return (
+        <PolaroidCard
+          title={link.title}
+          url={link.url}
+          gradientStart={gradientStart}
+          gradientEnd={gradientEnd}
+        />
+      );
+    case "notebook":
+      return <NotebookCard title={link.title} url={link.url} />;
+    case "postcard":
+      return <PostcardCard title={link.title} url={link.url} />;
+    case "minimalist":
+      return <MinimalistCard title={link.title} url={link.url} />;
+    case "retro-tech":
+      return <RetroTechCard title={link.title} url={link.url} />;
+    case "nature":
+      return <NatureCard title={link.title} url={link.url} />;
 
-  const cardContent = (
-    <>
-      <div className="flex items-center mb-2">
-        <PlantIcon className={`w-5 h-5 mr-2 ${color}`} />
-        <h3 className="text-lg font-semibold truncate">{link.title}</h3>
-      </div>
-      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{link.url}</p>
-      <a
-        href={link.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900"
-      >
-        Visit <ExternalLink className="ml-1" size={14} />
-      </a>
-    </>
-  );
-
-  const gradientStyle = {
-    background: `linear-gradient(to bottom right, ${gradientStart}, ${gradientEnd})`,
-  };
-
-  if (design === "tilted") {
-    return (
-      <motion.div
-        whileHover={{ scale: 1.05, rotate: 0 }}
-        className="group h-full"
-        style={{ transformOrigin: "center" }}
-      >
-        <div
-          className="p-5 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform -rotate-1 group-hover:rotate-0 h-full"
-          style={gradientStyle}
-        >
-          {cardContent}
-        </div>
-      </motion.div>
-    );
+    case "blueprint":
+      return <BlueprintCard title={link.title} url={link.url} />;
+    case "typewriter":
+      return <TypewriterCard title={link.title} url={link.url} />;
+    default:
+      return (
+        <TiltedCard
+          title={link.title}
+          url={link.url}
+          gradientStart={gradientStart}
+          gradientEnd={gradientEnd}
+        />
+      );
   }
-
-  if (design === "layered") {
-    return (
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        className="group relative h-full"
-      >
-        <div className="absolute inset-0 bg-white rounded-lg shadow-md transform rotate-3"></div>
-        <div
-          className="absolute inset-0 rounded-lg shadow-md transform -rotate-3"
-          style={gradientStyle}
-        ></div>
-        <div className="relative bg-white p-5 rounded-lg shadow-md z-10">
-          {cardContent}
-        </div>
-      </motion.div>
-    );
-  }
-
-  if (design === "polaroid") {
-    return (
-      <motion.div
-        whileHover={{ scale: 1.05, rotate: 0 }}
-        className="group bg-white p-3 shadow-md h-full"
-        style={{ transformOrigin: "center" }}
-      >
-        <div className="h-32 mb-4 rounded-sm" style={gradientStyle}></div>
-        <div className="px-2">{cardContent}</div>
-      </motion.div>
-    );
-  }
-
-  return null;
 }

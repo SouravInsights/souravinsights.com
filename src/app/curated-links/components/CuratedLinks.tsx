@@ -40,8 +40,19 @@ export default function DigitalGardenTabs({
 }: DigitalGardenTabsProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [cardDesign, setCardDesign] = useState<
-    "tilted" | "layered" | "polaroid"
-  >("tilted");
+    | "tilted"
+    | "layered"
+    | "polaroid"
+    | "notebook"
+    | "postcard"
+    | "minimalist"
+    | "retro-tech"
+    | "nature"
+    | "blueprint"
+    | "sticker"
+    | "typewriter"
+  >("polaroid");
+
   const [colorMode, setColorMode] = useState<"preset" | "custom">("preset");
   const [selectedPreset, setSelectedPreset] = useState<ColorPreset>(
     colorPresets[0]
@@ -64,7 +75,7 @@ export default function DigitalGardenTabs({
     colorMode === "preset" ? selectedPreset.endColor : customEndColor;
 
   return (
-    <div className="bg-gray-50 p-6 rounded-lg shadow-inner">
+    <div className="p-6 rounded-lg shadow-inner">
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex items-center gap-2">
           <div className="flex-grow flex items-center gap-2 bg-white rounded-md shadow-sm">
@@ -115,6 +126,14 @@ export default function DigitalGardenTabs({
                   <SelectItem value="tilted">Tilted</SelectItem>
                   <SelectItem value="layered">Layered</SelectItem>
                   <SelectItem value="polaroid">Polaroid</SelectItem>
+                  <SelectItem value="notebook">Notebook</SelectItem>
+                  <SelectItem value="postcard">Postcard</SelectItem>
+                  <SelectItem value="minimalist">Minimalist</SelectItem>
+                  <SelectItem value="retro-tech">Retro Tech</SelectItem>
+                  <SelectItem value="nature">Nature</SelectItem>
+                  <SelectItem value="blueprint">Blueprint</SelectItem>
+                  <SelectItem value="sticker">Sticker</SelectItem>
+                  <SelectItem value="typewriter">Typewriter</SelectItem>
                 </SelectContent>
               </Select>
             </div>
