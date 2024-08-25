@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import LinkCard from "./LinkCard";
+import ColorPicker from "./ColorPicker";
 import { AnimatePresence, motion } from "framer-motion";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import { Input } from "@/components/ui/input";
@@ -13,21 +14,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Leaf, Flower, Trees, TentTree } from "lucide-react";
+import {
+  Leaf,
+  Flower,
+  Trees,
+  Search,
+  Layout,
+  Palette,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { colorPresets, ColorPreset } from "../utils/colorPresets";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
-interface CuratedLinksTabsProps {
+interface DigitalGardenTabsProps {
   channels: DiscordChannel[];
   linkData: { [key: string]: LinkData[] };
 }
 
-export default function CuratedLinksTabs({
+export default function DigitalGardenTabs({
   channels,
   linkData,
-}: CuratedLinksTabsProps) {
+}: DigitalGardenTabsProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [cardDesign, setCardDesign] = useState<
     "tilted" | "layered" | "polaroid"
   >("tilted");
+  const [colorMode, setColorMode] = useState<"preset" | "custom">("preset");
+  const [selectedPreset, setSelectedPreset] = useState<ColorPreset>(
+    colorPresets[0]
+  );
+  const [customStartColor, setCustomStartColor] = useState("#f0f9ff");
+  const [customEndColor, setCustomEndColor] = useState("#e0f2fe");
+  const [isCustomizePanelOpen, setIsCustomizePanelOpen] = useState(false);
 
   const filterLinks = (links: LinkData[]) => {
     return links.filter(
@@ -37,32 +58,135 @@ export default function CuratedLinksTabs({
     );
   };
 
+  const gradientStart =
+    colorMode === "preset" ? selectedPreset.startColor : customStartColor;
+  const gradientEnd =
+    colorMode === "preset" ? selectedPreset.endColor : customEndColor;
+
   return (
-    <div className="p-6 rounded-lg shadow-inner">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <Input
-          type="text"
-          placeholder="Search links..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-64"
-        />
-        <Select
-          value={cardDesign}
-          onValueChange={(value: "tilted" | "layered" | "polaroid") =>
-            setCardDesign(value)
-          }
-        >
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Card Design" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tilted">Tilted</SelectItem>
-            <SelectItem value="layered">Layered</SelectItem>
-            <SelectItem value="polaroid">Polaroid</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="bg-gray-50 p-6 rounded-lg shadow-inner">
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <div className="flex-grow flex items-center gap-2 bg-white rounded-md shadow-sm">
+            <Search className="text-gray-400" size={20} />
+            <Input
+              type="text"
+              placeholder="Search links..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsCustomizePanelOpen(!isCustomizePanelOpen)}
+            className="whitespace-nowrap h-10"
+          >
+            {isCustomizePanelOpen ? (
+              <>
+                <ChevronUp className="mr-2 h-4 w-4" /> Hide Options
+              </>
+            ) : (
+              <>
+                <ChevronDown className="mr-2 h-4 w-4" /> Customize
+              </>
+            )}
+          </Button>
+        </div>
+
+        {isCustomizePanelOpen && (
+          <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-md shadow-sm">
+            <div className="flex-1 flex flex-col">
+              <Label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <Layout size={16} />
+                Card Theme
+              </Label>
+              <Select
+                value={cardDesign}
+                onValueChange={(value: "tilted" | "layered" | "polaroid") =>
+                  setCardDesign(value)
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select card design" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tilted">Tilted</SelectItem>
+                  <SelectItem value="layered">Layered</SelectItem>
+                  <SelectItem value="polaroid">Polaroid</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex-1 flex flex-col">
+              <Label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <Palette size={16} />
+                Color Scheme
+              </Label>
+              <div className="flex flex-col gap-2">
+                <RadioGroup
+                  defaultValue="preset"
+                  onValueChange={(value: "preset" | "custom") =>
+                    setColorMode(value)
+                  }
+                  className="flex mb-2"
+                >
+                  <div className="flex items-center mr-4">
+                    <RadioGroupItem value="preset" id="preset" />
+                    <Label htmlFor="preset" className="ml-2">
+                      Presets
+                    </Label>
+                  </div>
+                  <div className="flex items-center">
+                    <RadioGroupItem value="custom" id="custom" />
+                    <Label htmlFor="custom" className="ml-2">
+                      Custom
+                    </Label>
+                  </div>
+                </RadioGroup>
+
+                {colorMode === "preset" ? (
+                  <Select
+                    value={selectedPreset.name}
+                    onValueChange={(value) =>
+                      setSelectedPreset(
+                        colorPresets.find((preset) => preset.name === value) ||
+                          colorPresets[0]
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a color preset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {colorPresets.map((preset) => (
+                        <SelectItem key={preset.name} value={preset.name}>
+                          {preset.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="flex gap-2">
+                    <ColorPicker
+                      color={customStartColor}
+                      onChange={setCustomStartColor}
+                      label="Start"
+                    />
+                    <ColorPicker
+                      color={customEndColor}
+                      onChange={setCustomEndColor}
+                      label="End"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
       <Tabs defaultValue={channels[0]?.name} className="w-full">
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
           {channels.map((channel) => (
@@ -78,9 +202,6 @@ export default function CuratedLinksTabs({
                 <Flower className="w-4 h-4 mr-2" />
               )}
               {channel.name.includes("product") && (
-                <TentTree className="w-4 h-4 mr-2" />
-              )}
-              {channel.name.includes("mint") && (
                 <Trees className="w-4 h-4 mr-2" />
               )}
               <span>{channel.name.replace("-", " ")}</span>
@@ -99,7 +220,13 @@ export default function CuratedLinksTabs({
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
               >
                 {filterLinks(linkData[channel.name] || []).map((link) => (
-                  <LinkCard key={link.id} link={link} design={cardDesign} />
+                  <LinkCard
+                    key={link.id}
+                    link={link}
+                    design={cardDesign}
+                    gradientStart={gradientStart}
+                    gradientEnd={gradientEnd}
+                  />
                 ))}
               </motion.div>
             </AnimatePresence>

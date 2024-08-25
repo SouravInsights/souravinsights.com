@@ -8,25 +8,25 @@ import { LinkData } from "../utils/discordApi";
 interface LinkCardProps {
   link: LinkData;
   design: "tilted" | "layered" | "polaroid";
+  gradientStart: string;
+  gradientEnd: string;
 }
 
 const plantTypes = [
   { icon: Leaf, color: "text-emerald-600" },
   { icon: Flower, color: "text-pink-600" },
-  { icon: TentTree, color: "text-blue-600" },
-  { icon: Trees, color: "text-red-600" },
+  { icon: Trees, color: "text-blue-600" },
+  { icon: TentTree, color: "text-red-600" },
 ];
 
-const gradients = [
-  "from-emerald-50 to-teal-100",
-  "from-sky-50 to-indigo-100",
-  "from-rose-50 to-pink-100",
-];
-
-export default function LinkCard({ link, design }: LinkCardProps) {
+export default function LinkCard({
+  link,
+  design,
+  gradientStart,
+  gradientEnd,
+}: LinkCardProps) {
   const { icon: PlantIcon, color } =
     plantTypes[Math.floor(Math.random() * plantTypes.length)];
-  const gradient = gradients[Math.floor(Math.random() * gradients.length)];
 
   const cardContent = (
     <>
@@ -46,6 +46,10 @@ export default function LinkCard({ link, design }: LinkCardProps) {
     </>
   );
 
+  const gradientStyle = {
+    background: `linear-gradient(to bottom right, ${gradientStart}, ${gradientEnd})`,
+  };
+
   if (design === "tilted") {
     return (
       <motion.div
@@ -54,7 +58,8 @@ export default function LinkCard({ link, design }: LinkCardProps) {
         style={{ transformOrigin: "center" }}
       >
         <div
-          className={`bg-gradient-to-br ${gradient} p-5 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform -rotate-1 group-hover:rotate-0 h-full`}
+          className="p-5 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform -rotate-1 group-hover:rotate-0 h-full"
+          style={gradientStyle}
         >
           {cardContent}
         </div>
@@ -69,7 +74,10 @@ export default function LinkCard({ link, design }: LinkCardProps) {
         className="group relative h-full"
       >
         <div className="absolute inset-0 bg-white rounded-lg shadow-md transform rotate-3"></div>
-        <div className="absolute inset-0 bg-gray-50 rounded-lg shadow-md transform -rotate-3"></div>
+        <div
+          className="absolute inset-0 rounded-lg shadow-md transform -rotate-3"
+          style={gradientStyle}
+        ></div>
         <div className="relative bg-white p-5 rounded-lg shadow-md z-10">
           {cardContent}
         </div>
@@ -84,9 +92,7 @@ export default function LinkCard({ link, design }: LinkCardProps) {
         className="group bg-white p-3 shadow-md h-full"
         style={{ transformOrigin: "center" }}
       >
-        <div
-          className={`bg-gradient-to-br ${gradient} h-32 mb-4 rounded-sm`}
-        ></div>
+        <div className="h-32 mb-4 rounded-sm" style={gradientStyle}></div>
         <div className="px-2">{cardContent}</div>
       </motion.div>
     );
