@@ -31,8 +31,8 @@ export function TiltedCard({
   };
 
   const isLight = isLightColor(gradientStart);
-  const textColor = isLight ? "text-gray-800" : "text-white";
-  const subTextColor = isLight ? "text-gray-600" : "text-gray-200";
+  const textColor = isLight ? "text-gray-800" : "text-gray-700";
+  const subTextColor = isLight ? "text-gray-600" : "text-gray-600";
 
   const buttonBackgroundColor = isLight
     ? Color(gradientEnd).lighten(0.1).hex()
@@ -53,27 +53,33 @@ export function TiltedCard({
 
   return (
     <motion.div
-      whileHover={{ scale: 1.05, rotate: 0 }}
-      className="group h-full"
-      style={{ transformOrigin: "center" }}
+      className="group h-full perspective-1000"
+      initial={{ rotateX: 0, rotateY: 0, rotateZ: 0 }}
+      whileHover={{ rotateX: 0, rotateY: 0, rotateZ: -3 }}
+      transition={{ duration: 0.3 }}
     >
-      <div
-        className={`p-5 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform -rotate-1 group-hover:rotate-0 h-full flex flex-col ${textColor}`}
-        style={gradientStyle}
-      >
-        <h3 className="text-lg font-semibold mb-2 truncate">{title}</h3>
-        <p className={`text-sm mb-4 truncate ${subTextColor}`}>{url}</p>
-        <div className="mt-auto">
-          <motion.a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium"
-            style={buttonStyle}
-            whileHover={buttonHoverStyle}
-          >
-            Visit <ExternalLink className="ml-2 flex-shrink-0" size={14} />
-          </motion.a>
+      <div className="relative h-full transform-gpu transition-transform duration-300 ease-in-out">
+        <div
+          className="absolute inset-0 rounded-lg shadow-md"
+          style={gradientStyle}
+        ></div>
+        <div className="relative bg-white bg-opacity-90 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6">
+          <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>
+            {title}
+          </h3>
+          <p className={`text-sm mb-4 truncate ${subTextColor}`}>{url}</p>
+          <div className="mt-auto">
+            <motion.a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium"
+              style={buttonStyle}
+              whileHover={buttonHoverStyle}
+            >
+              Visit <ExternalLink className="ml-2 flex-shrink-0" size={14} />
+            </motion.a>
+          </div>
         </div>
       </div>
     </motion.div>
