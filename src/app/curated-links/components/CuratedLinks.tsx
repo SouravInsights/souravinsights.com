@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import LinkCard from "./LinkCard";
 import ColorPicker from "./ColorPicker";
@@ -18,6 +18,7 @@ import {
   Leaf,
   Flower,
   Trees,
+  TentTree,
   Search,
   Layout,
   Palette,
@@ -29,15 +30,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-interface DigitalGardenTabsProps {
+interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
   linkData: { [key: string]: LinkData[] };
 }
 
-export default function DigitalGardenTabs({
+const themesWithCustomColors = ["tilted", "layered", "polaroid"];
+
+export default function CuratedLinksTabs({
   channels,
   linkData,
-}: DigitalGardenTabsProps) {
+}: CuratedLinksTabsProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [cardDesign, setCardDesign] = useState<
     | "tilted"
@@ -47,19 +50,23 @@ export default function DigitalGardenTabs({
     | "postcard"
     | "minimalist"
     | "retro-tech"
-    | "nature"
     | "blueprint"
-    | "sticker"
     | "typewriter"
-  >("polaroid");
+  >("retro-tech");
 
   const [colorMode, setColorMode] = useState<"preset" | "custom">("preset");
   const [selectedPreset, setSelectedPreset] = useState<ColorPreset>(
-    colorPresets[0]
+    colorPresets.find((preset) => preset.name === "Mint Cream") ||
+      colorPresets[0]
   );
-  const [customStartColor, setCustomStartColor] = useState("#f0f9ff");
-  const [customEndColor, setCustomEndColor] = useState("#e0f2fe");
+  const [customStartColor, setCustomStartColor] = useState("#ccfbf1");
+  const [customEndColor, setCustomEndColor] = useState("#14b8a6");
   const [isCustomizePanelOpen, setIsCustomizePanelOpen] = useState(false);
+
+  const supportsCustomColors = useMemo(
+    () => themesWithCustomColors.includes(cardDesign),
+    [cardDesign]
+  );
 
   const filterLinks = (links: LinkData[]) => {
     return links.filter(
@@ -78,7 +85,7 @@ export default function DigitalGardenTabs({
     <div className="p-6 rounded-lg shadow-inner">
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <div className="flex-grow flex items-center gap-2 bg-white rounded-md shadow-sm">
+          <div className="flex-grow flex items-center gap-2 px-2 bg-white rounded-md shadow-sm">
             <Search className="text-gray-400" size={20} />
             <Input
               type="text"
@@ -130,38 +137,32 @@ export default function DigitalGardenTabs({
                   <SelectItem value="postcard">Postcard</SelectItem>
                   <SelectItem value="minimalist">Minimalist</SelectItem>
                   <SelectItem value="retro-tech">Retro Tech</SelectItem>
-                  <SelectItem value="nature">Nature</SelectItem>
                   <SelectItem value="blueprint">Blueprint</SelectItem>
-                  <SelectItem value="sticker">Sticker</SelectItem>
                   <SelectItem value="typewriter">Typewriter</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="flex-1 flex flex-col">
-              <Label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <Palette size={16} />
-                Color Scheme
-              </Label>
-              <div className="flex flex-col gap-2">
+            {supportsCustomColors && (
+              <div className="flex-1">
+                <Label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <Palette size={16} />
+                  Color Scheme
+                </Label>
                 <RadioGroup
                   defaultValue="preset"
                   onValueChange={(value: "preset" | "custom") =>
                     setColorMode(value)
                   }
-                  className="flex mb-2"
+                  className="flex space-x-4 mb-2"
                 >
-                  <div className="flex items-center mr-4">
+                  <div className="flex items-center space-x-2">
                     <RadioGroupItem value="preset" id="preset" />
-                    <Label htmlFor="preset" className="ml-2">
-                      Presets
-                    </Label>
+                    <Label htmlFor="preset">Presets</Label>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-2">
                     <RadioGroupItem value="custom" id="custom" />
-                    <Label htmlFor="custom" className="ml-2">
-                      Custom
-                    </Label>
+                    <Label htmlFor="custom">Custom</Label>
                   </div>
                 </RadioGroup>
 
@@ -187,7 +188,7 @@ export default function DigitalGardenTabs({
                     </SelectContent>
                   </Select>
                 ) : (
-                  <div className="flex gap-2">
+                  <div className="flex space-x-4">
                     <ColorPicker
                       color={customStartColor}
                       onChange={setCustomStartColor}
@@ -201,7 +202,7 @@ export default function DigitalGardenTabs({
                   </div>
                 )}
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
@@ -222,6 +223,9 @@ export default function DigitalGardenTabs({
               )}
               {channel.name.includes("product") && (
                 <Trees className="w-4 h-4 mr-2" />
+              )}
+              {channel.name.includes("mint") && (
+                <TentTree className="w-4 h-4 mr-2" />
               )}
               <span>{channel.name.replace("-", " ")}</span>
             </TabsTrigger>

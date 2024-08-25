@@ -24,9 +24,7 @@ interface LinkCardProps {
     | "postcard"
     | "minimalist"
     | "retro-tech"
-    | "nature"
     | "blueprint"
-    | "sticker"
     | "typewriter";
   gradientStart: string;
   gradientEnd: string;
@@ -74,9 +72,6 @@ export default function LinkCard({
       return <MinimalistCard title={link.title} url={link.url} />;
     case "retro-tech":
       return <RetroTechCard title={link.title} url={link.url} />;
-    case "nature":
-      return <NatureCard title={link.title} url={link.url} />;
-
     case "blueprint":
       return <BlueprintCard title={link.title} url={link.url} />;
     case "typewriter":
