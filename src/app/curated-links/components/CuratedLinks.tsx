@@ -29,6 +29,7 @@ import { colorPresets, ColorPreset } from "../utils/colorPresets";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/context/ThemeContext";
 
 interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
@@ -41,6 +42,7 @@ export default function CuratedLinksTabs({
   channels,
   linkData,
 }: CuratedLinksTabsProps) {
+  const { isDarkMode } = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [cardDesign, setCardDesign] = useState<
     | "tilted"
@@ -82,17 +84,17 @@ export default function CuratedLinksTabs({
     colorMode === "preset" ? selectedPreset.endColor : customEndColor;
 
   return (
-    <div className="p-6 rounded-lg shadow-inner">
+    <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <div className="flex-grow flex items-center gap-2 px-2 bg-white rounded-md shadow-sm">
-            <Search className="text-gray-400" size={20} />
+          <div className="flex-grow flex items-center gap-2 px-2 bg-white dark:bg-gray-700 rounded-md shadow-sm">
+            <Search className="text-gray-400 dark:text-gray-300" size={20} />
             <Input
               type="text"
               placeholder="Search links..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
             />
           </div>
           <Button
@@ -114,38 +116,84 @@ export default function CuratedLinksTabs({
         </div>
 
         {isCustomizePanelOpen && (
-          <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-md shadow-sm">
-            <div className="flex-1 flex flex-col">
-              <Label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-4 bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm">
+            <div className="flex-1">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-2">
                 <Layout size={16} />
                 Card Theme
               </Label>
               <Select
                 value={cardDesign}
-                onValueChange={(value: "tilted" | "layered" | "polaroid") =>
+                onValueChange={(value: typeof cardDesign) =>
                   setCardDesign(value)
                 }
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100">
                   <SelectValue placeholder="Select card design" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tilted">Tilted</SelectItem>
-                  <SelectItem value="layered">Layered</SelectItem>
-                  <SelectItem value="polaroid">Polaroid</SelectItem>
-                  <SelectItem value="notebook">Notebook</SelectItem>
-                  <SelectItem value="postcard">Postcard</SelectItem>
-                  <SelectItem value="minimalist">Minimalist</SelectItem>
-                  <SelectItem value="retro-tech">Retro Tech</SelectItem>
-                  <SelectItem value="blueprint">Blueprint</SelectItem>
-                  <SelectItem value="typewriter">Typewriter</SelectItem>
+                <SelectContent className="bg-white dark:bg-gray-600">
+                  <SelectItem
+                    value="tilted"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Tilted
+                  </SelectItem>
+                  <SelectItem
+                    value="layered"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Layered
+                  </SelectItem>
+
+                  <SelectItem
+                    value="polaroid"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Polaroid
+                  </SelectItem>
+                  <SelectItem
+                    value="notebook"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Notebook
+                  </SelectItem>
+                  <SelectItem
+                    value="postcard"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Postcard
+                  </SelectItem>
+                  <SelectItem
+                    value="minimalist"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Minimalist
+                  </SelectItem>
+                  <SelectItem
+                    value="retro-tech"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Retro Tech
+                  </SelectItem>
+                  <SelectItem
+                    value="blueprint"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Blueprint
+                  </SelectItem>
+                  <SelectItem
+                    value="typewriter"
+                    className="text-gray-900 dark:text-gray-100"
+                  >
+                    Typewriter
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {supportsCustomColors && (
               <div className="flex-1">
-                <Label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-2">
                   <Palette size={16} />
                   Color Scheme
                 </Label>
@@ -157,12 +205,24 @@ export default function CuratedLinksTabs({
                   className="flex space-x-4 mb-2"
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="preset" id="preset" />
-                    <Label htmlFor="preset">Presets</Label>
+                    <RadioGroupItem
+                      value="preset"
+                      id="preset"
+                      className="dark:border-gray-400"
+                    />
+                    <Label htmlFor="preset" className="dark:text-gray-200">
+                      Presets
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="custom" id="custom" />
-                    <Label htmlFor="custom">Custom</Label>
+                    <RadioGroupItem
+                      value="custom"
+                      id="custom"
+                      className="dark:border-gray-400"
+                    />
+                    <Label htmlFor="custom" className="dark:text-gray-200">
+                      Custom
+                    </Label>
                   </div>
                 </RadioGroup>
 
@@ -176,12 +236,16 @@ export default function CuratedLinksTabs({
                       )
                     }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100">
                       <SelectValue placeholder="Select a color preset" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white dark:bg-gray-600">
                       {colorPresets.map((preset) => (
-                        <SelectItem key={preset.name} value={preset.name}>
+                        <SelectItem
+                          key={preset.name}
+                          value={preset.name}
+                          className="text-gray-900 dark:text-gray-100"
+                        >
                           {preset.name}
                         </SelectItem>
                       ))}
@@ -213,7 +277,7 @@ export default function CuratedLinksTabs({
             <TabsTrigger
               key={channel.id}
               value={channel.name}
-              className="px-4 py-2 mx-1 rounded-full bg-white shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center"
+              className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
             >
               {channel.name.includes("fav") && (
                 <Leaf className="w-4 h-4 mr-2" />

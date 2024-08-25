@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +18,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider>
+          <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+            <header className="p-4 flex justify-between items-center">
+              <DarkModeToggle />
+            </header>
+            <main>{children}</main>
+          </div>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

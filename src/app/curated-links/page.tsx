@@ -30,13 +30,13 @@ export default async function CuratedLinksPage() {
   console.log("channels:", channels);
   console.log("linkData:", linkData);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-purple-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-green-800">
+        <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-400 transition-colors duration-200">
           My Digital Garden
         </h1>
-        <p className="text-center text-gray-600 mb-12">
-          A curated collection of inspiring links and resources
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-8 transition-colors duration-200">
+          A curated collection of usefful links and resources
         </p>
         <CuratedLinksTabs channels={channels} linkData={linkData} />
       </div>
