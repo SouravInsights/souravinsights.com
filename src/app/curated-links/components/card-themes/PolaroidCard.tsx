@@ -5,6 +5,7 @@ import Link from "next/link";
 
 interface CardProps {
   title: string;
+  description: string;
   url: string;
   gradientStart: string;
   gradientEnd: string;
@@ -12,6 +13,7 @@ interface CardProps {
 
 export function PolaroidCard({
   title,
+  description,
   url,
   gradientStart,
   gradientEnd,
@@ -30,7 +32,17 @@ export function PolaroidCard({
         <div className="h-32 mb-4 rounded-sm" style={gradientStyle}></div>
         <div className="px-2 flex flex-col flex-grow">
           <h3 className="text-lg font-semibold mb-2 truncate">{title}</h3>
-          <p className="text-sm text-gray-600 mb-4 truncate">{url}</p>
+          <p className={`text-sm mb-4 line-clamp-3`}>{description}</p>
+          <div className="mt-auto">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-sm font-medium hover:text-green-300"
+            >
+              Visit <ExternalLink className="ml-1 flex-shrink-0" size={14} />
+            </a>
+          </div>
         </div>
       </motion.div>
     </Link>

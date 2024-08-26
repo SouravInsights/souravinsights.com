@@ -50,6 +50,7 @@ export default function LinkCard({
       return (
         <LayeredCard
           title={link.title}
+          description={link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
@@ -59,6 +60,7 @@ export default function LinkCard({
       return (
         <PolaroidCard
           title={link.title}
+          description={link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
@@ -91,9 +93,21 @@ export default function LinkCard({
         />
       );
     case "blueprint":
-      return <BlueprintCard title={link.title} url={link.url} />;
+      return (
+        <BlueprintCard
+          title={link.title}
+          url={link.url}
+          description={link.description}
+        />
+      );
     case "typewriter":
-      return <TypewriterCard title={link.title} url={link.url} />;
+      return (
+        <TypewriterCard
+          title={link.title}
+          url={link.url}
+          description={link.description}
+        />
+      );
     default:
       return (
         <TiltedCard

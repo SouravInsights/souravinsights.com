@@ -4,10 +4,11 @@ import { ExternalLink } from "lucide-react";
 
 interface CardProps {
   title: string;
+  description: string;
   url: string;
 }
 
-export function BlueprintCard({ title, url }: CardProps) {
+export function BlueprintCard({ title, description, url }: CardProps) {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
@@ -17,7 +18,9 @@ export function BlueprintCard({ title, url }: CardProps) {
         <h3 className="text-lg font-mono font-bold mb-2 text-blue-300 truncate">
           {title}
         </h3>
-        <p className="text-sm font-mono text-blue-200 mb-4 truncate">{url}</p>
+        <p className={`text-sm mb-4 font-mono text-blue-200 line-clamp-3`}>
+          {description}
+        </p>
         <div className="mt-auto">
           <a
             href={url}

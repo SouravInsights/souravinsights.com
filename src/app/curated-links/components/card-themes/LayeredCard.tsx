@@ -6,6 +6,7 @@ import { useTheme } from "@/context/ThemeContext";
 
 interface CardProps {
   title: string;
+  description: string;
   url: string;
   gradientStart: string;
   gradientEnd: string;
@@ -23,6 +24,7 @@ function getContrastColor(color: string): string {
 
 export function LayeredCard({
   title,
+  description,
   url,
   gradientStart,
   gradientEnd,
@@ -99,7 +101,10 @@ export function LayeredCard({
           <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>
             {title}
           </h3>
-          <p className={`text-sm mb-4 truncate ${subTextColor}`}>{url}</p>
+          <p className={`text-sm mb-4 line-clamp-3 ${subTextColor}`}>
+            {description}
+          </p>
+
           <div className="mt-auto">
             <motion.a
               href={url}

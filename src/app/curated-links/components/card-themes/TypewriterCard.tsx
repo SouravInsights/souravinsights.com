@@ -4,10 +4,11 @@ import { ExternalLink } from "lucide-react";
 
 interface CardProps {
   title: string;
+  description: string;
   url: string;
 }
 
-export function TypewriterCard({ title, url }: CardProps) {
+export function TypewriterCard({ title, description, url }: CardProps) {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
@@ -25,10 +26,10 @@ export function TypewriterCard({ title, url }: CardProps) {
         {title}
       </h3>
       <p
-        className="text-sm font-mono text-gray-600 mb-4 truncate"
+        className={`text-sm font-mono mb-4 text-gray-600 line-clamp-3`}
         style={{ textShadow: "0.5px 0.5px 0 #fff" }}
       >
-        {url}
+        {description}
       </p>
       <div className="mt-auto">
         <a
