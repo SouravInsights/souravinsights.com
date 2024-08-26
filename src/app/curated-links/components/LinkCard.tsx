@@ -9,11 +9,9 @@ import { NotebookCard } from "./card-themes/NotebookCard";
 import { PostcardCard } from "./card-themes/PostcardCard";
 import { MinimalistCard } from "./card-themes/MinimalistCard";
 import { RetroTechCard } from "./card-themes/RetroTechCard";
-import { NatureCard } from "./card-themes/NatureCard";
 
 import { BlueprintCard } from "./card-themes/BlueprintCard";
 import { TypewriterCard } from "./card-themes/TypewriterCard";
-import { url } from "inspector";
 
 interface LinkCardProps {
   link: LinkData;
@@ -69,7 +67,13 @@ export default function LinkCard({
     case "notebook":
       return <NotebookCard title={link.title} url={link.url} />;
     case "postcard":
-      return <PostcardCard title={link.title} url={link.url} />;
+      return (
+        <PostcardCard
+          title={link.title}
+          url={link.url}
+          description={link.description}
+        />
+      );
     case "minimalist":
       return <MinimalistCard title={link.title} url={link.url} />;
     case "retro-tech":
