@@ -39,11 +39,18 @@ export async function getChannels(): Promise<DiscordChannel[]> {
     const channels = (await rest.get(
       Routes.guildChannels(GUILD_ID)
     )) as DiscordChannel[];
-    return channels.filter(
-      (channel) =>
-        channel.name.startsWith("fav-") ||
-        ["design-inspo", "mint-worthy", "product-hunt"].includes(channel.name)
-    );
+
+    const desiredChannels = [
+      "fav-portfolios",
+      "design-inspo",
+      "mint-worthy",
+      "product-hunt",
+      "reading-list",
+      "newsletters",
+      "opportunities",
+    ];
+
+    return channels.filter((channel) => desiredChannels.includes(channel.name));
   } catch (error) {
     console.error("Error fetching channels:", error);
     return [];

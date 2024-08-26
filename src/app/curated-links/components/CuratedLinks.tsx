@@ -24,6 +24,12 @@ import {
   Palette,
   ChevronDown,
   ChevronUp,
+  User,
+  Gem,
+  Rocket,
+  BookOpen,
+  Mail,
+  Briefcase,
 } from "lucide-react";
 import { colorPresets, ColorPreset } from "../utils/colorPresets";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -91,6 +97,45 @@ export default function CuratedLinksTabs({
     }
     return customEndColor;
   }, [colorMode, isDarkMode, selectedPreset, customEndColor]);
+
+  const getChannelIcon = (channelName: string) => {
+    switch (channelName) {
+      case "fav-portfolios":
+        return <User className="w-4 h-4 mr-2" />;
+      case "design-inspo":
+        return <Palette className="w-4 h-4 mr-2" />;
+      case "mint-worthy":
+        return <Gem className="w-4 h-4 mr-2" />;
+      case "product-hunt":
+        return <Rocket className="w-4 h-4 mr-2" />;
+      case "reading-list":
+        return <BookOpen className="w-4 h-4 mr-2" />;
+      case "newsletters":
+        return <Mail className="w-4 h-4 mr-2" />;
+      case "opportunities":
+        return <Briefcase className="w-4 h-4 mr-2" />;
+      default:
+        return null;
+    }
+  };
+
+  const orderedChannelNames = [
+    "reading-list",
+    "product-hunt",
+    "fav-portfolios",
+    "newsletters",
+    "opportunities",
+    "mint-worthy",
+    "design-inspo",
+  ];
+
+  const sortedChannels = useMemo(() => {
+    return [...channels].sort(
+      (a, b) =>
+        orderedChannelNames.indexOf(a.name) -
+        orderedChannelNames.indexOf(b.name)
+    );
+  }, [channels]);
 
   return (
     <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
@@ -280,31 +325,20 @@ export default function CuratedLinksTabs({
         )}
       </div>
 
-      <Tabs defaultValue={channels[0]?.name} className="w-full">
+      <Tabs defaultValue={sortedChannels[0]?.name} className="w-full">
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
-          {channels.map((channel) => (
+          {sortedChannels.map((channel) => (
             <TabsTrigger
               key={channel.id}
               value={channel.name}
               className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
             >
-              {channel.name.includes("fav") && (
-                <Leaf className="w-4 h-4 mr-2" />
-              )}
-              {channel.name.includes("design") && (
-                <Flower className="w-4 h-4 mr-2" />
-              )}
-              {channel.name.includes("product") && (
-                <Trees className="w-4 h-4 mr-2" />
-              )}
-              {channel.name.includes("mint") && (
-                <TentTree className="w-4 h-4 mr-2" />
-              )}
+              {getChannelIcon(channel.name)}
               <span>{channel.name.replace("-", " ")}</span>
             </TabsTrigger>
           ))}
         </TabsList>
-        {channels.map((channel) => (
+        {sortedChannels.map((channel) => (
           <TabsContent key={channel.id} value={channel.name}>
             <AnimatePresence mode="wait">
               <motion.div
