@@ -60,7 +60,7 @@ export default function CuratedLinksTabs({
     | "retro-tech"
     | "blueprint"
     | "typewriter"
-  >("retro-tech");
+  >("tilted");
 
   const [colorMode, setColorMode] = useState<"preset" | "custom">("preset");
   const [selectedPreset, setSelectedPreset] = useState<ColorPreset>(
