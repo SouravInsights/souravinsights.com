@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Color from "color";
+import { useTheme } from "@/context/ThemeContext";
 
 interface CardProps {
   title: string;
@@ -26,15 +27,28 @@ export function LayeredCard({
   gradientStart,
   gradientEnd,
 }: CardProps) {
+  const { isDarkMode } = useTheme();
+
   const gradientStyle = {
     background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
+    opacity: isDarkMode ? 0.8 : 1,
   };
 
   const isLight = isLightColor(gradientStart);
-  const textColor = isLight ? "text-gray-800" : "text-white";
-  const subTextColor = isLight ? "text-gray-600" : "text-gray-200";
+  const textColor = isDarkMode
+    ? "text-gray-100"
+    : isLight
+    ? "text-gray-800"
+    : "text-white";
+  const subTextColor = isDarkMode
+    ? "text-gray-300"
+    : isLight
+    ? "text-gray-600"
+    : "text-gray-200";
 
-  const buttonBackgroundColor = isLight
+  const buttonBackgroundColor = isDarkMode
+    ? Color(gradientEnd).darken(0.3).hex()
+    : isLight
     ? Color(gradientEnd).lighten(0.1).hex()
     : Color(gradientEnd).darken(0.1).hex();
   const buttonTextColor = getContrastColor(buttonBackgroundColor);
@@ -46,7 +60,9 @@ export function LayeredCard({
   };
 
   const buttonHoverStyle = {
-    backgroundColor: isLight
+    backgroundColor: isDarkMode
+      ? Color(buttonBackgroundColor).lighten(0.1).hex()
+      : isLight
       ? Color(buttonBackgroundColor).darken(0.1).hex()
       : Color(buttonBackgroundColor).lighten(0.1).hex(),
   };
@@ -63,7 +79,7 @@ export function LayeredCard({
         className="absolute inset-0 rounded-lg shadow-md transform translate-x-4 translate-y-4"
         style={{
           ...gradientStyle,
-          opacity: 0.3,
+          opacity: isDarkMode ? 0.3 : 0.5,
         }}
       ></div>
 
@@ -72,12 +88,12 @@ export function LayeredCard({
         className="absolute inset-0 rounded-lg shadow-md transform translate-x-2 translate-y-2"
         style={{
           ...gradientStyle,
-          opacity: 0.6,
+          opacity: isDarkMode ? 0.5 : 0.7,
         }}
       ></div>
 
       {/* Top layer (content) */}
-      <div className="relative bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
+      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
         <div className="h-2" style={gradientStyle}></div>
         <div className="p-5 flex-grow flex flex-col">
           <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>

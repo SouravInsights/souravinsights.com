@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Color from "color";
+import { useTheme } from "@/context/ThemeContext";
 
 interface CardProps {
   title: string;
@@ -26,15 +27,28 @@ export function TiltedCard({
   gradientStart,
   gradientEnd,
 }: CardProps) {
+  const { isDarkMode } = useTheme();
+
   const gradientStyle = {
     background: `linear-gradient(to bottom right, ${gradientStart}, ${gradientEnd})`,
+    opacity: isDarkMode ? 0.8 : 1, // Reduce opacity slightly in dark mode
   };
 
   const isLight = isLightColor(gradientStart);
-  const textColor = isLight ? "text-gray-800" : "text-gray-700";
-  const subTextColor = isLight ? "text-gray-600" : "text-gray-600";
+  const textColor = isDarkMode
+    ? "text-gray-100"
+    : isLight
+    ? "text-gray-800"
+    : "text-white";
+  const subTextColor = isDarkMode
+    ? "text-gray-300"
+    : isLight
+    ? "text-gray-600"
+    : "text-gray-200";
 
-  const buttonBackgroundColor = isLight
+  const buttonBackgroundColor = isDarkMode
+    ? Color(gradientEnd).darken(0.3).hex()
+    : isLight
     ? Color(gradientEnd).lighten(0.1).hex()
     : Color(gradientEnd).darken(0.1).hex();
   const buttonTextColor = getContrastColor(buttonBackgroundColor);
@@ -46,7 +60,9 @@ export function TiltedCard({
   };
 
   const buttonHoverStyle = {
-    backgroundColor: isLight
+    backgroundColor: isDarkMode
+      ? Color(buttonBackgroundColor).lighten(0.1).hex()
+      : isLight
       ? Color(buttonBackgroundColor).darken(0.1).hex()
       : Color(buttonBackgroundColor).lighten(0.1).hex(),
   };
@@ -63,7 +79,9 @@ export function TiltedCard({
           className="absolute inset-0 rounded-lg shadow-md"
           style={gradientStyle}
         ></div>
-        <div className="relative bg-white bg-opacity-90 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6">
+        <div
+          className={`relative bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-80 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
+        >
           <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>
             {title}
           </h3>
