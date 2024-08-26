@@ -27,8 +27,8 @@ async function getDiscordData() {
 
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getDiscordData();
-  console.log("channels:", channels);
-  console.log("linkData:", linkData);
+  // console.log("channels:", channels);
+  // console.log("linkData:", linkData);
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto">
@@ -36,7 +36,7 @@ export default async function CuratedLinksPage() {
           My Digital Garden
         </h1>
         <p className="text-center text-gray-600 dark:text-gray-300 mb-8 transition-colors duration-200">
-          A curated collection of usefful links and resources
+          A curated collection of useful links and resources
         </p>
         <CuratedLinksTabs channels={channels} linkData={linkData} />
       </div>
