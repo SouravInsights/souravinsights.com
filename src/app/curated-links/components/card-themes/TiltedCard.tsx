@@ -31,7 +31,6 @@ export function TiltedCard({
 
   const gradientStyle = {
     background: `linear-gradient(to bottom right, ${gradientStart}, ${gradientEnd})`,
-    opacity: isDarkMode ? 0.8 : 1, // Reduce opacity slightly in dark mode
   };
 
   const isLight = isLightColor(gradientStart);
@@ -67,6 +66,9 @@ export function TiltedCard({
       : Color(buttonBackgroundColor).lighten(0.1).hex(),
   };
 
+  // Adjust the background color to match the page background in dark mode
+  const cardBackgroundColor = isDarkMode ? "bg-gray-900" : "bg-white";
+
   return (
     <motion.div
       className="group h-full perspective-1000"
@@ -80,7 +82,7 @@ export function TiltedCard({
           style={gradientStyle}
         ></div>
         <div
-          className={`relative bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-80 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
+          className={`relative ${cardBackgroundColor} bg-opacity-90 dark:bg-opacity-90 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
         >
           <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>
             {title}
