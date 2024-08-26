@@ -327,16 +327,19 @@ export default function CuratedLinksTabs({
 
       <Tabs defaultValue={sortedChannels[0]?.name} className="w-full">
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
-          {sortedChannels.map((channel) => (
-            <TabsTrigger
-              key={channel.id}
-              value={channel.name}
-              className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
-            >
-              {getChannelIcon(channel.name)}
-              <span>{channel.name.replace("-", " ")}</span>
-            </TabsTrigger>
-          ))}
+          {sortedChannels.map((channel) => {
+            console.log("linkData:", linkData[channel.name]);
+            return (
+              <TabsTrigger
+                key={channel.id}
+                value={channel.name}
+                className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
+              >
+                {getChannelIcon(channel.name)}
+                <span>{channel.name.replace("-", " ")}</span>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
         {sortedChannels.map((channel) => (
           <TabsContent key={channel.id} value={channel.name}>

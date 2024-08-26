@@ -7,6 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 interface CardProps {
   title: string;
   url: string;
+  description?: string;
   gradientStart: string;
   gradientEnd: string;
 }
@@ -24,6 +25,7 @@ function getContrastColor(color: string): string {
 export function TiltedCard({
   title,
   url,
+  description,
   gradientStart,
   gradientEnd,
 }: CardProps) {
@@ -66,7 +68,6 @@ export function TiltedCard({
       : Color(buttonBackgroundColor).lighten(0.1).hex(),
   };
 
-  // Adjust the background color to match the page background in dark mode
   const cardBackgroundColor = isDarkMode ? "bg-gray-900" : "bg-white";
 
   return (
@@ -84,10 +85,21 @@ export function TiltedCard({
         <div
           className={`relative ${cardBackgroundColor} bg-opacity-90 dark:bg-opacity-90 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
         >
-          <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>
+          <h3
+            className={`text-lg font-semibold mb-2 line-clamp-2 ${textColor}`}
+            style={{
+              overflow: "hidden",
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              textOverflow: "ellipsis",
+            }}
+          >
             {title}
           </h3>
-          <p className={`text-sm mb-4 truncate ${subTextColor}`}>{url}</p>
+          <p className={`text-sm mb-4 line-clamp-3 ${subTextColor}`}>
+            {description}
+          </p>
           <div className="mt-auto">
             <motion.a
               href={url}

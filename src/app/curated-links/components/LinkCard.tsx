@@ -41,6 +41,7 @@ export default function LinkCard({
       return (
         <TiltedCard
           title={link.title}
+          description={link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}

@@ -5,6 +5,7 @@ import {
   LinkData,
   extractUrl,
   extractTitle,
+  extractDescription,
 } from "./utils/discordApi";
 import CuratedLinksTabs from "@/app/curated-links/components/CuratedLinks";
 
@@ -14,10 +15,12 @@ async function getDiscordData() {
 
   for (const channel of channels) {
     const messages = await getMessagesFromChannel(channel.id);
+    messages.forEach((msg) => console.log("msg:", msg));
     linkData[channel.name] = messages.map((msg) => ({
       id: msg.id,
-      url: extractUrl(msg.content),
-      title: extractTitle(msg.content),
+      url: extractUrl(msg.content, msg.embeds),
+      title: extractTitle(msg.embeds),
+      description: extractDescription(msg.embeds),
       visible: true,
     }));
   }

@@ -15,6 +15,7 @@ export interface DiscordMessage {
   id: string;
   content: string;
   channel_id: string;
+  embeds: any[];
 }
 
 export interface DiscordChannel {
@@ -26,6 +27,7 @@ export interface LinkData {
   id: string;
   url: string;
   title: string;
+  description?: string;
   visible: boolean;
 }
 
@@ -71,12 +73,31 @@ export async function getMessagesFromChannel(
   }
 }
 
-export function extractUrl(content: string): string {
+export function extractUrl(content: string, embeds: any[]): string {
+  // If there's an embed with a URL, return that
+  if (embeds && embeds.length > 0 && embeds[0].url) {
+    return embeds[0].url;
+  }
+  // Fallback to extracting from content
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const match = content.match(urlRegex);
   return match ? match[0] : "";
 }
 
-export function extractTitle(content: string): string {
-  return content.split("\n")[0] || "Untitled";
+export function extractTitle(embeds: any[]): string {
+  // If there's an embed with a title, return that
+  if (embeds && embeds.length > 0 && embeds[0].title) {
+    return embeds[0].title;
+  }
+  // Fallback title if no embeds present
+  return "Untitled";
+}
+
+export function extractDescription(embeds: any[]): string {
+  // If there's an embed with a description, return that
+  if (embeds && embeds.length > 0 && embeds[0].description) {
+    return embeds[0].description;
+  }
+  // Fallback description if no embeds present
+  return "No description available";
 }
