@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Color from "color";
 import { useTheme } from "@/context/ThemeContext";
+import { posthogClient } from "@/utils/posthog";
 
 interface CardProps {
   title: string;
@@ -29,6 +30,10 @@ export function TiltedCard({
   gradientStart,
   gradientEnd,
 }: CardProps) {
+  const handleLinkClick = () => {
+    posthogClient?.capture("link_clicked", { url, title });
+  };
+
   const { isDarkMode } = useTheme();
 
   const gradientStyle = {
@@ -76,6 +81,7 @@ export function TiltedCard({
       initial={{ rotateX: 0, rotateY: 0, rotateZ: 0 }}
       whileHover={{ rotateX: 0, rotateY: 0, rotateZ: -3 }}
       transition={{ duration: 0.3 }}
+      onClick={handleLinkClick}
     >
       <div className="relative h-full transform-gpu transition-transform duration-300 ease-in-out">
         <div

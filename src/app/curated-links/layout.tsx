@@ -1,5 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
+import PHProvider from "@/context/PostHogProvider";
+import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
   title: "My Digital Garden - Curated Links by SouravInsights",
@@ -29,10 +31,17 @@ export const metadata: Metadata = {
   },
 };
 
+const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
+  ssr: false,
+});
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
-      {children}
+      <PHProvider>
+        <PostHogPageView />
+        {children}
+      </PHProvider>
     </div>
   );
 }

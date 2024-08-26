@@ -9,9 +9,10 @@ import { NotebookCard } from "./card-themes/NotebookCard";
 import { PostcardCard } from "./card-themes/PostcardCard";
 import { MinimalistCard } from "./card-themes/MinimalistCard";
 import { RetroTechCard } from "./card-themes/RetroTechCard";
-
 import { BlueprintCard } from "./card-themes/BlueprintCard";
 import { TypewriterCard } from "./card-themes/TypewriterCard";
+
+import { posthogClient } from "@/utils/posthog";
 
 interface LinkCardProps {
   link: LinkData;
