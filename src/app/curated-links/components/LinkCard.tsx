@@ -12,8 +12,6 @@ import { RetroTechCard } from "./card-themes/RetroTechCard";
 import { BlueprintCard } from "./card-themes/BlueprintCard";
 import { TypewriterCard } from "./card-themes/TypewriterCard";
 
-import { posthogClient } from "@/utils/posthog";
-
 interface LinkCardProps {
   link: LinkData;
   design:

@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import PHProvider from "@/context/PostHogProvider";
+import { PHProvider } from "@/context/PostHogProvider";
 import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {

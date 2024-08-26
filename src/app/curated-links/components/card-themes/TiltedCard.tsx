@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Color from "color";
 import { useTheme } from "@/context/ThemeContext";
-import { posthogClient } from "@/utils/posthog";
+import posthog from "posthog-js";
 
 interface CardProps {
   title: string;
@@ -31,7 +31,7 @@ export function TiltedCard({
   gradientEnd,
 }: CardProps) {
   const handleLinkClick = () => {
-    posthogClient?.capture("link_clicked", { url, title });
+    posthog.capture("link_clicked", { url, title });
   };
 
   const { isDarkMode } = useTheme();
