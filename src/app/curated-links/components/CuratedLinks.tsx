@@ -78,10 +78,19 @@ export default function CuratedLinksTabs({
     );
   };
 
-  const gradientStart =
-    colorMode === "preset" ? selectedPreset.startColor : customStartColor;
-  const gradientEnd =
-    colorMode === "preset" ? selectedPreset.endColor : customEndColor;
+  const gradientStart = useMemo(() => {
+    if (colorMode === "preset") {
+      return isDarkMode ? selectedPreset.darkStart : selectedPreset.lightStart;
+    }
+    return customStartColor;
+  }, [colorMode, isDarkMode, selectedPreset, customStartColor]);
+
+  const gradientEnd = useMemo(() => {
+    if (colorMode === "preset") {
+      return isDarkMode ? selectedPreset.darkEnd : selectedPreset.lightEnd;
+    }
+    return customEndColor;
+  }, [colorMode, isDarkMode, selectedPreset, customEndColor]);
 
   return (
     <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
