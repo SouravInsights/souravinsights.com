@@ -65,7 +65,13 @@ export default function LinkCard({
         />
       );
     case "notebook":
-      return <NotebookCard title={link.title} url={link.url} />;
+      return (
+        <NotebookCard
+          title={link.title}
+          url={link.url}
+          description={link.description}
+        />
+      );
     case "postcard":
       return (
         <PostcardCard

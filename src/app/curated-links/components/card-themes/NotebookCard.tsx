@@ -4,10 +4,11 @@ import { ExternalLink } from "lucide-react";
 
 interface CardProps {
   title: string;
+  description: string;
   url: string;
 }
 
-export function NotebookCard({ title, url }: CardProps) {
+export function NotebookCard({ title, description, url }: CardProps) {
   return (
     <motion.div
       whileHover={{ scale: 1.05, rotate: 0 }}
@@ -26,9 +27,7 @@ export function NotebookCard({ title, url }: CardProps) {
         >
           {title}
         </h3>
-        <p className="text-sm text-gray-600 mb-4 truncate font-handwriting">
-          {url}
-        </p>
+        <p className={`text-sm mb-4 line-clamp-3 `}>{description}</p>
         <div className="mt-auto">
           <a
             href={url}
