@@ -1,13 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 interface CardProps {
   title: string;
+  description: string;
   url: string;
 }
 
-export function RetroTechCard({ title, url }: CardProps) {
+export function RetroTechCard({ title, description, url }: CardProps) {
+  const { isDarkMode } = useTheme();
+  const textColor = isDarkMode ? "text-gray-100" : "text-white";
+  const subTextColor = isDarkMode ? "text-gray-300" : "text-gray-200";
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
@@ -19,8 +24,13 @@ export function RetroTechCard({ title, url }: CardProps) {
           "repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.15), rgba(0, 255, 0, 0.15) 1px, transparent 1px, transparent 2px)",
       }}
     >
-      <h3 className="text-lg font-bold mb-2 truncate"> {title}</h3>
-      <p className="text-sm mb-4 truncate">{url}</p>
+      <h3 className={`text-lg font-bold mb-2 truncate ${textColor}`}>
+        {" "}
+        {title}
+      </h3>
+      <p className={`text-sm mb-4 line-clamp-3 ${subTextColor}`}>
+        {description}
+      </p>
       <div className="mt-auto">
         <a
           href={url}

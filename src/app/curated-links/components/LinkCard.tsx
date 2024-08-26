@@ -13,6 +13,7 @@ import { NatureCard } from "./card-themes/NatureCard";
 
 import { BlueprintCard } from "./card-themes/BlueprintCard";
 import { TypewriterCard } from "./card-themes/TypewriterCard";
+import { url } from "inspector";
 
 interface LinkCardProps {
   link: LinkData;
@@ -72,7 +73,13 @@ export default function LinkCard({
     case "minimalist":
       return <MinimalistCard title={link.title} url={link.url} />;
     case "retro-tech":
-      return <RetroTechCard title={link.title} url={link.url} />;
+      return (
+        <RetroTechCard
+          title={link.title}
+          url={link.url}
+          description={link.description}
+        />
+      );
     case "blueprint":
       return <BlueprintCard title={link.title} url={link.url} />;
     case "typewriter":
@@ -81,6 +88,7 @@ export default function LinkCard({
       return (
         <TiltedCard
           title={link.title}
+          description={link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}

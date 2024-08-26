@@ -15,10 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Leaf,
-  Flower,
-  Trees,
-  TentTree,
   Search,
   Layout,
   Palette,
@@ -328,7 +324,7 @@ export default function CuratedLinksTabs({
       <Tabs defaultValue={sortedChannels[0]?.name} className="w-full">
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
           {sortedChannels.map((channel) => {
-            console.log("linkData:", linkData[channel.name]);
+            //console.log("linkData:", linkData[channel.name]);
             return (
               <TabsTrigger
                 key={channel.id}

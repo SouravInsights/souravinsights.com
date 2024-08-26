@@ -27,7 +27,7 @@ export interface LinkData {
   id: string;
   url: string;
   title: string;
-  description?: string;
+  description: string;
   visible: boolean;
 }
 
