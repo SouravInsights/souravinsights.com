@@ -7,7 +7,7 @@ import {
   extractTitle,
   extractDescription,
 } from "./utils/discordApi";
-import CuratedLinksTabs from "@/app/curated-links/components/CuratedLinks";
+import CuratedLinksTabs from "@/app/curated-links/components/CuratedLinksTabs";
 
 async function getDiscordData() {
   const channels = await getChannels();
