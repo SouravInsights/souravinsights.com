@@ -38,7 +38,7 @@ export default async function CuratedLinksPage() {
         My Digital Garden
       </h1>
       <p className="text-center text-gray-600 dark:text-gray-300 mb-4 sm:mb-8 transition-colors duration-200">
-        A curated collection of inspiring links and resources
+        A curated collection of useful links and resources
       </p>
       <CuratedLinksTabs channels={channels} linkData={linkData} />
     </div>
