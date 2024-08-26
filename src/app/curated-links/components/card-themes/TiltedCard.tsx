@@ -81,7 +81,6 @@ export function TiltedCard({
       initial={{ rotateX: 0, rotateY: 0, rotateZ: 0 }}
       whileHover={{ rotateX: 0, rotateY: 0, rotateZ: -3 }}
       transition={{ duration: 0.3 }}
-      onClick={handleLinkClick}
     >
       <div className="relative h-full transform-gpu transition-transform duration-300 ease-in-out">
         <div
@@ -114,6 +113,7 @@ export function TiltedCard({
               className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium"
               style={buttonStyle}
               whileHover={buttonHoverStyle}
+              onClick={handleLinkClick}
             >
               Visit <ExternalLink className="ml-2 flex-shrink-0" size={14} />
             </motion.a>
