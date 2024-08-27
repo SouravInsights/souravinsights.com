@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import LinkCard from "./LinkCard";
 import ColorPicker from "./ColorPicker";
@@ -33,6 +33,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/context/ThemeContext";
+import posthog from "posthog-js";
 
 interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
@@ -58,6 +59,19 @@ export default function CuratedLinksTabs({
     | "blueprint"
     | "typewriter"
   >("tilted");
+
+  useEffect(() => {
+    // Track initial card theme when component mounts
+    posthog.capture("card_theme_selected", {
+      theme: cardDesign,
+      action: "initial",
+    });
+  }, [cardDesign]);
+
+  const handleCardDesignChange = (value: typeof cardDesign) => {
+    setCardDesign(value);
+    posthog.capture("card_theme_selected", { theme: value, action: "changed" });
+  };
 
   const [colorMode, setColorMode] = useState<"preset" | "custom">("preset");
   const [selectedPreset, setSelectedPreset] = useState<ColorPreset>(
@@ -176,12 +190,7 @@ export default function CuratedLinksTabs({
                 <Layout size={16} />
                 Card Theme
               </Label>
-              <Select
-                value={cardDesign}
-                onValueChange={(value: typeof cardDesign) =>
-                  setCardDesign(value)
-                }
-              >
+              <Select value={cardDesign} onValueChange={handleCardDesignChange}>
                 <SelectTrigger className="w-full bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100">
                   <SelectValue placeholder="Select card design" />
                 </SelectTrigger>
