@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import FooterWithSnakeGame from "@/components/footer/FooterWithGame";
+// import Footer from "@/components/footer/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,11 +22,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider>
-          <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+          <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
             <header className="p-4 flex justify-between items-center">
               <DarkModeToggle />
             </header>
-            <main>{children}</main>
+            <main className="flex-grow">{children}</main>
+            {/* <ContributionsHeatMap />
+            <Footer /> */}
+            <FooterWithSnakeGame />
           </div>
         </ThemeProvider>
       </body>
