@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import LinkCard from "./LinkCard";
 import ColorPicker from "./ColorPicker";
@@ -60,17 +60,59 @@ export default function CuratedLinksTabs({
     | "typewriter"
   >("tilted");
 
+  const orderedChannelNames = [
+    "reading-list",
+    "resources",
+    "product-hunt",
+    "fav-portfolios",
+    "newsletters",
+    "opportunities",
+    "mint-worthy",
+    "design-inspo",
+  ];
+
+  const sortedChannels = useMemo(() => {
+    return [...channels].sort(
+      (a, b) =>
+        orderedChannelNames.indexOf(a.name) -
+        orderedChannelNames.indexOf(b.name)
+    );
+  }, [channels]);
+
+  const [activeTab, setActiveTab] = useState(sortedChannels[0]?.name || "");
+  const tabStartTime = useRef(Date.now());
+
   useEffect(() => {
     // Track initial card theme when component mounts
     posthog.capture("card_theme_selected", {
       theme: cardDesign,
       action: "initial",
     });
-  }, [cardDesign]);
+
+    // Start tracking time for the initial tab
+    tabStartTime.current = Date.now();
+
+    // Cleanup function to send the final tab duration when the component unmounts
+    return () => {
+      const duration = (Date.now() - tabStartTime.current) / 1000; // Convert to seconds
+      posthog.capture("tab_view_duration", { tab: activeTab, duration });
+    };
+  }, [cardDesign, activeTab]);
+
+  useEffect(() => {
+    // When activeTab changes, send the duration for the previous tab and reset the timer
+    const duration = (Date.now() - tabStartTime.current) / 1000; // Convert to seconds
+    posthog.capture("tab_view_duration", { tab: activeTab, duration });
+    tabStartTime.current = Date.now();
+  }, [activeTab]);
 
   const handleCardDesignChange = (value: typeof cardDesign) => {
     setCardDesign(value);
     posthog.capture("card_theme_selected", { theme: value, action: "changed" });
+  };
+
+  const handleTabChange = (tabName: string) => {
+    setActiveTab(tabName);
   };
 
   const [colorMode, setColorMode] = useState<"preset" | "custom">("preset");
@@ -131,25 +173,6 @@ export default function CuratedLinksTabs({
         return null;
     }
   };
-
-  const orderedChannelNames = [
-    "reading-list",
-    "resources",
-    "product-hunt",
-    "fav-portfolios",
-    "newsletters",
-    "opportunities",
-    "mint-worthy",
-    "design-inspo",
-  ];
-
-  const sortedChannels = useMemo(() => {
-    return [...channels].sort(
-      (a, b) =>
-        orderedChannelNames.indexOf(a.name) -
-        orderedChannelNames.indexOf(b.name)
-    );
-  }, [channels]);
 
   return (
     <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
@@ -334,7 +357,11 @@ export default function CuratedLinksTabs({
         )}
       </div>
 
-      <Tabs defaultValue={sortedChannels[0]?.name} className="w-full">
+      <Tabs
+        defaultValue={sortedChannels[0]?.name}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
           {sortedChannels.map((channel) => {
             //console.log("linkData:", linkData[channel.name]);
