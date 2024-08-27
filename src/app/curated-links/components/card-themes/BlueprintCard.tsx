@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import posthog from "posthog-js";
 
 interface CardProps {
   title: string;
@@ -9,6 +10,9 @@ interface CardProps {
 }
 
 export function BlueprintCard({ title, description, url }: CardProps) {
+  const handleLinkClick = () => {
+    posthog.capture("link_clicked_blueprint_card", { url });
+  };
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
@@ -27,6 +31,7 @@ export function BlueprintCard({ title, description, url }: CardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center text-sm font-mono font-medium text-blue-300 hover:text-blue-100"
+            onClick={handleLinkClick}
           >
             Visit <ExternalLink className="ml-1 flex-shrink-0" size={14} />
           </a>

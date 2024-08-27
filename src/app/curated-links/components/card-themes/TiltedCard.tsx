@@ -31,7 +31,7 @@ export function TiltedCard({
   gradientEnd,
 }: CardProps) {
   const handleLinkClick = () => {
-    posthog.capture("link_clicked", { url, title });
+    posthog.capture("link_clicked_tilted_card", { url });
   };
 
   const { isDarkMode } = useTheme();

@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 interface CardProps {
   title: string;
@@ -18,6 +19,10 @@ export function PolaroidCard({
   gradientStart,
   gradientEnd,
 }: CardProps) {
+  const handleLinkClick = () => {
+    posthog.capture("link_clicked_polaroid_card", { url });
+  };
+
   const gradientStyle = {
     background: `linear-gradient(to bottom right, ${gradientStart}, ${gradientEnd})`,
   };
@@ -39,6 +44,7 @@ export function PolaroidCard({
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center text-sm font-medium hover:text-green-300"
+              onClick={handleLinkClick}
             >
               Visit <ExternalLink className="ml-1 flex-shrink-0" size={14} />
             </a>

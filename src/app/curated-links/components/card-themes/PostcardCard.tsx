@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import posthog from "posthog-js";
 
 interface CardProps {
   title: string;
@@ -10,7 +11,10 @@ interface CardProps {
 }
 
 export function PostcardCard({ title, description, url }: CardProps) {
-  const { isDarkMode } = useTheme();
+  const handleLinkClick = () => {
+    posthog.capture("link_clicked_postcard_card", { url });
+  };
+  // const { isDarkMode } = useTheme();
   // const textColor = isDarkMode ? "text-gray-100" : "text-white";
   // const subTextColor = isDarkMode ? "text-gray-300" : "text-gray-200";
   return (
@@ -34,6 +38,7 @@ export function PostcardCard({ title, description, url }: CardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+            onClick={handleLinkClick}
           >
             Visit <ExternalLink className="ml-1 flex-shrink-0" size={14} />
           </a>

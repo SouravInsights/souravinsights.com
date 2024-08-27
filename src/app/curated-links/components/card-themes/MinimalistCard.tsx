@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import posthog from "posthog-js";
 
 interface CardProps {
   title: string;
@@ -8,6 +9,9 @@ interface CardProps {
 }
 
 export function MinimalistCard({ title, url }: CardProps) {
+  const handleLinkClick = () => {
+    posthog.capture("link_clicked_minimalist_card", { url });
+  };
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -21,6 +25,7 @@ export function MinimalistCard({ title, url }: CardProps) {
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center text-sm font-light text-gray-600 hover:text-gray-800"
+          onClick={handleLinkClick}
         >
           Visit <ExternalLink className="ml-1 flex-shrink-0" size={14} />
         </a>

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Color from "color";
 import { useTheme } from "@/context/ThemeContext";
+import posthog from "posthog-js";
 
 interface CardProps {
   title: string;
@@ -29,6 +30,10 @@ export function LayeredCard({
   gradientStart,
   gradientEnd,
 }: CardProps) {
+  const handleLinkClick = () => {
+    posthog.capture("link_clicked_layered_card", { url });
+  };
+
   const { isDarkMode } = useTheme();
 
   const gradientStyle = {
@@ -113,6 +118,7 @@ export function LayeredCard({
               className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium"
               style={buttonStyle}
               whileHover={buttonHoverStyle}
+              onClick={handleLinkClick}
             >
               Visit <ExternalLink className="ml-2 flex-shrink-0" size={14} />
             </motion.a>
