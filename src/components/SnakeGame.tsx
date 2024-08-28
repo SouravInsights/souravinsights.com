@@ -3,11 +3,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowUp,
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  Keyboard,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Gamepad2,
 } from "lucide-react";
 import useSound from "use-sound";
 
@@ -204,33 +204,33 @@ const SnakeGame: React.FC = () => {
         <Button
           size="sm"
           onClick={() => handleDirectionChange("UP")}
-          className="p-2 bg-green-500 text-white"
+          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ArrowUp size={20} />
+          <ChevronUp size={24} />
         </Button>
         <div></div>
         <Button
           size="sm"
           onClick={() => handleDirectionChange("LEFT")}
-          className="p-2 bg-green-500 text-white"
+          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ArrowLeft size={20} />
+          <ChevronLeft size={24} />
         </Button>
         <div></div>
         <Button
           size="sm"
           onClick={() => handleDirectionChange("RIGHT")}
-          className="p-2 bg-green-500 text-white"
+          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ArrowRight size={20} />
+          <ChevronRight size={24} />
         </Button>
         <div></div>
         <Button
           size="sm"
           onClick={() => handleDirectionChange("DOWN")}
-          className="p-2 bg-green-500 text-white"
+          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ArrowDown size={20} />
+          <ChevronDown size={24} />
         </Button>
         <div></div>
       </div>
@@ -241,7 +241,7 @@ const SnakeGame: React.FC = () => {
         transition={{ delay: 0.3 }}
       >
         <h4 className="text-sm font-semibold mb-2 text-green-700 dark:text-green-300 flex items-center justify-center">
-          <Keyboard className="mr-2" size={16} />
+          <Gamepad2 className="mr-2" size={16} />
           How to Play
         </h4>
         <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
@@ -251,11 +251,11 @@ const SnakeGame: React.FC = () => {
           </li>
           <li className="flex items-center">
             <span className="mr-2">🍎</span>
-            Collect programming icons to level up
+            Eat up programming icons to level up your tech stack
           </li>
           <li className="flex items-center">
             <span className="mr-2">🚫</span>
-            Avoid hitting walls or yourself
+            Avoid walls and self-bites
           </li>
         </ul>
       </motion.div>
