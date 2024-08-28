@@ -1,6 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { Github, Linkedin, Twitter, ExternalLink, Heart } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Twitter,
+  ExternalLink,
+  Heart,
+  Code2,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -82,19 +89,22 @@ const techs: TechInfo[] = [
 const FooterWithSnakeGame: React.FC = () => {
   const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-2">
+    <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 transition-colors duration-200">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+            <h3 className="text-3xl font-bold text-green-800 dark:text-green-400 transition-colors duration-200">
               Code Muncher
             </h3>
-            <SnakeGame />
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transition-colors duration-200">
+              <SnakeGame />
+            </div>
           </div>
           <div className="space-y-8">
             <div>
-              <h4 className="text-xl font-semibold mb-4 flex items-center">
+              <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
                 <motion.div
+                  animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                   className="mr-2"
                 >
@@ -127,7 +137,7 @@ const FooterWithSnakeGame: React.FC = () => {
                           href={social.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-gray-300 hover:text-white transition-colors duration-200"
+                          className="text-gray-600 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400 transition-colors duration-200"
                           whileHover={{ scale: 1.2 }}
                           whileTap={{ scale: 0.9 }}
                         >
@@ -143,8 +153,10 @@ const FooterWithSnakeGame: React.FC = () => {
               </div>
             </div>
             <div>
-              <h4 className="text-xl font-semibold mb-4">Open Source</h4>
-              <p className="text-sm mb-2">
+              <h4 className="text-xl font-semibold mb-4 text-green-700 dark:text-green-300">
+                Open Source
+              </h4>
+              <p className="text-sm mb-2 text-gray-600 dark:text-gray-300">
                 This portfolio is open source. Feel free to explore, fork, or
                 contribute!
               </p>
@@ -157,62 +169,62 @@ const FooterWithSnakeGame: React.FC = () => {
                     "_blank"
                   )
                 }
-                className={"text-gray-700"}
+                className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-gray-700 dark:text-green-300 dark:hover:bg-gray-600 transition-colors duration-200"
               >
                 View on GitHub
               </Button>
             </div>
             <div>
-              <div>
-                <h4 className="text-xl font-semibold mb-4 flex items-center">
-                  <Heart className="mr-2 text-red-500" />
-                  Tech Stack
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {techs.map((tech, index) => (
-                    <motion.div
-                      key={index}
-                      className="px-3 py-2 bg-gray-700 rounded-full text-sm cursor-pointer flex items-center"
-                      whileHover={{ scale: 1.1, backgroundColor: tech.color }}
-                      onHoverStart={() => setHoveredTech(tech)}
-                      onHoverEnd={() => setHoveredTech(null)}
-                    >
-                      <span className="mr-1">{tech.icon}</span>
+              <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
+                <Heart className="mr-2 text-red-500" />
+                Tech Stack
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {techs.map((tech, index) => (
+                  <motion.div
+                    key={index}
+                    className="px-3 py-2 bg-white dark:bg-gray-700 rounded-full text-sm cursor-pointer flex items-center shadow-sm hover:shadow-md transition-shadow duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    onHoverStart={() => setHoveredTech(tech)}
+                    onHoverEnd={() => setHoveredTech(null)}
+                  >
+                    <span className="mr-1">{tech.icon}</span>
+                    <span className="text-gray-800 dark:text-gray-200">
                       {tech.name}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+              <div className="h-24 mt-4">
+                <AnimatePresence>
+                  {hoveredTech && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="p-3 bg-white dark:bg-gray-700 rounded-md shadow-lg"
+                    >
+                      <h5 className="text-sm font-semibold mb-2 text-green-700 dark:text-green-300">
+                        {hoveredTech.name} Showcase:
+                      </h5>
+                      <div className="flex items-center justify-center h-8">
+                        {hoveredTech.showcase}
+                      </div>
                     </motion.div>
-                  ))}
-                </div>
-                <div className="h-24 mt-4">
-                  <AnimatePresence>
-                    {hoveredTech && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="p-3 bg-gray-800 rounded-md"
-                      >
-                        <h5 className="text-sm font-semibold mb-2">
-                          {hoveredTech.name} Showcase:
-                        </h5>
-                        <div className="flex items-center justify-center h-8">
-                          {hoveredTech.showcase}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
         </div>
         <motion.div
-          className="mt-8 text-center text-sm text-gray-400"
+          className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          © {new Date().getFullYear()} SouravInsights | Crafted with passion and
-          probably too much coffee
+          © {new Date().getFullYear()} SouravInsights | Cultivating a digital
+          garden of knowledge and creativity
         </motion.div>
       </div>
     </footer>
