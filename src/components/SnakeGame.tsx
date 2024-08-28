@@ -92,7 +92,7 @@ const SnakeGame: React.FC = () => {
     newSnake.unshift(head);
 
     // Check if snake has eaten the food
-    if (snake[0].x === food.x && snake[0].y === food.y) {
+    if (head.x === food.x && head.y === food.y) {
       setScore((prevScore) => prevScore + 1);
       setFood(getRandomPosition());
       setCurrentIcon(
