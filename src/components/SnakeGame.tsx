@@ -54,10 +54,12 @@ const SnakeGame: React.FC = () => {
   const [playEat] = useSound("/sounds/food.mp3", { volume: 0.25 });
   const [playGameOver] = useSound("/sounds/gameover.mp3", { volume: 0.25 });
 
+  // Main game logic to move the snake
   const moveSnake = useCallback(() => {
     const newSnake = [...snake];
     const head = { ...newSnake[0] };
 
+    // Move the head based on the current direction
     switch (direction) {
       case "UP":
         head.y -= 1;
@@ -73,6 +75,7 @@ const SnakeGame: React.FC = () => {
         break;
     }
 
+    // Check for collisions with walls or self
     if (
       head.x < 0 ||
       head.x >= GRID_SIZE ||
@@ -85,8 +88,10 @@ const SnakeGame: React.FC = () => {
       return;
     }
 
+    // Add new head to the snake
     newSnake.unshift(head);
 
+    // Check if snake has eaten the food
     if (snake[0].x === food.x && snake[0].y === food.y) {
       setScore((prevScore) => prevScore + 1);
       setFood(getRandomPosition());
@@ -95,6 +100,7 @@ const SnakeGame: React.FC = () => {
       );
       playEat();
     } else {
+      // Remove tail if food wasn't eaten
       newSnake.pop();
       playMove();
     }
@@ -102,6 +108,7 @@ const SnakeGame: React.FC = () => {
     setSnake(newSnake);
   }, [snake, direction, food, playMove, playEat, playGameOver]);
 
+  // Set up game loop
   useEffect(() => {
     if (!gameOver) {
       const gameLoop = setInterval(moveSnake, GAME_SPEED);
@@ -109,6 +116,7 @@ const SnakeGame: React.FC = () => {
     }
   }, [moveSnake, gameOver]);
 
+  // Handle keyboard input
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     e.preventDefault();
     switch (e.key) {
@@ -127,16 +135,19 @@ const SnakeGame: React.FC = () => {
     }
   }, []);
 
+  // Set up event listener for keyboard input
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [handleKeyPress]);
 
+  // Generate a random position for food
   const getRandomPosition = (): Position => ({
     x: Math.floor(Math.random() * GRID_SIZE),
     y: Math.floor(Math.random() * GRID_SIZE),
   });
 
+  // Reset the game to initial state
   const resetGame = () => {
     setSnake(INITIAL_SNAKE);
     setDirection(INITIAL_DIRECTION);
@@ -148,6 +159,7 @@ const SnakeGame: React.FC = () => {
     );
   };
 
+  // Handle direction change (for mobile controls)
   const handleDirectionChange = (newDirection: Direction) => {
     setDirection(newDirection);
   };
