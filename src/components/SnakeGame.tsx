@@ -8,6 +8,7 @@ import {
   ChevronRight,
   ChevronDown,
   Gamepad2,
+  Play,
 } from "lucide-react";
 import useSound from "use-sound";
 import {
@@ -48,6 +49,7 @@ const SnakeGame: React.FC = () => {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [currentIcon, setCurrentIcon] = useState(programmingIcons[0]);
+  const [paused, setPaused] = useState<boolean>(false);
 
   // Sound effects
   const [playMove] = useSound("/sounds/move.mp3", { volume: 0.25 });
@@ -130,7 +132,7 @@ const SnakeGame: React.FC = () => {
      * - Remove tail to maintain snake length
      * - Play movement sound
      */
-    if (head.x === food.x && head.y === food.y) {
+    if (head.x === food.x && head.y === food.y && !paused) {
       // Score! (literally)
       setScore((prevScore) => prevScore + 1);
 
@@ -156,11 +158,11 @@ const SnakeGame: React.FC = () => {
 
   // Set up game loop
   useEffect(() => {
-    if (!gameOver) {
+    if (!gameOver && !paused) {
       const gameLoop = setInterval(moveSnake, GAME_SPEED);
       return () => clearInterval(gameLoop);
     }
-  }, [moveSnake, gameOver]);
+  }, [moveSnake, gameOver, paused]);
 
   // Handle keyboard input
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
@@ -177,6 +179,9 @@ const SnakeGame: React.FC = () => {
         break;
       case "ArrowRight":
         setDirection("RIGHT");
+        break;
+      case " ":
+        setPaused((prevPaused) => !prevPaused); // Toggle pause on space key
         break;
     }
   }, []);
@@ -209,7 +214,7 @@ const SnakeGame: React.FC = () => {
   const handleDirectionChange = (newDirection: Direction) => {
     setDirection(newDirection);
   };
-
+  console.log(paused);
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
       <div
@@ -260,6 +265,20 @@ const SnakeGame: React.FC = () => {
         >
           <currentIcon.icon size={CELL_SIZE * 0.8} color="white" />
         </motion.div>
+        {/* Pause Overlay */}
+        {paused && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-5 0 z-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="flex flex-col items-center">
+              <Play className="w-12 h-12 text-white" />
+              <p className="mt-2 text-white">Paused</p>
+            </div>
+          </motion.div>
+        )}
       </div>
       <div className="mt-4 text-center">
         <p className="text-lg font-semibold text-green-700 dark:text-green-300">
