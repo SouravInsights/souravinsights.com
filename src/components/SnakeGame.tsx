@@ -211,7 +211,32 @@ const SnakeGame: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+    <div className="flex flex-col gap-6 items-center justify-center w-full max-w-sm mx-auto">
+      <motion.div
+        className="flex flex-col gap-2 p-3 bg-green-50 dark:bg-gray-700 rounded-lg shadow-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <h4 className="text-sm font-semibold text-green-700 dark:text-green-300 flex items-center justify-center">
+          <Gamepad2 className="mr-2" size={16} />
+          How to Play
+        </h4>
+        <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
+          <li className="flex items-center">
+            <span className="mr-2">🎮</span>
+            Use arrow keys or on-screen buttons to move
+          </li>
+          <li className="flex items-center">
+            <span className="mr-2">🍎</span>
+            Eat up programming languages to level up your tech stack
+          </li>
+          <li className="flex items-center">
+            <span className="mr-2">🚫</span>
+            Avoid walls and self-bites
+          </li>
+        </ul>
+      </motion.div>
       <div
         className="border-2 border-green-600 dark:border-green-400 rounded-lg overflow-hidden bg-white dark:bg-gray-800 relative"
         style={{
@@ -318,31 +343,6 @@ const SnakeGame: React.FC = () => {
         </Button>
         <div></div>
       </div>
-      <motion.div
-        className="mt-6 p-3 bg-green-50 dark:bg-gray-700 rounded-lg shadow-md"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <h4 className="text-sm font-semibold mb-2 text-green-700 dark:text-green-300 flex items-center justify-center">
-          <Gamepad2 className="mr-2" size={16} />
-          How to Play
-        </h4>
-        <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
-          <li className="flex items-center">
-            <span className="mr-2">🎮</span>
-            Use arrow keys or on-screen buttons to move
-          </li>
-          <li className="flex items-center">
-            <span className="mr-2">🍎</span>
-            Eat up programming icons to level up your tech stack
-          </li>
-          <li className="flex items-center">
-            <span className="mr-2">🚫</span>
-            Avoid walls and self-bites
-          </li>
-        </ul>
-      </motion.div>
     </div>
   );
 };
