@@ -10,6 +10,16 @@ import {
   Gamepad2,
 } from "lucide-react";
 import useSound from "use-sound";
+import {
+  SiTypescript,
+  SiPython,
+  SiRust,
+  SiJavascript,
+  SiC,
+  SiReact,
+  SiNodedotjs,
+  SiGo,
+} from "react-icons/si";
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = { x: number; y: number };
@@ -20,7 +30,16 @@ const INITIAL_SNAKE: Position[] = [{ x: 10, y: 10 }];
 const INITIAL_DIRECTION: Direction = "RIGHT";
 const GAME_SPEED = 150;
 
-const programmingIcons = ["JS", "TS", "Py", "Rx", "Nx"];
+const programmingIcons = [
+  { icon: SiTypescript, color: "#3178C6" },
+  { icon: SiPython, color: "#3776AB" },
+  { icon: SiRust, color: "#000000" },
+  { icon: SiJavascript, color: "#F7DF1E" },
+  { icon: SiC, color: "#A8B9CC" },
+  { icon: SiReact, color: "#61DAFB" },
+  { icon: SiNodedotjs, color: "#339933" },
+  { icon: SiGo, color: "#00ADD8" },
+];
 
 const SnakeGame: React.FC = () => {
   const [snake, setSnake] = useState<Position[]>(INITIAL_SNAKE);
@@ -28,6 +47,7 @@ const SnakeGame: React.FC = () => {
   const [food, setFood] = useState<Position>({ x: 15, y: 15 });
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
+  const [currentIcon, setCurrentIcon] = useState(programmingIcons[0]);
 
   // Sound effects
   const [playMove] = useSound("/sounds/move.mp3", { volume: 0.25 });
@@ -67,9 +87,12 @@ const SnakeGame: React.FC = () => {
 
     newSnake.unshift(head);
 
-    if (head.x === food.x && head.y === food.y) {
+    if (snake[0].x === food.x && snake[0].y === food.y) {
       setScore((prevScore) => prevScore + 1);
       setFood(getRandomPosition());
+      setCurrentIcon(
+        programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
+      );
       playEat();
     } else {
       newSnake.pop();
@@ -120,6 +143,9 @@ const SnakeGame: React.FC = () => {
     setFood(getRandomPosition());
     setGameOver(false);
     setScore(0);
+    setCurrentIcon(
+      programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
+    );
   };
 
   const handleDirectionChange = (newDirection: Direction) => {
@@ -174,7 +200,7 @@ const SnakeGame: React.FC = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.2 }}
         >
-          {programmingIcons[score % programmingIcons.length]}
+          <currentIcon.icon size={CELL_SIZE * 0.8} color="white" />
         </motion.div>
       </div>
       <div className="mt-4 text-center">

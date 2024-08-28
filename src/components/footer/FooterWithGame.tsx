@@ -1,13 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  ExternalLink,
-  Heart,
-  Code2,
-} from "lucide-react";
+import { Github, Linkedin, Twitter, Cpu, Code2, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,26 +85,23 @@ const FooterWithSnakeGame: React.FC = () => {
     <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 transition-colors duration-200">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="space-y-6">
-            <h3 className="text-3xl font-bold text-green-800 dark:text-green-400 transition-colors duration-200">
+          <div className="space-y-6  flex flex-col items-center">
+            <h3 className="self-center text-3xl font-bold text-green-800 dark:text-green-400 transition-colors duration-200">
               Code Muncher
             </h3>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transition-colors duration-200">
+            <div className="p-6 rounded-lg shadow-sm transition-colors duration-200">
               <SnakeGame />
             </div>
           </div>
           <div className="space-y-8">
             <div>
               <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="mr-2"
-                >
-                  <ExternalLink size={20} />
-                </motion.div>
-                Connect
+                <Sparkles className="mr-2" size={20} />
+                {`Let's Connect`}
               </h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                {`Grab a virtual coffee with me and let's chat about code!`}
+              </p>
               <div className="flex space-x-4">
                 {[
                   {
@@ -153,12 +143,12 @@ const FooterWithSnakeGame: React.FC = () => {
               </div>
             </div>
             <div>
-              <h4 className="text-xl font-semibold mb-4 text-green-700 dark:text-green-300">
+              <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
+                <Code2 className="mr-2" size={20} />
                 Open Source
               </h4>
               <p className="text-sm mb-2 text-gray-600 dark:text-gray-300">
-                This portfolio is open source. Feel free to explore, fork, or
-                contribute!
+                {`This portfolio is open source. Feel free play around, just don't judge my commit messages too harshly!`}
               </p>
               <Button
                 variant="outline"
@@ -176,7 +166,7 @@ const FooterWithSnakeGame: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
-                <Heart className="mr-2 text-red-500" />
+                <Cpu className="mr-2 text-red-500" />
                 Tech Stack
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -223,8 +213,9 @@ const FooterWithSnakeGame: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          © {new Date().getFullYear()} SouravInsights | Cultivating a digital
-          garden of knowledge and creativity
+          © {new Date().getFullYear()} SouravInsights | Crafted with passion and
+          some (maybe a lot) ☕
+          <br />
         </motion.div>
       </div>
     </footer>
