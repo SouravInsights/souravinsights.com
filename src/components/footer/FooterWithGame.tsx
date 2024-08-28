@@ -1,6 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Github, Linkedin, Twitter, Cpu, Code2, Sparkles } from "lucide-react";
+import {
+  BinaryAppleIcon,
+  PixelatedSnakeIcon,
+  CodeBlockMazeIcon,
+} from "@/components/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,17 +84,37 @@ const techs: TechInfo[] = [
   },
 ];
 
+const IconRotator: React.FC = () => {
+  const icons = [BinaryAppleIcon, PixelatedSnakeIcon, CodeBlockMazeIcon];
+  const [currentIconIndex, setCurrentIconIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentIconIndex((prevIndex) => (prevIndex + 1) % icons.length);
+    }, 3000); // Change icon every 3 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const CurrentIcon = icons[currentIconIndex];
+
+  return (
+    <CurrentIcon className="w-6 h-6 sm:w-8 sm:h-8 transition-all duration-300 ease-in-out" />
+  );
+};
+
 const FooterWithSnakeGame: React.FC = () => {
   const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
     <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 transition-colors duration-200">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="space-y-6  flex flex-col items-center">
-            <h3 className="self-center text-3xl font-bold text-green-800 dark:text-green-400 transition-colors duration-200">
-              Code Muncher
+          <div className="flex flex-col gap-2 items-center">
+            <h3 className="text-center text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center space-x-2 mb-4">
+              <IconRotator />
+              <span>Language Muncher</span>
             </h3>
-            <div className="p-6 rounded-lg shadow-sm transition-colors duration-200">
+            <div className="px-6 py-4 rounded-lg shadow-sm transition-colors duration-200">
               <SnakeGame />
             </div>
           </div>
