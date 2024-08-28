@@ -54,59 +54,105 @@ const SnakeGame: React.FC = () => {
   const [playEat] = useSound("/sounds/food.mp3", { volume: 0.25 });
   const [playGameOver] = useSound("/sounds/gameover.mp3", { volume: 0.25 });
 
-  // Main game logic to move the snake
+  /**
+   * Handles the movement of the snake, including collision detection, food consumption, and game state updates.
+   * This function is memoized with useCallback to optimize performance in the game loop.
+   *
+   * This bad boy handles:
+   * - Snake movement (moving the snake based on the current direction)
+   * - Collision detection (for when our snake gets too adventurous)
+   * - Food consumption (scoring points and growing longer)
+   * - Game state updates (score, food position, game over)
+   *
+   *  @returns void, but a lot happens in here, trust me
+   */
   const moveSnake = useCallback(() => {
+    /** Create a new copy of the snake array.
+     * No body likes mutating the state directly, right?
+     */
     const newSnake = [...snake];
+
+    /** New head position */
     const head = { ...newSnake[0] };
 
-    // Move the head based on the current direction
+    /**
+     * Time to move our snake. Up is down, down is up, I'm not kidding...
+     * In this coordinate system:
+     * - y decreases upwards (0 is at the top)
+     * - x increases to the right
+     */
     switch (direction) {
       case "UP":
-        head.y -= 1;
+        head.y -= 1; // Moving up, so y gets smaller
         break;
       case "DOWN":
-        head.y += 1;
+        head.y += 1; // Moving down, y gets bigger
         break;
       case "LEFT":
-        head.x -= 1;
+        head.x -= 1; // Going left, x gets smaller
         break;
       case "RIGHT":
-        head.x += 1;
+        head.x += 1; // Going right, x gets bigger
         break;
     }
 
-    // Check for collisions with walls or self
+    /**
+     * Uh oh, did we hit something?
+     * This checks if we've smacked into a wall or ourselves (ouch!)
+     */
     if (
+      // Wall collision check
       head.x < 0 ||
       head.x >= GRID_SIZE ||
       head.y < 0 ||
       head.y >= GRID_SIZE ||
+      // Self collision check (chechk whether head position matches any body segment)
       newSnake.some((segment) => segment.x === head.x && segment.y === head.y)
     ) {
-      setGameOver(true);
+      setGameOver(true); // Game over, man. Game over!
       playGameOver();
-      return;
+      return; // We're done here, folks
     }
 
-    // Add new head to the snake
+    // If we're still alive, let's move our snake forward
     newSnake.unshift(head);
 
-    // Check if snake has eaten the food
+    /**
+     * Food check: Did we just score a snake snack?
+     * @note
+     * If food is eaten:
+     * - Increase score
+     * - Generate new food position
+     * - Change food icon
+     * - Play eating sound
+     * - Snake grows (tail is not removed)
+     * If food is not eaten:
+     * - Remove tail to maintain snake length
+     * - Play movement sound
+     */
     if (head.x === food.x && head.y === food.y) {
+      // Score! (literally)
       setScore((prevScore) => prevScore + 1);
+
+      // New food, who dis?
       setFood(getRandomPosition());
+
+      // Change up the food icon, just to keep things spicy
       setCurrentIcon(
         programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
       );
       playEat();
+      // Notice we don't remove the tail here - that's how our snake grows!
     } else {
-      // Remove tail if food wasn't eaten
+      // No food? Remove the tail to keep our snake the same length
       newSnake.pop();
       playMove();
     }
 
+    // Update our snake's position. React, do your thing!
     setSnake(newSnake);
   }, [snake, direction, food, playMove, playEat, playGameOver]);
+  // Dependencies array: The VIP list of state that decides whether this function will be recreated or not!
 
   // Set up game loop
   useEffect(() => {
