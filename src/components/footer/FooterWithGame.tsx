@@ -1,6 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Github, Linkedin, Twitter, Cpu, Code2, Sparkles } from "lucide-react";
+import {
+  BinaryAppleIcon,
+  PixelatedSnakeIcon,
+  CodeBlockMazeIcon,
+} from "@/components/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,6 +84,25 @@ const techs: TechInfo[] = [
   },
 ];
 
+const IconRotator: React.FC = () => {
+  const icons = [BinaryAppleIcon, PixelatedSnakeIcon, CodeBlockMazeIcon];
+  const [currentIconIndex, setCurrentIconIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentIconIndex((prevIndex) => (prevIndex + 1) % icons.length);
+    }, 3000); // Change icon every 3 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const CurrentIcon = icons[currentIconIndex];
+
+  return (
+    <CurrentIcon className="w-8 h-8 transition-all duration-300 ease-in-out" />
+  );
+};
+
 const FooterWithSnakeGame: React.FC = () => {
   const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
@@ -86,8 +110,9 @@ const FooterWithSnakeGame: React.FC = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-2 items-center">
-            <h3 className="text-center self-stretch text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200">
-              Language Muncher
+            <h3 className="text-center self-stretch text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center gap-2">
+              <IconRotator />
+              <span>Language Muncher</span>
             </h3>
             <div className="px-6 py-4 rounded-lg shadow-sm transition-colors duration-200">
               <SnakeGame />
