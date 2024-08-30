@@ -28,7 +28,6 @@ const GRID_SIZE = 20;
 const CELL_SIZE = 15;
 const INITIAL_SNAKE: Position[] = [{ x: 10, y: 10 }];
 const INITIAL_DIRECTION: Direction = "RIGHT";
-const GAME_SPEED = 150;
 
 const programmingIcons = [
   { icon: SiTypescript, color: "#3178C6" },
@@ -41,6 +40,14 @@ const programmingIcons = [
   { icon: SiGo, color: "#00ADD8" },
 ];
 
+const DIFFICULTY_SPEEDS = {
+  easy: 200,
+  medium: 150,
+  hard: 100,
+};
+
+type Difficulty = "easy" | "medium" | "hard";
+
 const SnakeGame: React.FC = () => {
   const [snake, setSnake] = useState<Position[]>(INITIAL_SNAKE);
   const [direction, setDirection] = useState<Direction>(INITIAL_DIRECTION);
@@ -48,6 +55,8 @@ const SnakeGame: React.FC = () => {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [currentIcon, setCurrentIcon] = useState(programmingIcons[0]);
+  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [gameSpeed, setGameSpeed] = useState(DIFFICULTY_SPEEDS.medium);
 
   // Sound effects
   const [playMove] = useSound("/sounds/move.mp3", { volume: 0.25 });
@@ -154,13 +163,17 @@ const SnakeGame: React.FC = () => {
   }, [snake, direction, food, playMove, playEat, playGameOver]);
   // Dependencies array: The VIP list of state that decides whether this function will be recreated or not!
 
+  useEffect(() => {
+    setGameSpeed(DIFFICULTY_SPEEDS[difficulty]);
+  }, [difficulty]);
+
   // Set up game loop
   useEffect(() => {
     if (!gameOver) {
-      const gameLoop = setInterval(moveSnake, GAME_SPEED);
+      const gameLoop = setInterval(moveSnake, gameSpeed);
       return () => clearInterval(gameLoop);
     }
-  }, [moveSnake, gameOver]);
+  }, [moveSnake, gameOver, gameSpeed]);
 
   // Handle keyboard input
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
@@ -210,8 +223,32 @@ const SnakeGame: React.FC = () => {
     setDirection(newDirection);
   };
 
+  const handleDifficultyChange = (newDifficulty: Difficulty) => {
+    setDifficulty(newDifficulty);
+    resetGame();
+  };
+
   return (
-    <div className="flex flex-col gap-6 items-center justify-center w-full max-w-sm mx-auto">
+    <div className="flex flex-col gap-4 items-center justify-center w-full max-w-sm mx-auto">
+      <div className="flex justify-center space-x-2">
+        {(["easy", "medium", "hard"] as Difficulty[]).map((level) => (
+          <Button
+            key={level}
+            onClick={() => handleDifficultyChange(level)}
+            variant="outline"
+            size="sm"
+            className={`px-3 py-1 text-sm transition-colors duration-200
+              ${
+                difficulty === level
+                  ? "bg-green-500 text-white hover:bg-green-600 hover:text-white"
+                  : "bg-white text-green-700 hover:bg-green-100 hover:text-green-800 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-300"
+              } border border-green-500 dark:border-green-400`}
+          >
+            {level.charAt(0).toUpperCase() + level.slice(1)}
+          </Button>
+        ))}
+      </div>
+
       <motion.div
         className="flex flex-col gap-2 p-3 bg-green-50 dark:bg-gray-700 rounded-lg shadow-md"
         initial={{ opacity: 0, y: 20 }}
@@ -234,6 +271,10 @@ const SnakeGame: React.FC = () => {
           <li className="flex items-center">
             <span className="mr-2">🚫</span>
             Avoid walls and self-bites
+          </li>
+          <li className="flex items-center">
+            <span className="mr-2">⚙️</span>
+            Choose your difficulty: Easy, Medium, or Hard
           </li>
         </ul>
       </motion.div>

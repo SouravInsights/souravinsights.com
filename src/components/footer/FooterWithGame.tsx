@@ -110,11 +110,11 @@ const FooterWithSnakeGame: React.FC = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-2 items-center">
-            <h3 className="text-center text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center space-x-2 mb-4">
+            <h3 className="text-center text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center space-x-2 mb-2">
               <IconRotator />
               <span>Language Muncher</span>
             </h3>
-            <div className="px-6 py-4 rounded-lg shadow-sm transition-colors duration-200">
+            <div className="px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">
               <SnakeGame />
             </div>
           </div>
