@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ import {
   SiNodedotjs,
   SiGo,
 } from "react-icons/si";
+import posthog from "posthog-js";
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = { x: number; y: number };
@@ -58,10 +59,53 @@ const SnakeGame: React.FC = () => {
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [gameSpeed, setGameSpeed] = useState(DIFFICULTY_SPEEDS.medium);
 
+  // New state and ref variables for tracking
+  const [highestScore, setHighestScore] = useState<number>(0);
+  const gameStartTime = useRef<number | null>(null);
+  const totalPlayTime = useRef<number>(0);
+  const gamesPlayed = useRef<number>(0);
+  const controlsUsed = useRef<{ keyboard: number; mobile: number }>({
+    keyboard: 0,
+    mobile: 0,
+  });
+
   // Sound effects
   const [playMove] = useSound("/sounds/move.mp3", { volume: 0.25 });
   const [playEat] = useSound("/sounds/food.mp3", { volume: 0.25 });
   const [playGameOver] = useSound("/sounds/gameover.mp3", { volume: 0.25 });
+
+  // Track game session and send analytics
+  useEffect(() => {
+    const startTime = Date.now();
+    const initialGamesPlayed = gamesPlayed.current;
+    const initialControlsUsed = { ...controlsUsed.current };
+
+    gameStartTime.current = startTime;
+    gamesPlayed.current += 1;
+
+    posthog.capture("game_started", { difficulty });
+
+    return () => {
+      if (gameStartTime.current) {
+        const sessionDuration = (Date.now() - startTime) / 1000; // in seconds
+        totalPlayTime.current += sessionDuration;
+
+        posthog.capture("game_ended", {
+          duration: sessionDuration,
+          score,
+          highestScore,
+          gamesPlayed: initialGamesPlayed + 1,
+          averageScore: score / (initialGamesPlayed + 1),
+          controlsUsed: {
+            keyboard:
+              controlsUsed.current.keyboard - initialControlsUsed.keyboard,
+            mobile: controlsUsed.current.mobile - initialControlsUsed.mobile,
+          },
+          difficulty,
+        });
+      }
+    };
+  }, [difficulty, score, highestScore]);
 
   /**
    * Handles the movement of the snake, including collision detection, food consumption, and game state updates.
@@ -216,6 +260,9 @@ const SnakeGame: React.FC = () => {
     setCurrentIcon(
       programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
     );
+    gameStartTime.current = Date.now();
+    gamesPlayed.current += 1;
+    posthog.capture("game_restarted", { difficulty });
   };
 
   // Handle direction change (for mobile controls)
@@ -225,6 +272,7 @@ const SnakeGame: React.FC = () => {
 
   const handleDifficultyChange = (newDifficulty: Difficulty) => {
     setDifficulty(newDifficulty);
+    posthog.capture("difficulty_mode_selected", { newDifficulty });
     resetGame();
   };
 
