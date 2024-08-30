@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/context/ThemeContext";
 import posthog from "posthog-js";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
@@ -41,13 +42,24 @@ interface CuratedLinksTabsProps {
 }
 
 const themesWithCustomColors = ["tilted", "layered", "polaroid"];
-const ITEMS_PER_PAGE = 12; // Number of items to load initially and on each "Load More" click
+
+const ITEMS_PER_PAGE_DESKTOP = 12;
+const ITEMS_PER_PAGE_MOBILE = 5;
 
 export default function CuratedLinksTabs({
   channels,
   linkData,
 }: CuratedLinksTabsProps) {
-  const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
+  const isMobile = useMediaQuery("(max-width: 640px)");
+
+  const itemsPerPage = isMobile
+    ? ITEMS_PER_PAGE_MOBILE
+    : ITEMS_PER_PAGE_DESKTOP;
+  const [visibleItems, setVisibleItems] = useState(itemsPerPage);
+  useEffect(() => {
+    setVisibleItems(itemsPerPage);
+  }, [isMobile, itemsPerPage]);
+
   const { isDarkMode } = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [cardDesign, setCardDesign] = useState<
@@ -169,7 +181,7 @@ export default function CuratedLinksTabs({
   };
 
   const loadMore = () => {
-    setVisibleItems((prevVisibleItems) => prevVisibleItems + ITEMS_PER_PAGE);
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + itemsPerPage);
   };
 
   const filterLinks = (links: LinkData[]) => {
