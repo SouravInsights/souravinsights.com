@@ -41,11 +41,13 @@ interface CuratedLinksTabsProps {
 }
 
 const themesWithCustomColors = ["tilted", "layered", "polaroid"];
+const ITEMS_PER_PAGE = 12; // Number of items to load initially and on each "Load More" click
 
 export default function CuratedLinksTabs({
   channels,
   linkData,
 }: CuratedLinksTabsProps) {
+  const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
   const { isDarkMode } = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [cardDesign, setCardDesign] = useState<
@@ -129,14 +131,6 @@ export default function CuratedLinksTabs({
     [cardDesign]
   );
 
-  const filterLinks = (links: LinkData[]) => {
-    return links.filter(
-      (link) =>
-        link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        link.url.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
-
   const gradientStart = useMemo(() => {
     if (colorMode === "preset") {
       return isDarkMode ? selectedPreset.darkStart : selectedPreset.lightStart;
@@ -172,6 +166,18 @@ export default function CuratedLinksTabs({
       default:
         return null;
     }
+  };
+
+  const loadMore = () => {
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + ITEMS_PER_PAGE);
+  };
+
+  const filterLinks = (links: LinkData[]) => {
+    return links.filter(
+      (link) =>
+        link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        link.url.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   };
 
   return (
@@ -388,17 +394,27 @@ export default function CuratedLinksTabs({
                 transition={{ duration: 0.3 }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
               >
-                {filterLinks(linkData[channel.name] || []).map((link) => (
-                  <LinkCard
-                    key={link.id}
-                    link={link}
-                    design={cardDesign}
-                    gradientStart={gradientStart}
-                    gradientEnd={gradientEnd}
-                  />
-                ))}
+                {filterLinks(linkData[channel.name] || [])
+                  .slice(0, visibleItems)
+                  .map((link) => (
+                    <LinkCard
+                      key={link.id}
+                      link={link}
+                      design={cardDesign}
+                      gradientStart={gradientStart}
+                      gradientEnd={gradientEnd}
+                    />
+                  ))}
               </motion.div>
             </AnimatePresence>
+            {filterLinks(linkData[channel.name] || []).length >
+              visibleItems && (
+              <div className="mt-6 text-center">
+                <Button onClick={loadMore} variant="outline">
+                  Load More
+                </Button>
+              </div>
+            )}
           </TabsContent>
         ))}
       </Tabs>
