@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌿 My Digital Garden
 
-## Getting Started
+Welcome to my Digital Garden - a dynamic, customizable curation of my favorite links and resources. This project serves as an extension of myself, housing curations and insights from various sources.
 
-First, run the development server:
+## 🌟 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 📊 Discord Integration: Automatically fetches and displays links shared on one of my private Discord server
+- 🎨 Customizable Themes: Multiple card designs to showcase links in visually appealing ways (hope you like them 🥹)
+- 🌓 Dark/Light Mode: Switch between dark and light themes (not properly implemented for all card designs, I'm working on it... 🙃)
+- 🔍 Search Functionality: Easily find specific links across all categories (could be improved a lot)
+- 📱 Responsive Design: Optimized for both desktop and mobile viewing
+- 📈 Analytics Integration: Track link popularity and user engagement with PostHog (super awesome too I must say)
+- 🔄 Load More: Efficiently handle large numbers of links with "Load More" functionality
+- 🐍 Interactive Footer: Features a fun "Language Muncher" Snake game, to make the footer less boring 😅
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Discord.js](https://discord.js.org/)
+- [PostHog](https://posthog.com/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## 🚀 Getting Started
 
-## Learn More
+1. Clone the repository:
+   ```
+   git clone https://github.com/SouravInsights/souravinsights.com.git
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:
+   ```
+   cd souravinsights.com
+   yarn install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory and add the following:
+   ```
+   DISCORD_BOT_TOKEN=your_discord_bot_token
+   DISCORD_CLIENT_ID=your_discord_client_id
+   DISCORD_GUILD_ID=your_discord_guild_id
+   NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
+   NEXT_PUBLIC_POSTHOG_HOST=your_posthog_host
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+4. Run the development server:
+   ```
+   yarn dev
+   ```
 
-## Deploy on Vercel
+## 🤝 Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📜 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🙏 Acknowledgements
+
+- [Discord API](https://discord.com/developers/docs/intro)
+- [Lucide Icons](https://lucide.dev/)
+- [React ColorFul](https://github.com/omgovich/react-colorful)
+
+---
+
+Built with ❤️ by [SouravInsights](https://souravinsights.com/)
