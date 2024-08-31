@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import FooterWithSnakeGame from "@/components/footer/FooterWithGame";
-// import Footer from "@/components/footer/Footer";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,10 +27,9 @@ export default function RootLayout({
               <DarkModeToggle />
             </header>
             <main className="flex-grow">{children}</main>
-            {/* <ContributionsHeatMap />
-            <Footer /> */}
             <FooterWithSnakeGame />
           </div>
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
