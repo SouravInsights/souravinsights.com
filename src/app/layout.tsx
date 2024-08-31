@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import FooterWithSnakeGame from "@/components/footer/FooterWithGame";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
             <FooterWithSnakeGame />
           </div>
           <SpeedInsights />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
