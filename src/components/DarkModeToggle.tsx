@@ -9,7 +9,7 @@ export function DarkModeToggle() {
   return (
     <button
       onClick={toggleDarkMode}
-      className="p-2 rounded-full bg-green-400 text-gray-800"
+      className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-white shadow-sm"
     >
       {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
     </button>

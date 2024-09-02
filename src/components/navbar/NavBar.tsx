@@ -32,8 +32,8 @@ const Navbar: React.FC = () => {
               <motion.div
                 className={`book px-4 py-2 rounded-full flex items-center space-x-2 ${
                   pathname === item.path
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ? "bg-gradient-to-br from-green-300 to-green-400 dark:from-gray-900 dark:to-gray-800"
+                    : " text-gray-800 dark:text-gray-200"
                 }`}
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.95 }}
@@ -50,10 +50,10 @@ const Navbar: React.FC = () => {
       </nav>
 
       {/* Mobile Navbar Button */}
-      <nav className="fixed bottom-4 right-4 z-50 md:hidden flex items-center space-x-2">
+      <nav className="fixed items-center bottom-4 right-4 z-50 md:hidden flex flex-col space-y-2">
         <DarkModeToggle />
         <motion.button
-          className="p-2 bg-green-500 rounded-full shadow-lg text-white"
+          className="p-2 bg-green-400 dark:bg-gray-900 text-white rounded-full shadow-lg"
           onClick={() => setIsOpen(!isOpen)}
           whileTap={{ scale: 0.95 }}
         >
@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
                   <motion.div
                     className={`px-4 py-3 rounded-lg flex items-center space-x-2 ${
                       pathname === item.path
-                        ? "bg-green-500 text-white"
+                        ? "bg-gradient-to-br from-green-300 to-green-400 dark:from-gray-900 dark:to-gray-800"
                         : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     }`}
                     whileHover={{ scale: 1.05 }}
