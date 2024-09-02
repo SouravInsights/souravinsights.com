@@ -33,7 +33,7 @@ const BookshelfPage: React.FC = () => {
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 p-8">
                 <Image
-                  src="/path-to-literal-logo.svg" // Replace with actual path to Literal's logo
+                  src="/literal-wordmark.png"
                   alt="Literal Club Logo"
                   width={150}
                   height={50}
