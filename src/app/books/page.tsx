@@ -5,28 +5,34 @@ import React from "react";
 import { ApolloProvider } from "@apollo/client";
 import client from "@/app/lib/literalApiClient";
 import { BookshelfContent } from "./components/BookshelfContent";
-import { Book, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
 const KindleImageDisplay: React.FC = () => {
-  const kindleImages = ["/kindle3.jpg", "/kindle2.jpg", "/kindle3.jpg"];
+  const kindleImages = ["/kindle1.jpg", "/kindle2.jpg", "/kindle3.jpg"];
 
   return (
     <motion.div
-      className="my-16 p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+      className="my-8 p-4 md:p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-bold mb-6 text-green-700 dark:text-green-400 text-center">
-        My Reading Companion: Kindle Oasis
-      </h2>
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+      <div className="flex flex-col space-y-2 mb-4 md:mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-green-700 dark:text-green-400 text-center">
+          My Reading Companion
+        </h2>
+        <p className="text-center text-gray-600 dark:text-gray-300">
+          It's like carrying a whole library without the backache! One digital
+          page at a time... 😬
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:flex items-center justify-center gap-4 md:gap-8">
         {kindleImages.map((src, index) => (
           <motion.div
             key={src}
-            className="relative w-64 h-80 rounded-lg overflow-hidden shadow-lg"
+            className="relative w-full sm:w-64 h-64 sm:h-80 rounded-lg overflow-hidden shadow-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.2, duration: 0.5 }}
@@ -42,9 +48,6 @@ const KindleImageDisplay: React.FC = () => {
           </motion.div>
         ))}
       </div>
-      <p className="text-center text-gray-600 dark:text-gray-300 mt-6">
-        My trusty Kindle Oasis: where all my digital adventures begin.
-      </p>
     </motion.div>
   );
 };
