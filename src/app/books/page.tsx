@@ -18,8 +18,8 @@ const BookshelfPage: React.FC = () => {
             My Bookshelf
           </h1>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            Explore my reading journey: from current reads to future adventures
-            and completed tales.
+            Explore my reading journey: see what I’m reading now, what’s next,
+            and the books I’ve finished.
           </p>
           <BookshelfContent />
 
