@@ -55,7 +55,7 @@ const KindleImageDisplay: React.FC = () => {
 const BookshelfPage: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:p-8 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:px-6 md:py-8 px-2">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-400">
             My Reading Journey
