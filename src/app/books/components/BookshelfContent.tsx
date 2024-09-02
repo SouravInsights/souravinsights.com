@@ -53,7 +53,7 @@ export const BookshelfContent: React.FC = () => {
   const renderContent = () => {
     if (loading) {
       return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
           {[...Array(10)].map((_, index) => (
             <SkeletonBookCard key={index} />
           ))}
@@ -68,7 +68,7 @@ export const BookshelfContent: React.FC = () => {
     }
 
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
         {data?.booksByReadingStateAndProfile.map((book: any) => (
           <BookCard key={book.id} book={book} />
         ))}
@@ -77,24 +77,28 @@ export const BookshelfContent: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md">
+    <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 md:p-8 rounded-lg shadow-md">
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
         className="space-y-6"
       >
-        <TabsList className="bg-green-100 dark:bg-gray-700 p-1 rounded-full inline-flex w-full sm:w-auto overflow-x-auto">
+        <TabsList className="bg-green-100 dark:bg-gray-700 p-1 rounded-full inline-flex w-full sm:w-auto overflow-x-auto scroll-snap-type-x mandatory">
           {Object.entries(tabContent).map(
             ([status, { icon, title, fullTitle }]) => (
               <TabsTrigger
                 key={status}
                 value={status}
-                className="flex-1 sm:flex-initial rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 whitespace-nowrap"
+                className="flex-1 sm:flex-initial rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 whitespace-nowrap scroll-snap-align-start"
               >
                 <div className="flex items-center justify-center space-x-1 sm:space-x-2">
                   {icon}
-                  <span className="hidden sm:inline">{fullTitle}</span>
-                  <span className="sm:hidden">{title}</span>
+                  <span className="hidden sm:inline text-sm lg:text-base">
+                    {fullTitle}
+                  </span>
+                  <span className="sm:hidden text-sm lg:text-base">
+                    {title}
+                  </span>
                 </div>
               </TabsTrigger>
             )
