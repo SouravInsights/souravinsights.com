@@ -12,7 +12,7 @@ import Image from "next/image";
 const BookshelfPage: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:p-8 p-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-400">
             My Bookshelf
@@ -30,8 +30,8 @@ const BookshelfPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-1/2 p-8">
+            <div className="flex flex-col md:flex-row items-stretch">
+              <div className="md:w-1/2 md:p-8 p-4 px-4 py-8">
                 <Image
                   src="/literal-wordmark.png"
                   alt="Literal Club Logo"
@@ -56,21 +56,25 @@ const BookshelfPage: React.FC = () => {
                   Try Literal Club <ExternalLink className="ml-2 h-5 w-5" />
                 </a>
               </div>
-              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-8">
-                <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto">
+              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 md:p-8 overflow-x-auto">
+                <pre className="text-sm md:text-base text-gray-800 dark:text-gray-200">
                   <code>{`
-query GetBooks($readingStatus: ReadingStatus) {
-books(readingStatus: $readingStatus) {
-  id
-  title
-  cover
-  authors {
-    name
+ query booksByReadingStateAndProfile(
+    $limit: Int!
+    $offset: Int!
+    $readingStatus: ReadingStatus!
+    $profileId: String!
+  ) {
+    booksByReadingStateAndProfile(
+      limit: $limit
+      offset: $offset
+      readingStatus: $readingStatus
+      profileId: $profileId
+    ) {
+      ...BookParts
+    }
   }
-  readingStatus
-}
-}
-                `}</code>
+        `}</code>
                 </pre>
               </div>
             </div>
