@@ -3,15 +3,15 @@ import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
 import dynamic from "next/dynamic";
 
-const DESCRIPTION = `Explore a curated collection of useful links and resources. 
-This page is an extension of myself and will house all of my curations, all of the resources, 
-links that I personally have discovered from various sources!`;
+const DESCRIPTION = `Explore my reading journey: see what I’m reading now, what’s next,
+  and the books I’ve finished!`;
+const TITLE = "My Reading Lists";
 
 export const metadata: Metadata = {
-  title: "My Digital Garden - Curated Links by SouravInsights",
+  title: TITLE,
   description: DESCRIPTION,
   openGraph: {
-    title: "My Digital Garden - Curated Links",
+    title: TITLE,
     description: DESCRIPTION,
     url: "https://souravinsights.com",
     type: "website",
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
         url: "/curated-page-og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "My Digital Garden Preview Image",
+        alt: "My Books Page Preview Image",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "My Digital Garden - Curated Links",
+    title: TITLE,
     description: DESCRIPTION,
     images: ["/curated-page-og-image.jpg"],
   },

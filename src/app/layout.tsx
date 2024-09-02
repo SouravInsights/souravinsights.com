@@ -19,13 +19,13 @@ export const metadata: Metadata = {
   title: "Hello world! I’m Sourav 👋",
   description: DESCRIPTION,
   openGraph: {
-    title: "My Digital Garden - Curated Links",
+    title: "Hello world! I’m Sourav 👋",
     description: DESCRIPTION,
     url: "https://souravinsights.com",
     type: "website",
     images: [
       {
-        url: "/opengraph-image.jpg",
+        url: "/home-page-og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Hello world! I’m Sourav 👋",
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "My Digital Garden - Curated Links",
+    title: "Hello world! I’m Sourav 👋",
     description: DESCRIPTION,
-    images: ["/opengraph-image.jpg"],
+    images: ["/home-page-og-image.jpg"],
   },
 };
 

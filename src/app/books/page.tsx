@@ -15,7 +15,7 @@ const BookshelfPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:p-8 p-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-400">
-            My Bookshelf
+            My Reading Journey
           </h1>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
             Explore my reading journey: see what I’m reading now, what’s next,
