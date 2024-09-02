@@ -8,8 +8,9 @@ export interface Book {
   id: string;
   title: string;
   cover: string;
-  authors: Author[];
-  status: BookStatus;
+  authors: { name: string }[];
+  publishedDate: string;
+  pageCount?: number;
 }
 
 export interface BookEdge {

@@ -1,13 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Star, BookOpen } from "lucide-react";
 import { Book } from "../types/bookTypes";
 
 interface BookCardProps {
@@ -15,24 +10,47 @@ interface BookCardProps {
 }
 
 export const BookCard: React.FC<BookCardProps> = ({ book }) => (
-  <Card className="h-full flex flex-col">
-    <CardHeader>
-      <CardTitle className="text-lg">{book.title}</CardTitle>
-      <CardDescription>
-        {book.authors.map((a) => a.name).join(", ")}
-      </CardDescription>
-    </CardHeader>
-    <CardContent className="flex-grow relative h-48">
-      <Image
-        src={book.cover}
-        alt={book.title}
-        layout="fill"
-        objectFit="cover"
-        className="rounded-md"
-      />
-    </CardContent>
-    <CardFooter>
-      <p className="text-sm text-gray-500">{book.status}</p>
-    </CardFooter>
-  </Card>
+  <motion.div
+    whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}
+    transition={{ duration: 0.3 }}
+  >
+    <Card className="h-full overflow-hidden bg-white dark:bg-gray-800 border border-green-200 dark:border-green-700">
+      <CardContent className="p-0 relative">
+        <div className="relative h-48 w-full">
+          <Image
+            src={book.cover}
+            alt={book.title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-t-lg"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60" />
+          <div className="absolute bottom-0 left-0 p-4 text-white">
+            <h3 className="text-lg font-bold truncate">{book.title}</h3>
+            <p className="text-xs opacity-80 truncate">
+              {book.authors.map((a) => a.name).join(", ")}
+            </p>
+          </div>
+        </div>
+        <div className="p-4 space-y-2">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-1">
+              <Star className="w-4 h-4 text-yellow-500" />
+              <span className="text-xs font-medium">4.5</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <BookOpen className="w-4 h-4 text-green-500" />
+              <span className="text-xs font-medium">
+                {book.pageCount || "N/A"} pages
+              </span>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Published: {new Date(book.publishedDate).getFullYear()}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  </motion.div>
 );
