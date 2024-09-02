@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/curated-page-og-image.jpg",
+        url: "/books-page-thumbnail.jpg",
         width: 1200,
         height: 630,
         alt: "My Books Page Preview Image",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/curated-page-og-image.jpg"],
+    images: ["/books-page-thumbnail.jpg"],
   },
 };
 
