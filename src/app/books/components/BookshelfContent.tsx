@@ -83,13 +83,13 @@ export const BookshelfContent: React.FC = () => {
         onValueChange={handleTabChange}
         className="space-y-6"
       >
-        <TabsList className="bg-green-100 dark:bg-gray-700 p-1 rounded-full inline-flex w-full sm:w-auto overflow-x-auto scroll-snap-type-x mandatory">
+        <TabsList className="bg-white dark:bg-gray-700 p-1 rounded-full inline-flex w-full sm:w-auto overflow-x-auto scroll-snap-type-x mandatory">
           {Object.entries(tabContent).map(
             ([status, { icon, title, fullTitle }]) => (
               <TabsTrigger
                 key={status}
                 value={status}
-                className="flex-1 sm:flex-initial rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 whitespace-nowrap scroll-snap-align-start"
+                className="flex-1 sm:flex-initial rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out data-[state=active]:bg-green-200 dark:data-[state=active]:bg-gray-600 whitespace-nowrap scroll-snap-align-start"
               >
                 <div className="flex items-center justify-center space-x-1 sm:space-x-2">
                   {icon}
