@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GET_BOOKS_BY_STATUS } from "../queries/getBooksByStatus";
 import { GET_PROFILE } from "../queries/getProfile";
 import { BookCard } from "./BookCard";
+import { SkeletonBookCard } from "./SkeletonBookCard";
 import { Book, Bookmark, CheckCircle } from "lucide-react";
 
 type ReadingStatus = "WANTS_TO_READ" | "IS_READING" | "FINISHED";
@@ -31,17 +32,6 @@ export const BookshelfContent: React.FC = () => {
     setActiveTab(value as ReadingStatus);
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      </div>
-    );
-  if (error)
-    return (
-      <div className="text-red-500 text-center">Error: {error.message}</div>
-    );
-
   const tabContent = {
     IS_READING: {
       icon: <Book className="w-6 h-6" />,
@@ -52,6 +42,32 @@ export const BookshelfContent: React.FC = () => {
       title: "Want to Read",
     },
     FINISHED: { icon: <CheckCircle className="w-6 h-6" />, title: "Completed" },
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[...Array(8)].map((_, index) => (
+            <SkeletonBookCard key={index} />
+          ))}
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="text-red-500 text-center">Error: {error.message}</div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {data?.booksByReadingStateAndProfile.map((book: any) => (
+          <BookCard key={book.id} book={book} />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -84,11 +100,7 @@ export const BookshelfContent: React.FC = () => {
             transition={{ duration: 0.3 }}
           >
             <TabsContent value={activeTab} className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {data?.booksByReadingStateAndProfile.map((book: any) => (
-                  <BookCard key={book.id} book={book} />
-                ))}
-              </div>
+              {renderContent()}
             </TabsContent>
           </motion.div>
         </AnimatePresence>
