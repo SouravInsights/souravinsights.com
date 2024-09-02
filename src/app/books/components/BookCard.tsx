@@ -3,7 +3,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, BookOpen } from "lucide-react";
-import { Book } from "../types/bookTypes";
+import { Book } from "@/app/books/types/bookTypes";
 
 interface BookCardProps {
   book: Book;
@@ -16,7 +16,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => (
   >
     <Card className="h-full overflow-hidden bg-white dark:bg-gray-800 border border-green-200 dark:border-green-700">
       <CardContent className="p-0 relative">
-        <div className="relative h-48 w-full">
+        <div className="relative h-48 sm:h-64 w-full">
           <Image
             src={book.cover}
             alt={book.title}
@@ -26,9 +26,11 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => (
             unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60" />
-          <div className="absolute bottom-0 left-0 p-4 text-white">
-            <h3 className="text-lg font-bold truncate">{book.title}</h3>
-            <p className="text-xs opacity-80 truncate">
+          <div className="absolute bottom-0 left-0 p-4 w-full">
+            <h3 className="text-lg font-bold text-white line-clamp-2 hover:line-clamp-none transition-all duration-300">
+              {book.title}
+            </h3>
+            <p className="text-xs text-white opacity-80 truncate">
               {book.authors.map((a) => a.name).join(", ")}
             </p>
           </div>
