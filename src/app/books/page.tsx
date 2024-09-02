@@ -5,9 +5,49 @@ import React from "react";
 import { ApolloProvider } from "@apollo/client";
 import client from "@/app/lib/literalApiClient";
 import { BookshelfContent } from "./components/BookshelfContent";
-import { ExternalLink } from "lucide-react";
+import { Book, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+
+const KindleImageDisplay: React.FC = () => {
+  const kindleImages = ["/kindle3.jpg", "/kindle2.jpg", "/kindle3.jpg"];
+
+  return (
+    <motion.div
+      className="my-16 p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h2 className="text-2xl font-bold mb-6 text-green-700 dark:text-green-400 text-center">
+        My Reading Companion: Kindle Oasis
+      </h2>
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+        {kindleImages.map((src, index) => (
+          <motion.div
+            key={src}
+            className="relative w-64 h-80 rounded-lg overflow-hidden shadow-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.2, duration: 0.5 }}
+            whileHover={{ scale: 1.05, rotate: index % 2 === 0 ? 2 : -2 }}
+          >
+            <Image
+              src={src}
+              alt={`Kindle Oasis ${index + 1}`}
+              fill
+              style={{ objectFit: "cover" }}
+              className="rounded-lg"
+            />
+          </motion.div>
+        ))}
+      </div>
+      <p className="text-center text-gray-600 dark:text-gray-300 mt-6">
+        My trusty Kindle Oasis: where all my digital adventures begin.
+      </p>
+    </motion.div>
+  );
+};
 
 const BookshelfPage: React.FC = () => {
   return (
@@ -21,7 +61,11 @@ const BookshelfPage: React.FC = () => {
             Explore my reading journey: see what I’m reading now, what’s next,
             and the books I’ve finished.
           </p>
+
           <BookshelfContent />
+
+          {/* Kindle Oasis Showcase */}
+          <KindleImageDisplay />
 
           {/* Literal Club Shoutout Section */}
           <motion.div
