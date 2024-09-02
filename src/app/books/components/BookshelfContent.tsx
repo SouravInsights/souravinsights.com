@@ -83,7 +83,7 @@ export const BookshelfContent: React.FC = () => {
         onValueChange={handleTabChange}
         className="space-y-6"
       >
-        <TabsList className="bg-white dark:bg-gray-700 p-1 rounded-full inline-flex w-full sm:w-auto overflow-x-auto scroll-snap-type-x mandatory">
+        <TabsList className="bg-white dark:bg-gray-700 p-1 rounded-full inline-flex w-full sm:w-auto">
           {Object.entries(tabContent).map(
             ([status, { icon, title, fullTitle }]) => (
               <TabsTrigger
