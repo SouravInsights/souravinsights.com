@@ -11,7 +11,7 @@ export function DarkModeToggle() {
       onClick={toggleDarkMode}
       className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-white shadow-sm"
     >
-      {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+      {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
     </button>
   );
 }

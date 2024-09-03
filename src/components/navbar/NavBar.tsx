@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
           onClick={() => setIsOpen(!isOpen)}
           whileTap={{ scale: 0.95 }}
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={32} /> : <Menu size={32} />}
         </motion.button>
       </nav>
 
