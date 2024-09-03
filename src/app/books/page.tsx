@@ -55,7 +55,7 @@ const KindleImageDisplay: React.FC = () => {
 const BookshelfPage: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:px-6 md:py-8 px-2">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:px-6 md:py-8 px-2 py-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-400">
             My Reading Journey
@@ -77,7 +77,7 @@ const BookshelfPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <div className="flex flex-col md:flex-row items-stretch mb-8">
+            <div className="flex flex-col md:flex-row items-stretch">
               <div className="md:w-1/2 md:p-8 p-4 px-4 py-8">
                 <Image
                   src="/literal-wordmark.png"
