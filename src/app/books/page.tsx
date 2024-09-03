@@ -103,7 +103,7 @@ const BookshelfPage: React.FC = () => {
                   Try Literal Club <ExternalLink className="ml-2 h-5 w-5" />
                 </a>
               </div>
-              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 md:p-8 overflow-x-auto">
+              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 mb-8 md:p-8 overflow-x-auto">
                 <pre className="text-sm md:text-base text-gray-800 dark:text-gray-200">
                   <code>{`
  query booksByReadingStateAndProfile(
