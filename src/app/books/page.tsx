@@ -77,7 +77,7 @@ const BookshelfPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <div className="flex flex-col md:flex-row items-stretch">
+            <div className="flex flex-col md:flex-row items-stretch mb-8">
               <div className="md:w-1/2 md:p-8 p-4 px-4 py-8">
                 <Image
                   src="/literal-wordmark.png"
@@ -103,7 +103,7 @@ const BookshelfPage: React.FC = () => {
                   Try Literal Club <ExternalLink className="ml-2 h-5 w-5" />
                 </a>
               </div>
-              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 mb-8 md:p-8 overflow-x-auto">
+              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 md:p-8 overflow-x-auto">
                 <pre className="text-sm md:text-base text-gray-800 dark:text-gray-200">
                   <code>{`
  query booksByReadingStateAndProfile(
