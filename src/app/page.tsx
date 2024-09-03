@@ -9,7 +9,7 @@ const companies = [
   {
     name: "Paragraph",
     role: "Full-stack Engineer",
-    period: "2023",
+    period: "2024",
     location: "Remote",
     logo: "https://pbs.twimg.com/profile_images/1693793364380938240/wvr-wszx_400x400.jpg",
     twitter: "@paragraph_xyz",
@@ -30,7 +30,8 @@ const companies = [
     logo: "https://pbs.twimg.com/profile_images/1693793364380938240/wvr-wszx_400x400.jpg",
     twitter: "@pimlicoHQ",
     website: "https://pimlico.io",
-    projectUrl: "https://github.com/SouravInsights/create-permissionless-app",
+    projectUrl:
+      "https://github.com/SouravInsights/permissionless.js/tree/main/packages/create-permissionless-app",
     current: false,
   },
   {
@@ -45,7 +46,8 @@ const companies = [
     logo: "https://pbs.twimg.com/profile_images/1507114143865786370/Ww3QGXhq_400x400.png",
     twitter: "@GALLERY",
     website: "https://gallery.so",
-    projectUrl: "https://github.com/gallery-so/gallery/pulls?q=is%3Apr+is%3Aclosed+author%3ASouravInsights",
+    projectUrl:
+      "https://github.com/gallery-so/gallery/pulls?q=is%3Apr+is%3Aclosed+author%3ASouravInsights",
     current: false,
   },
   {
@@ -64,7 +66,6 @@ const companies = [
     logo: "https://pbs.twimg.com/profile_images/1740493721601232896/3B7Nytzl_400x400.png",
     twitter: "@rabbithole_gg",
     website: "https://rabbithole.gg",
-    projectUrl: "https://github.com/SouravInsights/create-permissionless-app",
     current: false,
   },
 ];
