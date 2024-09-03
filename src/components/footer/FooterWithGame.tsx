@@ -106,7 +106,7 @@ const IconRotator: React.FC = () => {
 const FooterWithSnakeGame: React.FC = () => {
   const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
-    <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 transition-colors duration-200">
+    <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-8 md:py-12 transition-colors duration-200">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-2 items-center">

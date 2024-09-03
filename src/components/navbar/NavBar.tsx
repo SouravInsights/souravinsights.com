@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
       </nav>
 
       {/* Mobile Navbar Button */}
-      <nav className="fixed items-center bottom-4 right-4 z-50 md:hidden flex flex-col space-y-2">
+      <nav className="fixed items-center bottom-10 right-4 z-50 md:hidden flex flex-col space-y-2">
         <DarkModeToggle />
         <motion.button
           className="p-2 bg-green-400 dark:bg-gray-900 text-white rounded-full shadow-lg"
