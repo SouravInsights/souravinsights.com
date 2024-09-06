@@ -121,20 +121,6 @@ export default function Home() {
                 us.
               </p>
               <p>
-                With algorithms now prioritizing content that is loud and
-                outrageous and from people with a huge following, it has been
-                increasingly harder for people to get their voice heard. Also,
-                we don't own our content anymore; what if all the popular
-                platforms we use to share our ideas & thoughts cease to exist?
-              </p>
-              <p>
-                Our content is not just something we have created but it is also
-                part of our identity. It is part of who we are, what we are
-                thinking, what we believe in. It is part of the story we are
-                about to tell. Our content is one of our most valuable assets
-                and thus owning it is invaluable.
-              </p>
-              <p>
                 I intend to treat this website as an extension of myself. This
                 will house all my curations, all of my little insights from all
                 of my sources. And this site will always be a work-in-progress
