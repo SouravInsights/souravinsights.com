@@ -6,7 +6,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/components/navbar/NavBar";
 import ClientFooterWrapper from "@/components/footer/ClientFooterWrapper";
-import ClientMainWrapper from "@/components/ClientMainWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Home, BookOpen, BookmarkCheck } from "lucide-react";
+import { Menu, X, Home, BookOpen, BookmarkCheck, Gamepad2 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
+  { name: "Play", path: "/play", icon: Gamepad2 },
 ];
 
 const Navbar: React.FC = () => {
