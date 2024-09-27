@@ -103,21 +103,36 @@ const IconRotator: React.FC = () => {
   );
 };
 
-const FooterWithSnakeGame: React.FC = () => {
+interface FooterWithSnakeGameProps {
+  withGame?: boolean;
+}
+
+const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
+  withGame = true,
+}) => {
   const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
     <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-8 md:py-12 transition-colors duration-200">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="flex flex-col gap-2 items-center">
-            <h3 className="text-center text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center space-x-2 mb-2">
-              <IconRotator />
-              <span>Language Muncher</span>
-            </h3>
-            <div className="px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">
-              <SnakeGame />
+        <div
+          className={`${
+            withGame
+              ? "grid grid-cols-1 md:grid-cols-2 gap-12"
+              : "flex flex-col justify-center items-center"
+          }`}
+        >
+          {withGame && (
+            <div className="flex flex-col gap-2 items-center">
+              <h3 className="text-center text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center space-x-2 mb-2">
+                <IconRotator />
+                <span>Language Muncher</span>
+              </h3>
+              <div className="px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">
+                <SnakeGame />
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="space-y-8">
             <div>
               <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
@@ -233,7 +248,9 @@ const FooterWithSnakeGame: React.FC = () => {
           </div>
         </div>
         <motion.div
-          className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200"
+          className={`${
+            withGame && "mt-8"
+          } text-center text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}

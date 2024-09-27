@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
-import FooterWithSnakeGame from "@/components/footer/FooterWithGame";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/components/navbar/NavBar";
+import ClientFooterWrapper from "@/components/footer/ClientFooterWrapper";
+import ClientMainWrapper from "@/components/ClientMainWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,8 +51,8 @@ export default function RootLayout({
         <ThemeProvider>
           <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
             <Navbar />
-            <main className="flex-grow pt-20">{children}</main>
-            <FooterWithSnakeGame />
+            <ClientMainWrapper>{children}</ClientMainWrapper>
+            <ClientFooterWrapper />
           </div>
           <SpeedInsights />
           <Analytics />
