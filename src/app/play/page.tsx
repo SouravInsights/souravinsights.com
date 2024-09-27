@@ -1,19 +1,6 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React from "react";
 import SnakeGame from "@/components/SnakeGame";
-import { Button } from "@/components/ui/button";
-import { Gamepad2, ArrowLeft, Trophy } from "lucide-react";
-import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Language Muncher - Snake Game",
@@ -44,20 +31,6 @@ export const metadata: Metadata = {
 };
 
 const SnakeGamePage: React.FC = () => {
-  const [showInstructions, setShowInstructions] = useState(false);
-  // const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
-
-  // useEffect(() => {
-  //   // In a real app, you'd fetch this from an API
-  //   const dummyLeaderboard: LeaderboardEntry[] = [
-  //     { name: "Alice", score: 50, difficulty: "hard" },
-  //     { name: "Bob", score: 40, difficulty: "medium" },
-  //     { name: "Charlie", score: 30, difficulty: "easy" },
-  //   ];
-  //   setLeaderboard(dummyLeaderboard);
-  // }, []);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
       <div className="container mx-auto max-w-4xl">
@@ -94,7 +67,7 @@ const SnakeGamePage: React.FC = () => {
           </Button>
         </div> */}
 
-        {showInstructions && (
+        {/* {showInstructions && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -111,7 +84,7 @@ const SnakeGamePage: React.FC = () => {
               <li>Try different difficulty levels for more challenge</li>
             </ul>
           </motion.div>
-        )}
+        )} */}
 
         {/* {showLeaderboard && (
           <motion.div
