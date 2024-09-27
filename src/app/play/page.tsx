@@ -15,6 +15,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+export const metadata: Metadata = {
+  title: "Language Muncher - Snake Game",
+  description:
+    "Play the Language Muncher Snake Game! Gobble up programming languages and grow your tech stack in this fun, educational twist on the classic Snake game.",
+  openGraph: {
+    title: "Language Muncher - Snake Game",
+    description:
+      "Grow your tech stack in this fun, educational twist on the classic Snake game.",
+    url: "https://souravinsights.com/play",
+    type: "website",
+    images: [
+      {
+        url: "/snake-game-og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Language Muncher Snake Game",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Language Muncher - Snake Game",
+    description:
+      "Grow your tech stack in this fun, educational twist on the classic Snake game.",
+    images: ["/snake-game-og-image.jpg"],
+  },
+};
+
 const SnakeGamePage: React.FC = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   // const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
