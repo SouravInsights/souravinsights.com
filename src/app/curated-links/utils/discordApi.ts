@@ -51,6 +51,7 @@ export async function getChannels(): Promise<DiscordChannel[]> {
       "newsletters",
       "opportunities",
       "resources",
+      "blockchain",
     ];
 
     return channels.filter((channel) => desiredChannels.includes(channel.name));

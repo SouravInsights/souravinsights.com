@@ -27,6 +27,7 @@ import {
   Mail,
   Briefcase,
   Folders,
+  Layers,
 } from "lucide-react";
 import { colorPresets, ColorPreset } from "../utils/colorPresets";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -76,6 +77,7 @@ export default function CuratedLinksTabs({
 
   const orderedChannelNames = [
     "reading-list",
+    "blockchain",
     "resources",
     "product-hunt",
     "fav-portfolios",
@@ -175,6 +177,8 @@ export default function CuratedLinksTabs({
         return <Briefcase className="w-4 h-4 mr-2" />;
       case "resources":
         return <Folders className="w-4 h-4 mr-2" />;
+      case "blockchain":
+        return <Layers className="w-4 h-4 mr-2" />;
       default:
         return null;
     }
