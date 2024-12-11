@@ -13,7 +13,7 @@ import {
   Folder,
   File,
 } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const companies = [
   {
@@ -118,11 +118,15 @@ const TerminalWindow = ({
 const Directory = ({
   name,
   children,
+  className = "",
 }: {
   name: string;
   children: React.ReactNode;
+  className?: string;
 }) => (
-  <div className="pl-4 border-l border-gray-200 dark:border-gray-700">
+  <div
+    className={`pl-4 border-l border-gray-200 dark:border-gray-700 ${className}`}
+  >
     <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-2">
       <ChevronDown className="w-4 h-4" />
       <Folder className="w-4 h-4 text-yellow-500" />
@@ -148,6 +152,159 @@ const FileItem = ({
   </div>
 );
 
+const TerminalPrompt = () => {
+  const [displayedText, setDisplayedText] = useState("");
+  const fullText =
+    'sourav.exe --location="Somewhere on the internet" --role="Full-stack Engineer" --status="Building cool stuff"';
+
+  useEffect(() => {
+    let i = 0;
+    const typing = setInterval(() => {
+      setDisplayedText(fullText.substring(0, i));
+      i++;
+      if (i > fullText.length) clearInterval(typing);
+    }, 50);
+    return () => clearInterval(typing);
+  }, []);
+
+  return (
+    <div className="font-mono">
+      <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+        <span>➜</span>
+        <span>~/</span>
+        <span className="text-blue-600 dark:text-blue-400">whoami</span>
+      </div>
+      <div className="mt-2 flex gap-2">
+        <span className="text-gray-500">$</span>
+        <span className="text-gray-800 dark:text-gray-200">
+          {displayedText}
+        </span>
+        <span className="animate-pulse">▊</span>
+      </div>
+    </div>
+  );
+};
+
+const HeroSection = () => (
+  <div className="bg-white dark:bg-gray-900 rounded-lg p-6 md:p-8 overflow-hidden relative border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+    {/* Background grid effect - adjusted for better light mode visibility */}
+    <div
+      className="absolute inset-0 transition-opacity duration-200"
+      style={{
+        backgroundImage: `
+        linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
+      `,
+        backgroundSize: "4rem 4rem",
+        maskImage:
+          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+        WebkitMaskImage:
+          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+        opacity: "0.2",
+      }}
+    />
+
+    {/* Dark mode grid (will be hidden in light mode) */}
+    <div
+      className="absolute inset-0 transition-opacity duration-200 dark:opacity-20 opacity-0"
+      style={{
+        backgroundImage: `
+        linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
+      `,
+        backgroundSize: "4rem 4rem",
+        maskImage:
+          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+        WebkitMaskImage:
+          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+      }}
+    />
+    <div className="relative z-10">
+      <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="order-2 md:order-1">
+          <div className="space-y-6">
+            <TerminalPrompt />
+
+            <div className="mt-8 space-y-4 text-gray-600 dark:text-gray-300">
+              <p className="leading-relaxed">
+                And this is my{" "}
+                <a
+                  href="https://matthiasott.com/articles/into-the-personal-website-verse"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  tiny home on the internet
+                </a>
+                , a place to tell my own stories, share what I'm excited about,
+                what I'm thinking and what I'm currently up to.
+              </p>
+              <p className="leading-relaxed">
+                I believe,{" "}
+                <a
+                  href="https://thecreativeindependent.com/essays/laurel-schwulst-my-website-is-a-shifting-house-next-to-a-river-of-knowledge-what-could-yours-be/"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  a personal website has endless possibilities
+                </a>
+                , our identities, ideas, and dreams are created and expanded by
+                them.
+              </p>
+              <p>
+                I intend to treat this website as an extension of myself. This
+                will house all my curations, all of my little insights from all
+                of my sources. And this site will always be a work-in-progress
+                because there's{" "}
+                <a
+                  href="https://thecreativeindependent.com/essays/laurel-schwulst-my-website-is-a-shifting-house-next-to-a-river-of-knowledge-what-could-yours-be/"
+                  className="text-green-700 dark:text-green-400 underline hover:text-green-600 dark:hover:text-green-300 transition-colors"
+                >
+                  no state of "completeness" to a website.
+                </a>
+              </p>
+            </div>
+
+            <motion.div
+              className="flex flex-wrap gap-4 text-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2 }}
+            >
+              <a
+                href="https://github.com/souravinsights"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+              >
+                <Github className="w-4 h-4" />
+                <span>GitHub</span>
+              </a>
+              <a
+                href="https://twitter.com/souravinsights"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+              >
+                <Twitter className="w-4 h-4" />
+                <span>Twitter</span>
+              </a>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="order-1 md:order-2 flex justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg transition-colors duration-200"
+          >
+            <Macintosh />
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function Home() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -162,68 +319,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto space-y-12">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-16"
         >
-          <TerminalWindow title="~/portfolio/README.md">
-            <div className="grid lg:grid-cols-2 gap-8">
-              <div className="flex justify-center items-center">
-                <Macintosh />
-              </div>
-              <div className="prose dark:prose-invert max-w-none">
-                <h1 className="text-4xl font-bold mb-6 text-green-800 dark:text-green-400">
-                  Hello world! I'm <span className="text-primary">Sourav</span>{" "}
-                  <span
-                    role="img"
-                    aria-label="waving hand"
-                    className="animate-wave inline-block"
-                  >
-                    👋
-                  </span>
-                </h1>
-                <div className="space-y-4">
-                  <p>
-                    And this is my{" "}
-                    <a
-                      href="https://matthiasott.com/articles/into-the-personal-website-verse"
-                      className="text-green-700 dark:text-green-400 underline"
-                    >
-                      tiny home on the internet
-                    </a>
-                    , a place to tell my own stories, share what I'm excited
-                    about, what I'm thinking and what I'm currently up to.
-                  </p>
-                  <p>
-                    I believe,{" "}
-                    <a
-                      href="https://thecreativeindependent.com/essays/laurel-schwulst-my-website-is-a-shifting-house-next-to-a-river-of-knowledge-what-could-yours-be/"
-                      className="text-green-700 dark:text-green-400 underline"
-                    >
-                      a personal website has endless possibilities
-                    </a>
-                    , our identities, ideas, and dreams are created and expanded
-                    by them.
-                  </p>
-                  <p>
-                    I intend to treat this website as an extension of myself.
-                    This will house all my curations, all of my little insights
-                    from all of my sources. And this site will always be a
-                    work-in-progress because there's{" "}
-                    <a
-                      href="https://thecreativeindependent.com/essays/laurel-schwulst-my-website-is-a-shifting-house-next-to-a-river-of-knowledge-what-could-yours-be/"
-                      className="text-green-700 dark:text-green-400 underline hover:text-green-600 dark:hover:text-green-300 transition-colors"
-                    >
-                      no state of "completeness" to a website.
-                    </a>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </TerminalWindow>
+          <HeroSection />
         </motion.div>
 
         {/* Side Projects Section */}
@@ -231,10 +333,10 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-16"
+          className="space-y-6"
         >
           <TerminalWindow title="~/projects">
-            <Directory name="open-source">
+            <Directory name="open-source" className="overflow-x-auto">
               {sideProjects.map((project) => (
                 <FileItem key={project.name} name={`${project.name}.ts`}>
                   <div className="border border-gray-200 dark:border-gray-700 rounded p-4 mb-4">
@@ -278,9 +380,10 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
+          className="space-y-6"
         >
           <TerminalWindow title="~/experience">
-            <Directory name="companies">
+            <Directory name="companies" className="overflow-x-auto">
               {sortedCompanies.map((company) => (
                 <FileItem
                   key={company.name}
