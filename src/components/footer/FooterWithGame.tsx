@@ -1,6 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Github, Linkedin, Twitter, Cpu, Code2, Sparkles } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Twitter,
+  Cpu,
+  Code2,
+  Sparkles,
+  Terminal,
+} from "lucide-react";
 import {
   BinaryAppleIcon,
   PixelatedSnakeIcon,
@@ -112,8 +120,8 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
 }) => {
   const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
-    <footer className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-8 md:py-12 transition-colors duration-200">
-      <div className="container mx-auto">
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-8 md:py-12 transition-colors duration-200">
+      <div className="container mx-auto px-4">
         <div
           className={`${
             withGame
@@ -123,21 +131,21 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
         >
           {withGame && (
             <div className="flex flex-col gap-2 items-center">
-              <h3 className="text-center text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400 transition-colors duration-200 flex items-center justify-center space-x-2 mb-2">
-                <IconRotator />
-                <span>Language Muncher</span>
-              </h3>
-              <div className="px-6 py-2 rounded-lg shadow-sm transition-colors duration-200">
+              <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                <h3 className="text-center text-xl font-mono font-bold text-green-600 dark:text-green-400 flex items-center justify-center space-x-2 mb-4">
+                  <Terminal size={20} className="mr-2" />
+                  <span>~/games/snake</span>
+                </h3>
                 <SnakeGame />
               </div>
             </div>
           )}
 
           <div className="space-y-8">
-            <div>
-              <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
-                <Sparkles className="mr-2" size={20} />
-                {`Let's Connect`}
+            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+              <h4 className="text-xl font-mono mb-4 flex items-center text-green-600 dark:text-green-400">
+                <Terminal size={20} className="mr-2" />
+                <span>~/connect</span>
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                 {`Grab a virtual coffee with me and let's chat about code!`}
@@ -182,10 +190,10 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                 ))}
               </div>
             </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
-                <Code2 className="mr-2" size={20} />
-                Open Source
+            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+              <h4 className="text-xl font-mono mb-4 flex items-center text-green-600 dark:text-green-400">
+                <Terminal size={20} className="mr-2" />
+                <span>~/open-source</span>
               </h4>
               <p className="text-sm mb-2 text-gray-600 dark:text-gray-300">
                 {`This portfolio is open source. Feel free play around, just don't judge my commit messages too harshly!`}
@@ -204,10 +212,10 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                 View on GitHub
               </Button>
             </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-4 flex items-center text-green-700 dark:text-green-300">
-                <Cpu className="mr-2 text-red-500" />
-                Tech Stack
+            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+              <h4 className="text-xl font-mono mb-4 flex items-center text-green-600 dark:text-green-400">
+                <Terminal size={20} className="mr-2" />
+                <span>~/stack</span>
               </h4>
               <div className="flex flex-wrap gap-2">
                 {techs.map((tech, index) => (
