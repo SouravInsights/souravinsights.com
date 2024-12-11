@@ -4,7 +4,15 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Home, BookOpen, BookmarkCheck, Gamepad2 } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  BookOpen,
+  BookmarkCheck,
+  Gamepad2,
+  Terminal,
+} from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 const navItems = [
@@ -23,42 +31,46 @@ const Navbar: React.FC = () => {
       {/* Desktop Navbar */}
       <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden md:block">
         <motion.div
-          className="flex space-x-2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg"
+          className="flex space-x-2 bg-white dark:bg-gray-900 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
+          <div className="flex items-center px-3 text-green-600 dark:text-green-400 font-mono text-sm border-r border-gray-200 dark:border-gray-700">
+            <Terminal size={16} className="mr-2" />
+            <span>~/nav</span>
+          </div>
           {navItems.map((item) => (
             <Link href={item.path} key={item.name}>
               <motion.div
-                className={`book px-4 py-2 rounded-full flex items-center space-x-2 ${
+                className={`px-3 py-1.5 rounded-md flex items-center space-x-2 font-mono text-sm ${
                   pathname === item.path
-                    ? "bg-gradient-to-br from-green-300 to-green-400 dark:from-gray-900 dark:to-gray-800"
-                    : " text-gray-800 dark:text-gray-200"
+                    ? "bg-gray-100 dark:bg-gray-800 text-green-600 dark:text-green-400"
+                    : "text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 }`}
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <item.icon size={20} />
+                <item.icon size={16} />
                 <span>{item.name}</span>
               </motion.div>
             </Link>
           ))}
-          <div className="book">
+          <div className="border-l border-gray-200 dark:border-gray-700 pl-2">
             <DarkModeToggle />
           </div>
         </motion.div>
       </nav>
 
-      {/* Mobile Navbar Button */}
-      <nav className="fixed items-center bottom-10 right-4 z-50 md:hidden flex flex-col space-y-2">
+      {/* Mobile Navbar */}
+      <nav className="fixed bottom-4 right-4 z-50 md:hidden flex flex-col space-y-2">
         <DarkModeToggle />
         <motion.button
-          className="p-2 bg-green-400 dark:bg-gray-900 text-white rounded-full shadow-lg"
+          className="p-2 bg-white dark:bg-gray-900 text-green-600 dark:text-green-400 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
           onClick={() => setIsOpen(!isOpen)}
           whileTap={{ scale: 0.95 }}
         >
-          {isOpen ? <X size={32} /> : <Menu size={32} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </motion.button>
       </nav>
 
@@ -70,18 +82,22 @@ const Navbar: React.FC = () => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 bg-white dark:bg-gray-800 shadow-lg p-4 z-40 md:hidden rounded-t-3xl"
+            className="fixed inset-x-0 bottom-0 bg-white dark:bg-gray-900 shadow-lg p-4 z-40 md:hidden rounded-t-xl border-t border-gray-200 dark:border-gray-700"
           >
             <div className="flex flex-col space-y-2">
+              <div className="flex items-center px-3 py-2 text-green-600 dark:text-green-400 font-mono text-sm border-b border-gray-200 dark:border-gray-700">
+                <Terminal size={16} className="mr-2" />
+                <span>~/nav</span>
+              </div>
               {navItems.map((item) => (
                 <Link href={item.path} key={item.name}>
                   <motion.div
-                    className={`px-4 py-3 rounded-lg flex items-center space-x-2 ${
+                    className={`px-4 py-3 rounded-md flex items-center space-x-2 font-mono ${
                       pathname === item.path
-                        ? "bg-gradient-to-br from-green-300 to-green-400 dark:from-gray-900 dark:to-gray-800"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        ? "bg-gray-100 dark:bg-gray-800 text-green-600 dark:text-green-400"
+                        : "text-gray-800 dark:text-gray-200"
                     }`}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ x: 4 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(false)}
                   >
