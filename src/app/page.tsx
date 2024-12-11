@@ -154,10 +154,15 @@ const FileItem = ({
 
 const TerminalPrompt = () => {
   const [displayedText, setDisplayedText] = useState("");
-  const fullText =
+  // Shorter text for mobile screens
+  const mobileText = 'sourav.exe --role="Full-stack Engineer"';
+  const desktopText =
     'sourav.exe --location="Somewhere on the internet" --role="Full-stack Engineer" --status="Building cool stuff"';
 
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const fullText = isMobile ? mobileText : desktopText;
+
     let i = 0;
     const typing = setInterval(() => {
       setDisplayedText(fullText.substring(0, i));
@@ -176,7 +181,7 @@ const TerminalPrompt = () => {
       </div>
       <div className="mt-2 flex gap-2">
         <span className="text-gray-500">$</span>
-        <span className="text-gray-800 dark:text-gray-200">
+        <span className="text-gray-800 dark:text-gray-200 break-all">
           {displayedText}
         </span>
         <span className="animate-pulse">▊</span>
@@ -186,15 +191,15 @@ const TerminalPrompt = () => {
 };
 
 const HeroSection = () => (
-  <div className="bg-white dark:bg-gray-900 rounded-lg p-6 md:p-8 overflow-hidden relative border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-    {/* Background grid effect - adjusted for better light mode visibility */}
+  <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden relative border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+    {/* Background grid effect */}
     <div
       className="absolute inset-0 transition-opacity duration-200"
       style={{
         backgroundImage: `
-        linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
-      `,
+          linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
+        `,
         backgroundSize: "4rem 4rem",
         maskImage:
           "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
@@ -204,14 +209,14 @@ const HeroSection = () => (
       }}
     />
 
-    {/* Dark mode grid (will be hidden in light mode) */}
+    {/* Dark mode grid */}
     <div
       className="absolute inset-0 transition-opacity duration-200 dark:opacity-20 opacity-0"
       style={{
         backgroundImage: `
-        linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
-      `,
+          linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
+        `,
         backgroundSize: "4rem 4rem",
         maskImage:
           "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
@@ -219,13 +224,15 @@ const HeroSection = () => (
           "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
       }}
     />
-    <div className="relative z-10">
-      <div className="grid md:grid-cols-2 gap-8 items-center">
-        <div className="order-2 md:order-1">
+
+    <div className="relative z-10 p-4 md:p-8">
+      <div className="flex flex-col md:grid md:grid-cols-2 gap-8 items-center">
+        {/* Content section - Reordered for mobile */}
+        <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
             <TerminalPrompt />
 
-            <div className="mt-8 space-y-4 text-gray-600 dark:text-gray-300">
+            <div className="mt-6 md:mt-8 space-y-4 text-gray-600 dark:text-gray-300 text-sm md:text-base">
               <p className="leading-relaxed">
                 And this is my{" "}
                 <a
@@ -263,7 +270,7 @@ const HeroSection = () => (
             </div>
 
             <motion.div
-              className="flex flex-wrap gap-4 text-sm"
+              className="flex flex-wrap gap-3 text-sm"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2 }}
@@ -272,7 +279,7 @@ const HeroSection = () => (
                 href="https://github.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
               >
                 <Github className="w-4 h-4" />
                 <span>GitHub</span>
@@ -281,7 +288,7 @@ const HeroSection = () => (
                 href="https://twitter.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
               >
                 <Twitter className="w-4 h-4" />
                 <span>Twitter</span>
@@ -290,7 +297,8 @@ const HeroSection = () => (
           </div>
         </div>
 
-        <div className="order-1 md:order-2 flex justify-center">
+        {/* Macintosh section */}
+        <div className="order-1 md:order-2 w-full flex justify-center md:justify-end">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
