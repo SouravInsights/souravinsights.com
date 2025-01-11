@@ -82,6 +82,29 @@ const companies = [
 
 const sideProjects = [
   {
+    name: "FairForms",
+    description:
+      "A self-hosted form builder that doesn't cost a kidney per month. Create beautiful, conversational forms without breaking the bank.",
+    repoUrl: "https://github.com/SouravInsights/fairforms",
+    techStack: ["TypeScript", "Next.js", "Shadcn", "PostgreSQL", "Drizzle"],
+    deployedUrl: "https://www.fairforms.xyz/",
+  },
+  {
+    name: "Vendorly",
+    description:
+      "A web app for fashion retailers to manage vendor meetings, organize design collections, and share designs with customizable privacy options. Built with Next.js, TypeScript, and PostgreSQL.",
+    repoUrl: "https://github.com/SouravInsights/vendorly",
+    techStack: ["TypeScript", "Next.js", "Shadcn", "PostgreSQL", "Drizzle"],
+    deployedUrl: "https://vendorly.vercel.app/",
+  },
+  {
+    name: "NightOwls Community",
+    description: "",
+    repoUrl: "https://github.com/SouravInsights/nightowl-community",
+    techStack: ["TypeScript", "Next.js", "Shadcn", "PostgreSQL", "Drizzle"],
+    deployedUrl: "https://nightowl-community.vercel.app/",
+  },
+  {
     name: "create-permissionless-app",
     description:
       "CLI tool for bootstrapping Account Abstraction apps, similar to create-next-app but for Pimlico's AA infrastructure",
@@ -89,7 +112,6 @@ const sideProjects = [
       "https://github.com/SouravInsights/permissionless.js/tree/main/packages/create-permissionless-app",
     techStack: ["TypeScript", "Node.js", "React", "Viem"],
   },
-  // more projects coming soon
 ];
 
 // Custom Terminal-style components
@@ -348,23 +370,13 @@ export default function Home() {
               {sideProjects.map((project) => (
                 <FileItem key={project.name} name={`${project.name}.ts`}>
                   <div className="border border-gray-200 dark:border-gray-700 rounded p-4 mb-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                          {project.name}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400 mt-2">
-                          {project.description}
-                        </p>
-                      </div>
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-green-600 dark:text-green-400 hover:text-green-700"
-                      >
-                        <Github className="w-5 h-5" />
-                      </a>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {project.name}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 mt-2">
+                        {project.description || "<No description provided>"}
+                      </p>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-4">
                       {project.techStack.map((tech) => (
@@ -375,6 +387,41 @@ export default function Home() {
                           {tech}
                         </span>
                       ))}
+                    </div>
+                    <div className="mt-4 text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <ChevronRight className="w-4 h-4 text-green-500" />
+                        <span>
+                          Source code:{" "}
+                          <a
+                            href={project.repoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                          >
+                            {project.repoUrl.replace(/https?:\/\//, "")}
+                          </a>{" "}
+                          {/* <span className="text-gray-500">
+                            # Fork it till you make it
+                          </span> */}
+                        </span>
+                      </div>
+                      {project.deployedUrl && (
+                        <div className="flex items-center gap-2">
+                          <ChevronRight className="w-4 h-4 text-green-500" />
+                          <span>
+                            Deployed at:{" "}
+                            <a
+                              href={project.deployedUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 dark:text-blue-400 hover:underline"
+                            >
+                              {project.deployedUrl.replace(/https?:\/\//, "")}
+                            </a>
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </FileItem>
