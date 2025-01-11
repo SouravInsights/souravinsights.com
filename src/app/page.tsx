@@ -14,6 +14,7 @@ import {
   File,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { truncate } from "@/lib/utils";
 
 const companies = [
   {
@@ -212,6 +213,67 @@ const TerminalPrompt = () => {
   );
 };
 
+const SideProjectItem = ({
+  project,
+}: {
+  project: (typeof sideProjects)[0];
+}) => (
+  <FileItem key={project.name} name={`${project.name}.ts`}>
+    <div className="border border-gray-200 dark:border-gray-700 rounded p-4 mb-4">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {project.name}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
+          {project.description || "<No description provided>"}
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-2 mt-4">
+        {project.techStack.map((tech) => (
+          <span
+            key={tech}
+            className="px-2 py-1 text-sm rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+      <div className="mt-4 text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-2">
+        <div className="flex items-baseline gap-2">
+          <ChevronRight className="w-4 h-4 text-green-500 flex-shrink-0 mt-1" />
+          <div className="flex-grow min-w-0">
+            <span className="inline-block w-[105px]">Source code:</span>
+            <a
+              href={project.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-full sm:max-w-[calc(100%-105px)] truncate align-bottom"
+            >
+              {project.repoUrl.replace(/https?:\/\//, "")}
+            </a>
+          </div>
+        </div>
+        {project.deployedUrl && (
+          <div className="flex items-baseline gap-2">
+            <ChevronRight className="w-4 h-4 text-green-500 flex-shrink-0 mt-1" />
+            <div className="flex-grow min-w-0">
+              <span className="inline-block w-[105px]">Deployed at:</span>
+              <a
+                href={project.deployedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-full sm:max-w-[calc(100%-105px)] truncate align-bottom"
+              >
+                {project.deployedUrl.replace(/https?:\/\//, "")}
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </FileItem>
+);
+
 const HeroSection = () => (
   <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden relative border border-gray-200 dark:border-gray-700 transition-colors duration-200">
     {/* Background grid effect */}
@@ -368,63 +430,7 @@ export default function Home() {
           <TerminalWindow title="~/projects">
             <Directory name="open-source" className="overflow-x-auto">
               {sideProjects.map((project) => (
-                <FileItem key={project.name} name={`${project.name}.ts`}>
-                  <div className="border border-gray-200 dark:border-gray-700 rounded p-4 mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {project.name}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        {project.description || "<No description provided>"}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {project.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-1 text-sm rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-4 text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <ChevronRight className="w-4 h-4 text-green-500" />
-                        <span>
-                          Source code:{" "}
-                          <a
-                            href={project.repoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 dark:text-blue-400 hover:underline"
-                          >
-                            {project.repoUrl.replace(/https?:\/\//, "")}
-                          </a>{" "}
-                          {/* <span className="text-gray-500">
-                            # Fork it till you make it
-                          </span> */}
-                        </span>
-                      </div>
-                      {project.deployedUrl && (
-                        <div className="flex items-center gap-2">
-                          <ChevronRight className="w-4 h-4 text-green-500" />
-                          <span>
-                            Deployed at:{" "}
-                            <a
-                              href={project.deployedUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 dark:text-blue-400 hover:underline"
-                            >
-                              {project.deployedUrl.replace(/https?:\/\//, "")}
-                            </a>
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </FileItem>
+                <SideProjectItem key={project.name} project={project} />
               ))}
             </Directory>
           </TerminalWindow>
