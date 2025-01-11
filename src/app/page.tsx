@@ -224,7 +224,7 @@ const SideProjectItem = ({
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           {project.name}
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
+        <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base mt-2">
           {project.description || "<No description provided>"}
         </p>
       </div>
@@ -478,7 +478,7 @@ export default function Home() {
                             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                               {company.name}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
                               {company.role}
                             </p>
                           </div>
@@ -493,7 +493,7 @@ export default function Home() {
                           {company.description.map((point, i) => (
                             <li key={i} className="flex items-start">
                               <ChevronRight className="w-5 h-5 text-green-500 dark:text-green-400 mr-2 flex-shrink-0 mt-0.5" />
-                              <span className="text-gray-700 dark:text-gray-300">
+                              <span className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
                                 {point}
                               </span>
                             </li>
@@ -506,7 +506,7 @@ export default function Home() {
                             href={company.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-green-700 dark:text-green-300 hover:underline flex items-center"
+                            className="text-green-700 dark:text-green-300 hover:underline flex items-center text-sm md:text-base"
                           >
                             <Globe className="w-4 h-4 mr-1" />
                             Website
@@ -517,7 +517,7 @@ export default function Home() {
                             href={`https://twitter.com/${company.twitter}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-green-700 dark:text-green-300 hover:underline flex items-center"
+                            className="text-green-700 dark:text-green-300 hover:underline flex items-center text-sm md:text-base"
                           >
                             <Twitter className="w-4 h-4 mr-1" />
                             Twitter
@@ -528,7 +528,7 @@ export default function Home() {
                             href={company.projectUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-green-700 dark:text-green-300 hover:underline flex items-center"
+                            className="text-green-700 dark:text-green-300 hover:underline flex items-center text-sm md:text-base"
                           >
                             <ExternalLink className="w-4 h-4 mr-1" />
                             Project
