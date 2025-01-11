@@ -100,7 +100,7 @@ const sideProjects = [
   },
   {
     name: "NightOwls Community",
-    description: "",
+    description: `It's a cozy space for people who do their best work after sunset. It started from a tweet about needing a late-night hangout for developers, but grew into something more - a place where you can share what you're building, what you're listening to, and connect with other night owls without the pressure of being "live"`,
     repoUrl: "https://github.com/SouravInsights/nightowl-community",
     techStack: ["TypeScript", "Next.js", "Shadcn", "PostgreSQL", "Drizzle"],
     deployedUrl: "https://nightowl-community.vercel.app/",
