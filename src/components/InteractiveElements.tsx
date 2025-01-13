@@ -237,26 +237,34 @@ const FloatingIcons = () => {
 // Matrix Rain Effect
 const MatrixRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const width = (canvas.width = window.innerWidth);
-    const height = (canvas.height = 100);
+    // Set canvas size to match container
+    const handleResize = () => {
+      const rect = container.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    };
 
-    const columns = Math.floor(width / 20);
+    // Initial size
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    const columns = Math.floor(canvas.width / 20);
     const yPositions = Array(columns).fill(0);
-
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, width, height);
 
     const matrixEffect = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.fillStyle = "#0F0";
       ctx.font = "15px monospace";
@@ -266,7 +274,7 @@ const MatrixRain = () => {
         const x = i * 20;
         ctx.fillText(text, x, y);
 
-        if (y > 100 + Math.random() * 10000) {
+        if (y > canvas.height) {
           yPositions[i] = 0;
         } else {
           yPositions[i] = y + 20;
@@ -275,14 +283,20 @@ const MatrixRain = () => {
     };
 
     const interval = setInterval(matrixEffect, 50);
-    return () => clearInterval(interval);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute top-0 left-0 w-full opacity-10 pointer-events-none"
-    />
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"
+      />
+    </div>
   );
 };
 

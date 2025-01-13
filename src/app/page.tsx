@@ -526,7 +526,7 @@ export default function Home() {
   const sortedCompanies = [...companies].sort((a, b) => (b.current ? 1 : -1));
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200 relative">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200">
       {/* Add Matrix rain effect */}
       <MatrixRain />
 
