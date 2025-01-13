@@ -15,6 +15,11 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { truncate } from "@/lib/utils";
+import {
+  InteractiveTerminal,
+  FloatingIcons,
+  MatrixRain,
+} from "@/components/InteractiveElements";
 
 const companies = [
   {
@@ -521,7 +526,10 @@ export default function Home() {
   const sortedCompanies = [...companies].sort((a, b) => (b.current ? 1 : -1));
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200 relative">
+      {/* Add Matrix rain effect */}
+      <MatrixRain />
+
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Hero Section */}
         <motion.div
@@ -530,6 +538,15 @@ export default function Home() {
         >
           <HeroSection />
         </motion.div>
+
+        {/* Interactive Terminal Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          <InteractiveTerminal />
+        </motion.section>
 
         {/* Side Projects Section */}
         <motion.section
@@ -563,6 +580,9 @@ export default function Home() {
           </TerminalWindow>
         </motion.section>
       </div>
+
+      {/* Add Floating Icons */}
+      <FloatingIcons />
     </div>
   );
 }
