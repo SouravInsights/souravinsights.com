@@ -124,17 +124,17 @@ const TerminalWindow = ({
   children: React.ReactNode;
 }) => (
   <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-    <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 flex items-center gap-2">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+    <div className="bg-gray-100 dark:bg-gray-800 px-3 sm:px-4 py-2 flex items-center gap-2">
+      <div className="flex space-x-1.5 sm:space-x-2">
+        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
+        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
+        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
       </div>
-      <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 ml-2">
         {title}
       </span>
     </div>
-    <div className="p-4">{children}</div>
+    <div className="p-2 sm:p-4">{children}</div>
   </div>
 );
 
@@ -148,14 +148,14 @@ const Directory = ({
   className?: string;
 }) => (
   <div
-    className={`pl-4 border-l border-gray-200 dark:border-gray-700 ${className}`}
+    className={`pl-2 sm:pl-4 border-l border-gray-200 dark:border-gray-700 ${className}`}
   >
-    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-2">
-      <ChevronDown className="w-4 h-4" />
-      <Folder className="w-4 h-4 text-yellow-500" />
-      <span>{name}/</span>
+    <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700 dark:text-gray-300 mb-2">
+      <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+      <Folder className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
+      <span className="text-sm sm:text-base">{name}/</span>
     </div>
-    <div className="pl-6">{children}</div>
+    <div className="pl-3 sm:pl-6">{children}</div>
   </div>
 );
 
@@ -167,9 +167,9 @@ const FileItem = ({
   children: React.ReactNode;
 }) => (
   <div>
-    <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-2">
-      <File className="w-4 h-4 text-blue-500" />
-      <span>{name}</span>
+    <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700 dark:text-gray-300 mb-2">
+      <File className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+      <span className="text-sm sm:text-base">{name}</span>
     </div>
     {children}
   </div>
@@ -219,58 +219,169 @@ const SideProjectItem = ({
   project: (typeof sideProjects)[0];
 }) => (
   <FileItem key={project.name} name={`${project.name}.ts`}>
-    <div className="border border-gray-200 dark:border-gray-700 rounded p-4 mb-4">
+    <div className="border border-gray-200 dark:border-gray-700 rounded p-3 sm:p-4 mb-3 sm:mb-4">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
           {project.name}
         </h3>
-        <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base mt-2">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1.5 sm:mt-2">
           {project.description || "<No description provided>"}
         </p>
       </div>
-      <div className="flex flex-wrap gap-2 mt-4">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4">
         {project.techStack.map((tech) => (
           <span
             key={tech}
-            className="px-2 py-1 text-sm rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+            className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs sm:text-sm rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
           >
             {tech}
           </span>
         ))}
       </div>
-      <div className="mt-4 text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-2">
-        <div className="flex items-baseline gap-2">
-          <ChevronRight className="w-4 h-4 text-green-500 flex-shrink-0 mt-1" />
+      <div className="mt-3 sm:mt-4 text-xs sm:text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-1.5 sm:gap-2">
+        <div className="flex items-baseline gap-1.5 sm:gap-2">
+          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
           <div className="flex-grow min-w-0">
-            <span className="inline-block w-[105px]">Source code:</span>
+            <span className="inline-block w-[80px] sm:w-[105px]">Source:</span>
             <a
               href={project.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-full sm:max-w-[calc(100%-105px)] truncate align-bottom"
+              className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate align-bottom"
             >
-              {project.repoUrl.replace(/https?:\/\//, "")}
+              {truncate(project.repoUrl.replace(/https?:\/\//, ""), 30)}
             </a>
           </div>
         </div>
         {project.deployedUrl && (
-          <div className="flex items-baseline gap-2">
-            <ChevronRight className="w-4 h-4 text-green-500 flex-shrink-0 mt-1" />
+          <div className="flex items-baseline gap-1.5 sm:gap-2">
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
             <div className="flex-grow min-w-0">
-              <span className="inline-block w-[105px]">Deployed at:</span>
+              <span className="inline-block w-[80px] sm:w-[105px]">Live:</span>
               <a
                 href={project.deployedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-full sm:max-w-[calc(100%-105px)] truncate align-bottom"
+                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate align-bottom"
               >
-                {project.deployedUrl.replace(/https?:\/\//, "")}
+                {truncate(project.deployedUrl.replace(/https?:\/\//, ""), 30)}
               </a>
             </div>
           </div>
         )}
       </div>
     </div>
+  </FileItem>
+);
+
+const WorkExperienceItem = ({
+  company,
+}: {
+  company: (typeof companies)[0];
+}) => (
+  <FileItem key={company.name} name={`${company.name.toLowerCase()}.md`}>
+    <motion.div
+      className={`border rounded-lg overflow-hidden mb-3 sm:mb-4 ${
+        company.current
+          ? "border-green-500 dark:border-green-400"
+          : "border-gray-200 dark:border-gray-700"
+      }`}
+    >
+      <div className="p-3 sm:p-6">
+        {/* Company Header - Optimized for mobile */}
+        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
+          {/* Company Info */}
+          <div className="flex items-start space-x-3 sm:space-x-4">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 sm:w-[60px] sm:h-[60px] relative">
+                <Image
+                  src={company.logo}
+                  alt={`${company.name} logo`}
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
+              {company.current && (
+                <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
+                  Current
+                </span>
+              )}
+            </div>
+            <div>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                {company.name}
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                {company.role}
+              </p>
+              {/* Move period and location into the main info section on mobile */}
+              <div className="block sm:hidden mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p>
+                  {company.period} • {company.location}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Period and Location - Hidden on mobile, shown on desktop */}
+          <div className="hidden sm:block text-sm text-gray-600 dark:text-gray-400">
+            <p>{company.period}</p>
+            <p>{company.location}</p>
+          </div>
+        </div>
+
+        {/* Description Points */}
+        {company.description && (
+          <ul className="space-y-3 sm:space-y-4 mb-4 sm:mb-6 list-none">
+            {company.description.map((point, i) => (
+              <li key={i} className="flex items-start">
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 dark:text-green-400 mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                  {point}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Links Section - Optimized for mobile */}
+        <div className="flex flex-wrap gap-2 sm:gap-4">
+          {company.website && (
+            <a
+              href={company.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 dark:text-green-300 hover:underline flex items-center text-xs sm:text-sm"
+            >
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
+              Website
+            </a>
+          )}
+          {company.twitter && (
+            <a
+              href={`https://twitter.com/${company.twitter}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 dark:text-green-300 hover:underline flex items-center text-xs sm:text-sm"
+            >
+              <Twitter className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
+              Twitter
+            </a>
+          )}
+          {company.projectUrl && (
+            <a
+              href={company.projectUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 dark:text-green-300 hover:underline flex items-center text-xs sm:text-sm"
+            >
+              <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
+              Project
+            </a>
+          )}
+        </div>
+      </div>
+    </motion.div>
   </FileItem>
 );
 
@@ -446,98 +557,7 @@ export default function Home() {
           <TerminalWindow title="~/experience">
             <Directory name="companies" className="overflow-x-auto">
               {sortedCompanies.map((company) => (
-                <FileItem
-                  key={company.name}
-                  name={`${company.name.toLowerCase()}.md`}
-                >
-                  <motion.div
-                    className={`border rounded-lg overflow-hidden mb-4 ${
-                      company.current
-                        ? "border-green-500 dark:border-green-400"
-                        : "border-gray-200 dark:border-gray-700"
-                    }`}
-                  >
-                    <div className="p-6">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
-                        <div className="flex items-center">
-                          <div className="relative">
-                            <Image
-                              src={company.logo}
-                              alt={`${company.name} logo`}
-                              width={60}
-                              height={60}
-                              className="rounded-full"
-                            />
-                            {company.current && (
-                              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                Current
-                              </span>
-                            )}
-                          </div>
-                          <div className="ml-4">
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                              {company.name}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
-                              {company.role}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-4 sm:mt-0">
-                          <p>{company.period}</p>
-                          <p>{company.location}</p>
-                        </div>
-                      </div>
-                      {company.description && (
-                        <ul className="space-y-4 mb-6 list-none">
-                          {company.description.map((point, i) => (
-                            <li key={i} className="flex items-start">
-                              <ChevronRight className="w-5 h-5 text-green-500 dark:text-green-400 mr-2 flex-shrink-0 mt-0.5" />
-                              <span className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
-                                {point}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      <div className="flex items-center space-x-4">
-                        {company.website && (
-                          <a
-                            href={company.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-green-700 dark:text-green-300 hover:underline flex items-center text-sm md:text-base"
-                          >
-                            <Globe className="w-4 h-4 mr-1" />
-                            Website
-                          </a>
-                        )}
-                        {company.twitter && (
-                          <a
-                            href={`https://twitter.com/${company.twitter}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-green-700 dark:text-green-300 hover:underline flex items-center text-sm md:text-base"
-                          >
-                            <Twitter className="w-4 h-4 mr-1" />
-                            Twitter
-                          </a>
-                        )}
-                        {company.projectUrl && (
-                          <a
-                            href={company.projectUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-green-700 dark:text-green-300 hover:underline flex items-center text-sm md:text-base"
-                          >
-                            <ExternalLink className="w-4 h-4 mr-1" />
-                            Project
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                </FileItem>
+                <WorkExperienceItem key={company.name} company={company} />
               ))}
             </Directory>
           </TerminalWindow>
