@@ -530,7 +530,7 @@ export default function Home() {
       {/* Add Matrix rain effect */}
       <MatrixRain />
 
-      <div className="max-w-6xl mx-auto space-y-12">
+      <div className="max-w-6xl mx-auto space-y-12 pt-16">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
