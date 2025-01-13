@@ -200,40 +200,6 @@ clear      - Clear terminal`;
   );
 };
 
-// Floating Tech Icons
-const FloatingIcons = () => {
-  return (
-    <div className="fixed bottom-4 right-4 flex flex-col gap-3">
-      <AnimatePresence>
-        {["cpu", "code", "command"].map((icon, index) => (
-          <motion.div
-            key={icon}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: [0, -10, 0],
-              transition: {
-                duration: 2,
-                repeat: Infinity,
-                delay: index * 0.2,
-              },
-            }}
-            whileHover={{ scale: 1.2 }}
-            className="bg-gray-800 p-2 rounded-full cursor-pointer"
-          >
-            {icon === "cpu" && <Cpu className="w-5 h-5 text-green-400" />}
-            {icon === "code" && <Code2 className="w-5 h-5 text-blue-400" />}
-            {icon === "command" && (
-              <Command className="w-5 h-5 text-purple-400" />
-            )}
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
-  );
-};
-
 // Matrix Rain Effect
 const MatrixRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -300,4 +266,4 @@ const MatrixRain = () => {
   );
 };
 
-export { InteractiveTerminal, FloatingIcons, MatrixRain };
+export { InteractiveTerminal, MatrixRain };

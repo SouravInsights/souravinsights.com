@@ -17,7 +17,6 @@ import { useEffect, useRef, useState } from "react";
 import { truncate } from "@/lib/utils";
 import {
   InteractiveTerminal,
-  FloatingIcons,
   MatrixRain,
 } from "@/components/InteractiveElements";
 
@@ -580,9 +579,6 @@ export default function Home() {
           </TerminalWindow>
         </motion.section>
       </div>
-
-      {/* Add Floating Icons */}
-      <FloatingIcons />
     </div>
   );
 }
