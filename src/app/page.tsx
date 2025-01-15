@@ -30,7 +30,7 @@ const companies = [
     twitter: "@paragraph_xyz",
     website: "https://paragraph.xyz/",
     projectUrl: "https://github.com/paragraph-xyz",
-    current: true,
+    current: false,
   },
   {
     name: "Pimlico",
