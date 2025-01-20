@@ -16,11 +16,18 @@ export const checkDiscordLinks = schedules.task({
   id: "check-discord-links",
   cron: "*/5 * * * *", // Run every 5 minutes
   run: async (payload) => {
-    logger.info("Starting Discord links check");
+    logger.info("Starting Discord links check", {
+      timestamp: new Date().toISOString(),
+    });
 
     try {
       // Get all channels
       const channels = await getChannels();
+      logger.info("Fetched channels", {
+        channelCount: channels.length,
+        channelNames: channels.map((c) => c.name),
+      });
+
       let hasNewMessages = false;
 
       // Check each channel for new messages
@@ -28,11 +35,21 @@ export const checkDiscordLinks = schedules.task({
         const messages = await logger.trace("fetch-messages", async (span) => {
           span.setAttribute("channel.id", channel.id);
           span.setAttribute("channel.name", channel.name);
-          return await getMessagesFromChannel(channel.id);
+          const msgs = await getMessagesFromChannel(channel.id);
+          logger.info("Fetched messages", {
+            channelName: channel.name,
+            messageCount: msgs.length,
+            hasLinks: msgs.filter((m) => m.content.includes("http")).length,
+          });
+          return msgs;
         });
 
         // Get the last checked message ID
         const lastMessageId = await redis.get(`last_message:${channel.id}`);
+        logger.info("Last message ID", {
+          channelName: channel.name,
+          lastMessageId,
+        });
 
         // Check for new messages
         const newMessages = messages.filter((msg: DiscordMessage) => {
@@ -51,6 +68,10 @@ export const checkDiscordLinks = schedules.task({
           logger.info("Found new messages", {
             channelName: channel.name,
             count: newMessages.length,
+            messages: newMessages.map((m) => ({
+              id: m.id,
+              content: m.content.substring(0, 100), // first 100 chars
+            })),
           });
         }
       }
@@ -74,18 +95,33 @@ export const checkDiscordLinks = schedules.task({
           );
 
           if (!response.ok) {
-            throw new Error("Failed to revalidate");
+            const text = await response.text();
+            logger.error("Revalidation failed", {
+              status: response.status,
+              statusText: response.statusText,
+              responseText: text,
+            });
+            throw new Error(
+              `Failed to revalidate: ${response.status} ${response.statusText}`
+            );
           }
 
-          return await response.json();
+          const json = await response.json();
+          logger.info("Revalidation response", { json });
+          return json;
         });
 
         logger.info("Revalidation complete", { result });
+      } else {
+        logger.info("No new messages found");
       }
 
       return { success: true, hasNewMessages };
     } catch (error) {
-      logger.error("Error checking Discord links", { error });
+      logger.error("Error checking Discord links", {
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   },
