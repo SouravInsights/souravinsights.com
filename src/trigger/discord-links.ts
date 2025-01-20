@@ -14,7 +14,7 @@ const redis = new Redis({
 
 export const checkDiscordLinks = schedules.task({
   id: "check-discord-links",
-  cron: "*/5 * * * *", // Run every 5 minutes
+  // cron: "*/5 * * * *", // Run every 5 minutes
   run: async (payload) => {
     logger.info("Starting Discord links check", {
       timestamp: new Date().toISOString(),
