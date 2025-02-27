@@ -85,6 +85,14 @@ const companies = [
   },
 ];
 
+interface Projects {
+  name: string;
+  description: string;
+  repoUrl?: string;
+  techStack: string[];
+  deployedUrl?: string;
+}
+
 const sideProjects = [
   {
     name: "FairForms",
@@ -103,19 +111,44 @@ const sideProjects = [
     deployedUrl: "https://vendorly.vercel.app/",
   },
   {
-    name: "NightOwls Community",
-    description: `🦉 A cozy corner on the internet where night owls share their code, music, and late-night building adventures`,
-    repoUrl: "https://github.com/SouravInsights/nightowl-community",
-    techStack: ["TypeScript", "Next.js", "Shadcn", "PostgreSQL", "Drizzle"],
-    deployedUrl: "https://nightowl-community.vercel.app/",
-  },
-  {
     name: "create-permissionless-app",
     description:
       "CLI tool for bootstrapping Account Abstraction apps, similar to create-next-app but for Pimlico's AA infrastructure",
     repoUrl:
       "https://github.com/SouravInsights/permissionless.js/tree/main/packages/create-permissionless-app",
     techStack: ["TypeScript", "Node.js", "React", "Viem"],
+  },
+];
+
+const funProjects = [
+  {
+    name: "justanotherday.lol",
+    description:
+      "A minimalist, sarcastic landing page for those enjoying a completely normal day (especially when others aren't)",
+    techStack: ["Next.js", "React", "Tailwind", "Shadcn", "Framer Motion"],
+    deployedUrl: "https://www.justanotherday.lol/",
+  },
+  {
+    name: "levelmeup",
+    description:
+      "Smart resume analysis to match people with relevant opportunities & skills!",
+    repoUrl: "https://github.com/SouravInsights/levelmeup",
+    techStack: [
+      "Next.js",
+      "React",
+      "Tailwind",
+      "Shadcn",
+      "Framer Motion",
+      "HuggingFace",
+    ],
+    deployedUrl: "https://levelmeup.vercel.app/",
+  },
+  {
+    name: "NightOwls Community",
+    description: `🦉 A cozy corner on the internet where night owls share their code, music, and late-night building adventures`,
+    repoUrl: "https://github.com/SouravInsights/nightowl-community",
+    techStack: ["TypeScript", "Next.js", "Shadcn", "PostgreSQL", "Drizzle"],
+    deployedUrl: "https://nightowl-community.vercel.app/",
   },
 ];
 
@@ -217,11 +250,7 @@ const TerminalPrompt = () => {
   );
 };
 
-const SideProjectItem = ({
-  project,
-}: {
-  project: (typeof sideProjects)[0];
-}) => (
+const SideProjectItem = ({ project }: { project: Projects }) => (
   <FileItem key={project.name} name={`${project.name}.ts`}>
     <div className="border border-gray-200 dark:border-gray-700 rounded p-3 sm:p-4 mb-3 sm:mb-4">
       <div>
@@ -247,14 +276,16 @@ const SideProjectItem = ({
           <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
           <div className="flex-grow min-w-0">
             <span className="inline-block w-[80px] sm:w-[105px]">Source:</span>
-            <a
-              href={project.repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate align-bottom"
-            >
-              {truncate(project.repoUrl.replace(/https?:\/\//, ""), 30)}
-            </a>
+            {project.repoUrl && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate align-bottom"
+              >
+                {truncate(project.repoUrl.replace(/https?:\/\//, ""), 30)}
+              </a>
+            )}
           </div>
         </div>
         {project.deployedUrl && (
@@ -557,6 +588,22 @@ export default function Home() {
           <TerminalWindow title="~/projects">
             <Directory name="open-source" className="overflow-x-auto">
               {sideProjects.map((project) => (
+                <SideProjectItem key={project.name} project={project} />
+              ))}
+            </Directory>
+          </TerminalWindow>
+        </motion.section>
+
+        {/* Fun Projects Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-6"
+        >
+          <TerminalWindow title="~/fun-projects">
+            <Directory name="" className="overflow-x-auto">
+              {funProjects.map((project) => (
                 <SideProjectItem key={project.name} project={project} />
               ))}
             </Directory>
