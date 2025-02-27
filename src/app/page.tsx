@@ -122,7 +122,7 @@ const sideProjects = [
 
 const funProjects = [
   {
-    name: "justanotherday.lol",
+    name: "justanotherday",
     description:
       "A minimalist, sarcastic landing page for those enjoying a completely normal day (especially when others aren't)",
     techStack: ["Next.js", "React", "Tailwind", "Shadcn", "Framer Motion"],
@@ -602,7 +602,7 @@ export default function Home() {
           className="space-y-6"
         >
           <TerminalWindow title="~/fun-projects">
-            <Directory name="" className="overflow-x-auto">
+            <Directory name="experiments" className="overflow-x-auto">
               {funProjects.map((project) => (
                 <SideProjectItem key={project.name} project={project} />
               ))}

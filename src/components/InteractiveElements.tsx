@@ -149,25 +149,25 @@ clear      - Clear terminal`;
     <div
       ref={terminalRef}
       onClick={() => setIsFocused(true)}
-      className={`relative border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden cursor-text ${
+      className={`relative border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden cursor-text transition-colors duration-200 ${
         isFocused ? "ring-1 ring-green-500" : ""
       }`}
       tabIndex={0}
     >
       {/* Terminal Header */}
-      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 flex items-center gap-2">
+      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 flex items-center gap-2 transition-colors duration-200">
         <div className="flex space-x-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
           <div className="w-3 h-3 rounded-full bg-green-500"></div>
         </div>
-        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2 transition-colors duration-200">
           ~/terminal {isFocused ? "(active)" : "(click to activate)"}
         </span>
       </div>
 
-      {/* Terminal Content */}
-      <div className="p-4 bg-gray-900 font-mono text-sm min-h-[200px]">
+      {/* Terminal Content - Now responds to light/dark mode */}
+      <div className="p-4 bg-gray-50 dark:bg-gray-900 font-mono text-sm min-h-[200px] transition-colors duration-200">
         <div className="space-y-2">
           {commands.map((cmd, i) => (
             <motion.div
@@ -175,23 +175,31 @@ clear      - Clear terminal`;
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className={`${
-                cmd.isResponse ? "text-green-400" : "text-gray-300"
-              }`}
+                cmd.isResponse
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-gray-700 dark:text-gray-300"
+              } transition-colors duration-200`}
             >
-              {!cmd.isResponse && <span className="text-blue-400">$ </span>}
+              {!cmd.isResponse && (
+                <span className="text-blue-600 dark:text-blue-400 transition-colors duration-200">
+                  ${" "}
+                </span>
+              )}
               <span className="whitespace-pre-wrap">{cmd.text}</span>
             </motion.div>
           ))}
         </div>
 
         <div className="mt-4 flex items-start gap-2">
-          <span className="text-blue-400">$</span>
-          <div className="flex-1 text-gray-300">
+          <span className="text-blue-600 dark:text-blue-400 transition-colors duration-200">
+            $
+          </span>
+          <div className="flex-1 text-gray-700 dark:text-gray-300 transition-colors duration-200">
             {currentCommand}
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 1, repeat: Infinity }}
-              className="inline-block w-2 h-4 bg-gray-300 ml-1"
+              className="inline-block w-2 h-4 bg-gray-700 dark:bg-gray-300 ml-1 transition-colors duration-200"
             ></motion.span>
           </div>
         </div>
@@ -200,10 +208,29 @@ clear      - Clear terminal`;
   );
 };
 
-// Matrix Rain Effect
+// Matrix Rain Effect - Updated to be lighter in light mode
 const MatrixRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Check for dark mode
+  useEffect(() => {
+    // Initial check
+    setIsDarkMode(document.documentElement.classList.contains("dark"));
+
+    // Set up observer to watch for class changes on html element
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "class") {
+          setIsDarkMode(document.documentElement.classList.contains("dark"));
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -229,10 +256,14 @@ const MatrixRain = () => {
     const yPositions = Array(columns).fill(0);
 
     const matrixEffect = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      // Different background fade for light/dark mode
+      ctx.fillStyle = isDarkMode
+        ? "rgba(0, 0, 0, 0.05)"
+        : "rgba(255, 255, 255, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#0F0";
+      // Different text color for light/dark mode
+      ctx.fillStyle = isDarkMode ? "#0F0" : "#0A5A0A";
       ctx.font = "15px monospace";
 
       yPositions.forEach((y, i) => {
@@ -254,7 +285,7 @@ const MatrixRain = () => {
       clearInterval(interval);
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [isDarkMode]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden">
