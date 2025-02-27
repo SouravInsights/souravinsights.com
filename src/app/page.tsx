@@ -273,9 +273,9 @@ const SideProjectItem = ({ project }: { project: Projects }) => (
       </div>
       <div className="mt-3 sm:mt-4 text-xs sm:text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-1.5 sm:gap-2">
         {project.repoUrl && (
-          <div className="flex items-baseline gap-1.5 sm:gap-2">
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
-            <div className="flex-grow min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
+            <div className="flex-grow min-w-0 flex items-center">
               <span className="inline-block w-[80px] sm:w-[105px]">
                 Source:
               </span>
@@ -283,7 +283,7 @@ const SideProjectItem = ({ project }: { project: Projects }) => (
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate align-bottom"
+                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate"
               >
                 {truncate(project.repoUrl.replace(/https?:\/\//, ""), 30)}
               </a>
@@ -291,15 +291,15 @@ const SideProjectItem = ({ project }: { project: Projects }) => (
           </div>
         )}
         {project.deployedUrl && (
-          <div className="flex items-baseline gap-1.5 sm:gap-2">
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
-            <div className="flex-grow min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
+            <div className="flex-grow min-w-0 flex items-center">
               <span className="inline-block w-[80px] sm:w-[105px]">Live:</span>
               <a
                 href={project.deployedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate align-bottom"
+                className="text-blue-600 dark:text-blue-400 hover:underline inline-block max-w-[calc(100%-80px)] sm:max-w-[calc(100%-105px)] truncate"
               >
                 {truncate(project.deployedUrl.replace(/https?:\/\//, ""), 30)}
               </a>
