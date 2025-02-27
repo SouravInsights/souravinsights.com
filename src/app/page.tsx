@@ -272,11 +272,13 @@ const SideProjectItem = ({ project }: { project: Projects }) => (
         ))}
       </div>
       <div className="mt-3 sm:mt-4 text-xs sm:text-sm font-mono text-gray-600 dark:text-gray-400 flex flex-col gap-1.5 sm:gap-2">
-        <div className="flex items-baseline gap-1.5 sm:gap-2">
-          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
-          <div className="flex-grow min-w-0">
-            <span className="inline-block w-[80px] sm:w-[105px]">Source:</span>
-            {project.repoUrl && (
+        {project.repoUrl && (
+          <div className="flex items-baseline gap-1.5 sm:gap-2">
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
+            <div className="flex-grow min-w-0">
+              <span className="inline-block w-[80px] sm:w-[105px]">
+                Source:
+              </span>
               <a
                 href={project.repoUrl}
                 target="_blank"
@@ -285,9 +287,9 @@ const SideProjectItem = ({ project }: { project: Projects }) => (
               >
                 {truncate(project.repoUrl.replace(/https?:\/\//, ""), 30)}
               </a>
-            )}
+            </div>
           </div>
-        </div>
+        )}
         {project.deployedUrl && (
           <div className="flex items-baseline gap-1.5 sm:gap-2">
             <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0 mt-1" />
