@@ -36,27 +36,48 @@ export function TiltedCard({
 
   const { isDarkMode } = useTheme();
 
+  // Adjust gradient colors for dark mode to ensure better visibility
+  const adjustedGradientStart = isDarkMode
+    ? Color(gradientStart).lighten(0.1).hex()
+    : gradientStart;
+  const adjustedGradientEnd = isDarkMode
+    ? Color(gradientEnd).lighten(0.1).hex()
+    : gradientEnd;
+
   const gradientStyle = {
-    background: `linear-gradient(to bottom right, ${gradientStart}, ${gradientEnd})`,
+    background: `linear-gradient(to bottom right, ${adjustedGradientStart}, ${adjustedGradientEnd})`,
+    opacity: isDarkMode ? 0.8 : 1, // Slightly reduce opacity in dark mode for better contrast
   };
 
-  const isLight = isLightColor(gradientStart);
+  // Determine if the gradient background is light (for both modes)
+  const isGradientLight = isLightColor(adjustedGradientStart);
+
+  // More dynamic text color handling for both modes
   const textColor = isDarkMode
-    ? "text-gray-100"
-    : isLight
+    ? isGradientLight
+      ? "text-gray-800"
+      : "text-gray-100"
+    : isGradientLight
     ? "text-gray-800"
     : "text-white";
+
   const subTextColor = isDarkMode
-    ? "text-gray-300"
-    : isLight
+    ? isGradientLight
+      ? "text-gray-600"
+      : "text-gray-300"
+    : isGradientLight
     ? "text-gray-600"
     : "text-gray-200";
 
+  // In dark mode, lighten button colors instead of darkening them
   const buttonBackgroundColor = isDarkMode
-    ? Color(gradientEnd).darken(0.3).hex()
-    : isLight
+    ? isGradientLight
+      ? Color(adjustedGradientEnd).darken(0.1).hex()
+      : Color(adjustedGradientEnd).lighten(0.2).hex()
+    : isGradientLight
     ? Color(gradientEnd).lighten(0.1).hex()
     : Color(gradientEnd).darken(0.1).hex();
+
   const buttonTextColor = getContrastColor(buttonBackgroundColor);
 
   const buttonStyle = {
@@ -68,12 +89,14 @@ export function TiltedCard({
   const buttonHoverStyle = {
     backgroundColor: isDarkMode
       ? Color(buttonBackgroundColor).lighten(0.1).hex()
-      : isLight
+      : isGradientLight
       ? Color(buttonBackgroundColor).darken(0.1).hex()
       : Color(buttonBackgroundColor).lighten(0.1).hex(),
   };
 
+  // Adjust card background opacity based on mode
   const cardBackgroundColor = isDarkMode ? "bg-gray-900" : "bg-white";
+  const bgOpacity = isDarkMode ? "bg-opacity-95" : "bg-opacity-90";
 
   return (
     <motion.div
@@ -88,7 +111,7 @@ export function TiltedCard({
           style={gradientStyle}
         ></div>
         <div
-          className={`relative ${cardBackgroundColor} bg-opacity-90 dark:bg-opacity-90 p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
+          className={`relative ${cardBackgroundColor} ${bgOpacity} p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
         >
           <h3
             className={`text-lg font-semibold mb-2 line-clamp-2 ${textColor}`}
