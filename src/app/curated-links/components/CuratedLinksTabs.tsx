@@ -3,20 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import LinkCard from "./LinkCard";
-import ColorPicker from "./ColorPicker";
 import { AnimatePresence, motion } from "framer-motion";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
-import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Search,
-  Layout,
   Palette,
   ChevronDown,
   ChevronUp,
@@ -28,10 +17,9 @@ import {
   Briefcase,
   Folders,
   Layers,
+  Check,
 } from "lucide-react";
 import { colorPresets, ColorPreset } from "../utils/colorPresets";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/context/ThemeContext";
 import posthog from "posthog-js";
@@ -74,6 +62,31 @@ export default function CuratedLinksTabs({
     | "blueprint"
     | "typewriter"
   >("tilted");
+
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  type ThemeType =
+    | "tilted"
+    | "layered"
+    | "polaroid"
+    | "notebook"
+    | "postcard"
+    | "minimalist"
+    | "retro-tech"
+    | "blueprint"
+    | "typewriter";
+
+  // Create properly typed theme options
+  const themeOptions: { id: ThemeType; name: string }[] = [
+    { id: "tilted", name: "Tilted" },
+    { id: "polaroid", name: "Polaroid" },
+    { id: "notebook", name: "Notebook" },
+    { id: "layered", name: "Layered" },
+    { id: "retro-tech", name: "Retro Tech" },
+    { id: "minimalist", name: "Minimalist" },
+    { id: "postcard", name: "Postcard" },
+    { id: "blueprint", name: "Blueprint" },
+    { id: "typewriter", name: "Typewriter" },
+  ];
 
   const orderedChannelNames = [
     "reading-list",
@@ -198,181 +211,82 @@ export default function CuratedLinksTabs({
 
   return (
     <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
-      <div className="flex flex-col gap-4 mb-6">
-        <div className="flex items-center gap-2">
-          <div className="flex-grow flex items-center gap-2 px-2 bg-white dark:bg-gray-700 rounded-md shadow-sm">
-            <Search className="text-gray-400 dark:text-gray-300" size={20} />
-            <Input
-              type="text"
-              placeholder="Search links..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
-            />
+      <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        {/* Customization Toggle Button */}
+        <button
+          onClick={() => setIsCustomizePanelOpen(!isCustomizePanelOpen)}
+          className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          <div className="flex items-center">
+            <Palette className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <span className="font-medium">Customize Appearance</span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsCustomizePanelOpen(!isCustomizePanelOpen)}
-            className="whitespace-nowrap h-10"
-          >
-            {isCustomizePanelOpen ? (
-              <>
-                <ChevronUp className="mr-2 h-4 w-4" /> Hide Options
-              </>
-            ) : (
-              <>
-                <ChevronDown className="mr-2 h-4 w-4" /> Customize
-              </>
-            )}
-          </Button>
-        </div>
+          {isCustomizePanelOpen ? (
+            <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          ) : (
+            <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          )}
+        </button>
 
+        {/* Customization Panel */}
         {isCustomizePanelOpen && (
-          <div className="flex flex-col sm:flex-row gap-4 bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm">
-            <div className="flex-1">
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-2">
-                <Layout size={16} />
-                Card Theme
-              </Label>
-              <Select value={cardDesign} onValueChange={handleCardDesignChange}>
-                <SelectTrigger className="w-full bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100">
-                  <SelectValue placeholder="Select card design" />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-gray-600">
-                  <SelectItem
-                    value="tilted"
-                    className="text-gray-900 dark:text-gray-100"
+          <div className="p-4 border-t dark:border-gray-700 animate-fadeIn">
+            <div className="mb-4">
+              <h4 className="text-sm font-medium mb-3">Card Theme</h4>
+              {/* Responsive grid for theme buttons - 2 columns on mobile, 3 on larger screens */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {themeOptions.map((theme) => (
+                  <button
+                    key={theme.id}
+                    onClick={() => {
+                      setCardDesign(theme.id);
+                      posthog.capture("card_theme_selected", {
+                        theme: theme.id,
+                        action: "changed",
+                      });
+                    }}
+                    className={`p-2 rounded-md text-center transition-all ${
+                      cardDesign === theme.id
+                        ? "bg-green-100 dark:bg-green-900 font-medium"
+                        : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    }`}
                   >
-                    Tilted
-                  </SelectItem>
-                  <SelectItem
-                    value="layered"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Layered
-                  </SelectItem>
-
-                  <SelectItem
-                    value="polaroid"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Polaroid
-                  </SelectItem>
-                  <SelectItem
-                    value="notebook"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Notebook
-                  </SelectItem>
-                  <SelectItem
-                    value="postcard"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Postcard
-                  </SelectItem>
-                  <SelectItem
-                    value="minimalist"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Minimalist
-                  </SelectItem>
-                  <SelectItem
-                    value="retro-tech"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Retro Tech
-                  </SelectItem>
-                  <SelectItem
-                    value="blueprint"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Blueprint
-                  </SelectItem>
-                  <SelectItem
-                    value="typewriter"
-                    className="text-gray-900 dark:text-gray-100"
-                  >
-                    Typewriter
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                    {theme.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {supportsCustomColors && (
-              <div className="flex-1">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-2">
-                  <Palette size={16} />
-                  Color Scheme
-                </Label>
-                <RadioGroup
-                  defaultValue="preset"
-                  onValueChange={(value: "preset" | "custom") =>
-                    setColorMode(value)
-                  }
-                  className="flex space-x-4 mb-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value="preset"
-                      id="preset"
-                      className="dark:border-gray-400"
-                    />
-                    <Label htmlFor="preset" className="dark:text-gray-200">
-                      Presets
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value="custom"
-                      id="custom"
-                      className="dark:border-gray-400"
-                    />
-                    <Label htmlFor="custom" className="dark:text-gray-200">
-                      Custom
-                    </Label>
-                  </div>
-                </RadioGroup>
-
-                {colorMode === "preset" ? (
-                  <Select
-                    value={selectedPreset.name}
-                    onValueChange={(value) =>
-                      setSelectedPreset(
-                        colorPresets.find((preset) => preset.name === value) ||
-                          colorPresets[0]
-                      )
-                    }
-                  >
-                    <SelectTrigger className="w-full bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100">
-                      <SelectValue placeholder="Select a color preset" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-gray-600">
-                      {colorPresets.map((preset) => (
-                        <SelectItem
-                          key={preset.name}
-                          value={preset.name}
-                          className="text-gray-900 dark:text-gray-100"
-                        >
-                          {preset.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="flex space-x-4">
-                    <ColorPicker
-                      color={customStartColor}
-                      onChange={setCustomStartColor}
-                      label="Start"
-                    />
-                    <ColorPicker
-                      color={customEndColor}
-                      onChange={setCustomEndColor}
-                      label="End"
-                    />
-                  </div>
-                )}
+            {themesWithCustomColors.includes(cardDesign) && (
+              <div>
+                <h4 className="text-sm font-medium mb-3">Color Theme</h4>
+                {/* Also make color grid responsive */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {colorPresets.map((preset) => (
+                    <button
+                      key={preset.name}
+                      onClick={() => setSelectedPreset(preset)}
+                      className={`relative h-8 rounded-md overflow-hidden transition-all ${
+                        selectedPreset.name === preset.name
+                          ? "ring-2 ring-blue-500"
+                          : ""
+                      }`}
+                      title={preset.name}
+                    >
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(to right, ${preset.lightStart}, ${preset.lightEnd})`,
+                        }}
+                      />
+                      {selectedPreset.name === preset.name && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Check className="h-4 w-4 text-white drop-shadow-md" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
