@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSound from "use-sound";
+import { usePostLikes } from "@/hooks/usePostLikes";
 
 interface Particle {
   id: string;
@@ -13,10 +14,17 @@ interface Particle {
   color: string;
 }
 
-const ThreeDLikeButton = () => {
-  // Gard coded for now but will soon be fetched from db
-  const [totalLikes, setTotalLikes] = useState(722);
-  const [userLikes, setUserLikes] = useState(0);
+interface ThreeDLikeButtonProps {
+  slug: string;
+}
+
+const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
+  const { totalLikes, userLikes, addLike, isLoading } = usePostLikes({
+    slug,
+    initialTotalLikes: 0,
+    initialUserLikes: 0,
+  });
+
   const [particles, setParticles] = useState<Particle[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const MAX_USER_LIKES = 10;
@@ -68,7 +76,7 @@ const ThreeDLikeButton = () => {
         clearInterval(fillAnimationRef.current);
       }
     };
-  }, [fillPercentage]);
+  }, [fillPercentage, animatedFillPercentage]);
 
   // Different expressions based on like count
   const getHeartExpression = () => {
@@ -79,10 +87,12 @@ const ThreeDLikeButton = () => {
     return "smile";
   };
 
-  const handleLike = () => {
-    if (userLikes < MAX_USER_LIKES) {
-      setTotalLikes((prev) => prev + 1);
-      setUserLikes((prev) => prev + 1);
+  const handleLike = async () => {
+    if (userLikes < MAX_USER_LIKES && !isLoading) {
+      // Call the API to add a like
+      await addLike();
+
+      // Generate visual effects
       generateParticles();
 
       // Play sound with increasing pitch
@@ -187,7 +197,7 @@ const ThreeDLikeButton = () => {
             y: 2,
           }}
           aria-label="Like this post"
-          disabled={userLikes >= MAX_USER_LIKES}
+          disabled={userLikes >= MAX_USER_LIKES || isLoading}
         >
           <div className="relative">
             {/* 3D Shadow/Base Layer */}

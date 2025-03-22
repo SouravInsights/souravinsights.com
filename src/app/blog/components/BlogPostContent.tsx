@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import { PostData } from "../utils/blogUtils";
 import ThreeDLikeButton from "./ThreeDLikeButton";
+import ViewCounter from "./ViewCounter";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -129,7 +130,7 @@ export default function BlogPostContent({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <ThreeDLikeButton />
+          <ThreeDLikeButton slug={post.slug} />
         </motion.div>
       </div>
 
@@ -201,7 +202,7 @@ export default function BlogPostContent({
                 {post.title}
               </h1>
 
-              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center">
                   <Calendar className="mr-1 h-4 w-4" />
                   <time dateTime={post.date}>
@@ -213,6 +214,9 @@ export default function BlogPostContent({
                   <Clock className="mr-1 h-4 w-4" />
                   <span>{post.readingTime}</span>
                 </div>
+
+                {/* View Counter */}
+                <ViewCounter slug={post.slug} />
               </div>
             </header>
           </motion.div>
@@ -301,7 +305,7 @@ export default function BlogPostContent({
               transition={{ duration: 0.5, delay: 0.5 }}
               className="flex justify-center pr-8"
             >
-              <ThreeDLikeButton />
+              <ThreeDLikeButton slug={post.slug} />
             </motion.div>
           </div>
         </aside>

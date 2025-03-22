@@ -48,7 +48,8 @@
     "shiki": "^3.2.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "use-sound": "^5.0.0"
+    "use-sound": "^5.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@trigger.dev/build": "^3.3.11",
