@@ -185,7 +185,7 @@ export default function BlogPostContent({
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-row pt-12 lg:pt-0">
         {/* Main Content */}
         <article
           className="w-full lg:w-2/3 px-4 lg:px-0 lg:pr-12"
