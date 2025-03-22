@@ -12,11 +12,13 @@ import {
   BookmarkCheck,
   Gamepad2,
   Terminal,
+  BookText,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
+  { name: "Blog", path: "/blog", icon: BookText },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
   { name: "Play", path: "/play", icon: Gamepad2 },
@@ -44,7 +46,8 @@ const Navbar: React.FC = () => {
             <Link href={item.path} key={item.name}>
               <motion.div
                 className={`px-3 py-1.5 rounded-md flex items-center space-x-2 font-mono text-sm ${
-                  pathname === item.path
+                  pathname === item.path ||
+                  (item.path !== "/" && pathname?.startsWith(item.path))
                     ? "bg-gray-100 dark:bg-gray-800 text-green-600 dark:text-green-400"
                     : "text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 }`}
@@ -93,7 +96,8 @@ const Navbar: React.FC = () => {
                 <Link href={item.path} key={item.name}>
                   <motion.div
                     className={`px-4 py-3 rounded-md flex items-center space-x-2 font-mono ${
-                      pathname === item.path
+                      pathname === item.path ||
+                      (item.path !== "/" && pathname?.startsWith(item.path))
                         ? "bg-gray-100 dark:bg-gray-800 text-green-600 dark:text-green-400"
                         : "text-gray-800 dark:text-gray-200"
                     }`}
