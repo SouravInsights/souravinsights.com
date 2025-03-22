@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSound from "use-sound";
 import { usePostLikes } from "@/hooks/usePostLikes";
+import posthog from "posthog-js";
 
 interface Particle {
   id: string;
@@ -89,7 +90,15 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
 
   const handleLike = () => {
     if (userLikes < MAX_USER_LIKES) {
-      // Call the API to add a like (now optimistic)
+      // Track like event with PostHog
+      posthog.capture("blog_post_liked", {
+        slug: slug,
+        current_likes: userLikes,
+        total_likes: totalLikes,
+        max_reached: userLikes === MAX_USER_LIKES - 1,
+      });
+
+      // Call the API to add a like
       addLike();
 
       // Generate visual effects
@@ -150,6 +159,16 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
     if (animatedFillPercentage <= 90) return "#a78bfa"; // violet
     return "#e879f9"; // pink
   };
+
+  // Track when max likes are reached
+  useEffect(() => {
+    if (userLikes === MAX_USER_LIKES) {
+      posthog.capture("blog_post_max_likes_reached", {
+        slug: slug,
+        total_likes: totalLikes,
+      });
+    }
+  }, [userLikes, totalLikes, slug]);
 
   return (
     <div className="flex items-center gap-4">
