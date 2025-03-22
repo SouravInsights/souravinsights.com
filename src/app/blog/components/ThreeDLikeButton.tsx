@@ -87,10 +87,10 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
     return "smile";
   };
 
-  const handleLike = async () => {
-    if (userLikes < MAX_USER_LIKES && !isLoading) {
-      // Call the API to add a like
-      await addLike();
+  const handleLike = () => {
+    if (userLikes < MAX_USER_LIKES) {
+      // Call the API to add a like (now optimistic)
+      addLike();
 
       // Generate visual effects
       generateParticles();

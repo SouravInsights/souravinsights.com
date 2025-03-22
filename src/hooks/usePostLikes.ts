@@ -54,12 +54,19 @@ export function usePostLikes({
     fetchLikes();
   }, [slug]);
 
-  // Function to add a like
+  // Function to add a like with immediate visual feedback
   const addLike = async () => {
     if (userLikes >= 10) return; // Max likes reached
 
+    // Update UI immediately for responsive feedback
+    const previousTotalLikes = totalLikes;
+    const previousUserLikes = userLikes;
+
+    setTotalLikes((prev) => prev + 1);
+    setUserLikes((prev) => prev + 1);
+
     try {
-      setIsLoading(true);
+      // Send API request in background
       const response = await fetch("/api/blog/likes", {
         method: "POST",
         headers: {
@@ -72,15 +79,22 @@ export function usePostLikes({
         throw new Error("Failed to add like");
       }
 
+      // Synchronize with server values to ensure consistency
       const data = await response.json();
+
+      // Update with server values to handle edge cases
+      // For example: another device might have added likes,
+      // or server might have applied rate limiting
       setTotalLikes(data.totalLikes);
       setUserLikes(data.userLikes);
       setIsError(false);
     } catch (error) {
       console.error("Error adding like:", error);
+
+      // Restore previous values if the request failed
+      setTotalLikes(previousTotalLikes);
+      setUserLikes(previousUserLikes);
       setIsError(true);
-    } finally {
-      setIsLoading(false);
     }
   };
 
