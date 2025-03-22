@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PostData } from "../utils/blogUtils";
+import ThreeDLikeButton from "./ThreeDLikeButton";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -113,7 +114,7 @@ export default function BlogPostContent({
         </Link>
       </div>
 
-      {/* Mobile TOC */}
+      {/* Mobile TOC & Like Button Trigger */}
       <div className="lg:hidden sticky top-0 z-30 bg-white dark:bg-gray-900 p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
         <button
           onClick={() => setMobileMenuOpen(true)}
@@ -122,6 +123,14 @@ export default function BlogPostContent({
           <Menu size={16} />
           <span>Contents</span>
         </button>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <ThreeDLikeButton />
+        </motion.div>
       </div>
 
       {/* Mobile TOC Overlay */}
@@ -284,6 +293,16 @@ export default function BlogPostContent({
                 </div>
               </motion.div>
             )}
+
+            {/* Like Button */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="flex justify-center pr-8"
+            >
+              <ThreeDLikeButton />
+            </motion.div>
           </div>
         </aside>
       </div>
