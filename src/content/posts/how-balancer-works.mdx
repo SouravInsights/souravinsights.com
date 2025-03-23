@@ -1,0 +1,128 @@
+---
+title: How Balancer protocol works?
+date: 2021-04-16
+tags:
+  - Decentralized Exchange
+  - Ethereum
+  - Balancer
+  - Automated Market Maker
+  - Crypto Currencies
+related:
+  - name:
+    href:
+---
+
+![How Balancer works - diagram showing balanced pools and tokens](https://user-images.githubusercontent.com/26466468/115125491-0465b180-9fe6-11eb-963d-622b2df0cf91.jpg)
+
+## Table of Contents
+
+- Brief explanation of prerequisite topics
+  - How exchanges work
+  - Market Makers & why we need them
+  - Types of exchanges & brief explanation
+- What's Balancer and how it works
+- Terms glossary
+- What's liquidity and why we need liquidity providers
+- Usecases of Balancer
+- How to use Balancer to earn passive income
+- Understanding the maths of Balancer protocol
+
+> Before we dive into Balancer, let's get a primer on basic topics like how exchanges work, the types of exchanges, what are market makers and why do we need them etc.
+
+## How exchanges works?
+
+An exchange matches people who want to buy and sell something for something else. Buyers say what price, they are willing to buy any particular asset, by placing a 'buy order'. If there is a 'sell order' at the same price, then the exchange matches these two orders, a trade happens and the assets get exchanged. The price at which the trade got executed becomes the "Last Traded Price" and this is the price that we see on the Exchange.
+
+When the next person places an order, the Exchange again checks if there is a matching order on the other 'side' (buy or sell), and so the "Last Traded Price" changes with each successive trade. A quick note, if there isn't an order at the same or better price (higher is better on the buy side and lower is better on the sell side, by common sense), then this order stays 'open', until a future order matches against it (or is canceled by the person who placed it).
+
+> But imagine a situation where there is no one to 'buy' a particular sell order or even the vice versa for a long time? There should be someone always ready to buy or sell any assets. That's when we need Market Makers!
+
+## Who are Market Makers and why do we even need them?
+
+Whenever an asset is bought or sold, there must be someone on the other end of the transaction. If you want to buy 10 ETH, you must find someone who wants to sell 10 ETH. However, it's unlikely that you will immediately find someone who wants to sell the exact number of ETH you want to buy. This is where market makers come in.
+
+**Market Makers are always ready to buy or sell!** When we place an order to sell our 10 ETH, a market maker is always ready to purchase it from you, even if it doesn't have a seller lined up. Without market makers, it would take considerably longer time for buyers and sellers to be matched with one another. This would reduce liquidity, making it more difficult to enter or exit positions and adding to the costs and risks of trading.
+
+#### Key Takeaways
+
+- Market makers provide liquidity by being always ready to buy or sell assets at any time.
+- Without market makers, far fewer trades would happen and companies would have more limited access to capital.
+- Market makers profit on the difference between the bid and ask prices on their trades.
+
+## Types of Exchanges:
+
+There's 2 types of exchanges:
+
+- **Centralized Exchanges**
+- **Decentralized Exchanges**
+
+### Centralized Exchanges
+
+Centralized exchanges are just like traditional stock exchanges where people buy and sell assets. It maintains an **order book** _(It's just a list of the currently open buy and sell orders for an asset, organized by price)_ to execute trades for participants of the exchange.
+
+On a centralized exchange, buyers and sellers offer up different prices for an asset. When other users find a listed price to be acceptable, they execute a trade and that price becomes the asset's market price.
+
+In a Centralized Exchange, our funds remain in their custody. But it's for a good reason because an individual can lose hundreds or thousands of dollars of crypto holdings simply by forgetting the key to a wallet. A centralized exchange will not allow this to happen, as it safeguards the holdings in place of the individual trader. So one downside of CEX is we don't have the custody of our own wallet as the private key of our wallet is never exposed to us.
+
+Some popular Centralized Exchanges include companies like **Binance**, **Coinbase**, **WazirX** etc.
+
+### Decentralized Exchanges
+
+On the other hand, Decentralized Exchanges are totally revolutionary as it allows buyers or sellers to trade without having to give up control over their funds to any intermediary or custodian. This type of infrastructure is entirely different from centralized exchanges where users hand over their crypto assets to the exchange, which acts as a custodian!
+
+But unlike Centralized Exchanges, the match making system in DEXes don't maintain Order Books to execute trades! Instead it has some mathematical formulas that determine the price of any crypto asset. These mathematical formulas are known as [**Automated Market Makers**](https://www.gemini.com/cryptopedia/amm-what-are-automated-market-makers).
+
+Some popular Decentralized Exchanges are projects like **Uniswap**, **Balancer**, **PancakeSwap** etc.
+
+> Huh! That's a lot of things to digest but are very crucial in order to understand how Balancer works. Let's now get into Balancer and how it works!
+
+## Terms glossary
+
+> Let's get some of the terms defined before we move forward!
+
+1. **Spot price:** It's the current market price of any asset! Spot prices change according to supply and demand!
+2. **Token:** It just represents any crypto currency.
+3. **Balancer pool:** It's just a pool that holds the tokens. It can contain up to 8 different tokens, each with their own arbitrary weights.
+4. **Weight:** The weights represent the percentage of value that the pool should be holding in each token at any time. That percentage of value the pool holds in each token is expected to be always very close to the pool weight.
+
+## What is Balancer?
+
+Balancer is a decentralized finance protocol running on Ethereum blockchain! It enables users to seamlessly exchange Ethereum-based assets in a decentralized manner. We will understand how it's much more than a traditional exchange as we move forward.
+
+Using Balancer users create funds based on the cryptocurrencies in their portfolios. These funds are known as Balancer pools, and any user wishing to provide liquidity (a measure of the ease in which assets can be exchanged) to a pool can do so by simply depositing an asset in them.
+
+Users who provide liquidity to a Balancer pool, earn a portion of the trading fee paid to the network for the use of their funds, and are rewarded with a custom cryptocurrency called BAL. These deposits are essential to the network, providing the liquidity needed for users to buy and sell cryptocurrencies on the platform.
+
+For example, a Balancer pool might start off with 50% ETH, 25% USDC and 25% COMP. If at some point, the price of COMP doubles, the pool automatically reduces the amount of COMP it holds so that it can retain 25% of the pool's value. So, where does the COMP go? Balancer's smart contracts make them available to traders looking to buy COMP as prices go up.
+
+## How does it work?
+
+## Understanding the mathematics behind Balancer
+
+Let's start from the Balancer pool's value and how it is determined! When we create a Balancer pool, we define the percentages and the weights of each token within it! The value of each pool is defined solely by the balance and weights of each token.
+
+The formula Balancer uses to find the Spot Price is defined by:
+
+> SP = (Bi / Wi) ÷ ( Bo / Wo)
+
+But before trying to understand the proof, let's first understand how it works by taking an example:
+
+Let's assume we have 2 tokens, A & B
+And the value of 1 A = $2000 & 1 B = $1
+
+If we provide 1 A / 500 B to the pool
+
+The values on each side becomes $2000/$500, which has an 80/20 weighing!
+
+If we would have provided 1A / 2000 B to the pool, that would have been a normal 50/50 pool!
+
+And in a normal 50/50 pool,
+SP = Balance_A/Balance_B because the weights are the same.
+
+But if we have an 80/20 pool, Balance_A/Balance_B doesn't really make as much sense. So we divide each balance by its weight [Balance_A/80]/[Balance_B/20]
+
+Spot price of A = [Balance_B/Weight_B]/[Balance_A/Weight_A] = [500/20]/[1/80] = 2000
+
+Spot price of B = [Balance_A/Weight_A]/[Balance_B/Weight_B] = (1/80)/(500/20) = 0.0005
+
+This means we need 0.0005 of A to get 1B.
