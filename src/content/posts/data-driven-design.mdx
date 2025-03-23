@@ -18,7 +18,7 @@ While I created [nine different card themes](https://github.com/SouravInsights/s
 
 ### The Tilted Card: Playful Dimension
 
-![Tilted card animation](https://file.notion.so/f/f/e400fdcc-8277-4b9e-92ac-2d8bebf95782/e71291dc-03d6-4ccf-b88a-8a592067100c/CleanShot_2025-03-17_at_19.04.42.gif?table=block&id=1b952a94-fd23-8014-8f6c-e80d17226f74&spaceId=e400fdcc-8277-4b9e-92ac-2d8bebf95782&expirationTimestamp=1742616000000&signature=A03t98b7sQ322I4FHxOg7VyCY3fS4fUkKu0PRsL8jjo&downloadName=CleanShot+2025-03-17+at+19.04.42.gif)
+![Tilted card animation](/blog/data-driven-design/1.gif)
 
 The tilted card ([see code](https://github.com/SouravInsights/souravinsights.com/blob/main/src/app/curated-links/components/card-themes/TiltedCard.tsx)) is the one I like the most actually. It uses subtle 3D transforms to create a sense of depth. Getting this 3D tilt animation just right was one of the most satisfying part. I spent some time tweaking the rotation values and perspective settings until it felt natural:
 
@@ -58,7 +58,7 @@ Also, if you notice, I added the `transform-gpu` class to force hardware acceler
 
 As if multiple card theme weren't enough, I created these different color presets to let people further customize their experience.
 
-![Color preset animation](https://file.notion.so/f/f/e400fdcc-8277-4b9e-92ac-2d8bebf95782/a18df5f8-e64a-482d-9f7a-442264133188/CleanShot_2025-03-17_at_20.43.32.gif?table=block&id=1b952a94-fd23-8068-9997-dc5f2cd72487&spaceId=e400fdcc-8277-4b9e-92ac-2d8bebf95782&expirationTimestamp=1742616000000&signature=mLxUHVC5iEkiybIlYv9X-PUJm-RnDBTtbZMWsjMIn3A&downloadName=CleanShot+2025-03-17+at+20.43.32.gif)
+![Color preset animation](/blog/data-driven-design/2.gif)
 
 Rather than using random colors, I created a carefully curated set of color presets that work harmoniously in both light and dark modes:
 
@@ -141,7 +141,7 @@ Notice how each card theme has its own specific tracking event (`link_clicked_ti
 
 After collecting data for a while, I was surprised by the theme selection breakdown:
 
-![Theme selection statistics](https://file.notion.so/f/f/e400fdcc-8277-4b9e-92ac-2d8bebf95782/898e26a0-31c0-49c8-aaa7-b2c86e41e799/CleanShot_2025-03-16_at_21.37.332x.png?table=block&id=1b952a94-fd23-8086-ac94-e7d121b4da48&spaceId=e400fdcc-8277-4b9e-92ac-2d8bebf95782&expirationTimestamp=1742616000000&signature=YcqRuxWtITGuvjzwnMps6eU-K87QO4DMhv21ZrNhvPY&downloadName=CleanShot+2025-03-16+at+21.37.33%402x.png)
+![Theme selection statistics](/blog/data-driven-design/3.png)
 
 The tilted theme (my default) dominated with **888 selections**, while other themes had between just 17-34 selections each:
 
@@ -163,9 +163,9 @@ I'm so glad that went an extra mile with adding Posthog tacking for all these ev
 
 > Here's how the theme selection UI originally looked like:
 
-![Original theme selection UI](https://file.notion.so/f/f/e400fdcc-8277-4b9e-92ac-2d8bebf95782/9fdef9c6-68bf-4529-a9b5-7ef09c9bda71/CleanShot_2025-03-17_at_21.04.492x.png?table=block&id=1b952a94-fd23-808e-a0ec-f3821371a9d6&spaceId=e400fdcc-8277-4b9e-92ac-2d8bebf95782&expirationTimestamp=1742616000000&signature=ave9n8HUBM3dtwLpZT9MX9bgei2yUYm3VY_fbSIBS-c&downloadName=CleanShot+2025-03-17+at+21.04.49%402x.png)
+![Original theme selection UI](/blog/data-driven-design/4.png)
 
-![Original theme selection panel](https://file.notion.so/f/f/e400fdcc-8277-4b9e-92ac-2d8bebf95782/db02dbd8-35a6-427e-b6cb-b9dbb6cf4d1f/CleanShot_2025-03-17_at_21.02.462x.png?table=block&id=1b952a94-fd23-80ea-9ae3-f4f903f2939f&spaceId=e400fdcc-8277-4b9e-92ac-2d8bebf95782&expirationTimestamp=1742616000000&signature=bxb-oljMC8TmvPnUM00jmJ1hBhb7UBq2Xi4HPHQo8mY&downloadName=CleanShot+2025-03-17+at+21.02.46%402x.png)
+![Original theme selection panel](/blog/data-driven-design/5.png)
 
 ### Problems with this layout
 
@@ -178,7 +178,7 @@ The discoverability of the customization options could be a major factor in why 
 
 So I decided to completely redesign the UI to improve discoverability:
 
-![Redesigned theme selection UI](https://file.notion.so/f/f/e400fdcc-8277-4b9e-92ac-2d8bebf95782/58b123e4-304d-4333-af77-185cb9082299/CleanShot_2025-03-17_at_21.21.422x.png?table=block&id=1b952a94-fd23-80c1-9d6c-cc55ff8bac6f&spaceId=e400fdcc-8277-4b9e-92ac-2d8bebf95782&expirationTimestamp=1742616000000&signature=FbRRV9b9pJeMyKgTB1FtHqGBtoeaQlDtbmmYv-7TJtc&downloadName=CleanShot+2025-03-17+at+21.21.42%402x.png)
+![Redesigned theme selection UI](/blog/data-driven-design/6.png)
 
 Key improvements in the redesign:
 
