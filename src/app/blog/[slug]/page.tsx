@@ -2,6 +2,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import { getPostBySlug } from "../utils/blogUtils";
 import BlogPostContent from "../components/BlogPostContent";
+import Playground from "../components/Playground"; // Import the Playground component
 
 interface PostPageProps {
   params: {
@@ -44,7 +45,9 @@ export default function PostPage({ params }: PostPageProps) {
     notFound();
   }
 
-  const content = <MDXRemote source={post.content} />;
+  const content = (
+    <MDXRemote source={post.content} components={{ Playground }} />
+  );
 
   return <BlogPostContent post={post} content={content} />;
 }
