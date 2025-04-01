@@ -1,14 +1,24 @@
 ---
-title: Learning by Building: The Heart Button Animation from Scratch with TypeScript
+title: Learning by Building: The Delightful Like Button Animation from Scratch
 date: 2025-04-01
-excerpt: Learn how to build an interactive animated heart button with SVG, TypeScript and React. We'll cover animation techniques, SVG manipulation, and add fun interactive elements.
+excerpt: Learn how to build an interactive animated heart button with SVG, TypeScript and React. I'll cover animation techniques, SVG manipulation, and add fun interactive elements.
 tags: ["react", "typescript", "animation", "svg", "tutorial"]
 readingTime: 15 min read
 ---
 
 import Playground from "@/app/blog/components/Playground";
 
-When building my blog, I wanted to create a like button that was more than just functional – it needed to be delightful, memorable, and almost irresistible to click. Inspired by Josh Comeau's 3D button techniques, I set out to craft a heart button with a liquid-filling animation that would bring a touch of magic to the user experience.
+When building my blog, I wanted to create a like button that was more than just functional – it needed to be delightful, memorable, and almost irresistible to click. This button is highly inspired by Josh Comeau's blog. I wanted to craft a similiar heart button with a liquid-filling animation that brings joy.
+
+> Here's a demo:
+
+<video
+  src="/blog/heart-button-tutorial/heart-button-demo.mp4"
+  controls
+  width="100%"
+  autoPlay={true}
+  style={{ borderRadius: "8px" }}
+/>
 
 In this post, I'll break down how I built this heart button step by step. Best of all? I've integrated an interactive code playground so you can experiment with the code in real-time, tweak values, and see immediate results - because we all learn better by doing.
 
@@ -33,6 +43,16 @@ With these principles in mind, I designed a heart button that:
 - Plays a satisfying sound that increases in pitch
 
 Now, let's build it together!
+
+> Quick tip: When you are working with the interactive code examples, you can collapse the TOC section - so you can have more space to interact with the playground.
+
+<video
+  src="/blog/heart-button-tutorial/collapsible-toc.mp4"
+  controls
+  width="100%"
+  autoPlay={true}
+  style={{ borderRadius: "8px" }}
+/>
 
 ## Step 1: Starting with the Basic SVG Heart
 
@@ -1114,6 +1134,10 @@ The heart button on this blog includes all the features we've covered, plus:
 
 The complete source code for this button can be found [here](https://github.com/SouravInsights/souravinsights.com/blob/main/src/app/blog/components/ThreeDLikeButton.tsx).
 
-I hope you've enjoyed this tutorial and found it helpful for understanding how to build engaging interactive UI elements. If you have any questions or want to share your own creations, I'd love to hear from you!
+## Closing thoughts
 
-Happy coding!
+The web doesn't have to be boring. Small moments of delight like this heart button can transform boring interactions into memorable experiences. As developers, we have the power to create these moments of joy.
+
+I hope this breakdown and the interactive playground - inspires you to experiment with your own ideas. If you build something delightful using these techniques, I'd love to see it! Share it with me on Twitter: [@souravinsights](https://twitter.com/souravinsights).
+
+Now go spread some joy on the web! ❤️
