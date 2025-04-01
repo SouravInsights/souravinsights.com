@@ -3,18 +3,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Clock,
-  Calendar,
-  Menu,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Clock, Calendar, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { PostData } from "../utils/blogUtils";
 import ThreeDLikeButton from "./ThreeDLikeButton";
 import ViewCounter from "./ViewCounter";
+import CollapsibleTOC from "./CollapsibleTOC";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -34,6 +28,7 @@ export default function BlogPostContent({
   const [tableOfContents, setTableOfContents] = useState<TOCItem[]>([]);
   const [activeHeading, setActiveHeading] = useState<string>("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [isTOCCollapsed, setIsTOCCollapsed] = useState<boolean>(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -101,6 +96,11 @@ export default function BlogPostContent({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [tableOfContents]);
+
+  // Update TOC collapsed state from child component
+  const handleTOCCollapse = (collapsed: boolean) => {
+    setIsTOCCollapsed(collapsed);
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -187,9 +187,11 @@ export default function BlogPostContent({
       )}
 
       <div className="flex flex-col lg:flex-row pt-12 lg:pt-0">
-        {/* Main Content */}
+        {/* Main Content - Dynamic width based on TOC state */}
         <article
-          className="w-full lg:w-2/3 px-4 lg:px-0 lg:pr-12"
+          className={`transition-all duration-500 ease-in-out w-full ${
+            isTOCCollapsed ? "lg:w-[90%]" : "lg:w-2/3"
+          } px-4 lg:px-0 lg:pr-12`}
           ref={contentRef}
         >
           <motion.div
@@ -237,73 +239,30 @@ export default function BlogPostContent({
           </motion.div>
         </article>
 
-        {/* Right Sidebar - Desktop Only */}
-        <aside className="hidden lg:block w-1/3">
-          <div className="sticky top-8 space-y-8">
-            {/* Table of Contents */}
-            {tableOfContents.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
-              >
-                <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 flex items-center">
-                  <div className="flex space-x-2 mr-3">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <span className="font-mono text-sm text-gray-600 dark:text-gray-400">
-                    toc.md
-                  </span>
-                </div>
+        {/* Right Sidebar - Dynamic width based on TOC state */}
+        <aside
+          className={`hidden lg:flex flex-col transition-all duration-500 ease-in-out ${
+            isTOCCollapsed ? "lg:w-[10%]" : "lg:w-1/3"
+          }`}
+        >
+          <div className="sticky top-32 space-y-8 w-full flex flex-col items-center">
+            {/* Collapsible Table of Contents */}
+            <CollapsibleTOC
+              tableOfContents={tableOfContents}
+              activeHeading={activeHeading}
+              onCollapseChange={handleTOCCollapse}
+            />
 
-                <div className="p-4">
-                  <nav className="overflow-y-auto max-h-[70vh] font-mono">
-                    <ul className="space-y-1">
-                      {tableOfContents.map((heading) => (
-                        <li
-                          key={heading.id}
-                          style={{
-                            marginLeft: `${(heading.level - 1) * 0.75}rem`,
-                          }}
-                        >
-                          <a
-                            href={`#${heading.id}`}
-                            className={`text-sm hover:text-green-600 dark:hover:text-green-400 transition-colors flex items-center py-1 truncate ${
-                              activeHeading === heading.id
-                                ? "text-green-600 dark:text-green-400 font-medium"
-                                : "text-gray-700 dark:text-gray-300"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              document
-                                .getElementById(heading.id)
-                                ?.scrollIntoView({
-                                  behavior: "smooth",
-                                });
-                            }}
-                          >
-                            {activeHeading === heading.id && (
-                              <ChevronRight className="h-3 w-3 mr-1 flex-shrink-0" />
-                            )}
-                            <span className="truncate">{heading.text}</span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Like Button */}
+            {/* Like Button - Always visible */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex justify-center pr-8"
+              className={`flex ${
+                isTOCCollapsed
+                  ? "justify-center mt-8"
+                  : "justify-center pr-8 w-full"
+              }`}
             >
               <ThreeDLikeButton slug={post.slug} />
             </motion.div>

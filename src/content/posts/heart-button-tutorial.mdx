@@ -1,0 +1,1143 @@
+---
+title: Learning by Building: The Delightful Like Button Animation from Scratch
+date: 2025-04-01
+excerpt: Learn how to build an interactive animated heart button with SVG, TypeScript and React. I'll cover animation techniques, SVG manipulation, and add fun interactive elements.
+tags: ["react", "typescript", "animation", "svg", "tutorial"]
+readingTime: 15 min read
+---
+
+import Playground from "@/app/blog/components/Playground";
+
+When building my blog, I wanted to create a like button that was more than just functional – it needed to be delightful, memorable, and almost irresistible to click. This button is highly inspired by Josh Comeau's blog. I wanted to craft a similiar heart button with a liquid-filling animation that brings joy.
+
+> Here's a demo:
+
+<video
+  src="/blog/heart-button-tutorial/heart-button-demo.mp4"
+  controls
+  width="100%"
+  autoPlay={true}
+  style={{ borderRadius: "8px" }}
+/>
+
+In this post, I'll break down how I built this heart button step by step. Best of all? I've integrated an interactive code playground so you can experiment with the code in real-time, tweak values, and see immediate results - because we all learn better by doing.
+
+We'll start with simple SVG shapes and gradually add interactivity, animations, facial expressions, particle effects, and even sound feedback. Let's dive in!
+
+## The Vision: A Button Worth Clicking
+
+Before diving into code, let's consider what makes an interactive UI element truly engaging:
+
+1. **Visual feedback** - The element should respond visually to user interaction
+2. **Progressive changes** - Multiple interactions should reveal more features or states
+3. **Personality** - Adding character through expressions or animations
+4. **Multi-sensory feedback** - Visual, auditory, and motion cues
+5. **Surprising elements** - Little delights that aren't immediately obvious
+
+With these principles in mind, I designed a heart button that:
+
+- Fills up gradually when clicked, like liquid being poured in
+- Changes colors as it fills
+- Has a cute face that reacts to your interactions
+- Creates a brief celebration with particles
+- Plays a satisfying sound that increases in pitch
+
+Now, let's build it together!
+
+> Quick tip: When you are working with the interactive code examples, you can collapse the TOC section - so you can have more space to interact with the playground.
+
+<video
+  src="/blog/heart-button-tutorial/collapsible-toc.mp4"
+  controls
+  width="100%"
+  autoPlay={true}
+  style={{ borderRadius: "8px" }}
+/>
+
+## Step 1: Starting with the Basic SVG Heart
+
+First, let's create a simple heart shape. You can design it in Figma!
+
+<Playground
+  title="Basic SVG Heart"
+  description="A simple heart shape created using SVG path"
+  files={{
+    "/App.tsx": `import React from 'react';
+
+const HeartButton: React.FC = () => {
+return (
+
+<div className="heart-container">
+  <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+    <path
+      d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+      fill="#f87171"
+      stroke="#450a0a"
+      strokeWidth="1.5"
+    />
+  </svg>
+</div>
+); };
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="350px"
+/>
+
+**Experiment:** Try changing the `fill` color to `"#3b82f6"` (blue) or `"#10b981"` (green), or try `fill="none"` to see just the outline.
+
+## Step 2: Creating a Stateful Button
+
+Now, let's add interactivity by making the heart a clickable button with state:
+
+<Playground
+  title="Stateful Heart Button"
+  description="A clickable heart button that tracks how many times it's been clicked"
+  files={{
+    "/App.tsx": `import React, { useState } from 'react';
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const MAX_LIKES: number = 10;
+
+// Calculate fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+return (
+
+<div
+  className="heart-container"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "10px",
+  }}
+>
+  <button
+    onClick={() => setLikes((prev) => Math.min(prev + 1, MAX_LIKES))}
+    aria-label="Like button"
+    style={{ background: "transparent", border: "none", cursor: "pointer" }}
+  >
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+      <path
+        d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+        fill="#f87171"
+        stroke="#450a0a"
+        strokeWidth="1.5"
+      />
+    </svg>
+  </button>
+  <div style={{ fontFamily: "monospace" }}>
+    Likes: {likes}/{MAX_LIKES}
+  </div>
+</div>
+); };
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="400px"
+/>
+
+Now our heart is a clickable button that tracks likes! The button increases the like count each time it's clicked, up to a maximum of 10 likes.
+
+We've also calculated a `fillPercentage` based on the current number of likes compared to the maximum. We'll use this in the next step to create a visual fill effect.
+
+**Experiment:** Try changing `MAX_LIKES` to different values (2, 5, 20) to see how it affects the button behavior.
+
+## Step 3: Adding the Fill Animation Using Clip Path
+
+Let's make our heart visually respond to being clicked by adding a fill animation using the SVG clip-path property:
+
+<Playground
+  title="Heart Fill Animation"
+  description="Heart button that fills up as you click it using clip-path"
+  files={{
+    "/App.tsx": `import React, { useState } from 'react';
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const MAX_LIKES: number = 10;
+
+// Calculate fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+return (
+
+<div className="heart-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+<button
+onClick={() => setLikes(prev => Math.min(prev + 1, MAX_LIKES))}
+aria-label="Like button"
+style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} >
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+{/* Background heart (always visible) */}
+<path 
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z" 
+            fill="#f1f5f9"
+            stroke="#475569"
+            strokeWidth="1.5"
+          />
+
+          {/* Filled heart with clip path */}
+          <path
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+            fill="#f87171"
+            style={{
+              clipPath: \`polygon(0% \${100-fillPercentage}%, 100% \${100-fillPercentage}%, 100% 100%, 0% 100%)\`
+            }}
+          />
+        </svg>
+      </button>
+      <div style={{ fontFamily: 'monospace' }}>
+        Likes: {likes}/{MAX_LIKES} | Fill: {Math.round(fillPercentage)}%
+      </div>
+    </div>
+
+);
+};
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="450px"
+/>
+
+Now our heart fills up as we click! We achieved this with these key changes:
+
+1. Added a background heart with a light fill color
+2. Added a second heart path with a red fill color
+3. Applied a clip-path to the red heart that changes with the fillPercentage
+
+The clip-path we're using creates a horizontal slice that moves upward as the fillPercentage increases. This gives the illusion of the heart filling up from bottom to top.
+
+**Experiment:** Try modifying the clip-path to create different filling effects:
+
+- Fill from left to right:
+  ```
+  clipPath: `polygon(0% 0%, ${fillPercentage}% 0%, ${fillPercentage}% 100%, 0% 100%)`
+  ```
+- Fill from center outward:
+  ```
+  clipPath: `circle(${fillPercentage/2}% at center)`
+  ```
+
+## Step 4: Smooth Animation with useEffect
+
+Our current implementation updates the fill instantly when clicking. Let's make the filling animation smoother by implementing a gradual fill using `useEffect`:
+
+<Playground
+  title="Smooth Fill Animation"
+  description="Heart button with a smooth filling animation using useEffect"
+  files={{
+    "/App.tsx": `import React, { useState, useEffect, useRef } from 'react';
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const [animatedFillPercentage, setAnimatedFillPercentage] = useState<number>(0);
+const fillAnimationRef = useRef<NodeJS.Timeout | null>(null);
+const MAX_LIKES: number = 10;
+
+// Calculate target fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+// Animate the fill percentage
+useEffect(() => {
+// Clear any existing animation
+if (fillAnimationRef.current) {
+clearInterval(fillAnimationRef.current);
+}
+
+    const targetPercentage: number = fillPercentage;
+    let currentPercentage: number = animatedFillPercentage;
+
+    if (targetPercentage > currentPercentage) {
+      fillAnimationRef.current = setInterval(() => {
+        currentPercentage += 2; // Increment by 2% each frame
+
+        if (currentPercentage >= targetPercentage) {
+          currentPercentage = targetPercentage;
+          clearInterval(fillAnimationRef.current!);
+        }
+
+        setAnimatedFillPercentage(currentPercentage);
+      }, 16); // ~60fps
+    }
+
+    return () => {
+      if (fillAnimationRef.current) {
+        clearInterval(fillAnimationRef.current);
+      }
+    };
+
+}, [fillPercentage, animatedFillPercentage]);
+
+return (
+
+<div className="heart-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+<button
+onClick={() => setLikes(prev => Math.min(prev + 1, MAX_LIKES))}
+aria-label="Like button"
+style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} >
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+{/* Background heart */}
+<path 
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z" 
+            fill="#f1f5f9"
+            stroke="#475569"
+            strokeWidth="1.5"
+          />
+
+          {/* Filled heart with clip path */}
+          <path
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+            fill="#f87171"
+            style={{
+              clipPath: \`polygon(0% \${100-animatedFillPercentage}%, 100% \${100-animatedFillPercentage}%, 100% 100%, 0% 100%)\`
+            }}
+          />
+        </svg>
+      </button>
+      <div style={{ fontFamily: 'monospace' }}>
+        Likes: {likes}/{MAX_LIKES} | Fill: {Math.round(animatedFillPercentage)}%
+      </div>
+    </div>
+
+);
+};
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="600px"
+/>
+
+Now the heart fills up smoothly rather than instantly jumping to the new fill level! Here's how we accomplished this:
+
+1. Added a new state variable `animatedFillPercentage` to track the current animated fill level
+2. Used `useEffect` to create an animation loop when the target `fillPercentage` changes
+3. Used `setInterval` to gradually increment the `animatedFillPercentage` until it reaches the target
+4. Used `useRef` to keep track of the interval so we can clean it up properly
+
+The key to smooth animation is making small incremental changes at a high frame rate. We increment by 2% every 16ms, which gives approximately 60 frames per second.
+
+**Experiment:** Try changing the animation speed by modifying:
+
+- The increment value (replace `currentPercentage += 2` with a smaller number for slower animation or larger for faster)
+- The interval timing (replace `16` with a different number - higher for slower, lower for faster)
+
+## Step 5: Adding Color Transitions
+
+Let's make the heart change colors as it fills up:
+
+<Playground
+  title="Color-Changing Heart"
+  description="Heart that changes color as it fills up"
+  files={{
+    "/App.tsx": `import React, { useState, useEffect, useRef } from 'react';
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const [animatedFillPercentage, setAnimatedFillPercentage] = useState<number>(0);
+const fillAnimationRef = useRef<NodeJS.Timeout | null>(null);
+const MAX_LIKES: number = 10;
+
+// Calculate target fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+// Get color based on fill percentage
+const getFillColor = (): string => {
+if (animatedFillPercentage <= 10) return "#f87171"; // red
+if (animatedFillPercentage <= 30) return "#fb923c"; // orange
+if (animatedFillPercentage <= 50) return "#facc15"; // yellow
+if (animatedFillPercentage <= 70) return "#4ade80"; // green
+if (animatedFillPercentage <= 90) return "#60a5fa"; // blue
+return "#a78bfa"; // purple
+};
+
+// Animation effect
+useEffect(() => {
+// Clear any existing animation
+if (fillAnimationRef.current) {
+clearInterval(fillAnimationRef.current);
+}
+
+    const targetPercentage: number = fillPercentage;
+    let currentPercentage: number = animatedFillPercentage;
+
+    if (targetPercentage > currentPercentage) {
+      fillAnimationRef.current = setInterval(() => {
+        currentPercentage += 2; // Increment by 2% each frame
+
+        if (currentPercentage >= targetPercentage) {
+          currentPercentage = targetPercentage;
+          clearInterval(fillAnimationRef.current!);
+        }
+
+        setAnimatedFillPercentage(currentPercentage);
+      }, 16); // ~60fps
+    }
+
+    return () => {
+      if (fillAnimationRef.current) {
+        clearInterval(fillAnimationRef.current);
+      }
+    };
+
+}, [fillPercentage, animatedFillPercentage]);
+
+return (
+
+<div className="heart-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+<button
+onClick={() => setLikes(prev => Math.min(prev + 1, MAX_LIKES))}
+aria-label="Like button"
+style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} >
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+{/* Background heart */}
+<path 
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z" 
+            fill="#f1f5f9"
+            stroke="#475569"
+            strokeWidth="1.5"
+          />
+
+          {/* Filled heart with clip path */}
+          <path
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+            fill={getFillColor()}
+            style={{
+              clipPath: \`polygon(0% \${100-animatedFillPercentage}%, 100% \${100-animatedFillPercentage}%, 100% 100%, 0% 100%)\`
+            }}
+          />
+        </svg>
+      </button>
+      <div style={{ fontFamily: 'monospace' }}>
+        Likes: {likes}/{MAX_LIKES} | Color: {getFillColor()}
+      </div>
+    </div>
+
+);
+};
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="630px"
+/>
+
+Now our heart changes color as it fills up! We've added a `getFillColor` function that returns different colors based on the current `animatedFillPercentage`. This creates a rainbow effect as the heart fills, making the interaction more visually engaging.
+
+**Experiment:** Try using HSL color interpolation for a smooth rainbow effect:
+
+```tsx
+const getFillColor = (): string => {
+  // Map percentage to hue (0-360)
+  const hue = Math.floor((animatedFillPercentage / 100) * 360);
+  return `hsl(${hue}, 80%, 65%)`;
+};
+```
+
+## Step 6: Adding Facial Expressions
+
+Let's make our heart even more engaging by adding facial expressions that change based on the number of likes:
+
+<Playground
+  title="Heart with Expressions"
+  description="Heart button with facial expressions that change based on interaction"
+  files={{
+    "/App.tsx": `import React, { useState, useEffect, useRef } from 'react';
+
+// Define possible expression types for type safety
+type ExpressionType = 'neutral' | 'smile' | 'happy' | 'very-happy' | 'max';
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const [animatedFillPercentage, setAnimatedFillPercentage] = useState<number>(0);
+const fillAnimationRef = useRef<NodeJS.Timeout | null>(null);
+const MAX_LIKES: number = 10;
+
+// Calculate target fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+// Get color based on fill percentage
+const getFillColor = (): string => {
+if (animatedFillPercentage <= 10) return "#f87171"; // red
+if (animatedFillPercentage <= 30) return "#fb923c"; // orange
+if (animatedFillPercentage <= 50) return "#facc15"; // yellow
+if (animatedFillPercentage <= 70) return "#4ade80"; // green
+if (animatedFillPercentage <= 90) return "#60a5fa"; // blue
+return "#a78bfa"; // purple
+};
+
+const VERY_HAPPY_THRESHOLD = 0.7;
+const HAPPY_THRESHOLD = 0.3;
+
+// Get expression based on like count
+const getHeartExpression = (): ExpressionType => {
+if (likes === 0) return "neutral";
+if (likes === MAX_LIKES) return "max";
+if (likes > MAX_LIKES \* VERY_HAPPY_THRESHOLD) return "very-happy";
+if (likes > MAX_LIKES \* HAPPY_THRESHOLD) return "happy";
+return "smile";
+};
+
+// Animation effect
+useEffect(() => {
+// Clear any existing animation
+if (fillAnimationRef.current) {
+clearInterval(fillAnimationRef.current);
+}
+
+    const targetPercentage: number = fillPercentage;
+    let currentPercentage: number = animatedFillPercentage;
+
+    if (targetPercentage > currentPercentage) {
+      fillAnimationRef.current = setInterval(() => {
+        currentPercentage += 2; // Increment by 2% each frame
+
+        if (currentPercentage >= targetPercentage) {
+          currentPercentage = targetPercentage;
+          clearInterval(fillAnimationRef.current!);
+        }
+
+        setAnimatedFillPercentage(currentPercentage);
+      }, 16); // ~60fps
+    }
+
+    return () => {
+      if (fillAnimationRef.current) {
+        clearInterval(fillAnimationRef.current);
+      }
+    };
+
+}, [fillPercentage, animatedFillPercentage]);
+
+return (
+
+<div className="heart-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+<button
+onClick={() => setLikes(prev => Math.min(prev + 1, MAX_LIKES))}
+aria-label="Like button"
+style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} >
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+{/* Background heart */}
+<path 
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z" 
+            fill="#f1f5f9"
+            stroke="#475569"
+            strokeWidth="1.5"
+          />
+
+          {/* Filled heart with clip path */}
+          <path
+            d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+            fill={getFillColor()}
+            style={{
+              clipPath: \`polygon(0% \${100-animatedFillPercentage}%, 100% \${100-animatedFillPercentage}%, 100% 100%, 0% 100%)\`
+            }}
+          />
+
+          {/* Facial expressions based on state */}
+          {getHeartExpression() === "neutral" && (
+            <>
+              <circle cx="22" cy="25" r="2" fill="#475569" />
+              <circle cx="38" cy="25" r="2" fill="#475569" />
+              <path d="M24 35H36" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+            </>
+          )}
+
+          {getHeartExpression() === "smile" && (
+            <>
+              <circle cx="22" cy="25" r="2" fill="#475569" />
+              <circle cx="38" cy="25" r="2" fill="#475569" />
+              <path d="M24 33C26 35 34 35 36 33" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+            </>
+          )}
+
+          {getHeartExpression() === "happy" && (
+            <>
+              <circle cx="22" cy="25" r="2" fill="#475569" />
+              <circle cx="38" cy="25" r="2" fill="#475569" />
+              <path d="M24 32C26 36 34 36 36 32" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+            </>
+          )}
+
+          {getHeartExpression() === "very-happy" && (
+            <>
+              <path d="M20 25C20 23.8954 20.8954 23 22 23C23.1046 23 24 23.8954 24 25" stroke="#475569" strokeWidth="2" />
+              <path d="M36 25C36 23.8954 36.8954 23 38 23C39.1046 23 40 23.8954 40 25" stroke="#475569" strokeWidth="2" />
+              <path d="M24 32C26 36 34 36 36 32" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+            </>
+          )}
+
+          {getHeartExpression() === "max" && (
+            <>
+              <path d="M20 23C20 24.1046 20.8954 25 22 25C23.1046 25 24 24.1046 24 23" stroke="#475569" strokeWidth="2" />
+              <path d="M36 23C36 24.1046 36.8954 25 38 25C39.1046 25 40 24.1046 40 23" stroke="#475569" strokeWidth="2" />
+              <path d="M24 33C26 37 34 37 36 33" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M30 29L33 26M30 29L27 26" stroke="#475569" strokeWidth="1.5" />
+            </>
+          )}
+        </svg>
+      </button>
+      <div style={{ fontFamily: 'monospace' }}>
+        Likes: {likes}/{MAX_LIKES} | Expression: {getHeartExpression()}
+      </div>
+    </div>
+
+);
+};
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="950px"
+/>
+
+Now our heart has a face that changes expression based on how many likes it has received! We've added:
+
+1. A TypeScript type for different expressions
+2. A function to determine which expression to show based on like count
+3. Different SVG elements for eyes and mouth in each expression state
+
+Each expression gets progressively happier as the number of likes increases:
+
+- **neutral**: Basic dots for eyes and a straight line for the mouth
+- **smile**: Same eyes but with a slight smile
+- **happy**: Same eyes with a bigger smile
+- **very-happy**: Curved eyebrows with a big smile
+- **max**: Upside-down eyebrows, biggest smile, and a blush mark
+
+**Experiment:** Try creating a custom expression by modifying the SVG elements. For example, try to create a heart with a wink expression.
+
+## Step 7: Adding Particle Effects
+
+Let's make our heart button even more engaging by adding particle effects when it's clicked:
+
+<Playground
+  title="Heart with Particle Effects"
+  description="Heart button that emits particles when clicked"
+  files={{
+    "/App.tsx": `import React, { useState, useEffect, useRef } from 'react';
+
+// Define the Particle interface
+interface Particle {
+id: string;
+x: number;
+y: number;
+size: number;
+rotation: number;
+color: string;
+}
+
+// Define possible expression types
+type ExpressionType = 'neutral' | 'smile' | 'happy' | 'very-happy' | 'max';
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const [animatedFillPercentage, setAnimatedFillPercentage] = useState<number>(0);
+const [particles, setParticles] = useState<Particle[]>([]);
+const fillAnimationRef = useRef<NodeJS.Timeout | null>(null);
+const MAX_LIKES: number = 10;
+
+// Calculate target fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+// Get color based on fill percentage
+const getFillColor = (): string => {
+if (animatedFillPercentage <= 10) return "#f87171"; // red
+if (animatedFillPercentage <= 30) return "#fb923c"; // orange
+if (animatedFillPercentage <= 50) return "#facc15"; // yellow
+if (animatedFillPercentage <= 70) return "#4ade80"; // green
+if (animatedFillPercentage <= 90) return "#60a5fa"; // blue
+return "#a78bfa"; // purple
+};
+
+const VERY_HAPPY_THRESHOLD = 0.7;
+const HAPPY_THRESHOLD = 0.3;
+
+// Get expression based on like count
+const getHeartExpression = (): ExpressionType => {
+if (likes === 0) return "neutral";
+if (likes === MAX_LIKES) return "max";
+if (likes > MAX_LIKES \* VERY_HAPPY_THRESHOLD) return "very-happy";
+if (likes > MAX_LIKES \* HAPPY_THRESHOLD) return "happy";
+return "smile";
+};
+
+// Generate particles
+const generateParticles = (): void => {
+const newParticles: Particle[] = [];
+const colors: string[] = [
+'#f87171', '#fb923c', '#fbbf24', '#4ade80',
+'#60a5fa', '#a78bfa', '#f472b6'
+];
+
+    for (let i = 0; i < 10; i++) {
+      newParticles.push({
+        id: \`particle-\${Date.now()}-\${i}\`,
+        x: (Math.random() - 0.5) * 100, // Random horizontal spread
+        y: -(Math.random() * 80 + 10),  // Mostly upward direction
+        size: Math.random() * 8 + 4,    // Varied sizes
+        rotation: Math.random() * 360,  // Random rotation
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+
+    setParticles([...particles, ...newParticles]);
+
+    // Clean up particles after animation
+    setTimeout(() => {
+      setParticles(prevParticles =>
+        prevParticles.filter(p => !newParticles.find(np => np.id === p.id))
+      );
+    }, 1000);
+
+};
+
+// Handle like button click
+const handleLike = (): void => {
+if (likes < MAX_LIKES) {
+setLikes(prev => prev + 1);
+generateParticles();
+}
+};
+
+// Animation effect
+useEffect(() => {
+// Clear any existing animation
+if (fillAnimationRef.current) {
+clearInterval(fillAnimationRef.current);
+}
+
+    const targetPercentage: number = fillPercentage;
+    let currentPercentage: number = animatedFillPercentage;
+
+    if (targetPercentage > currentPercentage) {
+      fillAnimationRef.current = setInterval(() => {
+        currentPercentage += 2; // Increment by 2% each frame
+
+        if (currentPercentage >= targetPercentage) {
+          currentPercentage = targetPercentage;
+          clearInterval(fillAnimationRef.current!);
+        }
+
+        setAnimatedFillPercentage(currentPercentage);
+      }, 16); // ~60fps
+    }
+
+    return () => {
+      if (fillAnimationRef.current) {
+        clearInterval(fillAnimationRef.current);
+      }
+    };
+
+}, [fillPercentage, animatedFillPercentage]);
+
+return (
+
+<div className="heart-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+<div style={{ position: 'relative', width: '60px', height: '60px' }}>
+{/* Particle Effects */}
+{particles.map(particle => (
+<div
+key={particle.id}
+style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              width: particle.size,
+              height: particle.size,
+              borderRadius: '50%',
+              backgroundColor: particle.color,
+              transform: \`translate(-50%, -50%) translate(\${particle.x}px, \${particle.y}px) rotate(\${particle.rotation}deg)\`,
+              opacity: 0,
+              transition: 'all 1s ease-out',
+              animation: 'fadeOut 1s ease-out forwards'
+            }}
+/>
+))}
+
+        <button
+          onClick={handleLike}
+          aria-label="Like button"
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+        >
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            {/* Background heart */}
+            <path
+              d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+              fill="#f1f5f9"
+              stroke="#475569"
+              strokeWidth="1.5"
+            />
+
+            {/* Filled heart with clip path */}
+            <path
+              d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+              fill={getFillColor()}
+              style={{
+                clipPath: \`polygon(0% \${100-animatedFillPercentage}%, 100% \${100-animatedFillPercentage}%, 100% 100%, 0% 100%)\`
+              }}
+            />
+
+            {/* Facial expressions based on state */}
+            {getHeartExpression() === "neutral" && (
+              <>
+                <circle cx="22" cy="25" r="2" fill="#475569" />
+                <circle cx="38" cy="25" r="2" fill="#475569" />
+                <path d="M24 35H36" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+              </>
+            )}
+
+            {getHeartExpression() === "smile" && (
+              <>
+                <circle cx="22" cy="25" r="2" fill="#475569" />
+                <circle cx="38" cy="25" r="2" fill="#475569" />
+                <path d="M24 33C26 35 34 35 36 33" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+              </>
+            )}
+
+            {getHeartExpression() === "happy" && (
+              <>
+                <circle cx="22" cy="25" r="2" fill="#475569" />
+                <circle cx="38" cy="25" r="2" fill="#475569" />
+                <path d="M24 32C26 36 34 36 36 32" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+              </>
+            )}
+
+            {getHeartExpression() === "very-happy" && (
+              <>
+                <path d="M20 25C20 23.8954 20.8954 23 22 23C23.1046 23 24 23.8954 24 25" stroke="#475569" strokeWidth="2" />
+                <path d="M36 25C36 23.8954 36.8954 23 38 23C39.1046 23 40 23.8954 40 25" stroke="#475569" strokeWidth="2" />
+                <path d="M24 32C26 36 34 36 36 32" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+              </>
+            )}
+
+            {getHeartExpression() === "max" && (
+              <>
+                <path d="M20 23C20 24.1046 20.8954 25 22 25C23.1046 25 24 24.1046 24 23" stroke="#475569" strokeWidth="2" />
+                <path d="M36 23C36 24.1046 36.8954 25 38 25C39.1046 25 40 24.1046 40 23" stroke="#475569" strokeWidth="2" />
+                <path d="M24 33C26 37 34 37 36 33" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M30 29L33 26M30 29L27 26" stroke="#475569" strokeWidth="1.5" />
+              </>
+            )}
+          </svg>
+        </button>
+      </div>
+      <div style={{ fontFamily: 'monospace' }}>
+        Likes: {likes}/{MAX_LIKES} | Particles: {particles.length}
+      </div>
+
+      <style>
+        {
+          \`@keyframes fadeOut {
+            0% { opacity: 1; transform: translate(-50%, -50%) translate(0px, 0px) rotate(0deg); }
+            100% { opacity: 0; transform: translate(-50%, -50%) translate(\${(Math.random() - 0.5) * 100}px, \${-(Math.random() * 80 + 10)}px) rotate(\${Math.random() * 360}deg); }
+          }\`
+        }
+      </style>
+    </div>
+
+);
+};
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="950px"
+/>
+
+Now when you click the heart button, it erupts with colorful particles! This adds a delightful sense of celebration to each interaction. Here's what we added:
+
+1. A Particle interface to define the properties of each particle
+2. A `generateParticles` function that creates randomized particles
+3. CSS animations to make the particles move and fade out
+4. A modified click handler that generates particles on each click
+
+The particles have random:
+
+- Sizes
+- Colors (from our defined palette)
+- Directions (mostly upward)
+- Rotations
+
+**Experiment:** Try modifying the particle behavior:
+
+- Change the number of particles (increase the number in the for loop)
+- Adjust the particle size range
+- Create different particle shapes by changing the borderRadius
+
+## Step 8: Using Framer Motion for Better Animations
+
+The demos above use basic CSS and React state for animations. For production use, I recommend using a library like Framer Motion for smoother animations and better performance. Here's a simplified version that shows how we might implement some of these animations with Framer Motion:
+
+<Playground
+  title="Heart with Framer Motion"
+  description="Using Framer Motion for smoother animations"
+  files={{
+    "/App.tsx": `import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface Particle {
+id: string;
+x: number;
+y: number;
+size: number;
+rotation: number;
+color: string;
+}
+
+const HeartButton: React.FC = () => {
+const [likes, setLikes] = useState<number>(0);
+const [animatedFillPercentage, setAnimatedFillPercentage] = useState<number>(0);
+const [particles, setParticles] = useState<Particle[]>([]);
+const fillAnimationRef = useRef<NodeJS.Timeout | null>(null);
+const MAX_LIKES: number = 10;
+
+// Calculate target fill percentage
+const fillPercentage: number = Math.min(100, (likes / MAX_LIKES) \* 100);
+
+// Get color based on fill percentage
+const getFillColor = (): string => {
+if (animatedFillPercentage <= 10) return "#f87171"; // red
+if (animatedFillPercentage <= 30) return "#fb923c"; // orange
+if (animatedFillPercentage <= 50) return "#facc15"; // yellow
+if (animatedFillPercentage <= 70) return "#4ade80"; // green
+if (animatedFillPercentage <= 90) return "#60a5fa"; // blue
+return "#a78bfa"; // purple
+};
+
+// Generate particles
+const generateParticles = (): void => {
+const newParticles: Particle[] = [];
+const colors: string[] = [
+'#f87171', '#fb923c', '#fbbf24', '#4ade80',
+'#60a5fa', '#a78bfa', '#f472b6'
+];
+
+    for (let i = 0; i < 10; i++) {
+      newParticles.push({
+        id: \`particle-\${Date.now()}-\${i}\`,
+        x: (Math.random() - 0.5) * 100,
+        y: -(Math.random() * 80 + 10),
+        size: Math.random() * 8 + 4,
+        rotation: Math.random() * 360,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+
+    setParticles([...particles, ...newParticles]);
+
+    // Clean up particles after animation
+    setTimeout(() => {
+      setParticles(prevParticles =>
+        prevParticles.filter(p => !newParticles.find(np => np.id === p.id))
+      );
+    }, 1000);
+
+};
+
+// Handle like button click
+const handleLike = (): void => {
+if (likes < MAX_LIKES) {
+setLikes(prev => prev + 1);
+generateParticles();
+}
+};
+
+// Animation effect
+useEffect(() => {
+// Clear any existing animation
+if (fillAnimationRef.current) {
+clearInterval(fillAnimationRef.current);
+}
+
+    const targetPercentage: number = fillPercentage;
+    let currentPercentage: number = animatedFillPercentage;
+
+    if (targetPercentage > currentPercentage) {
+      fillAnimationRef.current = setInterval(() => {
+        currentPercentage += 2;
+
+        if (currentPercentage >= targetPercentage) {
+          currentPercentage = targetPercentage;
+          clearInterval(fillAnimationRef.current!);
+        }
+
+        setAnimatedFillPercentage(currentPercentage);
+      }, 16);
+    }
+
+    return () => {
+      if (fillAnimationRef.current) {
+        clearInterval(fillAnimationRef.current);
+      }
+    };
+
+}, [fillPercentage, animatedFillPercentage]);
+
+return (
+
+<div className="heart-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+<div style={{ position: 'relative', width: '60px', height: '60px' }}>
+{/* Particle Effects using Framer Motion */}
+<AnimatePresence>
+{particles.map(particle => (
+<motion.div
+key={particle.id}
+initial={{
+                x: 0,
+                y: 0,
+                scale: 0,
+                opacity: 0.8,
+                rotate: 0
+              }}
+animate={{
+                x: particle.x,
+                y: particle.y,
+                scale: 1,
+                opacity: 0,
+                rotate: particle.rotation
+              }}
+exit={{ opacity: 0 }}
+transition={{ duration: 1, ease: "easeOut" }}
+style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: particle.size,
+                height: particle.size,
+                borderRadius: '50%',
+                backgroundColor: particle.color,
+                transformOrigin: 'center center'
+              }}
+/>
+))}
+</AnimatePresence>
+
+        <motion.button
+          onClick={handleLike}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95, y: 2 }}
+          aria-label="Like button"
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+        >
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            {/* Background heart */}
+            <path
+              d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+              fill="#f1f5f9"
+              stroke="#475569"
+              strokeWidth="1.5"
+            />
+
+            {/* Filled heart with clip path */}
+            <path
+              d="M30 55C30 55 5 40 5 20C5 11.5 12 5 20 5C25 5 28.5 7.5 30 10C31.5 7.5 35 5 40 5C48 5 55 11.5 55 20C55 40 30 55 30 55Z"
+              fill={getFillColor()}
+              style={{
+                clipPath: \`polygon(0% \${100-animatedFillPercentage}%, 100% \${100-animatedFillPercentage}%, 100% 100%, 0% 100%)\`
+              }}
+            />
+          </svg>
+        </motion.button>
+      </div>
+
+      {/* Display count with Framer Motion */}
+      <motion.div
+        animate={likes > 0 ? { scale: [1, 1.2, 1] } : {}}
+        transition={{ duration: 0.3 }}
+        style={{ fontFamily: 'monospace' }}
+      >
+        Likes: {likes}/{MAX_LIKES}
+      </motion.div>
+    </div>
+
+);
+};
+
+export default function App() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', padding: '20px' }}>
+      <HeartButton />
+    </div>
+  );
+}`
+  }}
+  template="react-ts"
+  editorHeight="950px"
+/>
+
+Using Framer Motion gives us additional benefits:
+
+1. **AnimatePresence** - Properly handles the lifecycle of animated elements, including exit animations
+2. **motion components** - Makes it easy to add hover and tap animations to our button
+3. **More fluid transitions** - Framer Motion handles interpolation better than CSS alone
+4. **Less code** - We can define animations declaratively rather than imperatively
+
+Notice how the particles now have a more fluid animation, and the button has hover and tap effects to make it feel more interactive.
+
+## The Complete Implementation
+
+The heart button on this blog includes all the features we've covered, plus:
+
+1. **Sound effects** with increasing pitch
+2. **3D effects** using shadows and highlights
+3. **API integration** to store like counts in a database
+4. **Analytics tracking** to monitor engagement
+5. **Optimizations** for performance on different devices
+
+The complete source code for this button can be found [here](https://github.com/SouravInsights/souravinsights.com/blob/main/src/app/blog/components/ThreeDLikeButton.tsx).
+
+## Closing thoughts
+
+The web doesn't have to be boring. Small moments of delight like this heart button can transform boring interactions into memorable experiences. As developers, we have the power to create these moments of joy.
+
+I hope this breakdown and the interactive playground - inspires you to experiment with your own ideas. If you build something delightful using these techniques, I'd love to see it! Share it with me on Twitter: [@souravinsights](https://twitter.com/souravinsights).
+
+Now go spread some joy on the web! ❤️
