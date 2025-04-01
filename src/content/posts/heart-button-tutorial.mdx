@@ -1,6 +1,6 @@
 ---
 title: Learning by Building: The Heart Button Animation from Scratch with TypeScript
-date: 2025-03-25
+date: 2025-04-01
 excerpt: Learn how to build an interactive animated heart button with SVG, TypeScript and React. We'll cover animation techniques, SVG manipulation, and add fun interactive elements.
 tags: ["react", "typescript", "animation", "svg", "tutorial"]
 readingTime: 15 min read
@@ -8,13 +8,13 @@ readingTime: 15 min read
 
 import Playground from "@/app/blog/components/Playground";
 
-Have you ever wondered how those interactive elements that make websites feel alive are built? In this tutorial, I'll walk you through recreating the animated heart button that you see at the bottom of each post on this blog.
+When building my blog, I wanted to create a like button that was more than just functional – it needed to be delightful, memorable, and almost irresistible to click. Inspired by Josh Comeau's 3D button techniques, I set out to craft a heart button with a liquid-filling animation that would bring a touch of magic to the user experience.
 
-We'll start with simple SVG shapes and gradually add interactivity, animations, facial expressions, particle effects, and even sound feedback. By the end of this tutorial, you'll have the skills to create delightful interactive UI elements for your own projects.
+In this post, I'll break down how I built this heart button step by step. Best of all? I've integrated an interactive code playground so you can experiment with the code in real-time, tweak values, and see immediate results - because we all learn better by doing.
 
-Let's break it down step by step, with interactive code examples you can play with right here!
+We'll start with simple SVG shapes and gradually add interactivity, animations, facial expressions, particle effects, and even sound feedback. Let's dive in!
 
-## Understanding the Design Principles
+## The Vision: A Button Worth Clicking
 
 Before diving into code, let's consider what makes an interactive UI element truly engaging:
 
@@ -26,17 +26,17 @@ Before diving into code, let's consider what makes an interactive UI element tru
 
 With these principles in mind, I designed a heart button that:
 
-- Fills up gradually with each click
-- Changes color as it fills
-- Shows different facial expressions based on interaction level
-- Emits colorful particles on click
-- Changes sound pitch with each interaction
+- Fills up gradually when clicked, like liquid being poured in
+- Changes colors as it fills
+- Has a cute face that reacts to your interactions
+- Creates a brief celebration with particles
+- Plays a satisfying sound that increases in pitch
 
 Now, let's build it together!
 
-## Step 1: Starting with the Basic SVG Heart in TypeScript
+## Step 1: Starting with the Basic SVG Heart
 
-First, let's create a simple heart shape using SVG. SVG (Scalable Vector Graphics) is perfect for custom shapes like this because it's resolution-independent and easily animatable.
+First, let's create a simple heart shape. You can design it in Figma!
 
 <Playground
   title="Basic SVG Heart"
@@ -70,8 +70,6 @@ export default function App() {
   template="react-ts"
   editorHeight="350px"
 />
-
-The path `d` attribute contains the instructions to draw our heart shape. SVG paths might look complex, but they're just a series of commands that tell the browser how to draw the shape. In this case, we're drawing curves and lines to form a heart.
 
 **Experiment:** Try changing the `fill` color to `"#3b82f6"` (blue) or `"#10b981"` (green), or try `fill="none"` to see just the outline.
 
@@ -1114,26 +1112,8 @@ The heart button on this blog includes all the features we've covered, plus:
 4. **Analytics tracking** to monitor engagement
 5. **Optimizations** for performance on different devices
 
-You can see the complete source code for the button by checking out the `ThreeDLikeButton.tsx` component in the project repository.
+The complete source code for this button can be found [here](https://github.com/SouravInsights/souravinsights.com/blob/main/src/app/blog/components/ThreeDLikeButton.tsx).
 
-## Conclusion and Next Steps
-
-Through this tutorial, we've built a heart button that incorporates several principles of engaging UI:
-
-- **Visual feedback** through filling animations and color changes
-- **Progressive changes** that reveal more as users interact
-- **Personality** with facial expressions that respond to interaction
-- **Particles** that celebrate each interaction
-- **Animation** using both CSS transitions and Framer Motion
-
-You can adapt and expand upon these techniques to create your own engaging interactive elements. Some ideas for further exploration:
-
-1. Add 3D effects with CSS transform
-2. Integrate with a database to persist likes
-3. Add sound effects using the Web Audio API
-4. Create different themed buttons with different shapes and expressions
-5. Make the button accessible with keyboard navigation and ARIA attributes
-
-I hope you've enjoyed this tutorial and found it helpful for understanding how to build engaging interactive UI elements. If you have any questions or want to share your own creations, I'd love to hear from you in the comments!
+I hope you've enjoyed this tutorial and found it helpful for understanding how to build engaging interactive UI elements. If you have any questions or want to share your own creations, I'd love to hear from you!
 
 Happy coding!
