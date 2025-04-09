@@ -559,6 +559,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200">
+      {/* 0cred verification */}
+      <div className="5332faa9-0d5e-4793-b185-b5ca8c0f4635"></div>
+
       {/* Add Matrix rain effect */}
       <MatrixRain />
 
