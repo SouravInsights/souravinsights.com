@@ -591,6 +591,22 @@ export default function Home() {
           <InteractiveTerminal />
         </motion.section>
 
+        {/* Work Experience Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="space-y-6"
+        >
+          <TerminalWindow title="~/experience">
+            <Directory name="companies" className="overflow-x-auto">
+              {sortedCompanies.map((company) => (
+                <WorkExperienceItem key={company.name} company={company} />
+              ))}
+            </Directory>
+          </TerminalWindow>
+        </motion.section>
+
         {/* Side Projects Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -618,22 +634,6 @@ export default function Home() {
             <Directory name="experiments" className="overflow-x-auto">
               {funProjects.map((project) => (
                 <SideProjectItem key={project.name} project={project} />
-              ))}
-            </Directory>
-          </TerminalWindow>
-        </motion.section>
-
-        {/* Work Experience Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="space-y-6"
-        >
-          <TerminalWindow title="~/experience">
-            <Directory name="companies" className="overflow-x-auto">
-              {sortedCompanies.map((company) => (
-                <WorkExperienceItem key={company.name} company={company} />
               ))}
             </Directory>
           </TerminalWindow>
