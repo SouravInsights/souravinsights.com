@@ -596,13 +596,14 @@ export default function Home() {
         </motion.div>
 
         {/* Interactive Terminal Section */}
-        <motion.section
+
+        {/* <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
         >
           <InteractiveTerminal />
-        </motion.section>
+        </motion.section> */}
 
         {/* Work Experience Section */}
         <motion.section
