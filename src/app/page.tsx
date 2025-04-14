@@ -31,6 +31,14 @@ const companies = [
     website: "https://paragraph.xyz/",
     projectUrl: "https://github.com/paragraph-xyz",
     current: false,
+    description: [
+      "Contributed to the migration from Next.js Pages Router to App Router, focusing on refactoring key pages with Server Components to reduce JavaScript payload and improve load performance. Used Client Components selectively to preserve interactivity where needed, balancing UX and performance.",
+      "Redesigned the editor dashboard UI and improved the publishing flow in collaboration with our product designer and other engineers.",
+      "Contributed to a state management migration from Redux to Jotai by modularizing large state objects into granular atoms, improving maintainability and clarity.",
+      "Refactored UI components by abstracting business logic into custom React hooks and utility functions, creating a cleaner, reusable component library.",
+      "Actively participated in reviewing frontend & backend PRs, offering constructive feedback and hands-on refactors when necessary.",
+      "Took ownership of investigating and fixing quirky, hard-to-reproduce bugs by talking to users, gathering context, and handling multiple edge cases.",
+    ],
   },
   {
     name: "Pimlico",
