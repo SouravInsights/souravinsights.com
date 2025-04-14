@@ -563,7 +563,20 @@ export default function Home() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const y = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
-  const sortedCompanies = [...companies].sort((a, b) => (b.current ? 1 : -1));
+  const sortedCompanies = [...companies].sort((a, b) => {
+    const extractEndYear = (period: string) => {
+      const years = period.split("-").map((y) => y.trim());
+      return parseInt(years[1] || years[0]);
+    };
+
+    if (a.current && !b.current) return -1;
+    if (!a.current && b.current) return 1;
+
+    const yearA = extractEndYear(a.period);
+    const yearB = extractEndYear(b.period);
+
+    return yearB - yearA;
+  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200">
