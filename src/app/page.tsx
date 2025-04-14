@@ -168,7 +168,7 @@ const TerminalWindow = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+  <div className="bg-white dark:bg-gray-900 relative border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
     <div className="bg-gray-100 dark:bg-gray-800 px-3 sm:px-4 py-2 flex items-center gap-2">
       <div className="flex space-x-1.5 sm:space-x-2">
         <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
