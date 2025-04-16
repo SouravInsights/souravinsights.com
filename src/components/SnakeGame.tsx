@@ -220,21 +220,26 @@ const SnakeGame: React.FC = () => {
   }, [moveSnake, gameOver, gameSpeed]);
 
   // Handle keyboard input
+
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    e.preventDefault();
-    switch (e.key) {
-      case "ArrowUp":
-        setDirection("UP");
-        break;
-      case "ArrowDown":
-        setDirection("DOWN");
-        break;
-      case "ArrowLeft":
-        setDirection("LEFT");
-        break;
-      case "ArrowRight":
-        setDirection("RIGHT");
-        break;
+    // Only prevent default for arrow keys
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+      e.preventDefault();
+
+      switch (e.key) {
+        case "ArrowUp":
+          setDirection("UP");
+          break;
+        case "ArrowDown":
+          setDirection("DOWN");
+          break;
+        case "ArrowLeft":
+          setDirection("LEFT");
+          break;
+        case "ArrowRight":
+          setDirection("RIGHT");
+          break;
+      }
     }
   }, []);
 

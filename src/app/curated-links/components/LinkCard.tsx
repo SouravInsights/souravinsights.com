@@ -26,6 +26,9 @@ interface LinkCardProps {
     | "typewriter";
   gradientStart: string;
   gradientEnd: string;
+  isAdminMode?: boolean;
+  isCurated?: boolean;
+  onAddToCuration?: (link: LinkData) => void;
 }
 
 export default function LinkCard({
@@ -33,23 +36,28 @@ export default function LinkCard({
   design,
   gradientStart,
   gradientEnd,
+  isAdminMode = false,
+  isCurated = false,
+  onAddToCuration,
 }: LinkCardProps) {
   switch (design) {
     case "tilted":
       return (
         <TiltedCard
           title={link.title}
-          description={link.description}
+          description={link.notes || link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
+          isAdminMode={isAdminMode}
+          onAddToCuration={() => onAddToCuration?.(link)}
         />
       );
     case "layered":
       return (
         <LayeredCard
           title={link.title}
-          description={link.description}
+          description={link.notes || link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
@@ -59,7 +67,7 @@ export default function LinkCard({
       return (
         <PolaroidCard
           title={link.title}
-          description={link.description}
+          description={link.notes || link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
@@ -70,7 +78,7 @@ export default function LinkCard({
         <NotebookCard
           title={link.title}
           url={link.url}
-          description={link.description}
+          description={link.notes || link.description}
         />
       );
     case "postcard":
@@ -78,7 +86,7 @@ export default function LinkCard({
         <PostcardCard
           title={link.title}
           url={link.url}
-          description={link.description}
+          description={link.notes || link.description}
         />
       );
     case "minimalist":
@@ -88,7 +96,7 @@ export default function LinkCard({
         <RetroTechCard
           title={link.title}
           url={link.url}
-          description={link.description}
+          description={link.notes || link.description}
         />
       );
     case "blueprint":
@@ -96,7 +104,7 @@ export default function LinkCard({
         <BlueprintCard
           title={link.title}
           url={link.url}
-          description={link.description}
+          description={link.notes || link.description}
         />
       );
     case "typewriter":
@@ -104,17 +112,19 @@ export default function LinkCard({
         <TypewriterCard
           title={link.title}
           url={link.url}
-          description={link.description}
+          description={link.notes || link.description}
         />
       );
     default:
       return (
         <TiltedCard
           title={link.title}
-          description={link.description}
+          description={link.notes || link.description}
           url={link.url}
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
+          isAdminMode={isAdminMode}
+          onAddToCuration={() => onAddToCuration?.(link)}
         />
       );
   }

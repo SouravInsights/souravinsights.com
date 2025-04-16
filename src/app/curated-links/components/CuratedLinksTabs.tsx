@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -24,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/context/ThemeContext";
 import posthog from "posthog-js";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { CurationModal } from "./CurationModal";
 
 interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
@@ -75,6 +77,10 @@ export default function CuratedLinksTabs({
     | "blueprint"
     | "typewriter";
 
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLink, setSelectedLink] = useState<LinkData | null>(null);
+
   // Create properly typed theme options
   const themeOptions: { id: ThemeType; name: string }[] = [
     { id: "tilted", name: "Tilted" },
@@ -110,6 +116,15 @@ export default function CuratedLinksTabs({
 
   const [activeTab, setActiveTab] = useState(sortedChannels[0]?.name || "");
   const tabStartTime = useRef(Date.now());
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const adminKey = searchParams.get("adminKey");
+    if (adminKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
+      setIsAdminMode(true);
+      console.log("Admin mode activated");
+    }
+  }, []);
 
   useEffect(() => {
     // Track initial card theme when component mounts
@@ -172,6 +187,50 @@ export default function CuratedLinksTabs({
     return customEndColor;
   }, [colorMode, isDarkMode, selectedPreset, customEndColor]);
 
+  const openCurationModal = (link: LinkData) => {
+    setSelectedLink(link);
+    setIsModalOpen(true);
+  };
+
+  const saveToCollection = async (data: {
+    linkId: string;
+    notes: string;
+    creatorTwitter: string;
+    category: string;
+  }) => {
+    const link = linkData[data.category]?.find((l) => l.id === data.linkId);
+
+    if (!link) {
+      throw new Error("Link not found");
+    }
+
+    const response = await fetch("/api/curated-links", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
+      },
+      body: JSON.stringify({
+        title: link.title,
+        url: link.url,
+        description: link.description,
+        category: data.category,
+        notes: data.notes,
+        creatorTwitter: data.creatorTwitter,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save link");
+    }
+
+    // Track in PostHog
+    posthog.capture("link_added_to_curation", {
+      url: link.url,
+      category: data.category,
+    });
+  };
+
   const getChannelIcon = (channelName: string) => {
     switch (channelName) {
       case "fav-portfolios":
@@ -211,6 +270,14 @@ export default function CuratedLinksTabs({
 
   return (
     <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
+      {isAdminMode && (
+        <div className="mb-4 px-4 py-2 bg-yellow-100 dark:bg-yellow-800 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded">
+          <p className="flex items-center">
+            <span className="font-semibold">Admin Mode Active</span>
+          </p>
+        </div>
+      )}
+
       <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* Customization Toggle Button */}
         <button
@@ -300,7 +367,6 @@ export default function CuratedLinksTabs({
       >
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
           {sortedChannels.map((channel) => {
-            //console.log("linkData:", linkData[channel.name]);
             return (
               <TabsTrigger
                 key={channel.id}
@@ -333,6 +399,9 @@ export default function CuratedLinksTabs({
                       design={cardDesign}
                       gradientStart={gradientStart}
                       gradientEnd={gradientEnd}
+                      isAdminMode={isAdminMode && !link.isCurated}
+                      isCurated={!!link.isCurated}
+                      onAddToCuration={() => openCurationModal(link)}
                     />
                   ))}
               </motion.div>
@@ -348,6 +417,14 @@ export default function CuratedLinksTabs({
           </TabsContent>
         ))}
       </Tabs>
+
+      <CurationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        link={selectedLink}
+        category={activeTab}
+        onSave={saveToCollection}
+      />
     </div>
   );
 }
