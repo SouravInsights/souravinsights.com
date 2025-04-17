@@ -19,6 +19,7 @@ import {
   InteractiveTerminal,
   MatrixRain,
 } from "@/components/InteractiveElements";
+import LastDeployedInfo from "@/components/LastDeployedInfo";
 
 const companies = [
   {
@@ -507,6 +508,8 @@ const HeroSection = () => (
                   no state of "completeness" to a website.
                 </a>
               </p>
+
+              <LastDeployedInfo />
             </div>
 
             <motion.div
