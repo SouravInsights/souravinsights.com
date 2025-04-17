@@ -22,17 +22,14 @@ export function NewsletterSignup() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        "https://api.buttondown.com/v1/subscribers",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Token ${process.env.BUTTONDOWN_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: {
+          Authorization: `Token ${process.env.BUTTONDOWN_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
       if (response.ok) {
         setMessage("Thanks for subscribing! Check your inbox to confirm.");
