@@ -20,7 +20,6 @@ interface DeploymentInfo {
 
 interface SongInfo {
   name: string;
-  artist: string;
   url: string;
 }
 
@@ -56,7 +55,10 @@ export default function DeploymentStatus() {
         if (spotifyResponse.ok) {
           const data = await spotifyResponse.json();
           if (data.isPlaying && data.songInfo) {
-            setSongInfo(data.songInfo);
+            setSongInfo({
+              name: data.songInfo.name,
+              url: data.songInfo.url,
+            });
           }
         }
       } catch (err) {
@@ -78,7 +80,7 @@ export default function DeploymentStatus() {
   }
 
   if (!deploymentInfo) {
-    return null; // Don't show anything if there's no deployment info
+    return null;
   }
 
   // Format the deployment date
@@ -137,40 +139,39 @@ export default function DeploymentStatus() {
     <div className="text-sm text-gray-600 dark:text-gray-300 mt-4 leading-relaxed italic border-t border-gray-200 dark:border-gray-700 pt-4">
       <div className="flex items-start">
         <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400 flex-shrink-0 mr-2" />
-        <span>
-          This site was last deployed on {formattedDate} at {formattedTime}
-          {songInfo && (
-            <span>
-              {" while listening to "}
-              <a
-                href={songInfo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-green-600 dark:text-green-400 hover:underline font-medium"
-              >
-                {songInfo.name}
-              </a>{" "}
-              <span className="whitespace-nowrap">
-                by {songInfo.artist}{" "}
-                <Headphones size={14} className="inline-block -mt-0.5" />
-              </span>
-            </span>
-          )}
-          {weatherInfo && (
-            <span>
-              {songInfo ? "." : ","} The weather was{" "}
-              {getWeatherDescription(weatherInfo.description)}
-              {getWeatherIcon(weatherInfo.description)}
-              {" at "}
-              <span className="font-medium">
-                {Math.round(weatherInfo.temperature)}°C
-              </span>
-              {" in "}
-              <span className="font-medium">{weatherInfo.city}</span>
-              {"."}
-            </span>
-          )}
-        </span>
+        <div className="flex flex-wrap">
+          <span>
+            This site was last deployed on {formattedDate} at {formattedTime}
+            {songInfo && (
+              <>
+                {" while listening to "}
+                <a
+                  href={songInfo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-600 dark:text-green-400 hover:underline font-medium inline-flex items-center"
+                >
+                  {songInfo.name}
+                  <Headphones size={14} className="ml-1 -mt-0.5" />
+                </a>
+              </>
+            )}
+            {weatherInfo && (
+              <>
+                {songInfo ? "." : ""} The weather was{" "}
+                {getWeatherDescription(weatherInfo.description)}
+                {getWeatherIcon(weatherInfo.description)}
+                {" at "}
+                <span className="font-medium">
+                  {Math.round(weatherInfo.temperature)}°C
+                </span>
+                {" in "}
+                <span className="font-medium">{weatherInfo.city}</span>
+                {"."}
+              </>
+            )}
+          </span>
+        </div>
       </div>
     </div>
   );
