@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { LinkData } from "../utils/discordApi";
@@ -58,7 +58,7 @@ export function NoteEditorModal({
   const isNewLink = selectedLink ? !selectedLink.isCurated : false;
 
   // Debounced save function for autosave
-  const debouncedSave = useCallback(
+  const debouncedSaveRef = useRef(
     debounce(async (id: string, noteText: string, twitterHandle: string) => {
       if (!id || isNewLink) return;
 
@@ -72,20 +72,18 @@ export function NoteEditorModal({
       } finally {
         setIsSaving(false);
       }
-    }, 2000),
-    [onSaveNotes, isNewLink]
+    }, 2000)
   );
 
-  // Trigger autosave when notes change
   useEffect(() => {
-    if (selectedLink && !isNewLink && notes !== selectedLink.notes) {
-      debouncedSave(selectedLink.id, notes, twitter);
+    if (isOpen && selectedLink && !isNewLink && notes !== selectedLink.notes) {
+      debouncedSaveRef.current(selectedLink.id, notes, twitter);
     }
 
     return () => {
-      debouncedSave.cancel();
+      debouncedSaveRef.current.cancel();
     };
-  }, [notes, twitter, selectedLink, debouncedSave, isNewLink]);
+  }, [isOpen, notes, twitter, selectedLink, isNewLink]);
 
   // Manual save function
   const handleSave = async () => {
