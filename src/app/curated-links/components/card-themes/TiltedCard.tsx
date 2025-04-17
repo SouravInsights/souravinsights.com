@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Plus } from "lucide-react";
+import { ExternalLink, Plus, Edit } from "lucide-react";
 import Color from "color";
 import { useTheme } from "@/context/ThemeContext";
 import posthog from "posthog-js";
@@ -12,7 +12,9 @@ interface CardProps {
   gradientStart: string;
   gradientEnd: string;
   isAdminMode?: boolean;
+  isCurated?: boolean;
   onAddToCuration?: () => void;
+  onEditNotes?: () => void;
 }
 
 function isLightColor(color: string): boolean {
@@ -32,7 +34,9 @@ export function TiltedCard({
   gradientStart,
   gradientEnd,
   isAdminMode = false,
+  isCurated = false,
   onAddToCuration,
+  onEditNotes,
 }: CardProps) {
   const handleLinkClick = () => {
     posthog.capture("link_clicked_tilted_card", { url });
@@ -117,19 +121,37 @@ export function TiltedCard({
         <div
           className={`relative ${cardBackgroundColor} ${bgOpacity} p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
         >
-          {/* Admin add button - only visible in admin mode */}
+          {/* Admin buttons - Different buttons for curated vs non-curated */}
           {isAdminMode && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onAddToCuration?.();
-              }}
-              className="absolute top-2 right-2 p-1.5 bg-green-500 hover:bg-green-600 rounded-full text-white z-10 shadow-sm transition-all duration-200"
-              title="Add to curated collection"
-            >
-              <Plus size={16} />
-            </button>
+            <div className="absolute top-2 right-2 flex space-x-1 z-10">
+              {!isCurated ? (
+                // For non-curated links: Add to collection button
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onAddToCuration?.(); // This opens the sidebar for adding
+                  }}
+                  className="p-1.5 bg-green-500 hover:bg-green-600 rounded-full text-white shadow-sm transition-all duration-200"
+                  title="Add to curated collection"
+                >
+                  <Plus size={16} />
+                </button>
+              ) : (
+                // For curated links: Edit button
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onEditNotes?.();
+                  }}
+                  className="p-1.5 bg-blue-500 hover:bg-blue-600 rounded-full text-white shadow-sm transition-all duration-200"
+                  title="Edit notes"
+                >
+                  <Edit size={16} />
+                </button>
+              )}
+            </div>
           )}
 
           <h3

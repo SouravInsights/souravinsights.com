@@ -34,6 +34,7 @@ export interface LinkData {
   creatorTwitter?: string;
   clickCount?: number;
   isCurated?: boolean;
+  category?: string;
 }
 
 export async function getChannels(): Promise<DiscordChannel[]> {

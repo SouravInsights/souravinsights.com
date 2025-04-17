@@ -29,6 +29,7 @@ interface LinkCardProps {
   isAdminMode?: boolean;
   isCurated?: boolean;
   onAddToCuration?: (link: LinkData) => void;
+  onEditNotes?: (link: LinkData) => void;
 }
 
 export default function LinkCard({
@@ -39,6 +40,7 @@ export default function LinkCard({
   isAdminMode = false,
   isCurated = false,
   onAddToCuration,
+  onEditNotes,
 }: LinkCardProps) {
   switch (design) {
     case "tilted":
@@ -50,7 +52,9 @@ export default function LinkCard({
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
           isAdminMode={isAdminMode}
+          isCurated={isCurated}
           onAddToCuration={() => onAddToCuration?.(link)}
+          onEditNotes={() => onEditNotes?.(link)}
         />
       );
     case "layered":
@@ -124,7 +128,9 @@ export default function LinkCard({
           gradientStart={gradientStart}
           gradientEnd={gradientEnd}
           isAdminMode={isAdminMode}
+          isCurated={isCurated}
           onAddToCuration={() => onAddToCuration?.(link)}
+          onEditNotes={() => onEditNotes?.(link)}
         />
       );
   }

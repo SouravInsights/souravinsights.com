@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -19,13 +18,15 @@ import {
   Folders,
   Layers,
   Check,
+  Send,
 } from "lucide-react";
 import { colorPresets, ColorPreset } from "../utils/colorPresets";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/context/ThemeContext";
 import posthog from "posthog-js";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { CurationModal } from "./CurationModal";
+import { NewsletterModal } from "./NewsletterModal";
+import { NoteEditorModal } from "./NoteEditorModal";
 
 interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
@@ -78,8 +79,9 @@ export default function CuratedLinksTabs({
     | "typewriter";
 
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedLink, setSelectedLink] = useState<LinkData | null>(null);
+  const [selectedLinkForEditing, setSelectedLinkForEditing] =
+    useState<LinkData | null>(null);
+  const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
 
   // Create properly typed theme options
   const themeOptions: { id: ThemeType; name: string }[] = [
@@ -168,6 +170,9 @@ export default function CuratedLinksTabs({
   const [customEndColor, setCustomEndColor] = useState("#14b8a6");
   const [isCustomizePanelOpen, setIsCustomizePanelOpen] = useState(false);
 
+  const [showNewsletterModal, setShowNewsletterModal] = useState(false);
+  const [curatedLinks, setCuratedLinks] = useState<LinkData[]>([]);
+
   const supportsCustomColors = useMemo(
     () => themesWithCustomColors.includes(cardDesign),
     [cardDesign]
@@ -187,12 +192,81 @@ export default function CuratedLinksTabs({
     return customEndColor;
   }, [colorMode, isDarkMode, selectedPreset, customEndColor]);
 
-  const openCurationModal = (link: LinkData) => {
-    setSelectedLink(link);
-    setIsModalOpen(true);
+  const openAddLinkModal = (link: LinkData) => {
+    const newLink = {
+      ...link,
+      isCurated: false,
+      notes: "",
+    };
+    setSelectedLinkForEditing(newLink);
+    setIsEditorModalOpen(true);
   };
 
-  const saveToCollection = async (data: {
+  const openEditLinkModal = (link: LinkData) => {
+    setSelectedLinkForEditing(link);
+    setIsEditorModalOpen(true);
+  };
+
+  // Function to save notes for a link
+  const handleSaveNotes = async (
+    linkId: string,
+    notes: string,
+    creatorTwitter?: string
+  ): Promise<void> => {
+    try {
+      const response = await fetch("/api/curated-links/save-notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
+        },
+        body: JSON.stringify({
+          linkId,
+          notes,
+          creatorTwitter,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save notes");
+      }
+
+      // If successful, update the link in our local state
+      setCuratedLinks((prev) =>
+        prev.map((link) =>
+          link.id === linkId
+            ? {
+                ...link,
+                notes,
+                creatorTwitter: creatorTwitter || link.creatorTwitter,
+              }
+            : link
+        )
+      );
+
+      // Refresh curated links
+      fetchCuratedLinks();
+    } catch (error) {
+      console.error("Error saving notes:", error);
+    }
+  };
+
+  // Helper function to normalize URLs for comparison
+  const normalizeUrl = (url: string): string => {
+    try {
+      // Remove protocol, www, and trailing slashes for comparison
+      return url
+        .toLowerCase()
+        .replace(/^https?:\/\//, "")
+        .replace(/^www\./, "")
+        .replace(/\/$/, "");
+    } catch {
+      return url;
+    }
+  };
+
+  // Function to save a link to the curated collection
+  const addToCollection = async (data: {
     linkId: string;
     notes: string;
     creatorTwitter: string;
@@ -203,6 +277,8 @@ export default function CuratedLinksTabs({
     if (!link) {
       throw new Error("Link not found");
     }
+
+    console.log("Adding link to collection:", link.url);
 
     const response = await fetch("/api/curated-links", {
       method: "POST",
@@ -229,7 +305,37 @@ export default function CuratedLinksTabs({
       url: link.url,
       category: data.category,
     });
+
+    // Immediately refresh the curated links
+    await fetchCuratedLinks();
   };
+
+  // Function to fetch curated links
+  const fetchCuratedLinks = async () => {
+    try {
+      const response = await fetch("/api/curated-links", {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch curated links");
+      }
+
+      const data = await response.json();
+      setCuratedLinks(data.links);
+    } catch (error) {
+      console.error("Error fetching curated links:", error);
+      alert("Could not load curated links");
+    }
+  };
+
+  useEffect(() => {
+    if (isAdminMode) {
+      fetchCuratedLinks();
+    }
+  }, [isAdminMode, showNewsletterModal]);
 
   const getChannelIcon = (channelName: string) => {
     switch (channelName) {
@@ -271,10 +377,26 @@ export default function CuratedLinksTabs({
   return (
     <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
       {isAdminMode && (
-        <div className="mb-4 px-4 py-2 bg-yellow-100 dark:bg-yellow-800 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded">
-          <p className="flex items-center">
-            <span className="font-semibold">Admin Mode Active</span>
-          </p>
+        <div className="mb-4 px-4 py-3 bg-yellow-100 dark:bg-yellow-800 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p className="flex items-center mb-2 sm:mb-0">
+              <span className="font-semibold">Admin Mode Active</span>
+              <span className="ml-2 text-sm">
+                {curatedLinks.length
+                  ? `${curatedLinks.length} links in your collection`
+                  : "Add links to your collection"}
+              </span>
+            </p>
+
+            <Button
+              onClick={() => setShowNewsletterModal(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm flex items-center"
+              size="sm"
+            >
+              <Send size={14} className="mr-1.5" />
+              Create Newsletter
+            </Button>
+          </div>
         </div>
       )}
 
@@ -366,19 +488,18 @@ export default function CuratedLinksTabs({
         className="w-full"
       >
         <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto">
-          {sortedChannels.map((channel) => {
-            return (
-              <TabsTrigger
-                key={channel.id}
-                value={channel.name}
-                className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
-              >
-                {getChannelIcon(channel.name)}
-                <span>{channel.name.replace("-", " ")}</span>
-              </TabsTrigger>
-            );
-          })}
+          {sortedChannels.map((channel) => (
+            <TabsTrigger
+              key={channel.id}
+              value={channel.name}
+              className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
+            >
+              {getChannelIcon(channel.name)}
+              <span>{channel.name.replace("-", " ")}</span>
+            </TabsTrigger>
+          ))}
         </TabsList>
+
         {sortedChannels.map((channel) => (
           <TabsContent key={channel.id} value={channel.name}>
             <AnimatePresence mode="wait">
@@ -392,20 +513,49 @@ export default function CuratedLinksTabs({
               >
                 {filterLinks(linkData[channel.name] || [])
                   .slice(0, visibleItems)
-                  .map((link) => (
-                    <LinkCard
-                      key={link.id}
-                      link={link}
-                      design={cardDesign}
-                      gradientStart={gradientStart}
-                      gradientEnd={gradientEnd}
-                      isAdminMode={isAdminMode && !link.isCurated}
-                      isCurated={!!link.isCurated}
-                      onAddToCuration={() => openCurationModal(link)}
-                    />
-                  ))}
+                  .map((link) => {
+                    // Check if this link is already in our curated collection using normalized URLs
+                    const normalizedLinkUrl = normalizeUrl(link.url);
+                    const isCurated = curatedLinks.some(
+                      (curatedLink) =>
+                        normalizeUrl(curatedLink.url) === normalizedLinkUrl
+                    );
+
+                    console.log("Is Curated?", isCurated);
+
+                    // To find the matching curated link if it exists
+                    const curatedLink = isCurated
+                      ? curatedLinks.find(
+                          (cl) => normalizeUrl(cl.url) === normalizedLinkUrl
+                        )
+                      : null;
+
+                    // Use thae existing data if it has a curated version
+                    const enhancedLink = curatedLink
+                      ? {
+                          ...link,
+                          ...curatedLink,
+                          isCurated: true,
+                        }
+                      : link;
+
+                    return (
+                      <LinkCard
+                        key={link.id}
+                        link={enhancedLink}
+                        design={cardDesign}
+                        gradientStart={gradientStart}
+                        gradientEnd={gradientEnd}
+                        isAdminMode={isAdminMode}
+                        isCurated={isCurated}
+                        onAddToCuration={() => openAddLinkModal(link)}
+                        onEditNotes={() => openEditLinkModal(enhancedLink)}
+                      />
+                    );
+                  })}
               </motion.div>
             </AnimatePresence>
+
             {filterLinks(linkData[channel.name] || []).length >
               visibleItems && (
               <div className="mt-6 text-center">
@@ -418,12 +568,19 @@ export default function CuratedLinksTabs({
         ))}
       </Tabs>
 
-      <CurationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        link={selectedLink}
-        category={activeTab}
-        onSave={saveToCollection}
+      <NewsletterModal
+        isOpen={showNewsletterModal}
+        onClose={() => setShowNewsletterModal(false)}
+        curatedLinks={curatedLinks}
+      />
+
+      <NoteEditorModal
+        isOpen={isEditorModalOpen}
+        onClose={() => setIsEditorModalOpen(false)}
+        selectedLink={selectedLinkForEditing}
+        onSaveNotes={handleSaveNotes}
+        onAddToCollection={addToCollection}
+        currentCategory={activeTab}
       />
     </div>
   );

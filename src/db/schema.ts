@@ -16,6 +16,10 @@ export const curatedLinks = pgTable("curated_links", {
   notes: text("notes"),
   creatorTwitter: varchar("creator_twitter", { length: 100 }),
   clickCount: integer("click_count").default(0),
+  newsletterStatus: varchar("newsletter_status", { length: 20 }).default(
+    "none"
+  ),
+  buttondownEmailId: varchar("buttondown_email_id", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
