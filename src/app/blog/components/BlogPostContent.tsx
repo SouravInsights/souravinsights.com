@@ -9,6 +9,7 @@ import { PostData } from "../utils/blogUtils";
 import ThreeDLikeButton from "./ThreeDLikeButton";
 import ViewCounter from "./ViewCounter";
 import CollapsibleTOC from "./CollapsibleTOC";
+import DraftPostIndicator from "./DraftPostIndicator";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -101,6 +102,8 @@ export default function BlogPostContent({
   const handleTOCCollapse = (collapsed: boolean) => {
     setIsTOCCollapsed(collapsed);
   };
+
+  const isDraft = post.status === "draft";
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -235,7 +238,13 @@ export default function BlogPostContent({
             prose-blockquote:border-green-500 dark:prose-blockquote:border-green-400 
             prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/50"
           >
-            {content}
+            {isDraft ? (
+              <DraftPostIndicator previewParagraphs={10}>
+                {content}
+              </DraftPostIndicator>
+            ) : (
+              content
+            )}
           </motion.div>
         </article>
 
