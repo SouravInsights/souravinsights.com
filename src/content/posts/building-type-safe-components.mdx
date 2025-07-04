@@ -1,0 +1,218 @@
+---
+title: Building Type-Safe Dynamic Components with TypeScript's Advanced Features
+date: 2025-07-05
+excerpt: A deep dive into handling multiple form element types safely while preserving strict type safety and developer experience.
+tags: [TypeScript, React, Form Builder, Type Safety]
+readingTime: 12 min read
+status: draft
+---
+
+## The Problem: Handling Many Form Element Types Safely
+
+When building FairForms, I ran into a problem that sounds simple on paper but quickly became a surprisingly complex design challenge:
+
+**How do I build a form builder where each input type (text, multiple choice, date picker, etc.) has its own unique properties and behaviors, while preserving strict type safety and a smooth developer experience?**
+
+> Let me unpack what I mean by preserving strict type safety and smooth developer experience, and why it matters.
+
+In a dynamic UI system like a form builder with 15+ element types, it's easy to accidentally pass the wrong property or mutate data incorrectly, leading to subtle, hard-to-trace runtime bugs.
+
+Imagine you are building a form builder that lets users customize questions, like updating the placeholder text for an Email input. Behind the scenes, you fetch all form elements (text fields, dropdowns, date pickers, file uploads) into one dynamic elements array.
+
+You need to update the `placeholder` property for the specific element the user clicked. It feels like a routine update, but without strict type checks, you risk accidentally applying this change to an element type that shouldn’t even have a placeholder, leading to silent data corruption that may only surface much later.
+
+A naive update might look like this:
+
+```typescript
+elements.map((element) => {
+  if (element.id === targetId) {
+    return {
+      ...element,
+      properties: {
+        ...element.properties,
+        placeholder: "Enter your email",
+      },
+    };
+  }
+  return element;
+});
+```
+
+This code compiles and runs, but there's a hidden problem:
+
+> **If element is actually a Multiple Choice type, which has no placeholder property, you've just added an invalid field to its properties.**
+
+This creates silent data corruption that doesn't immediately throw an error but can cause rendering bugs or unexpected behaviors later.
+
+With advanced TypeScript type safety, using discriminated unions and type guards, you can prevent this class of bugs:
+
+```typescript
+function isEmailElement(element: FormElement): element is EmailFormElement {
+  return element.type === FormElementType.EMAIL;
+}
+
+elements.map((element) => {
+  if (element.id === targetId && isEmailElement(element)) {
+    return {
+      ...element,
+      properties: {
+        ...element.properties,
+        placeholder: "Enter your email",
+      },
+    };
+  }
+  return element;
+});
+```
+
+Now, TypeScript ensures you can only update the placeholder property if the element is actually of type EMAIL, preserving the integrity of your data even in a dynamic, runtime-driven system.
+
+Catching these issues early isn't just about preventing bugs - it saves hours of debugging, prevents user-facing breakages, and gives you the confidence to add new element types or refactor logic without fear.
+
+In practice, I needed a system that would:
+
+- Prevent runtime errors from property mismatches
+- Provide fast, accurate IntelliSense and autocomplete
+- Scale cleanly to 15+ different element types
+- Make it easy to add new element types without fear
+
+To tackle this, I experimented with multiple approaches to structure type-safe, dynamic components in FairForms, gradually refining towards a pattern that scaled cleanly without sacrificing ergonomics.
+
+---
+
+## Evolution of My Approach
+
+## Iteration 1: The Naive Union Approach (Failed)
+
+My first attempt was to define a **straightforward union type** for `FormElement`, expecting TypeScript to "just work":
+
+```typescript
+type FormElement =
+  | { type: "email"; id: string; properties: EmailProperties }
+  | {
+      type: "multiple_choice";
+      id: string;
+      properties: MultipleChoiceProperties;
+    }
+  | { type: "date"; id: string; properties: DateProperties };
+// ... other element types
+```
+
+It felt clean and type-safe at first, but quickly broke down when accessing type-specific properties:
+
+```typescript
+element.properties.placeholder;
+```
+
+TypeScript immediately complained:
+
+```
+Property 'placeholder' does not exist on type 'EmailProperties | MultipleChoiceProperties | DateProperties'.
+```
+
+Without knowing which variant `element` was, TypeScript couldn't safely infer which properties were available, forcing me to:
+
+- Write repetitive type guards:
+
+  ```typescript
+  if (element.type === "email") {
+    element.properties.placeholder;
+  }
+  ```
+
+- Use unsafe type assertions:
+
+  ```typescript
+  (element.properties as EmailProperties).placeholder;
+  ```
+
+- Accept losing type safety inside renderers and editors.
+
+As the UI grew to 15+ element types, this became unmanageable, cluttering the codebase and destroying the safety TypeScript was supposed to provide.
+
+## Iteration 2: Generic Constraints (Better, but Fragile)
+
+Next, I tried a **generic approach** to preserve type safety when working with _individual elements_:
+
+```typescript
+interface FormElement<T extends FormElementType, P> {
+  id: string;
+  type: T;
+  properties: P;
+}
+```
+
+Now, when working with a known element type, TypeScript inferred the correct `properties` shape:
+
+```typescript
+const emailElement: FormElement<"email", EmailProperties> = {
+  id: "1",
+  type: "email",
+  properties: {
+    placeholder: "Your email",
+  },
+};
+```
+
+> **This worked well when working with elements in isolation.**
+
+But it **broke down when dealing with arrays of mixed elements**:
+
+```typescript
+const elements: FormElement<FormElementType, unknown>[] = getElements();
+```
+
+TypeScript lost the tight coupling between `type` and `properties`, forcing me back to type assertions or repetitive narrowing logic when iterating:
+
+```typescript
+elements.forEach((element) => {
+  if (element.type === "email") {
+    // ❌ element.properties is still unknown here
+  }
+});
+```
+
+In short, generics helped in _controlled contexts_, but **weren't ergonomic for dynamic heterogeneous collections** like my form builder's `elements` array.
+
+## Iteration 3: Discriminated Unions with Type Guards (The Breakthrough)
+
+I returned to **discriminated unions**, but this time paired them with **custom type guards** to safely narrow types dynamically.
+
+```typescript
+type FormElement =
+  | { type: "email"; id: string; properties: EmailProperties }
+  | {
+      type: "multiple_choice";
+      id: string;
+      properties: MultipleChoiceProperties;
+    }
+  | { type: "date"; id: string; properties: DateProperties };
+// ... other element types
+```
+
+To safely work with specific types while iterating, I introduced type guards:
+
+```typescript
+function isEmailElement(
+  element: FormElement
+): element is Extract<FormElement, { type: "email" }> {
+  return element.type === "email";
+}
+
+elements.forEach((element) => {
+  if (isEmailElement(element)) {
+    // ✅ TypeScript knows properties is EmailProperties
+    element.properties.placeholder;
+  }
+});
+```
+
+This approach gave me:
+
+- **Type safety across heterogeneous arrays**
+- **Autocomplete and IntelliSense aligned with element type**
+- **Safe, readable narrowing at runtime without unsafe assertions**
+
+It also made the system **easy to extend**: adding a new element type only required adding a new variant to the union and defining properties, and the type system immediately enforced safety everywhere.
+
+---
