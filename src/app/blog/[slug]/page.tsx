@@ -1,5 +1,6 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
+import rehypePrettyCode from "rehype-pretty-code";
 import { getPostBySlug } from "../utils/blogUtils";
 import BlogPostContent from "../components/BlogPostContent";
 import Playground from "../components/Playground"; // Import the Playground component
@@ -38,6 +39,11 @@ export async function generateMetadata({ params }: PostPageProps) {
   };
 }
 
+const prettyCodeOptions = {
+  theme: "github-dark",
+  keepBackground: false,
+};
+
 export default function PostPage({ params }: PostPageProps) {
   const post = getPostBySlug(params.slug);
 
@@ -46,7 +52,15 @@ export default function PostPage({ params }: PostPageProps) {
   }
 
   const content = (
-    <MDXRemote source={post.content} components={{ Playground }} />
+    <MDXRemote
+      source={post.content}
+      components={{ Playground }}
+      options={{
+        mdxOptions: {
+          rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+        },
+      }}
+    />
   );
 
   return <BlogPostContent post={post} content={content} />;
