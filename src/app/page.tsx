@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { truncate } from "@/lib/utils";
-import {
-  InteractiveTerminal,
-  MatrixRain,
-} from "@/components/InteractiveElements";
+// import {
+//   InteractiveTerminal,
+//   MatrixRain,
+// } from "@/components/InteractiveElements";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 
 const companies = [
@@ -585,9 +585,6 @@ export default function Home() {
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-12 transition-colors duration-200">
       {/* 0cred verification */}
       <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07"></div>
-
-      {/* Add Matrix rain effect */}
-      <MatrixRain />
 
       <div className="max-w-6xl mx-auto space-y-12 pt-16">
         {/* Hero Section */}
