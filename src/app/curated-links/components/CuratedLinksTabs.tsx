@@ -10,15 +10,14 @@ import {
   ChevronDown,
   ChevronUp,
   User,
-  Gem,
   Rocket,
   BookOpen,
   Mail,
   Briefcase,
   Folders,
-  Layers,
   Check,
   Send,
+  Package,
 } from "lucide-react";
 import { colorPresets, ColorPreset } from "../utils/colorPresets";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ import posthog from "posthog-js";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { NewsletterModal } from "./NewsletterModal";
 import { NoteEditorModal } from "./NoteEditorModal";
+import { appendUTMParams } from "../utils/urlUtils";
 
 interface CuratedLinksTabsProps {
   channels: DiscordChannel[];
@@ -98,13 +98,12 @@ export default function CuratedLinksTabs({
 
   const orderedChannelNames = [
     "reading-list",
-    "blockchain",
     "resources",
     "product-hunt",
-    "fav-portfolios",
     "newsletters",
+    "fav-portfolios",
+    "tools",
     "opportunities",
-    "mint-worthy",
     "design-inspo",
   ];
 
@@ -343,8 +342,6 @@ export default function CuratedLinksTabs({
         return <User className="w-4 h-4 mr-2" />;
       case "design-inspo":
         return <Palette className="w-4 h-4 mr-2" />;
-      case "mint-worthy":
-        return <Gem className="w-4 h-4 mr-2" />;
       case "product-hunt":
         return <Rocket className="w-4 h-4 mr-2" />;
       case "reading-list":
@@ -355,8 +352,8 @@ export default function CuratedLinksTabs({
         return <Briefcase className="w-4 h-4 mr-2" />;
       case "resources":
         return <Folders className="w-4 h-4 mr-2" />;
-      case "blockchain":
-        return <Layers className="w-4 h-4 mr-2" />;
+      case "tools":
+        return <Package className="w-4 h-4 mr-2" />;
       default:
         return null;
     }
@@ -539,10 +536,18 @@ export default function CuratedLinksTabs({
                         }
                       : link;
 
+                    const linkWithUTM = {
+                      ...enhancedLink,
+                      url: appendUTMParams(enhancedLink.url, {
+                        utm_source: "souravinsights.com",
+                        utm_medium: "curated_links",
+                      }),
+                    };
+
                     return (
                       <LinkCard
                         key={link.id}
-                        link={enhancedLink}
+                        link={linkWithUTM}
                         design={cardDesign}
                         gradientStart={gradientStart}
                         gradientEnd={gradientEnd}

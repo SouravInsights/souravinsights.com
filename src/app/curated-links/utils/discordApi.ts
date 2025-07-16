@@ -51,13 +51,12 @@ export async function getChannels(): Promise<DiscordChannel[]> {
     const desiredChannels = [
       "fav-portfolios",
       "design-inspo",
-      "mint-worthy",
+      "tools",
       "product-hunt",
       "reading-list",
       "newsletters",
       "opportunities",
       "resources",
-      "blockchain",
     ];
 
     return channels.filter((channel) => desiredChannels.includes(channel.name));
