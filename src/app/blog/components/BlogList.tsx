@@ -22,12 +22,12 @@ export default function BlogList({ posts }: BlogListProps) {
       >
         <header className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Blog
+            Notes & Essays
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Interactive coding tutorials, stories, deep-dive explainers, startup
-            insights, movie analysis, essays on curiosity, human behavior, and
-            anything I'm curious about.
+            Interactive tutorials, stories, deep dives on startups, movies,
+            human behavior, and whatever random thing I get curious about at
+            2 AM 🦉
           </p>
         </header>
       </motion.div>

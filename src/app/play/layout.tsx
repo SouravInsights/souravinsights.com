@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/play-page-og-image.jpg",
+        url: "/snake-game-og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Play Page Preview Image",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Play - Interactive Games & Experiences",
     description: DESCRIPTION,
-    images: ["/play-page-og-image.jpg"],
+    images: ["/snake-game-og-image.jpg"],
   },
 };
 
