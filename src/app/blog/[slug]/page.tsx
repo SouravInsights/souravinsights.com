@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import rehypePrettyCode from "rehype-pretty-code";
 import { getPostBySlug } from "../utils/blogUtils";
 import BlogPostContent from "../components/BlogPostContent";
-import Playground from "../components/Playground"; // Import the Playground component
+import Playground from "../components/Playground";
 
 interface PostPageProps {
   params: {

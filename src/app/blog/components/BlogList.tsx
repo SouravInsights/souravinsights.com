@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React from "react";
@@ -24,8 +25,9 @@ export default function BlogList({ posts }: BlogListProps) {
             Blog
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Thoughts, stories, and ideas on web development, design, and
-            building digital products.
+            Interactive coding tutorials, stories, deep-dive explainers, startup
+            insights, movie analysis, essays on curiosity, human behavior, and
+            anything I'm curious about.
           </p>
         </header>
       </motion.div>
