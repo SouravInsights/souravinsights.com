@@ -43,23 +43,13 @@ const projects = [
     liveUrl: "https://vendorly.vercel.app/",
   },
   {
-    name: "create-permissionless-app",
-    repoUrl:
-      "https://github.com/SouravInsights/permissionless.js/tree/main/packages/create-permissionless-app",
-  },
-  {
     name: "justanotherday",
-    liveUrl: "https://www.justanotherday.lol/",
+    liveUrl: "https://justanotherday.vercel.app/",
   },
   {
     name: "levelmeup",
     repoUrl: "https://github.com/SouravInsights/levelmeup",
     liveUrl: "https://levelmeup.vercel.app/",
-  },
-  {
-    name: "NightOwls Community",
-    repoUrl: "https://github.com/SouravInsights/nightowl-community",
-    liveUrl: "https://nightowl-community.vercel.app/",
   },
 ];
 
@@ -353,7 +343,7 @@ export default function Home() {
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Things I build when I'm curious about something or need to
-                scratch a personal itch
+                scratch a personal itch.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
