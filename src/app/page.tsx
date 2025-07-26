@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronRight, ExternalLink, Twitter, Github } from "lucide-react";
 import { useRef } from "react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
+import { FavoriteLinks } from "@/components/FavoriteLinks";
 
 const companies = [
   {
@@ -414,7 +415,7 @@ export default function Home() {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                Recent ssays
+                Recent Essays
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Some thoughts on life, learning, and whatever random things I
@@ -430,8 +431,8 @@ export default function Home() {
                       <span>•</span>
                       <span>{blog.readingTime}</span>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-3 transition-colors">
-                      <a href={blog.url} className="block hover:text-primary">
+                    <h3 className="group-hover:text-green-600 dark:group-hover:text-green-400 font-semibold text-foreground mb-3 transition-colors">
+                      <a href={blog.url} className="block">
                         {blog.title}
                       </a>
                     </h3>
@@ -453,6 +454,16 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* Favorite Links Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55 }}
+          className="space-y-6"
+        >
+          <FavoriteLinks />
+        </motion.section>
+
         {/* Unpopular Opinions Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -463,7 +474,7 @@ export default function Home() {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                Unpoular Opinions
+                Unpopular Opinions
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Things I’ve felt, noticed and often keep circling back to.

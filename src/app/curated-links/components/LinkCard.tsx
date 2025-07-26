@@ -28,8 +28,10 @@ interface LinkCardProps {
   gradientEnd: string;
   isAdminMode?: boolean;
   isCurated?: boolean;
+  isFavorited?: boolean;
   onAddToCuration?: (link: LinkData) => void;
   onEditNotes?: (link: LinkData) => void;
+  onToggleFavorite?: (link: LinkData) => void;
 }
 
 export default function LinkCard({
@@ -39,8 +41,10 @@ export default function LinkCard({
   gradientEnd,
   isAdminMode = false,
   isCurated = false,
+  isFavorited = false,
   onAddToCuration,
   onEditNotes,
+  onToggleFavorite,
 }: LinkCardProps) {
   switch (design) {
     case "tilted":
@@ -53,8 +57,10 @@ export default function LinkCard({
           gradientEnd={gradientEnd}
           isAdminMode={isAdminMode}
           isCurated={isCurated}
+          isFavorited={isFavorited}
           onAddToCuration={() => onAddToCuration?.(link)}
           onEditNotes={() => onEditNotes?.(link)}
+          onToggleFavorite={() => onToggleFavorite?.(link)}
         />
       );
     case "layered":
@@ -129,8 +135,10 @@ export default function LinkCard({
           gradientEnd={gradientEnd}
           isAdminMode={isAdminMode}
           isCurated={isCurated}
+          isFavorited={isFavorited}
           onAddToCuration={() => onAddToCuration?.(link)}
           onEditNotes={() => onEditNotes?.(link)}
+          onToggleFavorite={() => onToggleFavorite?.(link)}
         />
       );
   }

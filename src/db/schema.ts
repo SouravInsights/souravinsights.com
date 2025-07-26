@@ -5,6 +5,7 @@ import {
   timestamp,
   varchar,
   integer,
+  bigint,
 } from "drizzle-orm/pg-core";
 
 export const curatedLinks = pgTable("curated_links", {
@@ -25,7 +26,7 @@ export const curatedLinks = pgTable("curated_links", {
 });
 
 export const favoriteLinks = pgTable("favorite_links", {
-  id: serial("id").primaryKey(),
+  id: bigint("id", { mode: "number" }).primaryKey(),
   title: text("title").notNull(),
   url: text("url").notNull(),
   description: text("description"),

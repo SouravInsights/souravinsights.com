@@ -1,0 +1,1 @@
+ALTER TABLE "favorite_links" ALTER COLUMN "id" SET DATA TYPE integer;

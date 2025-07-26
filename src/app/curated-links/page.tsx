@@ -18,7 +18,6 @@ async function getDiscordData() {
 
   for (const channel of channels) {
     const messages = await getMessagesFromChannel(channel.id);
-    messages.forEach((msg) => console.log("msg:", msg));
     linkData[channel.name] = messages.map((msg) => ({
       id: msg.id,
       url: extractUrl(msg.content, msg.embeds),

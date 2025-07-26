@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Plus, Edit } from "lucide-react";
+import { ExternalLink, Plus, Edit, Star } from "lucide-react";
 import Color from "color";
 import { useTheme } from "@/context/ThemeContext";
 import posthog from "posthog-js";
@@ -15,6 +15,8 @@ interface CardProps {
   isCurated?: boolean;
   onAddToCuration?: () => void;
   onEditNotes?: () => void;
+  isFavorited?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 function isLightColor(color: string): boolean {
@@ -37,6 +39,8 @@ export function TiltedCard({
   isCurated = false,
   onAddToCuration,
   onEditNotes,
+  isFavorited = false,
+  onToggleFavorite,
 }: CardProps) {
   const handleLinkClick = () => {
     posthog.capture("link_clicked_tilted_card", { url });
@@ -124,6 +128,23 @@ export function TiltedCard({
           {/* Admin buttons - Different buttons for curated vs non-curated */}
           {isAdminMode && (
             <div className="absolute top-2 right-2 flex space-x-1 z-10">
+              {/* Star/Favorite button - always visible in admin mode */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleFavorite?.();
+                }}
+                className={`p-1.5 rounded-full shadow-sm transition-all duration-200 ${
+                  isFavorited
+                    ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                    : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+                }`}
+                title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Star size={16} fill={isFavorited ? "currentColor" : "none"} />
+              </button>
+              
               {!isCurated ? (
                 // For non-curated links: Add to collection button
                 <button

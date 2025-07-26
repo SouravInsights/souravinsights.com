@@ -123,7 +123,7 @@ export default function CuratedLinksTabs({
     const adminKey = searchParams.get("adminKey");
     if (adminKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
       setIsAdminMode(true);
-      console.log("Admin mode activated");
+      // console.log("Admin mode activated");
     }
   }, []);
 
@@ -171,6 +171,7 @@ export default function CuratedLinksTabs({
 
   const [showNewsletterModal, setShowNewsletterModal] = useState(false);
   const [curatedLinks, setCuratedLinks] = useState<LinkData[]>([]);
+  const [favoriteLinks, setFavoriteLinks] = useState<string[]>([]);
 
   const supportsCustomColors = useMemo(
     () => themesWithCustomColors.includes(cardDesign),
@@ -243,10 +244,95 @@ export default function CuratedLinksTabs({
         )
       );
 
-      // Refresh curated links
       fetchCuratedLinks();
     } catch (error) {
       console.error("Error saving notes:", error);
+    }
+  };
+
+  const fetchFavoriteLinks = async () => {
+    try {
+      const response = await fetch("/api/favorite-links/public");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch favorite links");
+      }
+
+      const data = await response.json();
+      // Assuming the API returns an array of link IDs or link objects with id property
+      const linkIds = Array.isArray(data.links)
+        ? data.links.map((link: any) =>
+            typeof link === "string" ? link : link.id
+          )
+        : [];
+      setFavoriteLinks(linkIds);
+    } catch (error) {
+      console.error("Error fetching favorite links:", error);
+      alert("Could not load favorite links");
+    }
+  };
+
+  const toggleFavorite = async (linkId: string) => {
+    try {
+      const existingFavorite = favoriteLinks.includes(linkId);
+
+      // Find the full link data for this ID
+      const foundLinkData = Object.values(linkData)
+        .flat()
+        .find((link) => link.id === linkId);
+
+      if (!foundLinkData && !existingFavorite) {
+        throw new Error("Link data not found for favoriting");
+      }
+
+      let response;
+
+      if (existingFavorite) {
+        // DELETE with query parameter
+        response = await fetch(`/api/favorite-links?id=${linkId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
+          },
+        });
+      } else {
+        // POST with only the required fields expected by the backend
+        const favoritePayload = {
+          id: foundLinkData?.id,
+          title: foundLinkData?.title,
+          url: foundLinkData?.url,
+          description: foundLinkData?.description,
+          category: activeTab,
+        };
+
+        response = await fetch("/api/favorite-links", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
+          },
+          body: JSON.stringify(favoritePayload),
+        });
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error:", errorText);
+        throw new Error(
+          existingFavorite
+            ? "Failed to remove favorite"
+            : "Failed to add favorite"
+        );
+      }
+
+      setFavoriteLinks((prev) =>
+        existingFavorite
+          ? prev.filter((id) => id !== linkId)
+          : [...prev, linkId]
+      );
+    } catch (error) {
+      console.error("Error toggling favorite status:", error);
     }
   };
 
@@ -264,7 +350,6 @@ export default function CuratedLinksTabs({
     }
   };
 
-  // Function to save a link to the curated collection
   const addToCollection = async (data: {
     linkId: string;
     notes: string;
@@ -276,8 +361,6 @@ export default function CuratedLinksTabs({
     if (!link) {
       throw new Error("Link not found");
     }
-
-    console.log("Adding link to collection:", link.url);
 
     const response = await fetch("/api/curated-links", {
       method: "POST",
@@ -299,17 +382,14 @@ export default function CuratedLinksTabs({
       throw new Error("Failed to save link");
     }
 
-    // Track in PostHog
     posthog.capture("link_added_to_curation", {
       url: link.url,
       category: data.category,
     });
 
-    // Immediately refresh the curated links
     await fetchCuratedLinks();
   };
 
-  // Function to fetch curated links
   const fetchCuratedLinks = async () => {
     try {
       const response = await fetch("/api/curated-links", {
@@ -334,6 +414,7 @@ export default function CuratedLinksTabs({
     if (isAdminMode) {
       fetchCuratedLinks();
     }
+    fetchFavoriteLinks();
   }, [isAdminMode, showNewsletterModal]);
 
   const getChannelIcon = (channelName: string) => {
@@ -518,7 +599,7 @@ export default function CuratedLinksTabs({
                         normalizeUrl(curatedLink.url) === normalizedLinkUrl
                     );
 
-                    console.log("Is Curated?", isCurated);
+                    // console.log("Is Curated?", isCurated);
 
                     // To find the matching curated link if it exists
                     const curatedLink = isCurated
@@ -555,6 +636,8 @@ export default function CuratedLinksTabs({
                         isCurated={isCurated}
                         onAddToCuration={() => openAddLinkModal(link)}
                         onEditNotes={() => openEditLinkModal(enhancedLink)}
+                        isFavorited={favoriteLinks.includes(link.id)}
+                        onToggleFavorite={() => toggleFavorite(link.id)}
                       />
                     );
                   })}
