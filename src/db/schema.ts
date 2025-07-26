@@ -30,7 +30,6 @@ export const favoriteLinks = pgTable("favorite_links", {
   url: text("url").notNull(),
   description: text("description"),
   category: varchar("category", { length: 100 }).notNull(),
-  creatorName: varchar("creator_name", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

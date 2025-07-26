@@ -22,6 +22,13 @@
       "when": 1753547820450,
       "tag": "0002_chief_the_captain",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1753548347138,
+      "tag": "0003_hot_captain_america",
+      "breakpoints": true
     }
   ]
 }

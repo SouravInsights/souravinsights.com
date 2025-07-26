@@ -1,0 +1,1 @@
+ALTER TABLE "favorite_links" DROP COLUMN "creator_name";
