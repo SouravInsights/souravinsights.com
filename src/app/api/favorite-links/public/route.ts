@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { favoriteLinks } from "@/db/schema";
 
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const favorites = await db
@@ -29,13 +33,14 @@ export async function GET() {
       })),
     });
 
-    // Disable caching to ensure fresh data (not sure if it will work)
+    // Enhanced cache control headers
     response.headers.set(
       "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate"
+      "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
     );
     response.headers.set("Pragma", "no-cache");
     response.headers.set("Expires", "0");
+    response.headers.set("Surrogate-Control", "no-store");
 
     return response;
   } catch (error) {
