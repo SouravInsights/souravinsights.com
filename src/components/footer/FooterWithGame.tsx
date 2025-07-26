@@ -226,11 +226,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <motion.div
-            className="relative inline-block px-4 md:px-8 py-4 md:py-6 rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 max-w-2xl mx-auto"
-            whileHover={{ scale: 1.02, y: -2 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
+          <div className="relative inline-block px-4 md:px-8 py-4 md:py-6 rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 max-w-2xl mx-auto">
             <div className="absolute top-1 md:top-2 left-2 md:left-4 text-2xl md:text-4xl text-gray-300 dark:text-gray-600 font-serif">
               "
             </div>
@@ -249,7 +245,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
             >
               — Steve Jobs
             </motion.p>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     </footer>
