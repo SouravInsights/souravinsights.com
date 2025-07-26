@@ -1,20 +1,8 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  Cpu,
-  Code2,
-  Sparkles,
-  Terminal,
-} from "lucide-react";
-import {
-  BinaryAppleIcon,
-  PixelatedSnakeIcon,
-  CodeBlockMazeIcon,
-} from "@/components/icons";
-import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
+import { Github, Linkedin, Twitter } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -22,94 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import SnakeGame from "@/components/SnakeGame";
-
-interface TechInfo {
-  name: string;
-  icon: string;
-  color: string;
-  showcase: React.ReactNode;
-}
-
-const techs: TechInfo[] = [
-  {
-    name: "Next.js",
-    icon: "️️⚡",
-    color: "#000000",
-    showcase: <div className="text-xs">Loading... 99% | next start</div>,
-  },
-  {
-    name: "React",
-    icon: "⚛️",
-    color: "#61DAFB",
-    showcase: (
-      <div className="text-xs">
-        const [isAwesome, setIsAwesome] = useState(true);
-      </div>
-    ),
-  },
-  {
-    name: "TypeScript",
-    icon: "📘",
-    color: "#3178C6",
-    showcase: (
-      <div className="text-xs">{`type Developer = 'Awesome' | 'Super Awesome';`}</div>
-    ),
-  },
-  {
-    name: "Tailwind CSS",
-    icon: "🎨",
-    color: "#06B6D4",
-    showcase: (
-      <div className="text-xs">{`className="hover:awesome focus:more-awesome"`}</div>
-    ),
-  },
-  {
-    name: "ShadcN UI",
-    icon: "🧩",
-    color: "#000000",
-    showcase: (
-      <Button
-        size="sm"
-        variant="outline"
-        className="text-xs text-gray-700 hover:text-black"
-      >
-        Classy Button
-      </Button>
-    ),
-  },
-  {
-    name: "Framer Motion",
-    icon: "🎭",
-    color: "#FF4154",
-    showcase: (
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        className="w-4 h-4 bg-purple-500 rounded-full"
-      />
-    ),
-  },
-];
-
-const IconRotator: React.FC = () => {
-  const icons = [BinaryAppleIcon, PixelatedSnakeIcon, CodeBlockMazeIcon];
-  const [currentIconIndex, setCurrentIconIndex] = useState(0);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentIconIndex((prevIndex) => (prevIndex + 1) % icons.length);
-    }, 3000); // Change icon every 3 seconds
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const CurrentIcon = icons[currentIconIndex];
-
-  return (
-    <CurrentIcon className="w-6 h-6 sm:w-8 sm:h-8 transition-all duration-300 ease-in-out" />
-  );
-};
 
 interface FooterWithSnakeGameProps {
   withGame?: boolean;
@@ -118,154 +18,238 @@ interface FooterWithSnakeGameProps {
 const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   withGame = true,
 }) => {
-  const [hoveredTech, setHoveredTech] = useState<TechInfo | null>(null);
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-8 md:py-12 transition-colors duration-200">
-      <div className="container mx-auto px-4">
+    <footer className="relative bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-t border-gray-200 dark:border-gray-700 py-16 transition-all duration-500 overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]">
         <div
-          className={`${
-            withGame
-              ? "grid grid-cols-1 md:grid-cols-2 gap-12"
-              : "flex flex-col justify-center items-center"
-          }`}
+          className="absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
+            backgroundSize: "32px 32px",
+          }}
+        />
+      </div>
+
+      <div className="container mx-auto px-4 max-w-5xl relative">
+        {/* Main Content */}
+        <motion.div
+          className="flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12 mb-12 md:mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, staggerChildren: 0.1 }}
         >
-          {withGame && (
-            <div className="flex flex-col gap-2 items-center">
-              <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                <h3 className="text-center text-xl font-mono font-bold text-green-600 dark:text-green-400 flex items-center justify-center space-x-2 mb-4">
-                  <Terminal size={20} className="mr-2" />
-                  <span>~/games/snake</span>
-                </h3>
-                <SnakeGame />
-              </div>
+          {/* Left: Connect Section */}
+          <motion.div
+            className="flex-1 text-center md:text-left"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="flex items-center gap-2 mb-4 justify-center md:justify-start">
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+              >
+                ☕
+              </motion.div>
+              <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                Let's connect
+              </h3>
             </div>
+            <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed max-w-xs md:max-w-none mx-auto md:mx-0">
+              Grab a virtual coffee and let's chat about code, life, or that
+              next big idea you want to work on!
+            </p>
+            <div className="flex justify-center md:justify-start space-x-3">
+              {[
+                {
+                  icon: Github,
+                  link: "https://github.com/souravinsights",
+                  label: "GitHub",
+                  color: "hover:text-gray-900 dark:hover:text-white",
+                  bg: "hover:bg-gray-100 dark:hover:bg-gray-700",
+                },
+                {
+                  icon: Linkedin,
+                  link: "https://linkedin.com/in/souravinsights",
+                  label: "LinkedIn",
+                  color: "hover:text-blue-600 dark:hover:text-blue-400",
+                  bg: "hover:bg-blue-50 dark:hover:bg-blue-900/20",
+                },
+                {
+                  icon: Twitter,
+                  link: "https://twitter.com/souravinsights",
+                  label: "Twitter",
+                  color: "hover:text-sky-500 dark:hover:text-sky-400",
+                  bg: "hover:bg-sky-50 dark:hover:bg-sky-900/20",
+                },
+              ].map((social, index) => (
+                <TooltipProvider key={index}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        href={social.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`p-2 md:p-3 rounded-xl text-gray-600 dark:text-gray-300 ${social.color} ${social.bg} transition-all duration-300 group`}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 + index * 0.1 }}
+                      >
+                        <social.icon
+                          size={16}
+                          className="md:w-[18px] md:h-[18px] group-hover:animate-pulse"
+                        />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="font-medium">
+                      <p>{social.label}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Center: Play Button */}
+          {withGame && (
+            <motion.div
+              className="flex-shrink-0 order-first md:order-none"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  variant="outline"
+                  size="default"
+                  onClick={() => window.open("/play", "_self")}
+                  className="relative px-4 md:px-8 py-2 md:py-4 text-sm md:text-base text-gray-700 hover:text-gray-900 border-2 border-dashed border-gray-300 hover:border-gray-400 dark:text-gray-300 dark:hover:text-white dark:border-gray-600 dark:hover:border-gray-500 transition-all duration-300 group overflow-hidden"
+                >
+                  <motion.span
+                    className="flex items-center gap-2 relative z-10"
+                    whileHover={{ x: 2 }}
+                  >
+                    <motion.span
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        repeatDelay: 2,
+                      }}
+                    >
+                      🎮
+                    </motion.span>
+                    <span className="hidden sm:inline">Bored? Try this...</span>
+                    <span className="sm:hidden">Bored? Try this...</span>
+                  </motion.span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse" />
+                </Button>
+              </motion.div>
+            </motion.div>
           )}
 
-          <div className="space-y-8">
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-              <h4 className="text-xl font-mono mb-4 flex items-center text-green-600 dark:text-green-400">
-                <Terminal size={20} className="mr-2" />
-                <span>~/connect</span>
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                {`Grab a virtual coffee with me and let's chat about code!`}
-              </p>
-              <div className="flex space-x-4">
-                {[
-                  {
-                    icon: Github,
-                    link: "https://github.com/souravinsights",
-                    label: "GitHub",
-                  },
-                  {
-                    icon: Linkedin,
-                    link: "https://linkedin.com/in/souravinsights",
-                    label: "LinkedIn",
-                  },
-                  {
-                    icon: Twitter,
-                    link: "https://twitter.com/souravinsights",
-                    label: "Twitter",
-                  },
-                ].map((social, index) => (
-                  <TooltipProvider key={index}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <motion.a
-                          href={social.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-600 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400 transition-colors duration-200"
-                          whileHover={{ scale: 1.2 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <social.icon size={24} />
-                        </motion.a>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{social.label}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ))}
-              </div>
+          {/* Right: Open Source */}
+          <motion.div
+            className="flex-1 text-center md:text-right"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="flex items-center gap-2 mb-4 justify-center md:justify-end">
+              <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                Open Source
+              </h3>
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              >
+                ⚡
+              </motion.div>
             </div>
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-              <h4 className="text-xl font-mono mb-4 flex items-center text-green-600 dark:text-green-400">
-                <Terminal size={20} className="mr-2" />
-                <span>~/open-source</span>
-              </h4>
-              <p className="text-sm mb-2 text-gray-600 dark:text-gray-300">
-                {`This portfolio is open source. Feel free play around, just don't judge my commit messages too harshly!`}
-              </p>
+            <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed max-w-xs md:max-w-none mx-auto md:mx-0">
+              This portfolio is open source. Dive in, break things, just don't
+              judge my commit messages!
+            </p>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 variant="outline"
-                size="sm"
+                size="default"
                 onClick={() =>
                   window.open(
                     "https://github.com/SouravInsights/souravinsights.com",
                     "_blank"
                   )
                 }
-                className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-gray-700 dark:text-green-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                className="px-4 md:px-6 py-2 text-sm md:text-base text-gray-700 hover:text-gray-900 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800 transition-all duration-300 group"
               >
-                View on GitHub
+                <span className="flex items-center gap-2">
+                  <Github
+                    size={14}
+                    className="md:w-4 md:h-4 group-hover:rotate-12 transition-transform duration-300"
+                  />
+                  <span className="hidden sm:inline">Explore the code</span>
+                  <span className="sm:hidden">Code</span>
+                </span>
               </Button>
-            </div>
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-              <h4 className="text-xl font-mono mb-4 flex items-center text-green-600 dark:text-green-400">
-                <Terminal size={20} className="mr-2" />
-                <span>~/stack</span>
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {techs.map((tech, index) => (
-                  <motion.div
-                    key={index}
-                    className="px-3 py-2 bg-white dark:bg-gray-700 rounded-full text-sm cursor-pointer flex items-center shadow-sm hover:shadow-md transition-shadow duration-300"
-                    whileHover={{ scale: 1.05 }}
-                    onHoverStart={() => setHoveredTech(tech)}
-                    onHoverEnd={() => setHoveredTech(null)}
-                  >
-                    <span className="mr-1">{tech.icon}</span>
-                    <span className="text-gray-800 dark:text-gray-200">
-                      {tech.name}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-              <div className="h-24 mt-4">
-                <AnimatePresence>
-                  {hoveredTech && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="p-3 bg-white dark:bg-gray-700 rounded-md shadow-lg"
-                    >
-                      <h5 className="text-sm font-semibold mb-2 text-green-700 dark:text-green-300">
-                        {hoveredTech.name} Showcase:
-                      </h5>
-                      <div className="flex items-center justify-center h-8">
-                        {hoveredTech.showcase}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+
+        {/* Decorative separator */}
         <motion.div
-          className={`${
-            withGame && "mt-8"
-          } text-center text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200`}
+          className="relative mb-12"
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+        >
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <motion.div
+              className="w-3 h-3 bg-gray-400 dark:bg-gray-500 rounded-full"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Bottom: Quote */}
+        <motion.div
+          className="text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.6 }}
         >
-          © {new Date().getFullYear()} SouravInsights | Crafted with passion and
-          some (maybe a lot) ☕
-          <br />
+          <motion.div
+            className="relative inline-block px-4 md:px-8 py-4 md:py-6 rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 max-w-2xl mx-auto"
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div className="absolute top-1 md:top-2 left-2 md:left-4 text-2xl md:text-4xl text-gray-300 dark:text-gray-600 font-serif">
+              "
+            </div>
+            <p className="text-sm md:text-base italic text-gray-700 dark:text-gray-300 leading-relaxed px-4 md:px-0 relative z-10">
+              The only way to do great work is to love what you do. If you
+              haven't found it yet, keep looking. Don't settle.
+            </p>
+            <div className="absolute bottom-1 md:bottom-2 right-2 md:right-4 text-2xl md:text-4xl text-gray-300 dark:text-gray-600 font-serif rotate-180">
+              "
+            </div>
+            <motion.p
+              className="mt-3 md:mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              — Steve Jobs
+            </motion.p>
+          </motion.div>
         </motion.div>
       </div>
     </footer>
