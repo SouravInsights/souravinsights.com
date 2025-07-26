@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ChevronRight, ExternalLink, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight, ExternalLink, ChevronLeft } from "lucide-react";
 
 interface FavoriteLink {
   id: string;
@@ -10,13 +10,13 @@ interface FavoriteLink {
   url: string;
   description: string | null;
   category: string | null;
-  creatorTwitter: string | null;
   createdAt: string;
 }
 
 export function FavoriteLinks() {
   const [favorites, setFavorites] = useState<FavoriteLink[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     async function fetchFavorites() {
@@ -36,9 +36,17 @@ export function FavoriteLinks() {
     fetchFavorites();
   }, []);
 
+  const nextLink = () => {
+    setCurrentIndex((prev) => (prev === favorites.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevLink = () => {
+    setCurrentIndex((prev) => (prev === 0 ? favorites.length - 1 : prev - 1));
+  };
+
   if (loading) {
     return (
-      <section className="py-12 border-b border-border">
+      <section className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
         <div className="space-y-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Favorite Links</h2>
@@ -77,7 +85,90 @@ export function FavoriteLinks() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Mobile: Single card with navigation */}
+        <div className="md:hidden">
+          <div className="relative overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.a
+                key={currentIndex}
+                href={favorites[currentIndex]?.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="border border-border rounded-lg p-4 hover:bg-accent transition-all duration-200 group h-[140px] flex flex-col justify-between w-full block"
+              >
+                <div>
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors line-clamp-1">
+                      {favorites[currentIndex]?.title}
+                    </h3>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors flex-shrink-0 ml-2" />
+                  </div>
+
+                  {favorites[currentIndex]?.description && (
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {favorites[currentIndex].description}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  {favorites[currentIndex]?.category && (
+                    <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                      {favorites[currentIndex].category}
+                    </span>
+                  )}
+                </div>
+              </motion.a>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between mt-6 h-10">
+            <button
+              onClick={prevLink}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </button>
+
+            {/* Progress dots */}
+            <div className="flex gap-1">
+              {favorites
+                .slice(0, Math.min(6, favorites.length))
+                .map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      index === currentIndex
+                        ? "bg-green-600 dark:bg-green-400"
+                        : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                    }`}
+                  />
+                ))}
+            </div>
+
+            <button
+              onClick={nextLink}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <p className="text-xs text-muted-foreground text-center mt-3 opacity-70">
+            {currentIndex + 1} of {favorites.length}
+          </p>
+        </div>
+
+        {/* Desktop: Grid layout */}
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
           {favorites.slice(0, 6).map((favorite, index) => (
             <motion.a
               key={favorite.id}
@@ -107,13 +198,6 @@ export function FavoriteLinks() {
                   <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
                     {favorite.category}
                   </span>
-                )}
-
-                {favorite.creatorTwitter && (
-                  <div className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    <span>@{favorite.creatorTwitter}</span>
-                  </div>
                 )}
               </div>
             </motion.a>
