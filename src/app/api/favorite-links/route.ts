@@ -53,13 +53,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log("Inserting favorite link:", { id, title, url, category });
+
     const result = await db.insert(favoriteLinks).values({
-      id,
+      id: BigInt(id),
       title,
       url,
       description,
       category,
     });
+
+    console.log("Insert result:", result);
+
+    // Verify the insert by querying back
+    // const inserted = await db
+    //   .select()
+    //   .from(favoriteLinks)
+    //   .where(eq(favoriteLinks.id, BigInt(id)));
+    // console.log("Verification query result:", inserted);
 
     return NextResponse.json({
       success: true,
@@ -92,7 +103,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await db.delete(favoriteLinks).where(eq(favoriteLinks.id, parseInt(id)));
+    await db.delete(favoriteLinks).where(eq(favoriteLinks.id, BigInt(id)));
 
     return NextResponse.json({
       success: true,

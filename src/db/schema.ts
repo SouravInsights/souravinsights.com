@@ -26,7 +26,7 @@ export const curatedLinks = pgTable("curated_links", {
 });
 
 export const favoriteLinks = pgTable("favorite_links", {
-  id: bigint("id", { mode: "number" }).primaryKey(),
+  id: bigint("id", { mode: "bigint" }).primaryKey(),
   title: text("title").notNull(),
   url: text("url").notNull(),
   description: text("description"),

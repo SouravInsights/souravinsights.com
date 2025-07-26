@@ -252,23 +252,29 @@ export default function CuratedLinksTabs({
 
   const fetchFavoriteLinks = async () => {
     try {
-      const response = await fetch("/api/favorite-links/public");
+      const response = await fetch("/api/favorite-links/public", {
+        cache: "no-store", // Ensure fresh data
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch favorite links");
       }
 
       const data = await response.json();
-      // Assuming the API returns an array of link IDs or link objects with id property
-      const linkIds = Array.isArray(data.links)
-        ? data.links.map((link: any) =>
-            typeof link === "string" ? link : link.id
+
+      const linkIds = Array.isArray(data.favorites)
+        ? data.favorites.map((favorite: any) =>
+            typeof favorite === "string" ? favorite : favorite.id.toString()
           )
         : [];
+
+      console.log("Extracted favorite link IDs:", linkIds);
       setFavoriteLinks(linkIds);
     } catch (error) {
       console.error("Error fetching favorite links:", error);
-      alert("Could not load favorite links");
     }
   };
 
@@ -625,6 +631,24 @@ export default function CuratedLinksTabs({
                       }),
                     };
 
+                    const isFavorited = favoriteLinks.includes(link.id);
+                    // Debug logging
+                    if (
+                      link.title.includes(
+                        "How Data Travels the World to Reach Your Screen: A Deep Dive into O..."
+                      )
+                    ) {
+                      console.log("Debug favorite check:", {
+                        linkId: link.id,
+                        linkIdType: typeof link.id,
+                        favoriteLinks: favoriteLinks,
+                        favoriteLinksTypes: favoriteLinks.map(
+                          (id) => typeof id
+                        ),
+                        isFavorited: isFavorited,
+                      });
+                    }
+
                     return (
                       <LinkCard
                         key={link.id}
@@ -636,7 +660,7 @@ export default function CuratedLinksTabs({
                         isCurated={isCurated}
                         onAddToCuration={() => openAddLinkModal(link)}
                         onEditNotes={() => openEditLinkModal(enhancedLink)}
-                        isFavorited={favoriteLinks.includes(link.id)}
+                        isFavorited={isFavorited}
                         onToggleFavorite={() => toggleFavorite(link.id)}
                       />
                     );
