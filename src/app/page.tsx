@@ -459,7 +459,7 @@ export default function Home() {
 
             {/* Mobile: Single card with navigation */}
             <div className="md:hidden">
-              <div className="relative">
+              <div className="relative overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentOpinionIndex}
@@ -467,7 +467,7 @@ export default function Home() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -50 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900 h-[140px] flex items-center"
+                    className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900 h-[140px] flex items-center w-full"
                   >
                     <div className="flex items-start gap-4 w-full">
                       <span className="text-sm font-mono text-green-600 dark:text-green-400 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-300 transition-colors">
