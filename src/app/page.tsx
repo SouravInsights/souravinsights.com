@@ -2,11 +2,17 @@
 "use client";
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronRight, ExternalLink, Twitter, Github } from "lucide-react";
-import { useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ChevronRight,
+  ExternalLink,
+  Twitter,
+  Github,
+  ChevronLeft,
+} from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
+import { useState } from "react";
 
 const companies = [
   {
@@ -126,27 +132,6 @@ const myToolkit = {
   },
 };
 
-const CompanyPill = ({ company }: { company: (typeof companies)[0] }) => (
-  <a
-    href={company.website}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-  >
-    <div className="w-6 h-6 relative">
-      <Image
-        src={company.logo}
-        alt={`${company.name} logo`}
-        fill
-        className="rounded-full object-cover"
-      />
-    </div>
-    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-      {company.name}
-    </span>
-  </a>
-);
-
 const HeroSection = () => (
   <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden relative border border-gray-200 dark:border-gray-700 transition-colors duration-200">
     {/* Background grid effect */}
@@ -258,14 +243,19 @@ const HeroSection = () => (
 );
 
 export default function Home() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: scrollRef,
-    offset: ["start start", "end start"],
-  });
+  const [currentOpinionIndex, setCurrentOpinionIndex] = useState(0);
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
+  const nextOpinion = () => {
+    setCurrentOpinionIndex((prev) =>
+      prev === unpopularOpinions.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevOpinion = () => {
+    setCurrentOpinionIndex((prev) =>
+      prev === 0 ? unpopularOpinions.length - 1 : prev - 1
+    );
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-2 sm:p-4 md:p-12 transition-colors duration-200">
@@ -280,7 +270,6 @@ export default function Home() {
         >
           <HeroSection />
         </motion.div>
-
         {/* Experience Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -328,7 +317,6 @@ export default function Home() {
             </div>
           </div>
         </motion.section>
-
         {/* Projects Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -394,7 +382,6 @@ export default function Home() {
             </div>
           </div>
         </motion.section>
-
         {/* Blog Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -443,7 +430,6 @@ export default function Home() {
             </div>
           </div>
         </motion.section>
-
         {/* Favorite Links Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -467,10 +453,75 @@ export default function Home() {
                 Unpopular Opinions
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Things I’ve felt, noticed and often keep circling back to.
+                Things I've felt, noticed and often keep circling back to.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* Mobile: Single card with navigation */}
+            <div className="md:hidden">
+              <div className="relative">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentOpinionIndex}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900 min-h-[120px] flex items-center"
+                  >
+                    <div className="flex items-start gap-4 w-full">
+                      <span className="text-sm font-mono text-green-600 dark:text-green-400 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-300 transition-colors">
+                        {String(currentOpinionIndex + 1).padStart(2, "0")}
+                      </span>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 italic leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+                        {unpopularOpinions[currentOpinionIndex]}
+                      </p>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex items-center justify-between mt-6">
+                <button
+                  onClick={prevOpinion}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </button>
+
+                {/* Progress dots */}
+                <div className="flex gap-1">
+                  {unpopularOpinions.slice(0, 10).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentOpinionIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentOpinionIndex
+                          ? "bg-green-600 dark:bg-green-400"
+                          : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  onClick={nextOpinion}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <p className="text-xs text-muted-foreground text-center mt-3 opacity-70">
+                {currentOpinionIndex + 1} of {unpopularOpinions.length}
+              </p>
+            </div>
+
+            {/* Desktop: Grid layout */}
+            <div className="hidden md:grid grid-cols-2 gap-4">
               {unpopularOpinions.slice(0, 10).map((opinion, index) => (
                 <div
                   key={index}
