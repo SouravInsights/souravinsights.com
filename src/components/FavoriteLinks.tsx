@@ -133,7 +133,7 @@ export function FavoriteLinks() {
               className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
             >
               <ChevronLeft className="w-4 h-4" />
-              Previous
+              Prev
             </button>
 
             {/* Progress dots */}
