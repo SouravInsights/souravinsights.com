@@ -15,6 +15,13 @@
       "when": 1744836599009,
       "tag": "0001_old_abomination",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753547820450,
+      "tag": "0002_chief_the_captain",
+      "breakpoints": true
     }
   ]
 }

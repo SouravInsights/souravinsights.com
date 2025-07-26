@@ -23,3 +23,14 @@ export const curatedLinks = pgTable("curated_links", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const favoriteLinks = pgTable("favorite_links", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  url: text("url").notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  creatorName: varchar("creator_name", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
