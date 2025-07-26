@@ -467,7 +467,7 @@ export default function Home() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -50 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900 min-h-[120px] flex items-center"
+                    className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900 h-[140px] flex items-center"
                   >
                     <div className="flex items-start gap-4 w-full">
                       <span className="text-sm font-mono text-green-600 dark:text-green-400 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-300 transition-colors">
@@ -482,10 +482,10 @@ export default function Home() {
               </div>
 
               {/* Navigation */}
-              <div className="flex items-center justify-between mt-6">
+              <div className="flex items-center justify-between mt-6 h-10">
                 <button
                   onClick={prevOpinion}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Previous
@@ -508,7 +508,7 @@ export default function Home() {
 
                 <button
                   onClick={nextOpinion}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
