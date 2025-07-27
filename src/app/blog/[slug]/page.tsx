@@ -2,6 +2,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import rehypePrettyCode from "rehype-pretty-code";
 import { getPostBySlug } from "../utils/blogUtils";
+import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
 import Playground from "../components/Playground";
 
@@ -20,46 +21,9 @@ export async function generateMetadata({ params }: PostPageProps) {
       description: "The requested blog post could not be found.",
     };
   }
-
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
-  const ogImageParams = new URLSearchParams({
-    title: post.title,
-    excerpt: post.excerpt,
-    date: post.date,
-    readingTime: post.readingTime || "5 min read",
-    draft: post.status === "draft" ? "true" : "false",
-  });
-  const ogImageUrl = `${baseUrl}/api/og?${ogImageParams.toString()}`;
-
-  return {
-    title: post.title,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: "article",
-      publishedTime: post.date,
-      authors: ["Sourav Kumar Nanda"],
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-      siteName: "Notes & Essays",
-      url: `${baseUrl}/blog/${params.slug}`,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
-      images: [ogImageUrl],
-      creator: "@souravinsights",
-    },
-  };
+  return generateBlogMetadata(post, params.slug, baseUrl);
 }
 
 const prettyCodeOptions = {
