@@ -6,6 +6,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/components/navbar/NavBar";
 import ClientFooterWrapper from "@/components/footer/ClientFooterWrapper";
+import { PHProvider } from "@/context/PostHogProvider";
+import dynamic from "next/dynamic";
+
+const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
+  ssr: false,
+});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,15 +53,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider>
-          <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <ClientFooterWrapper />
-          </div>
-          <SpeedInsights />
-          <Analytics />
-        </ThemeProvider>
+        <PHProvider>
+          <PostHogPageView />
+          <ThemeProvider>
+            <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <ClientFooterWrapper />
+            </div>
+            <SpeedInsights />
+            <Analytics />
+          </ThemeProvider>
+        </PHProvider>
       </body>
     </html>
   );

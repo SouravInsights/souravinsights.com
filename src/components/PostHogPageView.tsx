@@ -8,8 +8,9 @@ export default function PostHogPageView(): null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const posthog = usePostHog();
+
   useEffect(() => {
-    // Track pageviews
+    // Track pageviews (PostHog will handle internal user filtering)
     if (pathname && posthog) {
       let url = window.origin + pathname;
       if (searchParams.toString()) {
