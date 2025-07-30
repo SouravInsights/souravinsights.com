@@ -1296,6 +1296,7 @@ const Macintosh: React.FC = () => {
           onMouseEnter={toggleCustomCursor}
           onMouseLeave={toggleCustomCursor}
           className={showCustomCursor ? "custom-cursor" : ""}
+          style={{ outline: "none" }}
         >
           <rect
             x="40.3937"
