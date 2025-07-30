@@ -24,7 +24,14 @@ export function FavoriteLinks() {
         const response = await fetch("/api/favorite-links/public");
         const data = await response.json();
         if (data.success) {
-          setFavorites(data.favorites);
+          const sorted = data.favorites
+            .sort(
+              (a: FavoriteLink, b: FavoriteLink) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
+            .slice(0, 6);
+          setFavorites(sorted);
         }
       } catch (error) {
         console.error("Error fetching favorite links:", error);
@@ -81,7 +88,7 @@ export function FavoriteLinks() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Favorite Links</h2>
           <p className="text-muted-foreground">
-            Curated resources and tools I find valuable
+            Curated resources, articles and tools I find valuable
           </p>
         </div>
 
@@ -138,19 +145,17 @@ export function FavoriteLinks() {
 
             {/* Progress dots */}
             <div className="flex gap-1">
-              {favorites
-                .slice(0, Math.min(6, favorites.length))
-                .map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index)}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentIndex
-                        ? "bg-green-600 dark:bg-green-400"
-                        : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
-                    }`}
-                  />
-                ))}
+              {favorites.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentIndex
+                      ? "bg-green-600 dark:bg-green-400"
+                      : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                  }`}
+                />
+              ))}
             </div>
 
             <button
@@ -169,7 +174,7 @@ export function FavoriteLinks() {
 
         {/* Desktop: Grid layout */}
         <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
-          {favorites.slice(0, 6).map((favorite, index) => (
+          {favorites.map((favorite, index) => (
             <motion.a
               key={favorite.id}
               href={favorite.url}
