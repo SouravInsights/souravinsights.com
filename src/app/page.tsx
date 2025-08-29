@@ -40,24 +40,42 @@ const companies = [
 const projects = [
   {
     name: "FairForms",
-    repoUrl: "https://github.com/SouravInsights/fairforms",
-    liveUrl: "https://www.fairforms.xyz/",
+    logo: "/projects/fairforms-logo.png",
+    website: "https://www.fairforms.xyz/",
   },
   {
-    name: "Vendorly",
-    repoUrl: "https://github.com/SouravInsights/vendorly",
-    liveUrl: "https://vendorly.vercel.app/",
+    name: "Beenthere",
+    logo: "/projects/beenthere-logo.png",
+    website: "https://www.beenthere.page/",
   },
   {
-    name: "justanotherday",
-    liveUrl: "https://justanotherday.vercel.app/",
-  },
-  {
-    name: "levelmeup",
-    repoUrl: "https://github.com/SouravInsights/levelmeup",
-    liveUrl: "https://levelmeup.vercel.app/",
+    name: "Waitroom",
+    logo: "/projects/waitroom-logo.png",
+    website: "https://www.waitroom.xyz/",
   },
 ];
+
+// const projects = [
+//   {
+//     name: "FairForms",
+//     repoUrl: "https://github.com/SouravInsights/fairforms",
+//     liveUrl: "https://www.fairforms.xyz/",
+//   },
+//   {
+//     name: "Vendorly",
+//     repoUrl: "https://github.com/SouravInsights/vendorly",
+//     liveUrl: "https://vendorly.vercel.app/",
+//   },
+//   {
+//     name: "justanotherday",
+//     liveUrl: "https://justanotherday.vercel.app/",
+//   },
+//   {
+//     name: "levelmeup",
+//     repoUrl: "https://github.com/SouravInsights/levelmeup",
+//     liveUrl: "https://levelmeup.vercel.app/",
+//   },
+// ];
 
 const blogHighlights = [
   {
@@ -334,42 +352,32 @@ export default function Home() {
                 scratch a personal itch.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <div
+            <div className="grid grid-cols-2 md:flex flex-wrap justify-center gap-4">
+              {projects.map((project, index) => (
+                <motion.a
                   key={project.name}
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-accent transition-all duration-300"
+                  href={project.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
                 >
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-foreground text-sm">
-                      {project.name}
-                    </h3>
-                    <div className="flex gap-2">
-                      {project.repoUrl && (
-                        <a
-                          href={project.repoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                          title="View source"
-                        >
-                          <Github className="w-4 h-4" />
-                        </a>
-                      )}
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground transition-colors"
-                          title="View live site"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-20 h-20 relative">
+                      <Image
+                        src={project.logo}
+                        alt={`${project.name} logo`}
+                        fill
+                        className="rounded-full object-cover"
+                      />
                     </div>
+                    <span className="text-sm font-medium text-foreground transition-colors text-center">
+                      {project.name}
+                    </span>
                   </div>
-                </div>
+                </motion.a>
               ))}
             </div>
             <div className="mt-8 text-center">
