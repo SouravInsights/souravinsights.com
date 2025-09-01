@@ -53,6 +53,11 @@ const projects = [
     logo: "/projects/waitroom-logo.png",
     website: "https://www.waitroom.xyz/",
   },
+  {
+    name: "3Reads",
+    logo: "/projects/3reads-logo.png",
+    website: "https://3reads.vercel.app/",
+  },
 ];
 
 // const projects = [
