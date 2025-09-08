@@ -204,14 +204,47 @@ const HeroSection = () => (
                 >
                   little corner of the internet
                 </a>
-                . I'm a full-stack engineer who loves building things, learning
-                new stuff, and occasionally writing about it.
+                . I'm a full-stack engineer who loves building underwhelming
+                interfaces,{" "}
+                <a
+                  href="https://x.com/souravinsights/status/1898797157463015437"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  learning new stuff
+                </a>
+                , and occasionally{" "}
+                <a
+                  href="https://www.souravinsights.com/blog"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  writing
+                </a>{" "}
+                about it.
               </p>
               <p className="leading-relaxed">
                 I spend my days writing code, tinkering with side projects, and
-                trying to figure out how to balance curiosity with actually
-                finishing things. When I'm not coding, you'll find me with a
-                guitar, on a bike ride, or probably reading something random.
+                figuring out{" "}
+                <a
+                  href="https://www.souravinsights.com/blog/polymath-mode"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  how to balance curiosity
+                </a>{" "}
+                with actually finishing things. When I'm not coding, you'll find
+                me{" "}
+                <a
+                  href="https://chordcanvas.vercel.app/"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  practicing chords
+                </a>{" "}
+                of my fav songs, on a bike ride, or probably{" "}
+                <a
+                  href="https://3reads.vercel.app/"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  reading something random.
+                </a>
               </p>
               <p>
                 This site is where I share what I'm working on, thinking about,
