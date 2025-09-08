@@ -1,6 +1,6 @@
 # 🌿 My Digital Garden
 
-Welcome to my Digital Garden - a dynamic, customizable curation of my favorite links and resources. This project serves as an extension of myself, housing curations and insights from various sources.
+Welcome to my Digital Garden - a dynamic, customizable curation of my favorite links and resources. This project serves as an extension of myself, housing curations and insights from various sources
 
 ## 🌟 Features
 
@@ -27,11 +27,13 @@ Welcome to my Digital Garden - a dynamic, customizable curation of my favorite l
 ## 🚀 Getting Started
 
 1. Clone the repository:
+
    ```
    git clone https://github.com/SouravInsights/souravinsights.com.git
    ```
 
 2. Install dependencies:
+
    ```
    cd souravinsights.com
    yarn install
@@ -39,6 +41,7 @@ Welcome to my Digital Garden - a dynamic, customizable curation of my favorite l
 
 3. Set up environment variables:
    Create a `.env.local` file in the root directory and add the following:
+
    ```
    DISCORD_BOT_TOKEN=your_discord_bot_token
    DISCORD_CLIENT_ID=your_discord_client_id
