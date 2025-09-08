@@ -5,7 +5,6 @@ import type { SVGProps } from "react";
 import { format } from "date-fns";
 import {
   Calendar,
-  Headphones,
   CloudRain,
   CloudSnow,
   CloudLightning,
@@ -51,6 +50,7 @@ export default function DeploymentStatus() {
     null
   );
   const [songInfo, setSongInfo] = useState<SongInfo | null>(null);
+
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -156,22 +156,22 @@ export default function DeploymentStatus() {
     <div className="text-sm text-gray-600 dark:text-gray-300 mt-4 leading-relaxed italic border-t border-gray-200 dark:border-gray-700 pt-4">
       <div className="flex items-start">
         <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400 flex-shrink-0 mr-2" />
-        <div>
-          <p>
+        <div className="flex flex-wrap">
+          <span>
             This site was last deployed on {formattedDate} at {formattedTime}
             {songInfo && (
-              <span className="inline-flex items-center ml-1">
+              <>
                 {" while listening to "}
                 <a
                   href={songInfo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-600 dark:text-green-400 hover:underline font-medium inline-flex items-center ml-1"
+                  className="text-green-600 dark:text-green-400 hover:underline font-medium inline-flex items-baseline"
                 >
                   <Spotify fontSize={16} className="mx-1" />
                   {songInfo.name}
                 </a>
-              </span>
+              </>
             )}
             {weatherInfo && (
               <>
@@ -187,7 +187,7 @@ export default function DeploymentStatus() {
                 {"."}
               </>
             )}
-          </p>
+          </span>
         </div>
       </div>
     </div>
