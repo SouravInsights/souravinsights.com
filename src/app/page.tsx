@@ -204,7 +204,7 @@ const HeroSection = () => (
                 >
                   little corner of the internet
                 </a>
-                . I'm a full-stack engineer who loves building underwhelming
+                . I'm a product engineer who loves building underwhelming
                 interfaces,{" "}
                 <a
                   href="https://x.com/souravinsights/status/1898797157463015437"
