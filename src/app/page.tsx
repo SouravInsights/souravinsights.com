@@ -247,7 +247,7 @@ const HeroSection = () => (
                 </a>
               </p>
               <p>
-                This site is where I share what I'm working on, thinking about,
+                This site is an extension of my personal self, it's where I share what I'm working on, thinking about,
                 and learning. It's always changing because, well, so am I.
               </p>
 
