@@ -238,7 +238,14 @@ const HeroSection = () => (
                 >
                   practicing chords
                 </a>{" "}
-                of my fav songs, on a bike ride, or probably{" "}
+                of my fav songs, on a{" "}
+                <a
+                  href="https://www.souravinsights.com/blog/why-riding-is-like-a-therapy"
+                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                >
+                  bike ride
+                </a>
+                , or probably{" "}
                 <a
                   href="https://3reads.vercel.app/"
                   className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
@@ -247,8 +254,9 @@ const HeroSection = () => (
                 </a>
               </p>
               <p>
-                This site is an extension of my personal self, it's where I share what I'm working on, thinking about,
-                and learning. It's always changing because, well, so am I.
+                This site is an extension of my personal self, it's where I
+                share what I'm working on, thinking about, and learning. It's
+                always changing because, well, so am I.
               </p>
 
               <LastDeployedInfo />
