@@ -1,0 +1,153 @@
+---
+title: On Designing Forms That Don't Get in the Way
+date: 2026-01-17
+excerpt: Notes on validation, accessibility, and the invisible decisions behind a calm sign-in flow.
+tags: [UX, Forms, Accessibility, React, Frontend]
+readingTime: 7 min read
+---
+
+Forms are one of those things everyone has built, but very few people enjoy spending time on.
+
+They tend to be designed quickly and revisited only when something breaks. But tiny decisions inside a form often have a lot of impact on how calm or frustrating the overall experience feels.
+
+Recently, while applying for a Frontend Engineer role at Evil Martians, the team behind tools like PostCSS and Autoprefixer, I noticed they weren't asking for a standard CV. Instead, they are asking for a link to the best login form I've implemented.
+
+At first, that sounded deceptively simple. But the more I thought about it, the clearer it became: building a good login experience is actually hard, if you care about the right things.
+
+They even have an article outlining 11 best practices for login and sign-up forms. Reading it made me realize that the login/signup flow for **beenthere.page** is something where I had already spent a lot of time thinking about validation, feedback, accessibility, and restraint.
+
+So this post is a breakdown of how I designed that flow. It's not a guide for building a "perfect" login form, it's more of a "here's what I cared about, what I avoided, and why" writeup.
+
+Most of these decisions are invisible when the're done right, but very noticeable when they're not.
+
+---
+
+## A Bit of Context
+
+This form is part of a niche product I'm building.
+
+> **beenthere.page** is a calm, personal space for travel stories, where you can claim a public URL (for example, `beenthere.page/sourav`) and capture trips in a way you would actually want to revisit. It's built for remembering, not for algorithm - photos, small details you'd otherwise forget, inside jokes, meaningful places, and moments shared with the people you traveled with. Travel memories tend to disappear as stories vanish and photos get buried, and BeenThere is an attempt to create something intentional, human, and worth coming back to.
+
+You can try the flow yourself and grab a username before someone else does! 😉
+
+A traditional email/password flow would have worked, but I wanted to ship a **password-less experience** with a username claim flow. This decision shaped everything else.
+
+I designed the form UI as a split-step wizard (Username to Email) instead of a single form. Since the username is the core the product, validating it first helps users feel invested before I ask for their email.
+
+---
+
+## Input Validation
+
+I used a hybrid validation pattern because different inputs ask different things from users.
+
+### Email: Validate on blur
+
+For emails, I prefer validating on `onBlur`.
+
+Showing "Invalid email" errors while someone is still typing feels unnecessarily punishing. I intentionally avoid validating on every keystroke or flashing red error states mid-typing. The goal here is to stay out of the user's way until they've finished.
+
+### Username: Validate on change (deliberately)
+
+Usernames are different.
+
+When someone types a username, they're implicitly asking a question:
+
+> "Is this taken?"
+
+I want to answer this question immediately. For that reason, I run username checks on `onChange` — but carefully.
+
+- **Client-side first**  
+  I immediately run format checks (length, allowed characters) and reserved word checks (for example, `admin`, `api`). This gives instant feedback and avoids unnecessary server round-trips for obvious rejections.
+
+- **Debounced availability check**  
+  If the username passes client checks, I trigger a debounced (500ms) API request to check availability. This keeps feedback fast without spamming the db.
+
+- **Immediate feedback reset**  
+  Any "Available" state is cleared as soon as the user types again, so a stale green checkmark never lingers.
+
+- **Non-intrusive visuals**  
+  While checking availability, the success indicator is replaced with a small spinner — enough feedback without being distracting.
+
+Even though this is driven by `onChange`, I'm not validating _on every keystroke_. I'm observing typing intent and responding once input stabilizes.
+
+---
+
+## Handling Async Race Conditions
+
+Network calls are unpredictable.
+
+A user might type `souravv` (request A), then quickly correct it to `sourav` (request B). If request A resolves after request B, the UI could show the wrong state.
+
+To prevent this, I use the `AbortController` pattern to cancel any pending request whenever the input changes. This ensures the UI always reflects the latest value and never a stale response.
+
+This is one of those invisible details that users never notice, which is exactly the point.
+
+---
+
+## Accessibility Considerations
+
+- **Forms & semantics**  
+  Inputs and submit actions are wrapped within proper `<form>` elements, so keyboard submission works naturally. All interactive elements are actual `<button>` elements, never divs, keeping keyboard and screen-reader behavior predictable.
+
+- **Autocomplete & input types**  
+  Inputs use appropriate `type` and `autocomplete` attributes (`autocomplete="username"` and `autocomplete="email"`), letting browsers, password managers, and mobile keyboards assist users instead of getting in the way.
+
+- **Screen reader feedback**  
+  Status messages use `aria-live="polite"` so availability updates are announced without stealing focus. Inputs are strictly associated with their error containers using `aria-errormessage` and `aria-invalid`, providing clear context to screen readers.
+
+- **Reduced motion**  
+  Step transitions respect OS-level motion preferences via `prefers-reduced-motion`. When motion is disabled, animations fall back to simple opacity changes.
+
+- **Focus states**  
+  Nobody likes default browser focus rings, so I have a custom custom focus ring `ring-emerald-500` with a subtle glow to maintain the app's design theme.
+
+---
+
+## Some Extras (That Still Affect UX)
+
+### Email deliverability checks
+
+Before accepting an email, I validate deliverability (MX/SMTP) using the Emailable API to avoid obvious bounces and wasted transactional emails. This runs after basic client-side validation and doesn't interrupt typing, but helps avoid obvious bounces and wasted transactional emails.
+
+### Transactional email setup
+
+Magic-link emails are sent using **Resend**. I find it the most easiest, convenient & straightforward. Especially their package "React Email" makes it so easy to compose emails using React components. I really love that. It removes a lot of the pain around crafting HTML emails and dealing with inline styles.
+
+---
+
+## Security & Guardrails
+
+### Reserved usernames
+
+I enforced a strict reserved-username policy. Handles like `admin`, `support`, `api`, or route names such as `/login` or `/settings` including ~50 other reserved words are blocked to avoid confusion and potential security issues. This rule is enforced consistently on both the client and API layers.
+
+### Auth infrastructure
+
+For auth, I chose **better-auth**, it's a newer library but it felt like the right choice. It gives me full control over the database (I'm using Drizzle ORM) without being locked into a specific vendor's black box.
+
+I mostly use the `username` and `magicLink` plugins. This keeps the core lightweight and focused only on what I need.
+
+---
+
+## UI Polish: Small Details That Add Up
+
+### Step transitions
+
+I use `AnimatePresence` from Framer Motion to transition between steps (Username -> Email). Instead of a hard toggle, the form slides out and the next step slides in, giving a sense of linear progress, not just a random state change.
+
+### Feedback & recovery
+
+- The submit button switches to a "Joining…" state during submission, preventing accidental double submits.
+- If a network error occurs, the user can retry without losing their input.
+
+---
+
+## Closing Thoughts
+
+Most form UX issues don't come from missing features, they come from timing, tone, and feedback that feels slightly off.
+
+This flow isn't complex, but it's intentionally calm. The goal was never to impress users, just to avoid getting in their way.
+
+---
+
+_Although the codebase of beenthere.page is closed source but if you're curious here's a gist of the entire code of the signin form._
