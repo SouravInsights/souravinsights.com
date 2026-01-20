@@ -6,27 +6,27 @@ tags: [UX, Forms, Accessibility, React, Frontend]
 readingTime: 7 min read
 ---
 
-Forms are one of those things everyone has built, but very few people enjoy spending time on.
+> Forms are one of those things everyone has built, but very few people enjoy spending time on.
 
 They tend to be designed quickly and revisited only when something breaks. But tiny decisions inside a form often have a lot of impact on how calm or frustrating the overall experience feels.
 
-Recently, while applying for a Frontend Engineer role at Evil Martians, the team behind tools like PostCSS and Autoprefixer, I noticed they weren't asking for a standard CV. Instead, they are asking for a link to the best login form I've implemented.
+Recently, while applying for a Frontend Engineer role at **[Evil Martians](https://evilmartians.com/)** (the team behind tools like **[PostCSS](https://postcss.org/)** & **[Autoprefixer](https://github.com/postcss/autoprefixer)**), I noticed they weren't asking for a standard CV. Instead, they are asking for a link to the best login form I've implemented.
 
-At first, that sounded deceptively simple. But the more I thought about it, the clearer it became: building a good login experience is actually hard, if you care about the right things.
+At first, that sounded **deceptively simple**. But the more I thought about it, the clearer it became: **building a good login experience is actually tricky**, if you care about the right things.
 
-They even have an article outlining 11 best practices for login and sign-up forms. Reading it made me realize that the login/signup flow for **beenthere.page** is something where I had already spent a lot of time thinking about validation, feedback, accessibility, and restraint.
+They even have an article outlining **[11 best practices for login and sign-up forms](https://evilmartians.com/chronicles/html-best-practices-for-login-and-signup-forms)** (_go ahead and give it a read_). Reading it made me realize that the login/signup flow for **[beenthere.page](https://www.beenthere.page/)** is something where I had already spent a lot of time thinking about validation, feedback, accessibility and restraint.
 
 So this post is a breakdown of how I designed that flow. It's not a guide for building a "perfect" login form, it's more of a "here's what I cared about, what I avoided, and why" writeup.
 
-Most of these decisions are invisible when the're done right, but very noticeable when they're not.
+Most of these decisions are invisible when they are done right, but very noticeable when they are not.
 
 ---
 
 ## A Bit of Context
 
-This form is part of a niche product I'm building.
+This form is part of a niche product I'm building. (_sorry for the shameless plug_)
 
-> **beenthere.page** is a calm, personal space for travel stories, where you can claim a public URL (for example, `beenthere.page/sourav`) and capture trips in a way you would actually want to revisit. It's built for remembering, not for algorithm - photos, small details you'd otherwise forget, inside jokes, meaningful places, and moments shared with the people you traveled with. Travel memories tend to disappear as stories vanish and photos get buried, and BeenThere is an attempt to create something intentional, human, and worth coming back to.
+> **[beenthere.page](https://www.beenthere.page/) is a calm, personal space for travel stories, where you can claim a public URL (for example, `beenthere.page/sourav`) and capture trips in a way you would actually want to revisit. It's built for remembering, not for algorithm - photos, small details you'd otherwise forget, inside jokes, meaningful places, and moments shared with the people you traveled with. Travel memories tend to disappear as stories vanish and photos get buried, and BeenThere is an attempt to create something intentional, human, and worth coming back to.
 
 You can try the flow yourself and grab a username before someone else does! 😉
 
@@ -38,7 +38,7 @@ I designed the form UI as a split-step wizard (Username to Email) instead of a s
 
 ## Input Validation
 
-I used a hybrid validation pattern because different inputs ask different things from users.
+I used a hybrid validation approach because different inputs ask different things from users.
 
 ### Email: Validate on blur
 
@@ -150,4 +150,4 @@ This flow isn't complex, but it's intentionally calm. The goal was never to impr
 
 ---
 
-_Although the codebase of beenthere.page is closed source but if you're curious here's a gist of the entire code of the signin form._
+_Although the codebase of beenthere.page is closed-source but if you're curious here's the [gist of the entire code of the signin form](https://gist.github.com/SouravInsights/f2da3b7cdc14e8b063dc4afbfb6d58e0)._
