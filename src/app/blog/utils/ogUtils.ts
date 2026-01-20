@@ -12,6 +12,11 @@ export function generateOGImageUrl(
     draft: post.status === "draft" ? "true" : "false",
   });
 
+  // Add tags if they exist (comma-separated)
+  if (post.tags && post.tags.length > 0) {
+    params.set("tags", post.tags.slice(0, 3).join(","));
+  }
+
   return `${baseUrl}/api/og?${params.toString()}`;
 }
 
