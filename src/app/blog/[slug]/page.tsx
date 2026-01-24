@@ -64,6 +64,8 @@ export default function PostPage({ params }: PostPageProps) {
     />
   );
 
+  // JSON-LD for SEO: Helps search engines understand the blog post structure,
+  // enabling rich snippets like article cards and author bylines.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
