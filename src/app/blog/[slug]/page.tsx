@@ -1,15 +1,30 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import rehypePrettyCode from "rehype-pretty-code";
-import { getPostBySlug } from "../utils/blogUtils";
+import { getPostBySlug, getBlogPosts } from "../utils/blogUtils";
+import { generateOGImageUrl } from "../utils/ogUtils";
 import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
-import Playground from "../components/Playground";
+import dynamic from "next/dynamic";
+
+const Playground = dynamic(() => import("../components/Playground"), {
+  ssr: false,
+  loading: () => (
+    <div className="my-8 h-[350px] w-full rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse border border-gray-200 dark:border-gray-700" />
+  ),
+});
 
 interface PostPageProps {
   params: {
     slug: string;
   };
+}
+
+export async function generateStaticParams() {
+  const posts = getBlogPosts();
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: PostPageProps) {
@@ -50,5 +65,33 @@ export default function PostPage({ params }: PostPageProps) {
     />
   );
 
-  return <BlogPostContent post={post} content={content} />;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
+  const ogImageUrl = generateOGImageUrl(post, baseUrl);
+
+  // JSON-LD for SEO: Helps search engines understand the blog post structure,
+  // enabling rich snippets like article cards and author bylines.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    dateModified: post.date,
+    image: ogImageUrl,
+    author: {
+      "@type": "Person",
+      name: "SouravInsights",
+    },
+    url: `${baseUrl}/blog/${params.slug}`,
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <BlogPostContent post={post} content={content} />
+    </>
+  );
 }
