@@ -2,6 +2,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import rehypePrettyCode from "rehype-pretty-code";
 import { getPostBySlug, getBlogPosts } from "../utils/blogUtils";
+import { generateOGImageUrl } from "../utils/ogUtils";
 import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
 import dynamic from "next/dynamic";
@@ -64,6 +65,9 @@ export default function PostPage({ params }: PostPageProps) {
     />
   );
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
+  const ogImageUrl = generateOGImageUrl(post, baseUrl);
+
   // JSON-LD for SEO: Helps search engines understand the blog post structure,
   // enabling rich snippets like article cards and author bylines.
   const jsonLd = {
@@ -73,11 +77,12 @@ export default function PostPage({ params }: PostPageProps) {
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
+    image: ogImageUrl,
     author: {
       "@type": "Person",
       name: "SouravInsights",
     },
-    url: `https://www.souravinsights.com/blog/${params.slug}`,
+    url: `${baseUrl}/blog/${params.slug}`,
   };
 
   return (
