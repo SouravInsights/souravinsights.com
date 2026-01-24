@@ -64,5 +64,27 @@ export default function PostPage({ params }: PostPageProps) {
     />
   );
 
-  return <BlogPostContent post={post} content={content} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      "@type": "Person",
+      name: "SouravInsights",
+    },
+    url: `https://www.souravinsights.com/blog/${params.slug}`,
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <BlogPostContent post={post} content={content} />
+    </>
+  );
 }
