@@ -1,15 +1,29 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import rehypePrettyCode from "rehype-pretty-code";
-import { getPostBySlug } from "../utils/blogUtils";
+import { getPostBySlug, getBlogPosts } from "../utils/blogUtils";
 import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
-import Playground from "../components/Playground";
+import dynamic from "next/dynamic";
+
+const Playground = dynamic(() => import("../components/Playground"), {
+  ssr: false,
+  loading: () => (
+    <div className="my-8 h-[350px] w-full rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse border border-gray-200 dark:border-gray-700" />
+  ),
+});
 
 interface PostPageProps {
   params: {
     slug: string;
   };
+}
+
+export async function generateStaticParams() {
+  const posts = getBlogPosts();
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: PostPageProps) {
