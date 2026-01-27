@@ -8,6 +8,10 @@ import {
   Twitter,
   Github,
   ChevronLeft,
+  Bike,
+  Footprints,
+  Coffee,
+  Music,
 } from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
@@ -127,24 +131,24 @@ const myToolkit = {
   coding: {
     title: "Dev Tools",
     items: [
-      { name: "OpenCode", logo: null, url: null },
+      { name: "OpenCode", logo: "/logos/opencode.png", url: null },
       { name: "Antigravity", logo: GoogleAntigravity, url: "https://antigravity.google/" },
       { name: "Ghostty", logo: Ghostty, url: "https://ghostty.org/" },
       { name: "Warp", logo: Warp, url: "https://www.warp.dev/" },
-      { name: "Conductor", logo: null, url: "https://www.conductor.build/" },
-      { name: "Git Butler", logo: null, url: "https://gitbutler.com/" },
+      { name: "Conductor", logo: "/logos/conductor.png", url: "https://www.conductor.build/" },
+      { name: "Git Butler", logo: "/logos/gitbutler.png", url: "https://gitbutler.com/" },
       { name: "GitHub Desktop", logo: GitHubDark, url: "https://github.com" },
       { name: "Docker", logo: Docker, url: "https://www.docker.com/" },
-      { name: "Obscura", logo: null, url: "https://obscura.net/" },
+      { name: "Obscura", logo: "/logos/obscura.svg", url: "https://obscura.net/" },
     ],
   },
   productivity: {
     title: "Getting Things Done",
     items: [
       { name: "Obsidian", logo: Obsidian, url: "https://obsidian.md/" },
-      { name: "Session", logo: null, url: "https://www.stayinsession.com/" },
-      { name: "Ebb", logo: null, url: "https://ebb.cool/" },
-      { name: "Craft", logo: null, url: "https://www.craft.do/" },
+      { name: "Session", logo: "/logos/session.png", url: "https://www.stayinsession.com/" },
+      { name: "Ebb", logo: "/logos/ebb.ico", url: "https://ebb.cool/" },
+      { name: "Craft", logo: "/logos/craft.png", url: "https://www.craft.do/" },
       { name: "Arc", logo: Arc, url: "https://arc.net/" },
       { name: "Raycast", logo: Raycast, url: "https://www.raycast.com/" },
     ],
@@ -154,20 +158,20 @@ const myToolkit = {
     items: [
       { name: "Figma", logo: Figma, url: "https://www.figma.com/" },
       { name: "Paper", logo: Paper, url: "https://paper.design/" },
-      { name: "Cap", logo: null, url: "https://cap.so/" },
-      { name: "Jitter", logo: null, url: "https://jitter.video/" },
-      { name: "Sublime", logo: null, url: "https://sublime.app/" },
+      { name: "Cap", logo: "/logos/cap.png", url: "https://cap.so/" },
+      { name: "Jitter", logo: "/logos/jitter.png", url: "https://jitter.video/" },
+      { name: "Sublime", logo: "/logos/sublime.png", url: "https://sublime.app/" },
     ],
   },
   daily: {
     title: "Daily Life",
     items: [
       { name: "Spotify", logo: Spotify, url: "https://www.spotify.com/" },
-      { name: "Kindle", logo: null, url: "https://www.amazon.com/kindle" },
-      { name: "Bike rides", logo: null, url: null },
-      { name: "Solo walks", logo: null, url: null },
-      { name: "Cafes", logo: null, url: null },
-      { name: "Guitar", logo: null, url: null },
+      { name: "Kindle", logo: "/logos/kindle.png", url: "https://read.amazon.com/landing" },
+      { name: "Bike rides", logo: Bike, url: null },
+      { name: "Solo walks", logo: Footprints, url: null },
+      { name: "Cafes", logo: Coffee, url: null },
+      { name: "Guitar", logo: Music, url: null },
     ],
   },
 };
@@ -637,7 +641,9 @@ export default function Home() {
                   <div className="flex flex-wrap gap-2">
                     {category.items.map((item, index) => {
                       const ItemWrapper = item.url ? "a" : "span";
-                      const Logo = item.logo;
+                      const logo = item.logo;
+                      const isStringLogo = typeof logo === 'string';
+                      const LogoComponent = !isStringLogo ? logo : null;
                       
                       return (
                         <ItemWrapper
@@ -653,11 +659,22 @@ export default function Home() {
                             ${item.url ? 'hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer' : ''}
                           `}
                         >
-                          {Logo && (
-                            <Logo 
-                              className="w-4 h-4" 
-                              style={{ flexShrink: 0 }}
-                            />
+                          {logo && (
+                            isStringLogo ? (
+                              <Image 
+                                src={logo}
+                                alt={`${item.name} logo`}
+                                width={16}
+                                height={16}
+                                className="w-4 h-4"
+                                style={{ flexShrink: 0 }}
+                              />
+                            ) : LogoComponent ? (
+                              <LogoComponent 
+                                className="w-4 h-4"
+                                style={{ flexShrink: 0 }}
+                              />
+                            ) : null
                           )}
                           <span>{item.name}</span>
                         </ItemWrapper>
