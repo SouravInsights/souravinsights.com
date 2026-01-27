@@ -38,7 +38,7 @@ const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-background dark:to-background dark:bg-background transition-colors duration-200">
       <PHProvider>
         <PostHogPageView />
         <div className="pt-12 md:pt-28 pb-12">{children}</div>

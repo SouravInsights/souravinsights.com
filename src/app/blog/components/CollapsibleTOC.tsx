@@ -47,17 +47,17 @@ export default function CollapsibleTOC({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 20 }}
           transition={{ duration: 0.4 }}
-          className="w-full bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm"
+          className="w-full bg-card rounded-lg border border-border overflow-hidden shadow-sm"
         >
           {/* TOC Header */}
-          <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 flex items-center justify-between">
+          <div className="border-b border-border bg-muted/50 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center">
               <div className="flex space-x-2 mr-3">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
-              <span className="font-mono text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-mono text-sm text-muted-foreground">
                 toc.md
               </span>
             </div>
@@ -65,10 +65,10 @@ export default function CollapsibleTOC({
             {/* Toggle button */}
             <button
               onClick={toggleCollapse}
-              className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center"
+              className="p-1.5 rounded-md hover:bg-muted text-muted-foreground transition-colors flex items-center"
               aria-label="Collapse table of contents"
             >
-              <span className="text-xs mr-1 text-gray-500 dark:text-gray-400">
+              <span className="text-xs mr-1 text-muted-foreground">
                 Collapse
               </span>
               <ChevronRight size={16} />
@@ -88,10 +88,10 @@ export default function CollapsibleTOC({
                   >
                     <a
                       href={`#${heading.id}`}
-                      className={`text-sm hover:text-green-600 dark:hover:text-green-400 transition-colors flex items-center py-1 truncate ${
+                      className={`text-sm hover:text-green-600 dark:hover:text-green-500 transition-colors flex items-center py-1 truncate ${
                         activeHeading === heading.id
-                          ? "text-green-600 dark:text-green-400 font-medium"
-                          : "text-gray-700 dark:text-gray-300"
+                          ? "text-green-600 dark:text-green-500 font-medium"
+                          : "text-muted-foreground"
                       }`}
                       onClick={(e) => {
                         e.preventDefault();
@@ -118,23 +118,23 @@ export default function CollapsibleTOC({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -10 }}
           transition={{ duration: 0.4 }}
-          className="mx-auto w-12 bg-white dark:bg-gray-800 h-auto rounded-md border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden"
+          className="mx-auto w-12 bg-card h-auto rounded-md border border-border shadow-sm overflow-hidden"
         >
           <div
             onClick={toggleCollapse}
-            className="h-full py-6 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-200"
+            className="h-full py-6 flex flex-col items-center justify-between cursor-pointer hover:bg-muted transition-colors duration-200"
             title="Expand table of contents"
           >
             <div className="flex items-center justify-center">
               <ChevronLeft
                 size={18}
-                className="text-gray-500 dark:text-gray-400"
+                className="text-muted-foreground"
               />
             </div>
             <div className="flex flex-col items-center pt-2">
               <BookOpen
                 size={18}
-                className="text-gray-500 dark:text-gray-400 mb-3"
+                className="text-muted-foreground mb-3"
               />
 
               {/* Small dots to indicate there are multiple items */}
