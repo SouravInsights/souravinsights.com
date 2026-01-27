@@ -216,7 +216,7 @@ const HeroSection = () => (
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
-            <div className="mt-6 md:mt-8 space-y-4 text-muted-foreground text-sm md:text-base">
+            <div className="mt-6 md:mt-8 space-y-4 text-foreground dark:text-muted-foreground text-sm md:text-base">
               <p className="leading-relaxed">
                 Hey there! This is my{" "}
                 <a
