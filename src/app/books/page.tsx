@@ -14,16 +14,16 @@ const KindleImageDisplay: React.FC = () => {
 
   return (
     <motion.div
-      className="my-8 p-4 md:p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+      className="my-8 p-4 md:p-8 rounded-lg shadow-lg overflow-hidden border border-border"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <div className="flex flex-col space-y-2 mb-4 md:mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-green-700 dark:text-green-400 text-center">
+        <h2 className="text-xl md:text-2xl font-bold text-foreground text-center">
           My Reading Companion
         </h2>
-        <p className="text-center text-gray-600 dark:text-gray-300">
+        <p className="text-center text-muted-foreground">
           It's like carrying a whole library without the backache! One digital
           page at a time... 😬
         </p>
@@ -55,12 +55,12 @@ const KindleImageDisplay: React.FC = () => {
 const BookshelfPage: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 md:px-6 md:py-8 px-2 py-4">
+      <div className="md:px-6 md:py-8 px-2 py-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-400">
+          <h1 className="text-4xl font-bold text-center mb-4 text-foreground">
             My Reading Journey
           </h1>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
             Explore my reading journey: see what I’m reading now, what’s next,
             and the books I’ve finished.
           </p>
@@ -72,7 +72,7 @@ const BookshelfPage: React.FC = () => {
 
           {/* Literal Club Shoutout Section */}
           <motion.div
-            className="mt-16 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-green-200 dark:border-green-700"
+            className="mt-16 rounded-lg shadow-md overflow-hidden border border-border"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
@@ -86,10 +86,10 @@ const BookshelfPage: React.FC = () => {
                   height={50}
                   className="mb-4"
                 />
-                <h2 className="text-2xl font-bold mb-4 text-green-700 dark:text-green-400">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">
                   Powered by Literal Club
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                <p className="text-muted-foreground mb-6">
                   This bookshelf is brought to life using Literal Club's amazing
                   GraphQL API. Literal Club offers a beautiful UI and robust API
                   for book lovers and developers alike.
@@ -103,8 +103,8 @@ const BookshelfPage: React.FC = () => {
                   Try Literal Club <ExternalLink className="ml-2 h-5 w-5" />
                 </a>
               </div>
-              <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 md:p-8 overflow-x-auto">
-                <pre className="text-sm md:text-base text-gray-800 dark:text-gray-200">
+              <div className="md:w-1/2 bg-green-50 dark:bg-secondary p-4 md:p-8 overflow-x-auto">
+                <pre className="text-sm md:text-base text-gray-800 dark:text-foreground">
                   <code>{`
  query booksByReadingStateAndProfile(
     $limit: Int!

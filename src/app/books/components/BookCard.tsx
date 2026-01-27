@@ -18,7 +18,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
       whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="h-full overflow-hidden bg-white dark:bg-gray-800 border border-green-200 dark:border-green-700">
+      <Card className="h-full overflow-hidden border border-border">
         <CardContent className="p-0 relative">
           <div className="relative h-48 sm:h-64 w-full">
             <Image
@@ -60,7 +60,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full mt-2 text-green-600 border-green-600 hover:bg-green-600 hover:text-white dark:text-green-400 dark:border-green-400 dark:hover:bg-green-400 dark:hover:text-gray-900"
+                  className="w-full mt-2"
                 >
                   <BookMarked className="w-4 h-4 mr-2" />
                   View Highlights

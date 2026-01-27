@@ -177,7 +177,7 @@ const myToolkit = {
 };
 
 const HeroSection = () => (
-  <div className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden relative border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+  <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
     {/* Background grid effect */}
     <div
       className="absolute inset-0 transition-opacity duration-200"
@@ -216,12 +216,12 @@ const HeroSection = () => (
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
-            <div className="mt-6 md:mt-8 space-y-4 text-gray-600 dark:text-gray-300 text-sm md:text-base">
+            <div className="mt-6 md:mt-8 space-y-4 text-foreground dark:text-muted-foreground text-sm md:text-base">
               <p className="leading-relaxed">
                 Hey there! This is my{" "}
                 <a
                   href="https://matthiasott.com/articles/into-the-personal-website-verse"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   little corner of the internet
                 </a>
@@ -229,14 +229,14 @@ const HeroSection = () => (
                 interfaces,{" "}
                 <a
                   href="https://x.com/souravinsights/status/1898797157463015437"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   learning new stuff
                 </a>
                 , and occasionally{" "}
                 <a
                   href="https://www.souravinsights.com/blog"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   writing
                 </a>{" "}
@@ -247,7 +247,7 @@ const HeroSection = () => (
                 figuring out{" "}
                 <a
                   href="https://www.souravinsights.com/blog/polymath-mode"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   how to balance curiosity
                 </a>{" "}
@@ -255,21 +255,21 @@ const HeroSection = () => (
                 me{" "}
                 <a
                   href="https://chordcanvas.vercel.app/"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   practicing chords
                 </a>{" "}
                 of my fav songs, on a{" "}
                 <a
                   href="https://www.souravinsights.com/blog/why-riding-is-like-a-therapy"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   bike ride
                 </a>
                 , or probably{" "}
                 <a
                   href="https://3reads.vercel.app/"
-                  className="text-green-600 dark:text-green-400 underline hover:text-green-500 dark:hover:text-green-300 transition-colors"
+                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   reading something random.
                 </a>
@@ -293,7 +293,7 @@ const HeroSection = () => (
                 href="https://github.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
                 <Github className="w-4 h-4" />
                 <span>GitHub</span>
@@ -302,7 +302,7 @@ const HeroSection = () => (
                 href="https://twitter.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
                 <Twitter className="w-4 h-4" />
                 <span>Twitter</span>
@@ -317,7 +317,7 @@ const HeroSection = () => (
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg transition-colors duration-200"
+            className="bg-secondary p-4 rounded-lg transition-colors duration-200"
           >
             <Macintosh />
           </motion.div>
@@ -343,7 +343,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-2 sm:p-4 md:p-12 transition-colors duration-200">
+    <div className="min-h-screen bg-background p-2 sm:p-4 md:p-12 transition-colors duration-200">
       {/* 0cred verification */}
       <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07"></div>
 
@@ -362,7 +362,7 @@ export default function Home() {
           transition={{ delay: 0.2 }}
           className="space-y-6"
         >
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Companies
@@ -379,7 +379,7 @@ export default function Home() {
                   href={company.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
+                  className="group border border-border rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
@@ -409,7 +409,7 @@ export default function Home() {
           transition={{ delay: 0.3 }}
           className="space-y-6"
         >
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Side Projects
@@ -426,7 +426,7 @@ export default function Home() {
                   href={project.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
+                  className="group border border-border rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
@@ -450,7 +450,7 @@ export default function Home() {
             <div className="mt-8 text-center">
               <a
                 href="https://github.com/SouravInsights"
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-400 font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
               >
                 View all projects <ChevronRight className="w-4 h-4" />
               </a>
@@ -464,7 +464,7 @@ export default function Home() {
           transition={{ delay: 0.4 }}
           className="space-y-6"
         >
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Recent Essays
@@ -477,13 +477,13 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {blogHighlights.map((blog) => (
                 <div key={blog.title} className="group">
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-6 hover:bg-accent transition-all duration-300 h-full">
+                  <div className="border border-border rounded-lg p-3 sm:p-6 hover:bg-accent transition-all duration-300 h-full">
                     <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
                       <span>{blog.date}</span>
                       <span>•</span>
                       <span>{blog.readingTime}</span>
                     </div>
-                    <h3 className="group-hover:text-green-600 dark:group-hover:text-green-400 font-semibold text-foreground mb-3 transition-colors">
+                    <h3 className="group-hover:text-green-600 dark:group-hover:text-green-500 font-semibold text-foreground mb-3 transition-colors">
                       <a href={blog.url} className="block">
                         {blog.title}
                       </a>
@@ -498,7 +498,7 @@ export default function Home() {
             <div className="mt-8 text-center">
               <a
                 href="/blog"
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-400 font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
               >
                 Read all posts <ChevronRight className="w-4 h-4" />
               </a>
@@ -522,7 +522,7 @@ export default function Home() {
           transition={{ delay: 0.5 }}
           className="space-y-6"
         >
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Unpopular Opinions
@@ -542,13 +542,13 @@ export default function Home() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -50 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900 h-[140px] flex items-center w-full"
+                    className="group hover:bg-accent border border-border rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-card/50 hover:border-input bg-card h-[140px] flex items-center w-full"
                   >
                     <div className="flex items-start gap-4 w-full">
-                      <span className="text-sm font-mono text-green-600 dark:text-green-400 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-300 transition-colors">
+                      <span className="text-sm font-mono text-green-600 dark:text-green-500 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
                         {String(currentOpinionIndex + 1).padStart(2, "0")}
                       </span>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 italic leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+                      <p className="text-sm text-muted-foreground italic leading-relaxed group-hover:text-foreground transition-colors">
                         {unpopularOpinions[currentOpinionIndex]}
                       </p>
                     </div>
@@ -560,7 +560,7 @@ export default function Home() {
               <div className="flex items-center justify-between mt-6 h-10">
                 <button
                   onClick={prevOpinion}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Prev
@@ -574,8 +574,8 @@ export default function Home() {
                       onClick={() => setCurrentOpinionIndex(index)}
                       className={`w-2 h-2 rounded-full transition-colors ${
                         index === currentOpinionIndex
-                          ? "bg-green-600 dark:bg-green-400"
-                          : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                          ? "bg-green-600 dark:bg-green-500"
+                          : "bg-muted hover:bg-muted-foreground/20"
                       }`}
                     />
                   ))}
@@ -583,7 +583,7 @@ export default function Home() {
 
                 <button
                   onClick={nextOpinion}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
@@ -600,13 +600,13 @@ export default function Home() {
               {unpopularOpinions.slice(0, 10).map((opinion, index) => (
                 <div
                   key={index}
-                  className="group hover:bg-accent border border-gray-200 dark:border-gray-700 rounded-xl p-3 sm:p-4 md:p-6 transition-all duration-300 hover:shadow-sm hover:shadow-gray-200/50 dark:hover:shadow-gray-800/20 hover:-translate-y-0.5 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-900"
+                  className="group hover:bg-accent border border-border rounded-xl p-3 sm:p-4 md:p-6 transition-all duration-300 hover:shadow-sm hover:shadow-card/50 hover:-translate-y-0.5 hover:border-input bg-card"
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-xs font-mono text-green-600 dark:text-green-400 mt-1 w-6 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-300 transition-colors">
+                    <span className="text-xs font-mono text-green-600 dark:text-green-500 mt-1 w-6 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 italic leading-relaxed group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+                    <p className="text-sm text-muted-foreground italic leading-relaxed group-hover:text-foreground transition-colors">
                       {opinion}
                     </p>
                   </div>
@@ -623,7 +623,7 @@ export default function Home() {
           transition={{ delay: 0.6 }}
           className="space-y-6"
         >
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Things I Use

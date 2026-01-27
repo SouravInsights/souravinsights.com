@@ -294,7 +294,7 @@ const SnakeGame: React.FC = () => {
               ${
                 difficulty === level
                   ? "bg-green-500 text-white hover:bg-green-600 hover:text-white"
-                  : "bg-white text-green-700 hover:bg-green-100 hover:text-green-800 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700 dark:hover:text-green-300"
+                  : "bg-card text-green-700 hover:bg-green-100 hover:text-green-800 dark:bg-card dark:text-green-400 dark:hover:bg-muted dark:hover:text-green-300"
               } border border-green-500 dark:border-green-400`}
           >
             {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -303,16 +303,16 @@ const SnakeGame: React.FC = () => {
       </div>
 
       <motion.div
-        className="flex flex-col gap-2 p-3 bg-green-50 dark:bg-gray-700 rounded-lg shadow-md"
+        className="flex flex-col gap-2 p-3 bg-green-50 dark:bg-muted rounded-lg shadow-md"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <h4 className="text-sm font-semibold text-green-700 dark:text-green-300 flex items-center justify-center">
+        <h4 className="text-sm font-semibold text-green-700 dark:text-green-500 flex items-center justify-center">
           <Gamepad2 className="mr-2" size={16} />
           How to Play
         </h4>
-        <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
+        <ul className="text-xs text-gray-600 dark:text-muted-foreground space-y-1">
           <li className="flex items-center">
             <span className="mr-2">🎮</span>
             Use arrow keys or on-screen buttons to move
@@ -332,7 +332,7 @@ const SnakeGame: React.FC = () => {
         </ul>
       </motion.div>
       <div
-        className="border-2 border-green-600 dark:border-green-400 rounded-lg overflow-hidden bg-white dark:bg-gray-800 relative"
+        className="border-2 border-green-600 dark:border-green-500 rounded-lg overflow-hidden bg-background relative"
         style={{
           width: `${GRID_SIZE * CELL_SIZE}px`,
           height: `${GRID_SIZE * CELL_SIZE}px`,
@@ -343,7 +343,7 @@ const SnakeGame: React.FC = () => {
           {Array.from({ length: 400 }).map((_, i) => (
             <div
               key={i}
-              className="border border-gray-100 dark:border-gray-700"
+              className="border border-gray-100 dark:border-border/20"
             />
           ))}
         </div>
@@ -381,7 +381,7 @@ const SnakeGame: React.FC = () => {
         </motion.div>
       </div>
       <div className="mt-4 text-center">
-        <p className="text-lg font-semibold text-green-700 dark:text-green-300">
+        <p className="text-lg font-semibold text-green-700 dark:text-green-500">
           Skills Collected: {score}
         </p>
         {gameOver && (

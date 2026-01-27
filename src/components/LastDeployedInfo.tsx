@@ -90,7 +90,7 @@ export default function DeploymentStatus() {
 
   if (isLoading) {
     return (
-      <div className="text-sm text-gray-500 dark:text-gray-400 mt-4 animate-pulse">
+      <div className="text-sm text-muted-foreground mt-4 animate-pulse">
         Loading latest site info...
       </div>
     );
@@ -153,9 +153,9 @@ export default function DeploymentStatus() {
   };
 
   return (
-    <div className="text-sm text-gray-600 dark:text-gray-300 mt-4 leading-relaxed italic border-t border-gray-200 dark:border-gray-700 pt-4">
+    <div className="text-sm text-muted-foreground mt-4 leading-relaxed italic border-t border-border pt-4">
       <div className="flex items-start">
-        <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400 flex-shrink-0 mr-2" />
+        <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-500 flex-shrink-0 mr-2" />
         <div className="flex flex-wrap">
           <span>
             This site was last deployed on {formattedDate} at {formattedTime}
@@ -166,7 +166,7 @@ export default function DeploymentStatus() {
                   href={songInfo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-600 dark:text-green-400 hover:underline font-medium inline-flex items-baseline"
+                  className="text-green-600 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
                 >
                   <Spotify fontSize={16} className="mx-1" />
                   {songInfo.name}

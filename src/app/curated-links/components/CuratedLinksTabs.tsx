@@ -459,9 +459,9 @@ export default function CuratedLinksTabs({
   };
 
   return (
-    <div className="dark:bg-gray-800 p-6 rounded-lg shadow-inner">
+    <div className="p-0 sm:p-6 rounded-lg transition-colors duration-200">
       {isAdminMode && (
-        <div className="mb-4 px-4 py-3 bg-yellow-100 dark:bg-yellow-800 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded">
+        <div className="mb-4 px-4 py-3 bg-yellow-100 dark:bg-yellow-500/10 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <p className="flex items-center mb-2 sm:mb-0">
               <span className="font-semibold">Admin Mode Active</span>
@@ -484,26 +484,26 @@ export default function CuratedLinksTabs({
         </div>
       )}
 
-      <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+      <div className="mb-6 border border-border rounded-lg overflow-hidden transition-colors duration-200">
         {/* Customization Toggle Button */}
         <button
           onClick={() => setIsCustomizePanelOpen(!isCustomizePanelOpen)}
-          className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-accent rounded-lg transition-colors border-b dark:border-border"
         >
           <div className="flex items-center">
-            <Palette className="mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Palette className="mr-2 h-5 w-5 text-gray-500 dark:text-muted-foreground" />
             <span className="font-medium">Customize Appearance</span>
           </div>
           {isCustomizePanelOpen ? (
-            <ChevronUp className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <ChevronUp className="h-5 w-5 text-gray-500 dark:text-muted-foreground" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <ChevronDown className="h-5 w-5 text-gray-500 dark:text-muted-foreground" />
           )}
         </button>
 
         {/* Customization Panel */}
         {isCustomizePanelOpen && (
-          <div className="p-4 border-t dark:border-gray-700 animate-fadeIn">
+          <div className="p-4 border-t dark:border-border animate-fadeIn">
             <div className="mb-4">
               <h4 className="text-sm font-medium mb-3">Card Theme</h4>
               {/* Responsive grid for theme buttons - 2 columns on mobile, 3 on larger screens */}
@@ -520,8 +520,8 @@ export default function CuratedLinksTabs({
                     }}
                     className={`p-2 rounded-md text-center transition-all ${
                       cardDesign === theme.id
-                        ? "bg-green-100 dark:bg-green-900 font-medium"
-                        : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        ? "bg-green-100 dark:bg-green-500/20 font-medium text-green-800 dark:text-green-300"
+                        : "bg-gray-100 dark:bg-muted hover:bg-gray-200 dark:hover:bg-accent"
                     }`}
                   >
                     {theme.name}
@@ -576,7 +576,7 @@ export default function CuratedLinksTabs({
             <TabsTrigger
               key={channel.id}
               value={channel.name}
-              className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-white dark:hover:bg-gray-600"
+              className="px-4 py-2 mx-1 rounded-full border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 flex items-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               {getChannelIcon(channel.name)}
               <span>{channel.name.replace("-", " ")}</span>

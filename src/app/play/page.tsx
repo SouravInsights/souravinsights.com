@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 const SnakeGamePage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+    <div className="py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         <div className="mb-8 flex justify-center items-center">
           {/* <Link href="/">
@@ -41,12 +41,12 @@ const SnakeGamePage: React.FC = () => {
               Back to Home
             </Button>
           </Link> */}
-          <h1 className="text-3xl font-bold text-green-700 dark:text-green-300">
+          <h1 className="text-3xl font-bold text-foreground">
             Language Muncher
           </h1>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <div className="rounded-lg p-6 mb-8 border border-border">
           <SnakeGame />
         </div>
 

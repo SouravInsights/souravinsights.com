@@ -120,12 +120,12 @@ export function NoteEditorModal({
       <DialogContent className="max-w-5xl w-full h-[90vh] p-0">
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b flex items-center justify-between">
+          <div className="p-4 border-b border-border flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">
                 {isNewLink ? "Add to Collection" : "Edit Notes"}
               </h2>
-              <p className="text-sm text-gray-500 mt-1 truncate max-w-lg">
+              <p className="text-sm text-muted-foreground mt-1 truncate max-w-lg">
                 {selectedLink.title}
               </p>
             </div>
@@ -140,7 +140,7 @@ export function NoteEditorModal({
             <div className="flex-1 p-4 overflow-auto">
               <div className="mb-4">
                 <h3 className="text-lg font-medium mb-2">Your Notes</h3>
-                <div className="border rounded-md overflow-hidden">
+                <div className="border border-border rounded-md overflow-hidden">
                   <MDXEditor
                     markdown={notes}
                     onChange={setNotes}
@@ -152,10 +152,10 @@ export function NoteEditorModal({
                       linkPlugin(),
                       imagePlugin(),
                     ]}
-                    contentEditableClassName="prose prose-sm max-w-none min-h-[500px] p-4"
+                    contentEditableClassName="prose dark:prose-invert prose-sm max-w-none min-h-[500px] p-4 bg-background text-foreground"
                   />
                 </div>
-                <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
                   <span>
                     {isSaving
                       ? "Saving..."
@@ -171,7 +171,7 @@ export function NoteEditorModal({
             </div>
 
             {/* Right panel - Metadata */}
-            <div className="w-64 border-l p-4 overflow-auto">
+            <div className="w-64 border-l border-border p-4 overflow-auto">
               <h3 className="text-lg font-medium mb-4">Metadata</h3>
 
               <div className="space-y-4">
@@ -191,7 +191,7 @@ export function NoteEditorModal({
                   <label className="block text-sm font-medium mb-1">
                     Category
                   </label>
-                  <div className="text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded">
+                  <div className="text-sm bg-muted p-2 rounded">
                     {currentCategory}
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export function NoteEditorModal({
                     value={twitter}
                     onChange={(e) => setTwitter(e.target.value)}
                     placeholder="@username"
-                    className="w-full p-2 text-sm border rounded-md"
+                    className="w-full p-2 text-sm border border-input rounded-md bg-background text-foreground"
                   />
                 </div>
 

@@ -19,7 +19,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   withGame = true,
 }) => {
   return (
-    <footer className="relative bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-16 transition-all duration-500">
+    <footer className="relative bg-card border-t border-border py-16 transition-all duration-500">
 
       <div className="container mx-auto px-4 max-w-5xl relative">
         {/* Main Content */}
@@ -47,7 +47,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                 Let's connect
               </h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed max-w-xs md:max-w-none mx-auto md:mx-0">
+            <p className="text-muted-foreground mb-6 text-sm leading-relaxed max-w-xs md:max-w-none mx-auto md:mx-0">
               Grab a virtual coffee and let's chat about code, life, or that
               next big idea you want to work on!
             </p>
@@ -58,7 +58,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                   link: "https://github.com/souravinsights",
                   label: "GitHub",
                   color: "hover:text-gray-900 dark:hover:text-white",
-                  bg: "hover:bg-gray-100 dark:hover:bg-gray-700",
+                  bg: "hover:bg-accent",
                 },
                 {
                   icon: Linkedin,
@@ -82,7 +82,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                         href={social.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-2 md:p-3 rounded-xl text-gray-600 dark:text-gray-300 ${social.color} ${social.bg} transition-all duration-300 group`}
+                        className={`p-2 md:p-3 rounded-xl text-muted-foreground ${social.color} ${social.bg} transition-all duration-300 group`}
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         initial={{ opacity: 0, y: 10 }}
@@ -120,7 +120,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                   variant="outline"
                   size="default"
                   onClick={() => window.open("/play", "_self")}
-                  className="relative px-4 md:px-8 py-2 md:py-4 text-sm md:text-base text-gray-700 hover:text-gray-900 border-2 border-dashed border-gray-300 hover:border-gray-400 dark:text-gray-300 dark:hover:text-white dark:border-gray-600 dark:hover:border-gray-500 transition-all duration-300 group overflow-hidden"
+                  className="relative px-4 md:px-8 py-2 md:py-4 text-sm md:text-base text-foreground border-2 border-dashed border-border hover:border-input transition-all duration-300 group overflow-hidden"
                 >
                   <motion.span
                     className="flex items-center gap-2 relative z-10"
@@ -163,7 +163,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                 ⚡
               </motion.div>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed max-w-xs md:max-w-none mx-auto md:mx-0">
+            <p className="text-muted-foreground mb-6 text-sm leading-relaxed max-w-xs md:max-w-none mx-auto md:mx-0">
               This portfolio is open source. Dive in, break things, just don't
               judge my commit messages!
             </p>
@@ -171,7 +171,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
               href="https://github.com/SouravInsights/souravinsights.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4 hover:decoration-gray-500 dark:hover:decoration-gray-400"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors underline decoration-border underline-offset-4 hover:decoration-input"
             >
               <Github size={14} className="flex-shrink-0" />
               <span className="hidden sm:inline">Explore the code</span>
@@ -187,10 +187,10 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
+          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <motion.div
-              className="w-3 h-3 bg-gray-400 dark:bg-gray-500 rounded-full"
+              className="w-3 h-3 bg-muted rounded-full"
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -204,19 +204,19 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="relative inline-block px-4 md:px-8 py-4 md:py-6 rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 max-w-2xl mx-auto">
-            <div className="absolute top-1 md:top-2 left-2 md:left-4 text-2xl md:text-4xl text-gray-300 dark:text-gray-600 font-serif">
+          <div className="relative inline-block px-4 md:px-8 py-4 md:py-6 rounded-2xl bg-card/60 backdrop-blur-sm border border-border/50 max-w-2xl mx-auto">
+            <div className="absolute top-1 md:top-2 left-2 md:left-4 text-2xl md:text-4xl text-muted/50 font-serif">
               "
             </div>
-            <p className="text-sm md:text-base italic text-gray-700 dark:text-gray-300 leading-relaxed px-4 md:px-0 relative z-10">
+            <p className="text-sm md:text-base italic text-foreground leading-relaxed px-4 md:px-0 relative z-10">
               The only way to do great work is to love what you do. If you
               haven't found it yet, keep looking. Don't settle.
             </p>
-            <div className="absolute bottom-1 md:bottom-2 right-2 md:right-4 text-2xl md:text-4xl text-gray-300 dark:text-gray-600 font-serif rotate-180">
+            <div className="absolute bottom-1 md:bottom-2 right-2 md:right-4 text-2xl md:text-4xl text-muted/50 font-serif rotate-180">
               "
             </div>
             <motion.p
-              className="mt-3 md:mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium"
+              className="mt-3 md:mt-4 text-xs md:text-sm text-muted-foreground font-medium"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}

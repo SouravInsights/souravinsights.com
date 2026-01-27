@@ -68,15 +68,15 @@ export default async function CuratedLinksPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-2 md:p-8 transition-colors duration-200">
+    <div className="p-4 sm:p-2 md:p-8 transition-colors duration-200">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 sm:mb-4 text-green-800 dark:text-green-400 transition-colors duration-200">
+      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 sm:mb-4 text-foreground transition-colors duration-200">
         My Digital Garden
       </h1>
-      <p className="text-center text-gray-600 dark:text-gray-300 mb-4 sm:mb-8 transition-colors duration-200">
+      <p className="text-center text-muted-foreground mb-4 sm:mb-8 transition-colors duration-200">
         A curated collection of useful links and resources
       </p>
 

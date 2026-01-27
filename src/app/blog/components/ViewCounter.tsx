@@ -47,9 +47,9 @@ const ViewCounter = ({ slug }: ViewCounterProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400"
+      className="flex items-center gap-1.5 text-muted-foreground"
     >
-      <Eye size={16} className="text-gray-400 dark:text-gray-500" />
+      <Eye size={16} className="text-muted-foreground" />
       <span className="text-sm font-mono">
         {isLoading ? (
           <span className="animate-pulse">...</span>

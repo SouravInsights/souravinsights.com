@@ -111,7 +111,7 @@ export default function BlogPostContent({
       <div className="mb-6 px-4 lg:px-0">
         <Link
           href="/blog"
-          className="inline-flex items-center text-green-600 dark:text-green-400 hover:underline"
+          className="inline-flex items-center text-green-600 dark:text-green-500 hover:underline"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           <span>Back to all posts</span>
@@ -119,10 +119,10 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div className="lg:hidden sticky top-0 z-30 bg-white dark:bg-gray-900 p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+      <div className="lg:hidden sticky top-0 z-30 bg-background p-4 border-b border-border flex justify-between items-center">
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm border border-border rounded-md text-muted-foreground"
         >
           <Menu size={16} />
           <span>Contents</span>
@@ -139,15 +139,15 @@ export default function BlogPostContent({
 
       {/* Mobile TOC Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-gray-500/50 dark:bg-gray-900/80 backdrop-blur-sm">
-          <div className="absolute right-0 top-0 h-full w-4/5 max-w-xs bg-white dark:bg-gray-800 shadow-xl p-5 overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm">
+          <div className="absolute right-0 top-0 h-full w-4/5 max-w-xs bg-card shadow-xl p-5 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-foreground">
                 Table of Contents
               </h3>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                className="p-1.5 rounded-full bg-muted text-muted-foreground"
               >
                 <X size={16} />
               </button>
@@ -165,10 +165,10 @@ export default function BlogPostContent({
                     >
                       <a
                         href={`#${heading.id}`}
-                        className={`text-sm hover:text-green-600 dark:hover:text-green-400 transition-colors block py-1 ${
+                        className={`text-sm hover:text-green-600 dark:hover:text-green-500 transition-colors block py-1 ${
                           activeHeading === heading.id
-                            ? "text-green-600 dark:text-green-400 font-medium"
-                            : "text-gray-700 dark:text-gray-300"
+                            ? "text-green-600 dark:text-green-500 font-medium"
+                            : "text-muted-foreground"
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -203,11 +203,11 @@ export default function BlogPostContent({
             transition={{ duration: 0.5 }}
           >
             <header className="mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 {post.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center">
                   <Calendar className="mr-1 h-4 w-4" />
                   <time dateTime={post.date}>
@@ -233,10 +233,10 @@ export default function BlogPostContent({
             id="mdx-content-container"
             className="prose prose-green max-w-none dark:prose-invert 
             prose-headings:font-semibold
-            prose-a:text-green-600 dark:prose-a:text-green-400
-            prose-p:text-gray-700 dark:prose-p:text-gray-300
-            prose-blockquote:border-green-500 dark:prose-blockquote:border-green-400 
-            prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800/50"
+            prose-a:text-green-600 dark:prose-a:text-green-500
+            prose-p:text-gray-700 dark:prose-p:text-muted-foreground
+            prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500 
+            prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
           >
             {isDraft ? (
               <DraftPostIndicator previewParagraphs={10}>

@@ -21,10 +21,10 @@ export default function BlogList({ posts }: BlogListProps) {
         transition={{ duration: 0.5 }}
       >
         <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Notes & Essays
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-muted-foreground">
             Interactive tutorials, stories, deep dives on startups, movies,
             human behavior, and whatever random thing I get curious about at
             2 AM 🦉
@@ -40,11 +40,11 @@ export default function BlogList({ posts }: BlogListProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md border border-gray-200 dark:border-gray-700"
+              className="rounded-lg overflow-hidden border border-border"
             >
               <Link href={`/blog/${post.slug}`} className="block p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <time dateTime={post.date}>
                       {format(new Date(post.date), "MMMM d, yyyy")}
                     </time>
@@ -66,15 +66,15 @@ export default function BlogList({ posts }: BlogListProps) {
                   )}
                 </div>
 
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                <h2 className="text-2xl font-bold text-foreground mb-3">
                   {post.title}
                 </h2>
 
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                <p className="text-muted-foreground mb-4">
                   {post.excerpt}
                 </p>
 
-                <div className="inline-flex px-3 py-1 text-sm rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100">
+                <div className="inline-flex px-3 py-1 text-sm rounded-full bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300">
                   Read article
                 </div>
               </Link>
@@ -82,7 +82,7 @@ export default function BlogList({ posts }: BlogListProps) {
           ))
         ) : (
           <div className="text-center py-16">
-            <h3 className="text-xl text-gray-600 dark:text-gray-400">
+            <h3 className="text-xl text-muted-foreground">
               No blog posts yet. Check back soon!
             </h3>
           </div>

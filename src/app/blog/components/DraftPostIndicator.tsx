@@ -53,7 +53,7 @@ export default function DraftPostIndicator({
         transition={{ duration: 0.5 }}
         className="sticky top-20 z-20 mb-6 lg:mb-8 flex justify-center"
       >
-        <div className="bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 rounded-full px-4 py-2 inline-flex items-center gap-2 shadow-sm">
+        <div className="bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/50 rounded-full px-4 py-2 inline-flex items-center gap-2 shadow-sm">
           <FileWarning
             size={16}
             className="text-amber-600 dark:text-amber-400"
@@ -79,7 +79,7 @@ export default function DraftPostIndicator({
         >
           <form
             onSubmit={handlePasswordSubmit}
-            className="flex items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+            className="flex items-center gap-2 bg-card p-2 rounded-lg shadow-md border border-border"
           >
             <motion.div
               initial={{ scale: 0.9 }}
@@ -96,7 +96,7 @@ export default function DraftPostIndicator({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Author password"
-              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              className="px-3 py-1.5 text-sm border border-input rounded-md bg-background text-foreground"
               autoFocus
             />
             <button
@@ -118,11 +118,11 @@ export default function DraftPostIndicator({
           <>
             {visibleContent}
 
-            <div className="mt-8 p-6 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-center bg-gray-50 dark:bg-gray-800/50">
-              <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <div className="mt-8 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
+              <h4 className="text-lg font-medium text-foreground mb-2">
                 This post is still being drafted
               </h4>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-muted-foreground">
                 Check back later for the complete article!
               </p>
             </div>
