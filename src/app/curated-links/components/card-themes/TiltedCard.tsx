@@ -66,17 +66,13 @@ export function TiltedCard({
 
   // More dynamic text color handling for both modes
   const textColor = isDarkMode
-    ? isGradientLight
-      ? "text-gray-800"
-      : "text-gray-100"
+    ? "text-foreground"
     : isGradientLight
     ? "text-gray-800"
     : "text-white";
 
   const subTextColor = isDarkMode
-    ? isGradientLight
-      ? "text-gray-600"
-      : "text-gray-300"
+    ? "text-muted-foreground"
     : isGradientLight
     ? "text-gray-600"
     : "text-gray-200";
@@ -107,7 +103,7 @@ export function TiltedCard({
   };
 
   // Adjust card background opacity based on mode
-  const cardBackgroundColor = isDarkMode ? "bg-gray-900" : "bg-white";
+  const cardBackgroundColor = isDarkMode ? "bg-card" : "bg-white";
   const bgOpacity = isDarkMode ? "bg-opacity-95" : "bg-opacity-90";
 
   return (
@@ -138,7 +134,7 @@ export function TiltedCard({
                 className={`p-1.5 rounded-full shadow-sm transition-all duration-200 ${
                   isFavorited
                     ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                    : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+                    : "bg-muted hover:bg-gray-400 text-muted-foreground"
                 }`}
                 title={isFavorited ? "Remove from favorites" : "Add to favorites"}
               >

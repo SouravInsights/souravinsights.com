@@ -173,7 +173,7 @@ export function NewsletterModal({
                 </label>
                 <div className="max-h-[300px] overflow-y-auto border rounded-md p-1">
                   {curatedLinks.length === 0 ? (
-                    <p className="text-center text-gray-500 p-4">
+                    <p className="text-center text-muted-foreground p-4">
                       No curated links available. Add some links to your
                       collection first.
                     </p>
@@ -195,7 +195,7 @@ export function NewsletterModal({
                               >
                                 {link.title}
                               </label>
-                              <div className="text-xs text-gray-500 mt-1">
+                              <div className="text-xs text-muted-foreground mt-1">
                                 {link.category && (
                                   <span>Category: {link.category} • </span>
                                 )}
@@ -209,7 +209,7 @@ export function NewsletterModal({
                                 </a>
                               </div>
                               {link.notes && (
-                                <p className="text-sm mt-1 text-gray-600">
+                                <p className="text-sm mt-1 text-muted-foreground">
                                   {link.notes.length > 100
                                     ? `${link.notes.substring(0, 100)}...`
                                     : link.notes}
@@ -294,9 +294,9 @@ export function NewsletterModal({
                 </div>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md">
+              <div className="bg-muted p-4 rounded-md">
                 <h3 className="font-medium mb-1">Draft Created Successfully</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-muted-foreground">
                   Your newsletter draft has been created. Now choose when to
                   send it to your subscribers.
                 </p>

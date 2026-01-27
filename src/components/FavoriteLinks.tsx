@@ -53,7 +53,7 @@ export function FavoriteLinks() {
 
   if (loading) {
     return (
-      <section className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+      <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
         <div className="space-y-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Favorite Links</h2>
@@ -65,11 +65,11 @@ export function FavoriteLinks() {
           <div className="md:hidden">
             <div className="border border-border rounded-lg p-4 animate-pulse h-[140px] flex flex-col justify-between">
               <div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-4/5"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-1 w-full"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+                <div className="h-4 bg-muted rounded mb-2 w-4/5"></div>
+                <div className="h-3 bg-muted rounded mb-1 w-full"></div>
+                <div className="h-3 bg-muted rounded w-2/3"></div>
               </div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 mt-4"></div>
+              <div className="h-4 bg-muted rounded w-20 mt-4"></div>
             </div>
           </div>
 
@@ -78,11 +78,11 @@ export function FavoriteLinks() {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-gray-900 border border-border rounded-lg p-4 animate-pulse"
+                className="bg-card border border-border rounded-lg p-4 animate-pulse"
               >
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-1"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+                <div className="h-4 bg-muted rounded mb-2"></div>
+                <div className="h-3 bg-muted rounded mb-1"></div>
+                <div className="h-3 bg-muted rounded w-2/3"></div>
               </div>
             ))}
           </div>
@@ -96,7 +96,7 @@ export function FavoriteLinks() {
   }
 
   return (
-    <section className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-6 sm:p-6 md:p-8">
+    <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
       <div className="space-y-8">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Favorite Links</h2>
@@ -122,10 +122,10 @@ export function FavoriteLinks() {
               >
                 <div>
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors line-clamp-1">
+                    <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
                       {favorites[currentIndex]?.title}
                     </h3>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors flex-shrink-0 ml-2" />
+                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors flex-shrink-0 ml-2" />
                   </div>
 
                   {favorites[currentIndex]?.description && (
@@ -137,7 +137,7 @@ export function FavoriteLinks() {
 
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   {favorites[currentIndex]?.category && (
-                    <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                    <span className="bg-secondary px-2 py-1 rounded text-xs">
                       {favorites[currentIndex].category}
                     </span>
                   )}
@@ -150,7 +150,7 @@ export function FavoriteLinks() {
           <div className="flex items-center justify-between mt-6 h-10">
             <button
               onClick={prevLink}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
             >
               <ChevronLeft className="w-4 h-4" />
               Prev
@@ -164,8 +164,8 @@ export function FavoriteLinks() {
                   onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-colors ${
                     index === currentIndex
-                      ? "bg-green-600 dark:bg-green-400"
-                      : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                      ? "bg-green-600 dark:bg-green-500"
+                      : "bg-muted hover:bg-muted-foreground/20"
                   }`}
                 />
               ))}
@@ -173,7 +173,7 @@ export function FavoriteLinks() {
 
             <button
               onClick={nextLink}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-400 transition-colors border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-accent h-full"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
             >
               Next
               <ChevronRight className="w-4 h-4" />
@@ -199,10 +199,10 @@ export function FavoriteLinks() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors line-clamp-1">
+                <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
                   {favorite.title}
                 </h3>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors flex-shrink-0 ml-2" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors flex-shrink-0 ml-2" />
               </div>
 
               {favorite.description && (
@@ -213,7 +213,7 @@ export function FavoriteLinks() {
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 {favorite.category && (
-                  <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                  <span className="bg-secondary px-2 py-1 rounded text-xs">
                     {favorite.category}
                   </span>
                 )}
@@ -225,7 +225,7 @@ export function FavoriteLinks() {
         <div className="mt-8 text-center">
           <a
             href="/curated-links"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-400 font-medium transition-colors"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
           >
             View all curated links <ChevronRight className="w-4 h-4" />
           </a>

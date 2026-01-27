@@ -43,12 +43,12 @@ export function LayeredCard({
 
   const isLight = isLightColor(gradientStart);
   const textColor = isDarkMode
-    ? "text-gray-100"
+    ? "text-foreground"
     : isLight
     ? "text-gray-800"
     : "text-white";
   const subTextColor = isDarkMode
-    ? "text-gray-300"
+    ? "text-muted-foreground"
     : isLight
     ? "text-gray-600"
     : "text-gray-200";
@@ -100,7 +100,7 @@ export function LayeredCard({
       ></div>
 
       {/* Top layer (content) */}
-      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
+      <div className="relative bg-white dark:bg-card rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
         <div className="h-2" style={gradientStyle}></div>
         <div className="p-5 flex-grow flex flex-col">
           <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>

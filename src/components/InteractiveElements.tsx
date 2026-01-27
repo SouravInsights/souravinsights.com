@@ -149,25 +149,25 @@ clear      - Clear terminal`;
     <div
       ref={terminalRef}
       onClick={() => setIsFocused(true)}
-      className={`relative border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden cursor-text transition-colors duration-200 ${
+      className={`relative border border-border rounded-lg overflow-hidden cursor-text transition-colors duration-200 ${
         isFocused ? "ring-1 ring-green-500" : ""
       }`}
       tabIndex={0}
     >
       {/* Terminal Header */}
-      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 flex items-center gap-2 transition-colors duration-200">
+      <div className="bg-secondary px-4 py-2 flex items-center gap-2 transition-colors duration-200">
         <div className="flex space-x-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
           <div className="w-3 h-3 rounded-full bg-green-500"></div>
         </div>
-        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2 transition-colors duration-200">
+        <span className="text-sm text-muted-foreground ml-2 transition-colors duration-200">
           ~/terminal {isFocused ? "(active)" : "(click to activate)"}
         </span>
       </div>
 
       {/* Terminal Content - Now responds to light/dark mode */}
-      <div className="p-4 bg-gray-50 dark:bg-gray-900 font-mono text-sm min-h-[200px] transition-colors duration-200">
+      <div className="p-4 bg-muted font-mono text-sm min-h-[200px] transition-colors duration-200">
         <div className="space-y-2">
           {commands.map((cmd, i) => (
             <motion.div
@@ -176,12 +176,12 @@ clear      - Clear terminal`;
               animate={{ opacity: 1, y: 0 }}
               className={`${
                 cmd.isResponse
-                  ? "text-green-600 dark:text-green-400"
-                  : "text-gray-700 dark:text-gray-300"
+                  ? "text-green-600 dark:text-green-500"
+                  : "text-foreground"
               } transition-colors duration-200`}
             >
               {!cmd.isResponse && (
-                <span className="text-blue-600 dark:text-blue-400 transition-colors duration-200">
+                <span className="text-blue-600 dark:text-blue-500 transition-colors duration-200">
                   ${" "}
                 </span>
               )}
@@ -191,15 +191,15 @@ clear      - Clear terminal`;
         </div>
 
         <div className="mt-4 flex items-start gap-2">
-          <span className="text-blue-600 dark:text-blue-400 transition-colors duration-200">
+          <span className="text-blue-600 dark:text-blue-500 transition-colors duration-200">
             $
           </span>
-          <div className="flex-1 text-gray-700 dark:text-gray-300 transition-colors duration-200">
+          <div className="flex-1 text-foreground transition-colors duration-200">
             {currentCommand}
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ duration: 1, repeat: Infinity }}
-              className="inline-block w-2 h-4 bg-gray-700 dark:bg-gray-300 ml-1 transition-colors duration-200"
+              className="inline-block w-2 h-4 bg-foreground ml-1 transition-colors duration-200"
             ></motion.span>
           </div>
         </div>
