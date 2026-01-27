@@ -20,7 +20,7 @@ const KindleImageDisplay: React.FC = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="flex flex-col space-y-2 mb-4 md:mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-green-700 dark:text-green-500 text-center">
+        <h2 className="text-xl md:text-2xl font-bold text-foreground text-center">
           My Reading Companion
         </h2>
         <p className="text-center text-muted-foreground">
@@ -57,7 +57,7 @@ const BookshelfPage: React.FC = () => {
     <ApolloProvider client={client}>
       <div className="md:px-6 md:py-8 px-2 py-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-4 text-green-800 dark:text-green-500">
+          <h1 className="text-4xl font-bold text-center mb-4 text-foreground">
             My Reading Journey
           </h1>
           <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -86,7 +86,7 @@ const BookshelfPage: React.FC = () => {
                   height={50}
                   className="mb-4"
                 />
-                <h2 className="text-2xl font-bold mb-4 text-green-700 dark:text-green-500">
+                <h2 className="text-2xl font-bold mb-4 text-foreground">
                   Powered by Literal Club
                 </h2>
                 <p className="text-muted-foreground mb-6">

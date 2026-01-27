@@ -23,7 +23,7 @@ export const LiteralShoutout: React.FC = () => {
             height={50}
             className="mb-4"
           />
-          <h2 className="text-2xl font-bold mb-4 text-green-700 dark:text-green-400">
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
             Powered by Literal Club
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">

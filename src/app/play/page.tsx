@@ -41,7 +41,7 @@ const SnakeGamePage: React.FC = () => {
               Back to Home
             </Button>
           </Link> */}
-          <h1 className="text-3xl font-bold text-green-700 dark:text-green-500">
+          <h1 className="text-3xl font-bold text-foreground">
             Language Muncher
           </h1>
         </div>

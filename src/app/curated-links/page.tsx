@@ -73,7 +73,7 @@ export default async function CuratedLinksPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 sm:mb-4 text-green-800 dark:text-green-500 transition-colors duration-200">
+      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-2 sm:mb-4 text-foreground transition-colors duration-200">
         My Digital Garden
       </h1>
       <p className="text-center text-muted-foreground mb-4 sm:mb-8 transition-colors duration-200">
