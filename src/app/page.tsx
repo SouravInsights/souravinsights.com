@@ -39,19 +39,19 @@ const companies = [
 
 const projects = [
   {
-    name: "FairForms",
-    logo: "/projects/fairforms-logo.png",
-    website: "https://www.fairforms.xyz/",
-  },
-  {
     name: "Beenthere",
     logo: "/projects/beenthere-logo.png",
     website: "https://www.beenthere.page/",
   },
   {
+    name: "FairForms",
+    logo: "/projects/fairforms-logo.png",
+    website: "https://fairforms.vercel.app/",
+  },
+  {
     name: "Waitroom",
     logo: "/projects/waitroom-logo.png",
-    website: "https://www.waitroom.xyz/",
+    website: "https://waitroom-api.vercel.app/",
   },
   {
     name: "3Reads",
