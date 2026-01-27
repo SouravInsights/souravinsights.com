@@ -102,15 +102,12 @@ const blogHighlights = [
 ];
 
 const unpopularOpinions = [
-  "Curiousity > Talent",
-  "Life is a chessboard and we are the pawns!",
+  "Curiousity & persistence can outmatch talent.",
+"Suffering is not always bad, comfort is not always good.",
   "The most dangerous thing about the internet isn’t distraction, it’s identity addiction!",
-  "Most people aren’t in love. They’re in need. They’re in loneliness. They’re in fear of not being enough",
-  "Suffering is not always bad, comfort is not always good.",
   "We romanticize 'busy' because we're scared of what we'd find in the silence",
   "You are replaceable. And that’s okay",
   "Sometimes you don’t miss the person. You miss the version of yourself who hoped things would turn out better.",
-  "Peace in love is underrated. People confuse chaos for chemistry.",
   "Most people are lonely not because they're alone, but because they're afraid to be vulnerable",
 ];
 
