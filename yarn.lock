@@ -2386,6 +2386,11 @@
   resolved "https://registry.yarnpkg.com/@react-hook/passive-layout-effect/-/passive-layout-effect-1.2.1.tgz#c06dac2d011f36d61259aa1c6df4f0d5e28bc55e"
   integrity sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==
 
+"@ridemountainpig/svgl-react@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@ridemountainpig/svgl-react/-/svgl-react-1.0.15.tgz#5631ddf9e8d8d2dfd0bf047517b4605929f834a0"
+  integrity sha512-SeJ2TbDUvcWXA31UyKXOsaMohC7gY6VHiiB/+yColFO0aZG1v08kbUyYSQIOvIZhVukfV0cmz+HwlhNCZ1oQPA==
+
 "@rollup/rollup-darwin-arm64@^4.18.1":
   version "4.31.0"
   resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.31.0.tgz#d137dff254b19163a6b52ac083a71cd055dae844"

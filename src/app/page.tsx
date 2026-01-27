@@ -5,7 +5,6 @@ import Macintosh from "@/components/Macintosh";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronRight,
-  ExternalLink,
   Twitter,
   Github,
   ChevronLeft,
@@ -13,6 +12,19 @@ import {
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
 import { useState } from "react";
+import {
+  Docker,
+  GitHubDark,
+  Figma,
+  Obsidian,
+  Spotify,
+  Raycast,
+  Ghostty,
+  Warp,
+  Arc,
+  Paper,
+  GoogleAntigravity
+} from "@ridemountainpig/svgl-react";
 
 const companies = [
   {
@@ -115,41 +127,48 @@ const myToolkit = {
   coding: {
     title: "Dev Tools",
     items: [
-      "OpenCode",
-      "Antigravity",
-      "Ghostty",
-      "Warp Terminal",
-      "Conductor.build",
-      "Git Butler",
-      "GitHub Desktop",
-      "Docker",
-      "Obscura.net"
+      { name: "OpenCode", logo: null, url: null },
+      { name: "Antigravity", logo: GoogleAntigravity, url: "https://antigravity.google/" },
+      { name: "Ghostty", logo: Ghostty, url: "https://ghostty.org/" },
+      { name: "Warp", logo: Warp, url: "https://www.warp.dev/" },
+      { name: "Conductor", logo: null, url: "https://www.conductor.build/" },
+      { name: "Git Butler", logo: null, url: "https://gitbutler.com/" },
+      { name: "GitHub Desktop", logo: GitHubDark, url: "https://github.com" },
+      { name: "Docker", logo: Docker, url: "https://www.docker.com/" },
+      { name: "Obscura", logo: null, url: "https://obscura.net/" },
     ],
   },
   productivity: {
     title: "Getting Things Done",
     items: [
-      "Obsidian",
-      "Session (Pomodoro)",
-      "Ebb.cool",
-      "Craft.do",
-      "Arc Browser",
-      "Raycast",
+      { name: "Obsidian", logo: Obsidian, url: "https://obsidian.md/" },
+      { name: "Session", logo: null, url: "https://www.stayinsession.com/" },
+      { name: "Ebb", logo: null, url: "https://ebb.cool/" },
+      { name: "Craft", logo: null, url: "https://www.craft.do/" },
+      { name: "Arc", logo: Arc, url: "https://arc.net/" },
+      { name: "Raycast", logo: Raycast, url: "https://www.raycast.com/" },
     ],
   },
   creative: {
     title: "Creative Work",
     items: [
-      "Figma",
-      "Paper.design",
-      "Cap.so",
-      "Jitter.video",
-      "Sublime.app"
+      { name: "Figma", logo: Figma, url: "https://www.figma.com/" },
+      { name: "Paper", logo: Paper, url: "https://paper.design/" },
+      { name: "Cap", logo: null, url: "https://cap.so/" },
+      { name: "Jitter", logo: null, url: "https://jitter.video/" },
+      { name: "Sublime", logo: null, url: "https://sublime.app/" },
     ],
   },
   daily: {
     title: "Daily Life",
-    items: ["Spotify", "Kindle", "Bike rides", "Solo walks", "Cafes", "Guitar"],
+    items: [
+      { name: "Spotify", logo: Spotify, url: "https://www.spotify.com/" },
+      { name: "Kindle", logo: null, url: "https://www.amazon.com/kindle" },
+      { name: "Bike rides", logo: null, url: null },
+      { name: "Solo walks", logo: null, url: null },
+      { name: "Cafes", logo: null, url: null },
+      { name: "Guitar", logo: null, url: null },
+    ],
   },
 };
 
@@ -616,14 +635,34 @@ export default function Home() {
                     {category.title}
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {category.items.map((item) => (
-                      <span
-                        key={item}
-                        className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded"
-                      >
-                        {item}
-                      </span>
-                    ))}
+                    {category.items.map((item, index) => {
+                      const ItemWrapper = item.url ? "a" : "span";
+                      const Logo = item.logo;
+                      
+                      return (
+                        <ItemWrapper
+                          key={`${key}-${index}`}
+                          {...(item.url ? {
+                            href: item.url,
+                            target: "_blank",
+                            rel: "noopener noreferrer"
+                          } : {})}
+                          className={`
+                            px-3 py-2 text-xs bg-secondary text-secondary-foreground rounded-md
+                            flex items-center gap-2
+                            ${item.url ? 'hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer' : ''}
+                          `}
+                        >
+                          {Logo && (
+                            <Logo 
+                              className="w-4 h-4" 
+                              style={{ flexShrink: 0 }}
+                            />
+                          )}
+                          <span>{item.name}</span>
+                        </ItemWrapper>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
