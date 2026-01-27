@@ -19,17 +19,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   withGame = true,
 }) => {
   return (
-    <footer className="relative bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-t border-gray-200 dark:border-gray-700 py-16 transition-all duration-500 overflow-hidden">
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]">
-        <div
-          className="absolute top-0 left-0 w-full h-full"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
-      </div>
+    <footer className="relative bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-16 transition-all duration-500">
 
       <div className="container mx-auto px-4 max-w-5xl relative">
         {/* Main Content */}
@@ -177,28 +167,16 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
               This portfolio is open source. Dive in, break things, just don't
               judge my commit messages!
             </p>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant="outline"
-                size="default"
-                onClick={() =>
-                  window.open(
-                    "https://github.com/SouravInsights/souravinsights.com",
-                    "_blank"
-                  )
-                }
-                className="px-4 md:px-6 py-2 text-sm md:text-base text-gray-700 hover:text-gray-900 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800 transition-all duration-300 group"
-              >
-                <span className="flex items-center gap-2">
-                  <Github
-                    size={14}
-                    className="md:w-4 md:h-4 group-hover:rotate-12 transition-transform duration-300"
-                  />
-                  <span className="hidden sm:inline">Explore the code</span>
-                  <span className="sm:hidden">Code</span>
-                </span>
-              </Button>
-            </motion.div>
+            <a
+              href="https://github.com/SouravInsights/souravinsights.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors underline decoration-gray-300 dark:decoration-gray-600 underline-offset-4 hover:decoration-gray-500 dark:hover:decoration-gray-400"
+            >
+              <Github size={14} className="flex-shrink-0" />
+              <span className="hidden sm:inline">Explore the code</span>
+              <span className="sm:hidden">Code</span>
+            </a>
           </motion.div>
         </motion.div>
 
