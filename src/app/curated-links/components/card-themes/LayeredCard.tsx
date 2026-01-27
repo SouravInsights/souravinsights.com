@@ -41,37 +41,17 @@ export function LayeredCard({
     opacity: isDarkMode ? 0.8 : 1,
   };
 
-  const isLight = isLightColor(gradientStart);
-  const textColor = isDarkMode
-    ? "text-foreground"
-    : isLight
-    ? "text-gray-800"
-    : "text-white";
-  const subTextColor = isDarkMode
-    ? "text-muted-foreground"
-    : isLight
-    ? "text-gray-600"
-    : "text-gray-200";
-
-  const buttonBackgroundColor = isDarkMode
-    ? Color(gradientEnd).darken(0.3).hex()
-    : isLight
-    ? Color(gradientEnd).lighten(0.1).hex()
-    : Color(gradientEnd).darken(0.1).hex();
-  const buttonTextColor = getContrastColor(buttonBackgroundColor);
+  const textColor = "text-foreground";
+  const subTextColor = "text-muted-foreground";
 
   const buttonStyle = {
-    backgroundColor: buttonBackgroundColor,
-    color: buttonTextColor,
+    backgroundColor: "var(--primary)",
+    color: "var(--primary-foreground)",
     transition: "all 0.3s ease",
   };
 
   const buttonHoverStyle = {
-    backgroundColor: isDarkMode
-      ? Color(buttonBackgroundColor).lighten(0.1).hex()
-      : isLight
-      ? Color(buttonBackgroundColor).darken(0.1).hex()
-      : Color(buttonBackgroundColor).lighten(0.1).hex(),
+    opacity: 0.9,
   };
 
   return (
@@ -100,7 +80,7 @@ export function LayeredCard({
       ></div>
 
       {/* Top layer (content) */}
-      <div className="relative bg-white dark:bg-card rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
+      <div className="relative bg-card rounded-lg shadow-lg border border-border overflow-hidden h-full flex flex-col">
         <div className="h-2" style={gradientStyle}></div>
         <div className="p-5 flex-grow flex flex-col">
           <h3 className={`text-lg font-semibold mb-2 truncate ${textColor}`}>

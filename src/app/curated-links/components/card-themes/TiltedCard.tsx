@@ -61,50 +61,22 @@ export function TiltedCard({
     opacity: isDarkMode ? 0.8 : 1, // Slightly reduce opacity in dark mode for better contrast
   };
 
-  // Determine if the gradient background is light (for both modes)
-  const isGradientLight = isLightColor(adjustedGradientStart);
+  // Standardized system colors
+  const cardBackgroundColor = "bg-card";
+  const bgOpacity = "bg-opacity-95";
+  const textColor = "text-foreground";
+  const subTextColor = "text-muted-foreground";
 
-  // More dynamic text color handling for both modes
-  const textColor = isDarkMode
-    ? "text-foreground"
-    : isGradientLight
-    ? "text-gray-800"
-    : "text-white";
-
-  const subTextColor = isDarkMode
-    ? "text-muted-foreground"
-    : isGradientLight
-    ? "text-gray-600"
-    : "text-gray-200";
-
-  // In dark mode, lighten button colors instead of darkening them
-  const buttonBackgroundColor = isDarkMode
-    ? isGradientLight
-      ? Color(adjustedGradientEnd).darken(0.1).hex()
-      : Color(adjustedGradientEnd).lighten(0.2).hex()
-    : isGradientLight
-    ? Color(gradientEnd).lighten(0.1).hex()
-    : Color(gradientEnd).darken(0.1).hex();
-
-  const buttonTextColor = getContrastColor(buttonBackgroundColor);
-
+  // Simplified button logic relying on system tokens or consistent contrast
   const buttonStyle = {
-    backgroundColor: buttonBackgroundColor,
-    color: buttonTextColor,
+    backgroundColor: "var(--primary)",
+    color: "var(--primary-foreground)",
     transition: "all 0.3s ease",
   };
 
   const buttonHoverStyle = {
-    backgroundColor: isDarkMode
-      ? Color(buttonBackgroundColor).lighten(0.1).hex()
-      : isGradientLight
-      ? Color(buttonBackgroundColor).darken(0.1).hex()
-      : Color(buttonBackgroundColor).lighten(0.1).hex(),
+    opacity: 0.9,
   };
-
-  // Adjust card background opacity based on mode
-  const cardBackgroundColor = isDarkMode ? "bg-card" : "bg-white";
-  const bgOpacity = isDarkMode ? "bg-opacity-95" : "bg-opacity-90";
 
   return (
     <motion.div
@@ -119,7 +91,7 @@ export function TiltedCard({
           style={gradientStyle}
         ></div>
         <div
-          className={`relative ${cardBackgroundColor} ${bgOpacity} p-5 rounded-lg shadow-sm overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
+          className={`relative ${cardBackgroundColor} ${bgOpacity} p-5 rounded-lg shadow-sm border border-border overflow-hidden h-full flex flex-col transform-gpu transition-transform duration-300 ease-in-out group-hover:rotate-6`}
         >
           {/* Admin buttons - Different buttons for curated vs non-curated */}
           {isAdminMode && (

@@ -459,7 +459,7 @@ export default function CuratedLinksTabs({
   };
 
   return (
-    <div className="dark:bg-card p-6 rounded-lg shadow-inner">
+    <div className="p-0 sm:p-6 rounded-lg transition-colors duration-200">
       {isAdminMode && (
         <div className="mb-4 px-4 py-3 bg-yellow-100 dark:bg-yellow-500/10 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -484,7 +484,7 @@ export default function CuratedLinksTabs({
         </div>
       )}
 
-      <div className="mb-6 bg-white dark:bg-secondary rounded-lg shadow-sm">
+      <div className="mb-6 border border-border rounded-lg overflow-hidden transition-colors duration-200">
         {/* Customization Toggle Button */}
         <button
           onClick={() => setIsCustomizePanelOpen(!isCustomizePanelOpen)}
@@ -576,7 +576,7 @@ export default function CuratedLinksTabs({
             <TabsTrigger
               key={channel.id}
               value={channel.name}
-              className="px-4 py-2 mx-1 rounded-full bg-white dark:bg-muted shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center dark:text-foreground dark:hover:bg-accent data-[state=active]:bg-green-50 data-[state=active]:dark:bg-green-500/20 data-[state=active]:text-green-700 data-[state=active]:dark:text-green-300"
+              className="px-4 py-2 mx-1 rounded-full border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 flex items-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               {getChannelIcon(channel.name)}
               <span>{channel.name.replace("-", " ")}</span>
