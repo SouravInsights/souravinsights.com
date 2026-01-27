@@ -99,7 +99,7 @@ export const BookshelfContent: React.FC = () => {
   };
 
   return (
-    <div className="bg-card shadow-sm p-4 sm:p-6 md:p-8 rounded-lg border border-border">
+    <div className="p-4 sm:p-6 md:p-8 rounded-lg border border-border">
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}

@@ -46,7 +46,7 @@ const SnakeGamePage: React.FC = () => {
           </h1>
         </div>
 
-        <div className="bg-card shadow-sm rounded-lg p-6 mb-8">
+        <div className="rounded-lg p-6 mb-8 border border-border">
           <SnakeGame />
         </div>
 

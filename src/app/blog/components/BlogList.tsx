@@ -40,7 +40,7 @@ export default function BlogList({ posts }: BlogListProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+              className="rounded-lg overflow-hidden border border-border"
             >
               <Link href={`/blog/${post.slug}`} className="block p-6">
                 <div className="flex items-center justify-between mb-2">

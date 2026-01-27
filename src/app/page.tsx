@@ -362,7 +362,7 @@ export default function Home() {
           transition={{ delay: 0.2 }}
           className="space-y-6"
         >
-          <div className="bg-card shadow-sm border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Companies
@@ -409,7 +409,7 @@ export default function Home() {
           transition={{ delay: 0.3 }}
           className="space-y-6"
         >
-          <div className="bg-card shadow-sm border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Side Projects
@@ -464,7 +464,7 @@ export default function Home() {
           transition={{ delay: 0.4 }}
           className="space-y-6"
         >
-          <div className="bg-card shadow-sm border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Recent Essays
@@ -522,7 +522,7 @@ export default function Home() {
           transition={{ delay: 0.5 }}
           className="space-y-6"
         >
-          <div className="bg-card shadow-sm border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Unpopular Opinions
@@ -623,7 +623,7 @@ export default function Home() {
           transition={{ delay: 0.6 }}
           className="space-y-6"
         >
-          <div className="bg-card shadow-sm border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 Things I Use

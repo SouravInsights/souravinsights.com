@@ -18,7 +18,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
       whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="bg-card shadow-sm h-full overflow-hidden border border-border">
+      <Card className="h-full overflow-hidden border border-border">
         <CardContent className="p-0 relative">
           <div className="relative h-48 sm:h-64 w-full">
             <Image
