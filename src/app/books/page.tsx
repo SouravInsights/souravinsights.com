@@ -14,7 +14,7 @@ const KindleImageDisplay: React.FC = () => {
 
   return (
     <motion.div
-      className="my-8 p-4 md:p-8 bg-card rounded-lg shadow-lg overflow-hidden border border-border"
+      className="my-8 p-4 md:p-8 rounded-lg shadow-lg overflow-hidden border border-border"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -72,7 +72,7 @@ const BookshelfPage: React.FC = () => {
 
           {/* Literal Club Shoutout Section */}
           <motion.div
-            className="mt-16 bg-card rounded-lg shadow-md overflow-hidden border border-border"
+            className="mt-16 rounded-lg shadow-md overflow-hidden border border-border"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}

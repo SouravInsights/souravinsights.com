@@ -9,7 +9,7 @@ import { ExternalLink } from "lucide-react";
 export const LiteralShoutout: React.FC = () => {
   return (
     <motion.div
-      className="mt-16 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-green-200 dark:border-green-700"
+      className="mt-16 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-border"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
@@ -40,7 +40,7 @@ export const LiteralShoutout: React.FC = () => {
             Try Literal Club <ExternalLink className="ml-2 h-5 w-5" />
           </a>
         </div>
-        <div className="md:w-1/2 bg-green-50 dark:bg-gray-700 p-4 md:p-8 overflow-x-auto">
+        <div className="md:w-1/2 bg-muted p-4 md:p-8 overflow-x-auto">
           <pre className="text-sm md:text-base text-gray-800 dark:text-gray-200">
             <code>{`
 query booksByReadingStateAndProfile(
