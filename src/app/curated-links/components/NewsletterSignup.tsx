@@ -58,16 +58,16 @@ export function NewsletterSignup() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-card dark:to-card dark:bg-card p-6 rounded-lg shadow-md border border-green-100 dark:border-border">
+    <div className="bg-card dark:bg-card p-6 rounded-lg border border-border">
       <div className="flex items-center mb-4">
-        <div className="bg-green-100 dark:bg-green-500/20 p-2 rounded-full mr-3">
-          <Mail className="w-5 h-5 text-green-600 dark:text-green-500" />
+        <div className="bg-primary/10 p-2 rounded-full mr-3">
+          <Mail className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-foreground">
+          <h3 className="text-xl font-semibold text-foreground">
             My Weekly Internet Treasures
           </h3>
-          <p className="text-sm text-gray-600 dark:text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Curated treasures from the overlooked corners of the internet
           </p>
         </div>
@@ -97,7 +97,7 @@ export function NewsletterSignup() {
 
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="flex items-center text-green-600 dark:text-green-500 hover:text-green-700 dark:hover:text-green-400 transition-colors text-sm mt-3 font-medium"
+          className="flex items-center text-primary hover:text-primary/80 transition-colors text-sm mt-3 font-medium"
         >
           {showDetails ? "Show less" : "Why subscribe?"}
           {showDetails ? (
@@ -116,7 +116,7 @@ export function NewsletterSignup() {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden mb-6"
           >
-            <div className="border-l-2 border-green-300 dark:border-green-500/50 pl-4 mb-4">
+            <div className="border-l-2 border-primary/30 pl-4 mb-4">
               <p className="text-sm text-gray-600 dark:text-muted-foreground italic mb-2">
                 "We live in a paradox of abundance: an endless ocean of content,
                 yet somehow the truly valuable gems often remain hidden in
@@ -127,7 +127,7 @@ export function NewsletterSignup() {
                 deserve attention but don't always get it.
               </p>
             </div>
-            <div className="bg-white dark:bg-card p-3 rounded border border-gray-200 dark:border-border">
+            <div className="bg-muted/50 p-3 rounded border border-border">
               <p className="text-sm font-medium mb-1 text-gray-700 dark:text-foreground">
                 What you'll receive:
               </p>
@@ -155,7 +155,7 @@ export function NewsletterSignup() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center"
           >
             {isSubmitting ? (
               <>
