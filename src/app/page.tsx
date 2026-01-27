@@ -141,7 +141,7 @@ const myToolkit = {
     title: "Creative Work",
     items: [
       "Figma",
-      "Paper.design"
+      "Paper.design",
       "Cap.so",
       "Jitter.video",
       "Sublime.app"
