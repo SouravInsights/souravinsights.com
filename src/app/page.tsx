@@ -113,16 +113,17 @@ const unpopularOpinions = [
 
 const myToolkit = {
   coding: {
-    title: "Development",
+    title: "Dev Tools",
     items: [
-      "VS Code",
+      "OpenCode",
+      "Antigravity",
+      "Ghostty",
       "Warp Terminal",
-      "Git",
+      "Conductor.build",
+      "Git Butler",
+      "GitHub Desktop",
       "Docker",
-      "Postgres",
-      "TypeScript",
-      "Next.js",
-      "React",
+      "Obscura.net"
     ],
   },
   productivity: {
@@ -130,7 +131,8 @@ const myToolkit = {
     items: [
       "Obsidian",
       "Session (Pomodoro)",
-      "Notion",
+      "Ebb.cool",
+      "Craft.do",
       "Arc Browser",
       "Raycast",
     ],
@@ -139,16 +141,15 @@ const myToolkit = {
     title: "Creative Work",
     items: [
       "Figma",
+      "Paper.design"
       "Cap.so",
-      "Framer Motion",
-      "Tailwind CSS",
-      "Guitar",
-      "Sketching",
+      "Jitter.video",
+      "Sublime.app"
     ],
   },
   daily: {
     title: "Daily Life",
-    items: ["Spotify", "Kindle", "Bike rides", "Solo walks", "Coffee shops"],
+    items: ["Spotify", "Kindle", "Bike rides", "Solo walks", "Cafes", "Guitar"],
   },
 };
 
