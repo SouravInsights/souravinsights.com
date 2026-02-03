@@ -27,7 +27,7 @@ import {
   Warp,
   Arc,
   Paper,
-  GoogleAntigravity
+  GoogleAntigravity,
 } from "@ridemountainpig/svgl-react";
 
 const companies = [
@@ -100,12 +100,12 @@ const projects = [
 
 const blogHighlights = [
   {
-    title: "What Wilson (the volleyball) Taught Me About Loneliness",
-    url: "/blog/find-your-wilson",
+    title: "On Designing Forms That Don't Get in the Way",
+    url: "/blog/on-designing-forms",
     excerpt:
-      "What a volleyball named Wilson in the movie 'Cast Away' taught me about loneliness, connection, and what it really means to stay human.",
-    readingTime: "9 min read",
-    date: "2025-07-18",
+      "Notes on validation, accessibility, and the invisible decisions behind a calm sign-in flow.",
+    readingTime: "7 min read",
+    date: "2026-01-17",
   },
   {
     title: "Building a Brain That Can Do Everything (But Not All at Once)",
@@ -119,7 +119,7 @@ const blogHighlights = [
 
 const unpopularOpinions = [
   "Curiousity & persistence can outmatch talent.",
-"Suffering is not always bad, comfort is not always good.",
+  "Suffering is not always bad, comfort is not always good.",
   "The most dangerous thing about the internet isn’t distraction, it’s identity addiction!",
   "We romanticize 'busy' because we're scared of what we'd find in the silence",
   "You are replaceable. And that’s okay",
@@ -132,21 +132,41 @@ const myToolkit = {
     title: "Dev Tools",
     items: [
       { name: "OpenCode", logo: "/logos/opencode.png", url: null },
-      { name: "Antigravity", logo: GoogleAntigravity, url: "https://antigravity.google/" },
+      {
+        name: "Antigravity",
+        logo: GoogleAntigravity,
+        url: "https://antigravity.google/",
+      },
       { name: "Ghostty", logo: Ghostty, url: "https://ghostty.org/" },
       { name: "Warp", logo: Warp, url: "https://www.warp.dev/" },
-      { name: "Conductor", logo: "/logos/conductor.png", url: "https://www.conductor.build/" },
-      { name: "Git Butler", logo: "/logos/gitbutler.png", url: "https://gitbutler.com/" },
+      {
+        name: "Conductor",
+        logo: "/logos/conductor.png",
+        url: "https://www.conductor.build/",
+      },
+      {
+        name: "Git Butler",
+        logo: "/logos/gitbutler.png",
+        url: "https://gitbutler.com/",
+      },
       { name: "GitHub Desktop", logo: GitHubDark, url: "https://github.com" },
       { name: "Docker", logo: Docker, url: "https://www.docker.com/" },
-      { name: "Obscura", logo: "/logos/obscura.svg", url: "https://obscura.net/" },
+      {
+        name: "Obscura",
+        logo: "/logos/obscura.svg",
+        url: "https://obscura.net/",
+      },
     ],
   },
   productivity: {
     title: "Getting Things Done",
     items: [
       { name: "Obsidian", logo: Obsidian, url: "https://obsidian.md/" },
-      { name: "Session", logo: "/logos/session.png", url: "https://www.stayinsession.com/" },
+      {
+        name: "Session",
+        logo: "/logos/session.png",
+        url: "https://www.stayinsession.com/",
+      },
       { name: "Ebb", logo: "/logos/ebb.ico", url: "https://ebb.cool/" },
       { name: "Craft", logo: "/logos/craft.png", url: "https://www.craft.do/" },
       { name: "Arc", logo: Arc, url: "https://arc.net/" },
@@ -159,15 +179,27 @@ const myToolkit = {
       { name: "Figma", logo: Figma, url: "https://www.figma.com/" },
       { name: "Paper", logo: Paper, url: "https://paper.design/" },
       { name: "Cap", logo: "/logos/cap.png", url: "https://cap.so/" },
-      { name: "Jitter", logo: "/logos/jitter.png", url: "https://jitter.video/" },
-      { name: "Sublime", logo: "/logos/sublime.png", url: "https://sublime.app/" },
+      {
+        name: "Jitter",
+        logo: "/logos/jitter.png",
+        url: "https://jitter.video/",
+      },
+      {
+        name: "Sublime",
+        logo: "/logos/sublime.png",
+        url: "https://sublime.app/",
+      },
     ],
   },
   daily: {
     title: "Daily Life",
     items: [
       { name: "Spotify", logo: Spotify, url: "https://www.spotify.com/" },
-      { name: "Kindle", logo: "/logos/kindle.png", url: "https://read.amazon.com/landing" },
+      {
+        name: "Kindle",
+        logo: "/logos/kindle.png",
+        url: "https://read.amazon.com/landing",
+      },
       { name: "Bike rides", logo: Bike, url: null },
       { name: "Solo walks", logo: Footprints, url: null },
       { name: "Cafes", logo: Coffee, url: null },
@@ -332,13 +364,13 @@ export default function Home() {
 
   const nextOpinion = () => {
     setCurrentOpinionIndex((prev) =>
-      prev === unpopularOpinions.length - 1 ? 0 : prev + 1
+      prev === unpopularOpinions.length - 1 ? 0 : prev + 1,
     );
   };
 
   const prevOpinion = () => {
     setCurrentOpinionIndex((prev) =>
-      prev === 0 ? unpopularOpinions.length - 1 : prev - 1
+      prev === 0 ? unpopularOpinions.length - 1 : prev - 1,
     );
   };
 
@@ -642,26 +674,28 @@ export default function Home() {
                     {category.items.map((item, index) => {
                       const ItemWrapper = item.url ? "a" : "span";
                       const logo = item.logo;
-                      const isStringLogo = typeof logo === 'string';
+                      const isStringLogo = typeof logo === "string";
                       const LogoComponent = !isStringLogo ? logo : null;
-                      
+
                       return (
                         <ItemWrapper
                           key={`${key}-${index}`}
-                          {...(item.url ? {
-                            href: item.url,
-                            target: "_blank",
-                            rel: "noopener noreferrer"
-                          } : {})}
+                          {...(item.url
+                            ? {
+                                href: item.url,
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                              }
+                            : {})}
                           className={`
                             px-3 py-2 text-xs bg-secondary text-secondary-foreground rounded-md
                             flex items-center gap-2
-                            ${item.url ? 'hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer' : ''}
+                            ${item.url ? "hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer" : ""}
                           `}
                         >
-                          {logo && (
-                            isStringLogo ? (
-                              <Image 
+                          {logo &&
+                            (isStringLogo ? (
+                              <Image
                                 src={logo}
                                 alt={`${item.name} logo`}
                                 width={16}
@@ -670,12 +704,11 @@ export default function Home() {
                                 style={{ flexShrink: 0 }}
                               />
                             ) : LogoComponent ? (
-                              <LogoComponent 
+                              <LogoComponent
                                 className="w-4 h-4"
                                 style={{ flexShrink: 0 }}
                               />
-                            ) : null
-                          )}
+                            ) : null)}
                           <span>{item.name}</span>
                         </ItemWrapper>
                       );
