@@ -254,6 +254,18 @@ export default function BlogPostContent({
               content
             )}
           </motion.div>
+
+          {/* Hacker News Button at Bottom */}
+          {post.hnUrl && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-12 pt-8 border-t border-border"
+            >
+              <HackerNewsButton url={post.hnUrl} />
+            </motion.div>
+          )}
         </article>
 
         {/* Right Sidebar - Dynamic width based on TOC state */}
