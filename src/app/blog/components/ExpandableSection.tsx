@@ -19,10 +19,10 @@ export default function ExpandableSection({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="my-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shadow-sm">
+    <div className="my-8 rounded-lg border border-border bg-card overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+      <div className="flex items-center justify-between px-4 py-3 bg-muted border-b border-border">
+        <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           {title}
         </h3>
         {gistUrl && (
@@ -30,10 +30,10 @@ export default function ExpandableSection({
             href={gistUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs flex items-center gap-1 text-green-600 dark:text-green-500 hover:underline"
+            className="text-xs flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-accent hover:bg-accent/80 text-accent-foreground transition-colors border border-border"
           >
-            Open GitHub Gist
             <ExternalLink size={12} />
+            View Source
           </a>
         )}
       </div>
@@ -50,14 +50,14 @@ export default function ExpandableSection({
 
         {/* Gradient Overlay (only when collapsed) */}
         {!isExpanded && (
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-gray-900 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-card to-transparent pointer-events-none" />
         )}
       </div>
 
       {/* Toggle Button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-t border-gray-100 dark:border-gray-800"
+        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors border-t border-border"
       >
         {isExpanded ? (
           <>

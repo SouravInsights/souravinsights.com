@@ -8,7 +8,10 @@ interface GistEmbedProps {
 }
 
 const prettyCodeOptions = {
-  theme: "github-dark",
+  theme: {
+    dark: "github-dark",
+    light: "github-light",
+  },
   keepBackground: false,
 };
 
@@ -23,7 +26,7 @@ export default async function GistEmbed({ id, file }: GistEmbedProps) {
 
     if (!res.ok) {
       return (
-        <div className="p-4 my-4 border border-red-200 bg-red-50 text-red-600 rounded">
+        <div className="p-4 my-4 border border-destructive/50 bg-destructive/10 text-destructive rounded">
           Failed to load Gist.
         </div>
       );
@@ -38,7 +41,7 @@ export default async function GistEmbed({ id, file }: GistEmbedProps) {
 
     if (!targetFile) {
         return (
-            <div className="p-4 my-4 border border-red-200 bg-red-50 text-red-600 rounded">
+            <div className="p-4 my-4 border border-destructive/50 bg-destructive/10 text-destructive rounded">
               File not found in Gist.
             </div>
           );
@@ -50,7 +53,7 @@ export default async function GistEmbed({ id, file }: GistEmbedProps) {
 
     return (
       <ExpandableSection gistUrl={gistUrl} title={filename}>
-        <div className="prose prose-green max-w-none dark:prose-invert">
+        <div className="prose prose-sm prose-green max-w-none dark:prose-invert">
           <MDXRemote
             source={content}
             options={{
@@ -66,7 +69,7 @@ export default async function GistEmbed({ id, file }: GistEmbedProps) {
   } catch (error) {
     console.error("Error fetching gist:", error);
     return (
-        <div className="p-4 my-4 border border-red-200 bg-red-50 text-red-600 rounded">
+        <div className="p-4 my-4 border border-destructive/50 bg-destructive/10 text-destructive rounded">
           Error loading Gist content.
         </div>
       );
