@@ -227,7 +227,7 @@ export default function BlogPostContent({
 
               {/* Hacker News Button */}
               {post.hnUrl && (
-                <div className="mt-4">
+                <div className="mt-8 mb-12">
                   <HackerNewsButton url={post.hnUrl} />
                 </div>
               )}
