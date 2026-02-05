@@ -1,0 +1,294 @@
+---
+title: The AI Workflow You Need to Slow Down and Reflect
+date: 2026-02-04
+excerpt: Everyone's racing to 10x their productivity and ship faster. Generating code at inference speed. But what if you need to slow down? Here's a simple workflow to preserve what you actually learn while coding with AI.
+tags:
+  [
+    ai,
+    workflows,
+    learning,
+    documentation,
+    developer-tools,
+    knowledge-management,
+  ]
+readingTime: 8 min
+status: draft
+---
+
+There's a lot going on in the AI space, more specifically the agentic-coding space or call it [agentic-engineering](https://x.com/karpathy/status/2019137879310836075?s=20) space. Every day I wake up, I come across atleast 10-15 twitter threads or articles or videos about topics like "Guide to 10x your coding", "[Ship like a team of five](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa)", "Get 10x better results from Claude Code". Techniques like running [5 Claudes in parallel](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [Shipping at Inference-Speed](https://steipete.me/posts/2025/shipping-at-inference-speed).
+
+> It's all crazy & exciting but frankly, too overwhelming at the same time. It feels like the world is moving at such speed that I'm barely able to catch up.
+
+I mean as much as the thought of "Shipping at Inference-Speed" seems exciting, what does it really mean for an average engineer like me who's still trying to get better at the tech stack where he/she already spent years, who's still learning the craft of engineering, who still loves to hand craft interfaces and software?
+
+> Not sure about others but I personally feel like I need to slow down!
+
+So this post is not about a very sophisticated workflow that will 10x or 100x your agentic-engineering process or about generating code at inference speed. This article is about a workflow that will help you **"slow down & reflect"**. This workflow might seem counterproductive at first, but over time the value will compound.
+
+## Some context about the problem I faced
+
+The other day, I was in a chat session with my agent, debugging a weird build issue related to my monorepo setup using Turbopack. I was consistently getting build errors during server deployment on [Render](https://render.com/). Since agents are biased toward pre-training data, I suspect it had little framework or platform-specific context, and it didn't even pause to ask clarifying questions either.
+
+So I provided relevant docs, along with error logs from [Render](https://render.com/), and other relevant context. We tried everything. Changed build commands. Modified package.json. Adjusted workspace configurations. Tweaking the `tsconfig.json`. Each attempt meant committing to git, waiting for the build to complete, and hitting a new error.
+
+It took almost a solid 3-4 hours and eventually, it worked. Like magic!
+
+But I had no idea what actually fixed it. I'd touched multiple files. Changed several lines of code. Not a lot individually, but enough that I couldn't tell which change mattered.
+
+I couldn't explain:
+
+- What the actual problem was
+- What we tried that failed (and why)
+- What finally worked (and why)
+- What I'd do differently next time
+
+All of those insights lived inside a chat session that's hard to review later and effectively inaccessible.
+
+But this isn't just about this particular debugging session. The same problem applies to any session where you are building a new feature or working on something important with an agent. Architectural decisions, coding patterns it followed, commands or scripts it ran to test things, everything you didn't know before just feels like magic.
+
+## Why This Matters
+
+Currently, all of us are spending more time in the chat window than the editor. I personally use AI coding assistants every day. Antigravity, mostly. And OpenCode too. Wait, I didn't mention "Claude Code"? Before you get mad at me, let me tell everyone that it's way, way, way better than anything else but at this point I'm just too finacially broke to afford it. They're incredible at getting things done. But then I realized:
+
+> I wasn't learning at the speed at which I'm generating code.
+
+And as an engineer, I don't want my AI to replace my thinking. I want to learn & work with the agent, rather than just consume its output. I believe every agent chat session contains wisdom worth preserving.
+
+When an AI debugs a tricky problem or implements a feature, it discovers valuable insights:
+
+- Patterns that worked
+- Approaches that failed
+- The right sequence of tool calls
+- Context that mattered
+- Dead ends to avoid
+
+Then the session ends. All that knowledge evaporates. Me, as an engineer, learn nothing. The AI agent learns nothing.
+
+2 months later, I face a similar issue. I start from zero again.
+
+> So I want to solve this, at least for myself.
+
+## What I Tried First
+
+I thought I was being smart. I added a section to my `agents.md` file:
+
+> When debugging or building features, create a learning doc at the end of the session.
+
+Perfect, right? The AI reads this file at the start of every conversation. It'll just... do it.
+
+I had this for 3 days. The AI never did it. Not once.
+
+Turns out, passive instructions are useless. The AI reads `agents.md`, nods politely, then immediately forgets about it the moment it starts solving your actual problem. There's no trigger. No reminder. It's just context that gets buried under 50 other things.
+
+I needed something I could actually invoke. Something explicit.
+
+## What Actually Worked
+
+I stumbled on something called workflows. Most AI coding assistants support them—they're just markdown files in a `.agent/workflows/` directory.
+
+Here's the idea: you write a workflow file with instructions. Then you invoke it with a slash command. The AI reads it and follows the steps.
+
+So I created `/document-session`.
+
+Now, at the end of any session, I type `/document-session`. The AI creates a structured doc capturing what we learned. That's it.
+
+No hoping it remembers. No passive instructions. Just a command and a result.
+
+## How It Actually Works
+
+The workflow does two things:
+
+**First, it figures out what kind of session this was.**
+
+Was this an architectural decision? Like "Why did we choose Fastify over Express?"
+
+Or was it a learning/discovery? Like "How did we fix this Render build issue?"
+
+**Then, it creates the right kind of document.**
+
+Decisions go in `docs/decisions/`. They're timeless. No date prefix. Just the decision name.
+
+Learnings go in `docs/learnings/`. They're date-prefixed so I can see when I learned something.
+
+Each type has a template.
+
+For learnings:
+
+- What was the problem?
+- What did we try that failed?
+- What actually worked?
+- Why did it work?
+- What should I remember next time?
+
+For decisions:
+
+- What were we trying to solve?
+- What options did we consider?
+- What did we choose and why?
+- What are the trade-offs?
+
+The AI fills in the template. I review it. If I don't understand something, I ask. We iterate until it makes sense. Then I commit it.
+
+Now that knowledge is searchable. I can grep for it. I can reference it. I can share it.
+
+## Here's What It Looks Like
+
+This is the actual doc from that Render debugging session:
+
+````markdown
+# Render Monorepo Build Fix
+
+**Date:** 2026-02-04  
+**Context:** Server deployment kept failing with module resolution errors
+
+## Problem
+
+Build failed with:
+
+```
+Error: Cannot find module '@beenthere/db'
+```
+
+## Attempts
+
+- **Attempt 1:** Added `yarn build:packages` → Still failed
+- **Attempt 2:** Modified turbo filters → Still failed
+- **Attempt 3:** Used `workspace:*` protocol → **WORKED**
+
+## Solution
+
+In `apps/server/package.json`:
+
+```json
+"dependencies": {
+  "@beenthere/db": "workspace:*"
+}
+```
+
+## Root Cause
+
+Render doesn't auto-resolve workspace packages like local dev does.
+
+## Key Learnings
+
+- Always use `workspace:*` for monorepo deps in production
+- Build order matters: packages before apps
+
+## Future Reference
+
+This applies to any monorepo deployment platform.
+````
+
+That's it. Simple. Clear. Searchable.
+
+Next time I deploy a monorepo to Render, I'll search `docs/learnings/` and find this. I won't repeat the same 4-hour debugging loop.
+
+That's never happened with chat history.
+
+## What I've Actually Learned Using This
+
+I've been doing this for a few weeks. Here's the best part:
+
+**Writing things down exposes what you don't understand.**
+
+When the AI creates the doc, I have to review it. That's when I realize: "Wait, I don't actually know why that worked."
+
+Last week, the AI fixed a React rendering issue. The doc said: "Moving the state up fixed it." I asked: "But why?" Turns out, I didn't understand React's reconciliation. We dug deeper. Now I do.
+
+Without the doc, I would've just moved on. Code works, ship it.
+
+**Failed attempts are more valuable than the solution.**
+
+The template forces me to document what didn't work. That's the context that makes the fix make sense.
+
+"We tried X, it failed because Y" is more valuable than "The solution is Z."
+
+**I actually search these docs.**
+
+I've referenced past learnings at least 5 times already. When I'm debugging something, I search `docs/learnings/` first.
+
+I've never once searched my chat history. It's too noisy. Too unstructured.
+
+**It's just not for me.**
+
+If I ever work with other engineers, they can read these docs. They'll understand why we made certain choices. What gotchas to watch for. What we've already tried.
+
+That's institutional knowledge. Right now, it's just me. But it won't always be.
+
+## How This Relates to Other Approaches
+
+If you've read Addy Osmani's excellent piece on [Self-Improving Coding Agents](https://addyosmani.com/blog/self-improving-agents/), you might notice a subtle overlap.
+
+Addy talks about keeping a `progress.txt` file - a live log that agents append to after each iteration. It's their memory between runs. When an agent restarts, it reads `progress.txt` to remember what it tried before.
+
+**This workflow does something similar, but for humans.**
+
+Instead of a log for the agent to remember, it's a structured doc for _you_ to learn from. The key difference:
+
+- **Addy's `progress.txt`:** Agent memory between iterations (machine-readable)
+- **My `/document-session`:** Human learning between sessions (human-readable)
+  Both solve the same problem: **knowledge evaporates without persistence.**
+
+For agents, that means they repeat mistakes. For humans, it means we don't learn.
+
+The insight is the same: **write it down, or lose it.**
+
+If you're running autonomous agent loops overnight (like Addy describes), you'll want both - `progress.txt` for the agent and `/document-session` docs for yourself. That way, the agent remembers what it did, and you understand why it worked.
+
+## The One Thing That Matters
+
+Here's what I learned: **Passive instructions don't work. Active triggers do.**
+
+You can tell an AI to document things. It won't. It's too focused on solving the immediate problem.
+
+But give it a simple command to invoke? That works.
+
+The workflow isn't magic. It's just a template and a trigger. But that's enough to turn evaporating knowledge into something you can actually use.
+
+## Try It Yourself
+
+You don't need my exact workflow. Adapt it to your needs.
+
+The core idea:
+
+1. Create a `.agent/workflows/` directory
+2. Add a markdown file with a template
+3. Invoke it with a slash command at the end of sessions
+
+Here's a minimal version:
+
+```markdown
+---
+description: Document learnings from this session
+---
+
+# Document Session
+
+At the end of a session, create a learning doc.
+
+## Template
+
+- What was the problem?
+- What did we try?
+- What worked?
+- Why?
+- What should we remember?
+```
+
+That's it. The AI will follow the template when you invoke it.
+
+You can see my full workflow (with decision vs learning classification) here: [link to GitHub]
+
+## Start Small
+
+You don't need a perfect system. You don't need comprehensive documentation.
+
+You just need to preserve the insights that would otherwise evaporate.
+
+Try it after your next debugging session. Type `/document-session` (or whatever you call it). See what happens.
+
+Maybe it'll help you slow down too.
+
+---
+
+**Note:** This works with most AI coding assistants that support `.agent/workflows/` (Antigravity, OpenCode, etc.). Check your assistant's docs for specifics.
