@@ -14,15 +14,19 @@ tags:
 readingTime: 8 min
 ---
 
-There's a lot going on in the AI space, more specifically the agentic-coding space or call it [agentic-engineering](https://x.com/karpathy/status/2019137879310836075?s=20) space. Every day I wake up, I come across atleast 10-15 twitter threads or articles or videos about topics like "Guide to 10x your coding", "[Ship like a team of five](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa)", "Get 10x better results from Claude Code". Techniques like running [5 Claudes in parallel](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [Shipping at Inference-Speed](https://steipete.me/posts/2025/shipping-at-inference-speed).
+There's a lot going on in the AI space, more specifically the **agentic-coding** or call it [**agentic-engineering**](https://x.com/karpathy/status/2019137879310836075?s=20) or whatever new term pops up soon. Every day I wake up, I come across atleast ~20 twitter threads or articles or videos about topics like **Guide to 10x your coding**, **[Ship like a team of five](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa), **Get 10x better results from Claude Code**. Techniques like running [**5 Claudes in parallel**](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [**Shipping at Inference-Speed\*\*](https://steipete.me/posts/2025/shipping-at-inference-speed).
 
 > It's all crazy & exciting but frankly, too overwhelming at the same time. It feels like the world is moving at such speed that I'm barely able to catch up.
 
-I mean as much as the thought of "Shipping at Inference-Speed" seems exciting, what does it really mean for an average engineer like me who's still trying to get better at the tech stack where he/she already spent years, who's still learning the craft of engineering, who still loves to hand craft interfaces and software?
+I mean as much as the thought of "Shipping at Inference-Speed" seems exciting, what does it really mean for an engineer like me who's still **trying to get better** at the tech stack where I have already spent years, who's still learning the **craft of engineering**, who still loves to **handcraft interfaces**?
+
+I've always been confident about my wits as an engineer. I lowkey miss the times when we used to figure things out by reading docs, asking questions in Discord communities, or digging through StackOverflow. There was a sense of joy & pride when solutions weren't a prompt away. But lately, I've been feeling like my skills are prolly falling behind the **10x engineering** hype as I scroll through Twitter or LinkedIn.
+
+I know what people will say: "Problem solving isn't gone. Writing code was never the goal, it was just the means." Sure, AI presents new problems to solve. But maybe I'm not fully ready for that world yet.
 
 > Not sure about others but I personally feel like I need to slow down!
 
-So this post is not about a very sophisticated workflow that will 10x or 100x your agentic-engineering process or about generating code at inference speed. This article is about a workflow that will help you **"slow down & reflect"**. This workflow might seem counterproductive at first, but over time the value will compound.
+So this post is not about a very sophisticated workflow that will 10x or 100x your agentic-engineering process or about generating code at inference speed. This article is about a very simple workflow that will help you **"slow down & reflect"**. This workflow might seem counterproductive at first, but over time the value will compound.
 
 ## Some context about the problem I faced
 
@@ -99,9 +103,9 @@ The workflow does two things:
 
 **First, it figures out what kind of session this was.**
 
-Was this an architectural decision? Like "Why did we choose Fastify over Express?"
+Was this a new faeture implement or about architectural decisions? Like "Why did we choose Fastify over Next.js API Routes?"
 
-Or was it a learning/discovery? Like "How did we fix this Render build issue?"
+Or was it a learning/discovery from a debugging session? Like "How did we fix this Render build issue?"
 
 **Then, it creates the right kind of document.**
 
@@ -132,57 +136,23 @@ Now that knowledge is searchable. I can grep for it. I can reference it. I can s
 
 ## Here's What It Looks Like
 
-This is the actual doc from that Render debugging session:
+Here's a real `learnings` doc that this workflow generated during one of my BetterAuth debugging session:
 
-````markdown
-# Render Monorepo Build Fix
+<GistLink
+  id="941331e94e62f975a643f1d93a904626"
+  title="Better Auth Session Validation Debugging"
+  description="How we debugged cookie-based auth vs Bearer tokens, __Secure- prefix behavior, and token structure"
+/>
 
-**Date:** 2026-02-04  
-**Context:** Server deployment kept failing with module resolution errors
+The key insights:
 
-## Problem
+- Better Auth uses cookie-based sessions, not Bearer tokens
+- The `__Secure-` prefix requires HTTPS (won't work on localhost)
+- Database only stores the token ID, not the full token with signature
 
-Build failed with:
+Next time I integrate Better Auth with a backend framework, I'll search `docs/learnings/` and find this. I won't repeat the same debugging loop.
 
-```
-Error: Cannot find module '@beenthere/db'
-```
-
-## Attempts
-
-- **Attempt 1:** Added `yarn build:packages` → Still failed
-- **Attempt 2:** Modified turbo filters → Still failed
-- **Attempt 3:** Used `workspace:*` protocol → **WORKED**
-
-## Solution
-
-In `apps/server/package.json`:
-
-```json
-"dependencies": {
-  "@beenthere/db": "workspace:*"
-}
-```
-
-## Root Cause
-
-Render doesn't auto-resolve workspace packages like local dev does.
-
-## Key Learnings
-
-- Always use `workspace:*` for monorepo deps in production
-- Build order matters: packages before apps
-
-## Future Reference
-
-This applies to any monorepo deployment platform.
-````
-
-That's it. Simple. Clear. Searchable.
-
-Next time I deploy a monorepo to Render, I'll search `docs/learnings/` and find this. I won't repeat the same 4-hour debugging loop.
-
-That's never happened with chat history.
+This won't have been possible with chat history.
 
 ## What I've Actually Learned Using This
 
@@ -216,23 +186,22 @@ That's institutional knowledge. Right now, it's just me. But it won't always be.
 
 ## How This Relates to Other Approaches
 
-If you've read Addy Osmani's excellent piece on [Self-Improving Coding Agents](https://addyosmani.com/blog/self-improving-agents/), you might notice a subtle overlap.
+If you've read Addy Osmani's excellent piece on [Self-Improving Coding Agents](https://addyosmani.com/blog/self-improving-agents/), you will recognize a similar insight.
 
-Addy talks about keeping a `progress.txt` file - a live log that agents append to after each iteration. It's their memory between runs. When an agent restarts, it reads `progress.txt` to remember what it tried before.
+Addy talks about keeping a `progress.txt` file: a live log that agents append to after each iteration. It's their memory between sessions. When an agent restarts, it reads `progress.txt` to remember what it tried before.
 
-**This workflow does something similar, but for humans.**
-
-Instead of a log for the agent to remember, it's a structured doc for _you_ to learn from. The key difference:
+His approach solves agent memory. This one solves human learning.
 
 - **Addy's `progress.txt`:** Agent memory between iterations (machine-readable)
 - **My `/document-session`:** Human learning between sessions (human-readable)
-  Both solve the same problem: **knowledge evaporates without persistence.**
 
-For agents, that means they repeat mistakes. For humans, it means we don't learn.
+Both solve the same root problem: **without memory, you repeat mistakes.**
+
+For agents, that means they repeat failed attempts. For humans, it means we don't learn from our sessions.
 
 The insight is the same: **write it down, or lose it.**
 
-If you're running autonomous agent loops overnight (like Addy describes), you'll want both - `progress.txt` for the agent and `/document-session` docs for yourself. That way, the agent remembers what it did, and you understand why it worked.
+If you're running autonomous agent loops overnight (like Addy describes), you'll want both: a `progress.txt` for the agent and maybe `/document-session` docs for yourself. That way, the agent remembers what it did, and you understand why it worked.
 
 ## The One Thing That Matters
 
@@ -274,12 +243,12 @@ At the end of a session, create a learning doc.
 - What should we remember?
 ```
 
-That's it. The AI will follow the template when you invoke it.
+That's it. The AI will follow the template when you invoke it with a slash command like : `/document-session`.
 
 Here's the full workflow document that you can copy:
 
-<GistLink 
-  id="e0c8e506c998897d510bf41795fde7e9" 
+<GistLink
+  id="e0c8e506c998897d510bf41795fde7e9"
   title="Document Session Workflow"
   description="Complete workflow template for documenting decisions and learnings"
 />
@@ -296,4 +265,4 @@ Maybe it'll help you slow down too.
 
 ---
 
-**Note:** This works with most AI coding assistants that support `.agent/workflows/` (Antigravity, OpenCode, etc.). Check your assistant's docs for specifics.
+**Note:** This should work with most AI coding assistants that support `.agent/workflows/`. But I have personally tried it with Antigravity. It should work for OpenCode and maybe Claude Code too. For Cursor, I assume you can do a similiar workflow with `rules`. Check your assistant's docs for specifics.
