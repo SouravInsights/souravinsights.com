@@ -15,7 +15,7 @@ readingTime: 8 min
 hnUrl: https://news.ycombinator.com/item?id=46906432
 ---
 
-There's a lot going on in the AI space, more specifically the **agentic-coding** or call it [**agentic-engineering**](https://x.com/karpathy/status/2019137879310836075?s=20) or whatever new term pops up soon. Every day I wake up, I come across atleast ~20 twitter threads or articles or videos about topics like **Guide to 10x your coding**, [**Ship like a team of five**](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa), **Get 10x better results from Claude Code**. Techniques like running [**5 Claudes in parallel**](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [**Shipping at Inference-Speed**](https://steipete.me/posts/2025/shipping-at-inference-speed).
+There's a lot going on in the AI space, more specifically the **agentic-coding** or call it [**agentic-engineering**](https://x.com/karpathy/status/2019137879310836075?s=20) or whatever new term pops up in couple weeks. Every day I wake up, I come across atleast ~20 twitter threads or articles or videos about topics like **Guide to 10x your coding**, [**Ship like a team of five**](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa), **Get 10x better results from Claude Code**. Techniques like running [**5 Claudes in parallel**](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [**Shipping at Inference-Speed**](https://steipete.me/posts/2025/shipping-at-inference-speed).
 
 > It's all crazy & exciting but frankly, too overwhelming at the same time. It feels like the world is moving at such speed that I'm barely able to catch up.
 
@@ -29,7 +29,7 @@ I know what people will say: "Problem solving isn't gone. Writing code was never
 
 So this post is not about a very sophisticated workflow that will 10x or 100x your agentic-engineering process or about generating code at inference speed. This article is about a very simple workflow that will help you **"slow down & reflect"**. This workflow might seem counterproductive at first, but over time the value will compound.
 
-## Some context about the problem I faced
+## Some context about the problem
 
 The other day, I was in a chat session with my agent, debugging a weird build issue related to my monorepo setup using Turbopack. I was consistently getting build errors during server deployment on [Render](https://render.com/). Since agents are biased toward pre-training data, I suspect it had little framework or platform-specific context, and it didn't even pause to ask clarifying questions either.
 
@@ -113,7 +113,7 @@ Now, at the end of any session, I type `/document-session`. The AI creates a str
 
 No hoping it remembers. No passive instructions. Just a command and a result.
 
-## How It Actually Works
+## How It Works
 
 The workflow does two things:
 
@@ -170,7 +170,7 @@ Next time I integrate Better Auth with a backend framework, I'll search `docs/le
 
 This won't have been possible with chat history.
 
-## What I've Actually Learned Using This
+## What I've Learned Using This
 
 I've been doing this for a week or so and here's what I realized:
 
@@ -268,8 +268,6 @@ You just need to preserve the insights that would otherwise evaporate.
 Try it after your next debugging session. Type `/document-session` (or whatever you call it). See what happens.
 
 Maybe it'll help you slow down too.
-
----
 
 **Note:** This should work with most AI coding assistants that support `.agent/workflows/`. But I have personally tried it with Antigravity. It should work for OpenCode and maybe Claude Code too. For Cursor, I assume you can do a similiar workflow with `rules`. Check your assistant's docs for specifics.
 
