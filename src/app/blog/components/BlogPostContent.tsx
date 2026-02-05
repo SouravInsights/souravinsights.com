@@ -10,6 +10,7 @@ import ThreeDLikeButton from "./ThreeDLikeButton";
 import ViewCounter from "./ViewCounter";
 import CollapsibleTOC from "./CollapsibleTOC";
 import DraftPostIndicator from "./DraftPostIndicator";
+import HackerNewsButton from "./HackerNewsButton";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -223,6 +224,13 @@ export default function BlogPostContent({
                 {/* View Counter */}
                 <ViewCounter slug={post.slug} />
               </div>
+
+              {/* Hacker News Button */}
+              {post.hnUrl && (
+                <div className="mt-4">
+                  <HackerNewsButton url={post.hnUrl} />
+                </div>
+              )}
             </header>
           </motion.div>
 

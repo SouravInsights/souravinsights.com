@@ -9,6 +9,7 @@ export interface PostMetadata {
   tags: string[];
   readingTime: string;
   status?: "published" | "draft";
+  hnUrl?: string;
 }
 
 export interface PostData extends PostMetadata {
@@ -112,6 +113,7 @@ export function getBlogPosts(): PostMetadata[] {
       tags: matterData.tags || [],
       readingTime: matterData.readingTime || "3 min read",
       status: matterData.status || "published",
+      hnUrl: matterData.hnUrl,
     };
   });
 
@@ -145,6 +147,7 @@ export function getPostBySlug(slug: string): PostData | null {
       date: matterData.date || new Date().toISOString(),
       readingTime: matterData.readingTime || "3 min read",
       status: matterData.status || "published",
+      hnUrl: matterData.hnUrl,
     };
   } catch (error) {
     console.error(`Error getting post by slug: ${slug}`, error);
