@@ -6,7 +6,7 @@ import { generateOGImageUrl } from "../utils/ogUtils";
 import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
 import dynamic from "next/dynamic";
-import GistEmbed from "../components/GistEmbed";
+import GistLink from "../components/GistLink";
 
 const Playground = dynamic(() => import("../components/Playground"), {
   ssr: false,
@@ -57,7 +57,7 @@ export default function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistEmbed }}
+      components={{ Playground, GistLink }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
