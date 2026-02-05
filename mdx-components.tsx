@@ -177,7 +177,7 @@ const CustomPre = ({
   return (
     <div className="relative my-8 group">
       {/* Header with language and copy button */}
-      <div className="flex items-center justify-between bg-muted border-b border-border px-4 py-2 text-muted-foreground rounded-t-lg">
+      <div className="flex items-center justify-between bg-gray-900 dark:bg-gray-800 px-4 py-2 text-gray-200 rounded-t-lg">
         <div className="flex items-center">
           <Terminal size={16} className="mr-2" aria-hidden="true" />
           <span className="text-xs font-mono">{language || "Code"}</span>
@@ -290,8 +290,8 @@ const CodeBlockStyles = () => (
       border-top-left-radius: 0.5rem;
       border-top-right-radius: 0.5rem;
       padding: 0.5rem 1rem;
-      background-color: hsl(var(--muted));
-      color: hsl(var(--muted-foreground));
+      background-color: rgb(17, 24, 39);
+      color: rgb(229, 231, 235);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
         "Liberation Mono", "Courier New", monospace;
       font-size: 0.875rem;
