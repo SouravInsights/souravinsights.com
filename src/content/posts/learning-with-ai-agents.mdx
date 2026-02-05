@@ -14,7 +14,7 @@ tags:
 readingTime: 8 min
 ---
 
-There's a lot going on in the AI space, more specifically the **agentic-coding** or call it [**agentic-engineering**](https://x.com/karpathy/status/2019137879310836075?s=20) or whatever new term pops up soon. Every day I wake up, I come across atleast ~20 twitter threads or articles or videos about topics like **Guide to 10x your coding**, **[Ship like a team of five](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa), **Get 10x better results from Claude Code**. Techniques like running [**5 Claudes in parallel**](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [**Shipping at Inference-Speed\*\*](https://steipete.me/posts/2025/shipping-at-inference-speed).
+There's a lot going on in the AI space, more specifically the **agentic-coding** or call it [**agentic-engineering**](https://x.com/karpathy/status/2019137879310836075?s=20) or whatever new term pops up soon. Every day I wake up, I come across atleast ~20 twitter threads or articles or videos about topics like **Guide to 10x your coding**, [**Ship like a team of five**](https://every.to/source-code/how-i-use-claude-code-to-ship-like-a-team-of-five-6f23f136-52ab-455f-a997-101c071613aa), **Get 10x better results from Claude Code**. Techniques like running [**5 Claudes in parallel**](https://x.com/bcherny/status/2007179833990885678?s=20), and how people are [**Shipping at Inference-Speed**](https://steipete.me/posts/2025/shipping-at-inference-speed).
 
 > It's all crazy & exciting but frankly, too overwhelming at the same time. It feels like the world is moving at such speed that I'm barely able to catch up.
 
@@ -32,7 +32,7 @@ So this post is not about a very sophisticated workflow that will 10x or 100x yo
 
 The other day, I was in a chat session with my agent, debugging a weird build issue related to my monorepo setup using Turbopack. I was consistently getting build errors during server deployment on [Render](https://render.com/). Since agents are biased toward pre-training data, I suspect it had little framework or platform-specific context, and it didn't even pause to ask clarifying questions either.
 
-So I provided relevant docs, along with error logs from [Render](https://render.com/), and other relevant context. We tried everything. Changed build commands. Modified package.json. Adjusted workspace configurations. Tweaking the `tsconfig.json`. Each attempt meant committing to git, waiting for the build to complete, and hitting a new error.
+So I provided relevant docs, along with error logs from Render, and other relevant context. We tried everything. Changed build commands. Modified package.json. Adjusted workspace configurations. Tweaking the `tsconfig.json`. Each attempt meant committing to git, waiting for the build to complete, and hitting a new error.
 
 It took almost a solid 3-4 hours and eventually, it worked. Like magic!
 
@@ -73,13 +73,28 @@ Then the session ends. All that knowledge evaporates. Me, as an engineer, learn 
 
 ## What I Tried First
 
-I thought I was being smart. I added a section to my `agents.md` file:
+First, I added this below section to my `agents.md` file:
 
-> When debugging or building features, create a learning doc at the end of the session.
+```markdown
+## Learning & Documentation
 
-Perfect, right? The AI reads this file at the start of every conversation. It'll just... do it.
+When debugging, building features, or making architecture decisions, create a learning doc in `docs/learnings/` at the end of the session.
 
-I had this for 3 days. The AI never did it. Not once.
+These docs should be:
+
+- Succinct and to the point, not comprehensive
+- Written like notes, not like AI-generated docs
+- Focused on _what the problem actually was_, _what we tried_, _what actually fixed it_, and _why_
+- Include inline comments or a small "Why?" note whenever something non-obvious is happening in the code
+
+Name files concisely, the shorter the better, as long as it's clear what it's about.
+
+If something feels "magical" or ambiguous during the session, flag it in the doc. During long debug loops, you can keep a running "attempt log" in the chat as we go, so we can distill it into the final learning doc even if the session is long. The point is: nothing should feel like magic after we're done.
+```
+
+And based on what I knew about `agents.md`, I thought the agent will read this file, at the start of every conversation. And it'll just... do it.
+
+I had this for 3 days. The AI never craeted any docs. Not at all.
 
 Turns out, passive instructions are useless. The AI reads `agents.md`, nods politely, then immediately forgets about it the moment it starts solving your actual problem. There's no trigger. No reminder. It's just context that gets buried under 50 other things.
 
@@ -87,7 +102,7 @@ I needed something I could actually invoke. Something explicit.
 
 ## What Actually Worked
 
-I stumbled on something called workflows. Most AI coding assistants support them—they're just markdown files in a `.agent/workflows/` directory.
+Then I got to know about agent workflows. Most AI coding assistants support them. They're just markdown files in a `.agent/workflows/` directory.
 
 Here's the idea: you write a workflow file with instructions. Then you invoke it with a slash command. The AI reads it and follows the steps.
 
@@ -103,9 +118,9 @@ The workflow does two things:
 
 **First, it figures out what kind of session this was.**
 
-Was this a new faeture implement or about architectural decisions? Like "Why did we choose Fastify over Next.js API Routes?"
+Was this a new faeture implementation or about architectural decisions? Like "Why did we choose Fastify over Next.js API Routes?"
 
-Or was it a learning/discovery from a debugging session? Like "How did we fix this Render build issue?"
+Or was it a learning/discovery from a debugging session? Like "How did we fix this better-auth session validation issue?"
 
 **Then, it creates the right kind of document.**
 
@@ -156,15 +171,13 @@ This won't have been possible with chat history.
 
 ## What I've Actually Learned Using This
 
-I've been doing this for a few weeks. Here's the best part:
+I've been doing this for a week or so and here's what I realized:
 
 **Writing things down exposes what you don't understand.**
 
 When the AI creates the doc, I have to review it. That's when I realize: "Wait, I don't actually know why that worked."
 
-Last week, the AI fixed a React rendering issue. The doc said: "Moving the state up fixed it." I asked: "But why?" Turns out, I didn't understand React's reconciliation. We dug deeper. Now I do.
-
-Without the doc, I would've just moved on. Code works, ship it.
+Without the workflow, I would just move on. Code works, ship it.
 
 **Failed attempts are more valuable than the solution.**
 
@@ -172,17 +185,17 @@ The template forces me to document what didn't work. That's the context that mak
 
 "We tried X, it failed because Y" is more valuable than "The solution is Z."
 
-**I actually search these docs.**
+**I actually go through these docs when necesssary.**
 
-I've referenced past learnings at least 5 times already. When I'm debugging something, I search `docs/learnings/` first.
+I've referenced past learnings at least 2-3 times already. When I'm debugging something, I search `docs/learnings/` first.
 
 I've never once searched my chat history. It's too noisy. Too unstructured.
 
-**It's just not for me.**
+**It's not just for me I hope.**
 
-If I ever work with other engineers, they can read these docs. They'll understand why we made certain choices. What gotchas to watch for. What we've already tried.
+If I ever work with other engineers, they can read these docs. They'll understand why I made certain choices. What gotchas to watch for. What I've already tried.
 
-That's institutional knowledge. Right now, it's just me. But it won't always be.
+That's institutional knowledge. Right now, it's just me in the codebase. But it won't always be.
 
 ## How This Relates to Other Approaches
 
@@ -203,17 +216,9 @@ The insight is the same: **write it down, or lose it.**
 
 If you're running autonomous agent loops overnight (like Addy describes), you'll want both: a `progress.txt` for the agent and maybe `/document-session` docs for yourself. That way, the agent remembers what it did, and you understand why it worked.
 
-## The One Thing That Matters
-
-Here's what I learned: **Passive instructions don't work. Active triggers do.**
-
-You can tell an AI to document things. It won't. It's too focused on solving the immediate problem.
-
-But give it a simple command to invoke? That works.
-
-The workflow isn't magic. It's just a template and a trigger. But that's enough to turn evaporating knowledge into something you can actually use.
-
 ## Try It Yourself
+
+This workflow is pretty simple. It's just a template and a trigger. But that's enough to turn evaporating knowledge into something you can actually use.
 
 You don't need my exact workflow. Adapt it to your needs.
 
@@ -245,7 +250,7 @@ At the end of a session, create a learning doc.
 
 That's it. The AI will follow the template when you invoke it with a slash command like : `/document-session`.
 
-Here's the full workflow document that you can copy:
+Here's my full workflow document that you can use:
 
 <GistLink
   id="e0c8e506c998897d510bf41795fde7e9"
