@@ -58,6 +58,7 @@ export function generateBlogMetadata(
       description: post.excerpt,
       images: [ogImageUrl],
       creator: "@souravinsights",
+      site: "@souravinsights",
     },
   };
 }
