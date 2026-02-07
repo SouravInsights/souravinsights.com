@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GET_ALL_BOOKS } from "../queries/getBooksByStatus";
+import { GET_BOOKS_BY_STATUS } from "../queries/getBooksByStatus";
 import { GET_PROFILE } from "../queries/getProfile";
 import { BookCard } from "./BookCard";
 import { SkeletonBookCard } from "./SkeletonBookCard";
@@ -19,10 +19,11 @@ export const BookshelfContent: React.FC = () => {
   });
   // console.log("profileData:", profileData);
 
-  const { loading, error, data } = useQuery(GET_ALL_BOOKS, {
+  const { loading, error, data } = useQuery(GET_BOOKS_BY_STATUS, {
     variables: {
-      limit: 50,
+      limit: 10,
       offset: 0,
+      readingStatus: activeTab,
       profileId: profileData?.profile?.id,
     },
     skip: !profileData?.profile?.id,
@@ -55,7 +56,7 @@ export const BookshelfContent: React.FC = () => {
     if (loading || profileLoading) {
       return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(10)].map((_, index) => (
             <SkeletonBookCard key={index} />
           ))}
         </div>
@@ -74,14 +75,7 @@ export const BookshelfContent: React.FC = () => {
       return <div className="text-center text-muted-foreground">Profile not found.</div>;
     }
 
-    let books = [];
-    if (activeTab === "IS_READING") {
-      books = data?.isReading || [];
-    } else if (activeTab === "WANTS_TO_READ") {
-      books = data?.wantsToRead || [];
-    } else if (activeTab === "FINISHED") {
-      books = data?.finished || [];
-    }
+    const books = data?.booksByReadingStateAndProfile || [];
 
     if (books.length === 0) {
       return (
