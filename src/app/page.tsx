@@ -300,10 +300,10 @@ const HeroSection = () => (
                 </a>
                 , or probably{" "}
                 <a
-                  href="https://3reads.vercel.app/"
+                  href="https://www.souravinsights.com/books"
                   className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
-                  reading something random.
+                  reading some books.
                 </a>
               </p>
               <p>
