@@ -101,15 +101,15 @@ export const BookshelfContent: React.FC = () => {
         onValueChange={handleTabChange}
         className="space-y-6"
       >
-        <TabsList className="bg-muted p-1 rounded-full inline-flex w-full sm:w-auto">
+        <TabsList className="flex justify-start mb-6 bg-transparent overflow-x-auto w-full p-0 h-auto">
           {Object.entries(tabContent).map(
             ([status, { icon, title, fullTitle }]) => (
               <TabsTrigger
                 key={status}
                 value={status}
-                className="flex-1 sm:flex-initial rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 ease-in-out data-[state=active]:bg-green-200 dark:data-[state=active]:bg-background whitespace-nowrap scroll-snap-align-start"
+                className="px-4 py-2 mx-1 rounded-full border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 flex items-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground whitespace-nowrap"
               >
-                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                <div className="flex items-center justify-center space-x-2">
                   {icon}
                   <span className="hidden sm:inline text-sm lg:text-base">
                     {fullTitle}
