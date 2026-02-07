@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,14 +9,12 @@ import { GET_PROFILE } from "../queries/getProfile";
 import { BookCard } from "./BookCard";
 import { SkeletonBookCard } from "./SkeletonBookCard";
 import { Book, Bookmark, CheckCircle } from "lucide-react";
-import { matchBooks } from "../utils/bookMatcher";
 
 type ReadingStatus = "WANTS_TO_READ" | "IS_READING" | "FINISHED";
 
 export const BookshelfContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ReadingStatus>("IS_READING");
-  const [matchedBooks, setMatchedBooks] = useState<any[]>([]);
-  const { data: profileData } = useQuery(GET_PROFILE, {
+  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE, {
     variables: { handle: "sourav" },
   });
   console.log("profileData:", profileData);
@@ -31,24 +29,6 @@ export const BookshelfContent: React.FC = () => {
     skip: !profileData?.profile?.id,
   });
   console.log("data from BookshelfContent useQuery:", data);
-
-  useEffect(() => {
-    if (data?.booksByReadingStateAndProfile) {
-      fetch("/api/readwise/books")
-        .then((res) => res.json())
-        .then((readwiseData) => {
-          const matched = matchBooks(
-            data.booksByReadingStateAndProfile,
-            readwiseData.results
-          );
-          console.log("matched data:", matched);
-          setMatchedBooks(matched);
-        })
-        .catch((err) => console.error("Error fetching Readwise books:", err));
-    }
-  }, [data]);
-
-  console.log("matchedBooks", matchedBooks);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value as ReadingStatus);
@@ -73,7 +53,7 @@ export const BookshelfContent: React.FC = () => {
   };
 
   const renderContent = () => {
-    if (loading) {
+    if (loading || profileLoading) {
       return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
           {[...Array(10)].map((_, index) => (
@@ -83,18 +63,34 @@ export const BookshelfContent: React.FC = () => {
       );
     }
 
-    if (error) {
+    if (error || profileError) {
       return (
-        <div className="text-red-500 text-center">Error: {error.message}</div>
+        <div className="text-red-500 text-center">
+          Error: {error?.message || profileError?.message}
+        </div>
+      );
+    }
+
+    if (!profileData?.profile) {
+      return <div className="text-center text-muted-foreground">Profile not found.</div>;
+    }
+
+    const books = data?.booksByReadingStateAndProfile || [];
+
+    if (books.length === 0) {
+      return (
+         <div className="text-center text-muted-foreground py-10">
+            No books found in this shelf.
+         </div>
       );
     }
 
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-        {matchedBooks.map((book: any) => (
-          <BookCard key={book.id} book={book} />
-        ))}
-      </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+          {books.map((book: any) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </div>
     );
   };
 

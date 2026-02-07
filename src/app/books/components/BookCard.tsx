@@ -4,15 +4,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, BookOpen, BookMarked } from "lucide-react";
-import { BookWithReadwiseId } from "@/app/books/types/bookTypes";
+import { Book } from "@/app/books/types/bookTypes";
 import { Button } from "@/components/ui/button";
 
 interface BookCardProps {
-  book: BookWithReadwiseId;
+  book: Book;
 }
 
 export const BookCard: React.FC<BookCardProps> = ({ book }) => {
-  console.log("book:", book);
   return (
     <motion.div
       whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}
@@ -55,18 +54,6 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
             {/* <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Published: {new Date(book.publishedDate).getFullYear()}
             </p> */}
-            {book.readwiseId && (
-              <Link href={`/books/${book.readwiseId}/highlights`} passHref>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full mt-2"
-                >
-                  <BookMarked className="w-4 h-4 mr-2" />
-                  View Highlights
-                </Button>
-              </Link>
-            )}
           </div>
         </CardContent>
       </Card>
