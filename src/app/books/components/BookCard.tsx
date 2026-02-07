@@ -1,11 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, BookOpen, BookMarked } from "lucide-react";
 import { Book } from "@/app/books/types/bookTypes";
-import { Button } from "@/components/ui/button";
 
 interface BookCardProps {
   book: Book;

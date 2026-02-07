@@ -17,7 +17,7 @@ export const BookshelfContent: React.FC = () => {
   const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE, {
     variables: { handle: "sourav" },
   });
-  console.log("profileData:", profileData);
+  // console.log("profileData:", profileData);
 
   const { loading, error, data } = useQuery(GET_BOOKS_BY_STATUS, {
     variables: {
@@ -28,7 +28,7 @@ export const BookshelfContent: React.FC = () => {
     },
     skip: !profileData?.profile?.id,
   });
-  console.log("data from BookshelfContent useQuery:", data);
+  // console.log("data from BookshelfContent useQuery:", data);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value as ReadingStatus);
