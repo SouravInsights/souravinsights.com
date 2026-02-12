@@ -53,77 +53,81 @@ const KindleImageDisplay: React.FC = () => {
 };
 
 const BookshelfPage: React.FC = () => {
+  const [totalBooks, setTotalBooks] = React.useState<number | null>(null);
+
   return (
     <ApolloProvider client={client}>
       <div className="md:px-6 md:py-8 px-2 py-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-4 text-foreground">
-            My Reading Journey
+            Library
           </h1>
-          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Explore my reading journey: see what I’m reading now, what’s next,
-            and the books I’ve finished.
+          <p className="text-center text-muted-foreground mb-2 max-w-2xl mx-auto">
+            Books I'm reading and have read lately.
           </p>
+          {totalBooks !== null && (
+            <p className="text-center text-sm text-muted-foreground/70 mb-8">
+              Total read: {totalBooks}
+            </p>
+          )}
 
-          <BookshelfContent />
+          <BookshelfContent onBooksLoaded={setTotalBooks} />
 
           {/* Kindle Oasis Showcase */}
           <KindleImageDisplay />
 
           {/* Literal Club Shoutout Section */}
           <motion.div
-            className="mt-16 rounded-lg shadow-md overflow-hidden border border-border"
+            className="mt-16 p-6 md:p-8 rounded-lg border border-border bg-gradient-to-br from-green-50/50 to-emerald-50/30 dark:from-green-950/20 dark:to-emerald-950/10 relative overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <div className="flex flex-col md:flex-row items-stretch">
-              <div className="md:w-1/2 md:p-8 p-4 px-4 py-8">
-                <Image
-                  src="/literal-wordmark.png"
-                  alt="Literal Club Logo"
-                  width={150}
-                  height={50}
-                  className="mb-4"
-                />
-                <h2 className="text-2xl font-bold mb-4 text-foreground">
-                  Powered by Literal Club
-                </h2>
-                <p className="text-muted-foreground mb-6">
-                  This bookshelf is brought to life using Literal Club's amazing
-                  GraphQL API. Literal Club offers a beautiful UI and robust API
-                  for book lovers and developers alike.
-                </p>
-                <a
-                  href="https://literal.club"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
-                >
-                  Try Literal Club <ExternalLink className="ml-2 h-5 w-5" />
-                </a>
+            {/* Decorative background pattern */}
+            <div className="absolute inset-0 opacity-5 dark:opacity-10">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <pattern id="books-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M10 10h5v20h-5z M25 15h5v15h-5z" fill="currentColor" className="text-green-600" />
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#books-pattern)" />
+              </svg>
+            </div>
+
+            <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-4 flex-1">
+                {/* Theme-aware logo */}
+                <div className="shrink-0">
+                  <Image
+                    src="/literal-wordmark.svg"
+                    alt="Literal Club"
+                    width={120}
+                    height={40}
+                    className="hidden dark:block opacity-90"
+                  />
+                  <Image
+                    src="/literal-wordmark-light.svg"
+                    alt="Literal Club"
+                    width={120}
+                    height={40}
+                    className="block dark:hidden opacity-90"
+                  />
+                </div>
+                
+                <div className="flex-1 text-center md:text-left">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    I use Literal Club to track my reading. They have a nice API that powers this page.
+                  </p>
+                </div>
               </div>
-              <div className="md:w-1/2 bg-green-50 dark:bg-secondary p-4 md:p-8 overflow-x-auto">
-                <pre className="text-sm md:text-base text-gray-800 dark:text-foreground">
-                  <code>{`
- query booksByReadingStateAndProfile(
-    $limit: Int!
-    $offset: Int!
-    $readingStatus: ReadingStatus!
-    $profileId: String!
-  ) {
-    booksByReadingStateAndProfile(
-      limit: $limit
-      offset: $offset
-      readingStatus: $readingStatus
-      profileId: $profileId
-    ) {
-      ...BookParts
-    }
-  }
-        `}</code>
-                </pre>
-              </div>
+              
+              <a
+                href="https://literal.club"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap"
+              >
+                Check it out <ExternalLink className="h-4 w-4" />
+              </a>
             </div>
           </motion.div>
         </div>
@@ -133,3 +137,4 @@ const BookshelfPage: React.FC = () => {
 };
 
 export default BookshelfPage;
+
