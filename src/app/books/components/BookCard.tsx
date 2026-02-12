@@ -7,9 +7,10 @@ import { BookCoverFallback } from "./BookCoverFallback";
 interface BookCardProps {
   book: Book;
   status: "reading" | "want to read" | "read";
+  forceGenerativeCover?: boolean;
 }
 
-export const BookCard: React.FC<BookCardProps> = ({ book, status }) => {
+export const BookCard: React.FC<BookCardProps> = ({ book, status, forceGenerativeCover = false }) => {
   const [imageError, setImageError] = useState(false);
   
   const statusConfig = {
@@ -29,6 +30,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book, status }) => {
 
   const config = statusConfig[status];
   const hasCover = book.cover && !imageError;
+  const showGenerative = forceGenerativeCover || !hasCover;
 
   return (
     <motion.div
@@ -38,7 +40,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book, status }) => {
     >
       {/* Book Cover */}
       <div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg shadow-lg">
-        {hasCover ? (
+        {!showGenerative && hasCover ? (
           <Image
             src={book.cover}
             alt={book.title}
@@ -64,4 +66,3 @@ export const BookCard: React.FC<BookCardProps> = ({ book, status }) => {
     </motion.div>
   );
 };
-
