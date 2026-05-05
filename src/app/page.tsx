@@ -60,6 +60,16 @@ const projects = [
     website: "https://www.beenthere.page/",
   },
   {
+    name: "BeenThere Stamps",
+    logo: "/projects/stamps-beenthere-logo.png",
+    website: "https://stamps.beenthere.page/",
+  },
+  {
+    name: "Poetik",
+    logo: "/projects/poetik-logo.png",
+    website: "https://poetik.vercel.app/",
+  },
+  {
     name: "FairForms",
     logo: "/projects/fairforms-logo.png",
     website: "https://fairforms.vercel.app/",
