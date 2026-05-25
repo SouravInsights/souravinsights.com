@@ -7,6 +7,10 @@ import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
 import dynamic from "next/dynamic";
 import GistLink from "../components/GistLink";
+import SideBySide from "../components/SideBySide";
+import HtmlNestingVisualizer from "../components/HtmlNestingVisualizer";
+import DomTreeAnimator from "../components/DomTreeAnimator";
+import VideoPlayer from "../components/VideoPlayer";
 
 const Playground = dynamic(() => import("../components/Playground"), {
   ssr: false,
@@ -57,7 +61,7 @@ export default function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistLink }}
+      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
