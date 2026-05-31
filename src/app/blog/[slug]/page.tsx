@@ -11,6 +11,11 @@ import SideBySide from "../components/SideBySide";
 import HtmlNestingVisualizer from "../components/HtmlNestingVisualizer";
 import DomTreeAnimator from "../components/DomTreeAnimator";
 import VideoPlayer from "../components/VideoPlayer";
+import ConcurrencyVisualizer from "../components/ConcurrencyVisualizer";
+import SemaphoreVisualizer from "../components/SemaphoreVisualizer";
+import WorkerOffloadDemo from "../components/WorkerOffloadDemo";
+import RenderThrashingDemo from "../components/RenderThrashingDemo";
+import ArchitectureFlowVisualizer from "../components/ArchitectureFlowVisualizer";
 
 const Playground = dynamic(() => import("../components/Playground"), {
   ssr: false,
@@ -61,7 +66,7 @@ export default function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer }}
+      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, ConcurrencyVisualizer, SemaphoreVisualizer, WorkerOffloadDemo, RenderThrashingDemo, ArchitectureFlowVisualizer }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
