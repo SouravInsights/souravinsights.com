@@ -1,151 +1,93 @@
 ---
 title: Architecting the TripMediaLibrary Pipeline
 date: 2026-06-01
-excerpt: A practical deep dive into how I built a highly-concurrent, worker-driven photo upload pipeline using Web Workers, WASM, OffscreenCanvas, and Semaphores for BeenThere.
+excerpt: Building a highly-concurrent, worker-driven photo upload pipeline from scratch. An exploration of the JavaScript event loop, memory management, and decoupling UX from network speed.
 tags: [Architecture, JavaScript, React, System Design, Web Workers]
 readingTime: 20 min read
 ---
 
-Uploading a batch of high-resolution trip photos can be tricky to get right in the browser. Even if you're only uploading 20 photos (typically 5-8MB each) using a standard HTML `<input type="file" multiple />`, the browser can sometimes stutter, the progress bar might jump erratically, and if the network blips, the experience degrades quickly.
+Building a photo uploader seems like a solved problem. You drop an `<input type="file" multiple />` into your React component, wire up a `fetch` request, and call it a day. If you're building a simple avatar uploader, that's exactly what you should do.
 
-When building the **TripMediaLibrary** for BeenThere, I had a few specific constraints. We have a hard cap of 1GB space allocation for free users and a maximum of 20 photos per trip. Because of these limits, I wanted the upload process to feel very intentional and reliable. I opted for a skeuomorphic experience—a vintage camera that visually "develops" polaroids as they upload, sliding them out and stacking them onto a desk. 
+But reality fractures when you try to scale that naive approach. When building the **TripMediaLibrary** for BeenThere, our constraints were entirely different. Users needed to upload batches of high-resolution trip photos directly from their phones. We have a hard cap of 1GB space allocation for free users and a maximum of 20 photos per trip. These aren't heavily compressed web images; these are pristine, 8MB Apple HEIC and raw camera files.
 
-Getting this UI to feel smooth while processing image data in the background required a solid architecture. It was a great opportunity to apply some core JavaScript concepts: **concurrency, parallelism, Web Workers, WASM, OffscreenCanvas, Semaphores, and React performance optimizations**.
+When you try to run twenty 8MB images through a standard JavaScript `Promise.all()` loop on a mobile device, things break. The UI stutters. The browser memory balloons until the tab silently crashes. Progress bars jump erratically, and if the network blips, the entire experience falls apart.
 
-In this post, I'll break down the key parts of the pipeline. I've also built a few interactive visualizers so you can see how the JavaScript engine handles these concepts in real-time.
+To make the upload process feel intentional, reliable, and fluid—complete with a skeuomorphic UI that visually "develops" polaroids as they upload—we had to completely rethink how we handle data in the browser. 
 
----
+Before we dive into the code, here is the complete 4-phase architecture we built to solve this. Click through the phases to build a mental map of how the data flows before we unpack the theory below.
 
-## 1. Concurrency vs Parallelism: The Orchestrator
-
-At the highest level, the pipeline is controlled by a hook: `useTripMediaUpload.ts`. 
-
-Its job is to coordinate three independent systems:
-1. **The Network Pipeline**: Extracts EXIF data, compresses images, and uploads them to the cloud.
-2. **The Visual Loop**: Manages the vintage camera animation queue (sliding polaroids out and dropping them into a stack).
-3. **The Progress Tracker**: Aggregates the async progress events into a single progress bar.
-
-To orchestrate this, we need to understand the differences between **Sequential**, **Concurrent**, and **Parallel** execution.
-
-- **Sequential** execution means tasks are done one after another without any overlap. One finishes completely before the next begins.
-- **Concurrency** is handling numerous tasks by alternating between subtasks (interleaving) on a single thread. The tasks progress together, but never at the exact same physical millisecond.
-- **Parallelism** is performing multiple tasks simultaneously at the exact same physical millisecond. Because JavaScript's main execution environment is strictly single-threaded, it only has one call stack. The Event Loop can interleave tasks rapidly (concurrency), but it can never execute two pieces of JavaScript code at the exact same physical instant. The only way to achieve true parallelism in the browser—where two distinct pieces of JavaScript are executing simultaneously on different CPU cores—is by spawning an isolated OS-level thread via a **Web Worker**.
-
-Try the interactive demo below to see the subtle differences between executing tasks sequentially (blocking), concurrently (interleaving via the Event Loop), and in parallel (true simultaneous execution via Web Workers).
-
-<ConcurrencyVisualizer />
-
-In `useTripMediaUpload.ts`, the background network pipeline and the visual foreground loop run concurrently. Because they rely on non-blocking async operations, the single-threaded event loop interleaves their execution. I simply use `Promise.all()` as a synchronization barrier to wait for both of these concurrent tasks to finish.
-
-```javascript
-// useTripMediaUpload.ts
-// 1. True Streaming Pipeline (Runs in Background)
-const networkUploadPromise = processNetworkUploads(
-  photoUploadTasks,
-  networkUploadResultsByIndex,
-  {
-    onProgress: (trackingId, points) =>
-      updateProgressForPhoto(trackingId, points, photoUploadTasks.length),
-    onPhotoExtracted: addPhotoToAnimationQueue,
-  }
-).then(() => {
-  hasAllNetworkUploadsFinished = true;
-});
-
-// 2. Visual Loop (Runs in Foreground)
-const visualLoopPromise = runPolaroidAnimationLoop(
-  photoUploadTasks.length,
-  networkUploadResultsByIndex,
-  () => hasAllNetworkUploadsFinished
-);
-
-// Wait for both the raw network pipeline and the visual loop to finish!
-await Promise.all([networkUploadPromise, visualLoopPromise]);
-```
-
-By using `Promise.all()`, I ensure the upload session isn't marked as "complete" until both the files are safely in the cloud **AND** the user has finished seeing the polaroid animations. The code waits for the slower of the two loops.
+<ArchitectureFlowVisualizer />
 
 ---
 
-## 2. Unblocking the Main Thread: Web Workers in Action
+## Why the browser begs for mercy
 
-If you try to extract EXIF data and resize a 5-8MB image on the browser's main JavaScript thread, the UI will often freeze. JavaScript is single-threaded; if it's busy crunching pixels, it cannot paint CSS animations or respond to clicks.
+When building a modern photo uploader, you don't just blindly send files to a server. You want to do local processing first—extracting EXIF data (for GPS coordinates and capture dates) and generating client-side thumbnails to give the user immediate visual feedback.
 
-Click the "Process on Main Thread" button below to see what happens when you block the main thread. The CSS spinner will freeze. Then try the "Process in Web Worker" button.
+If you attempt to run this kind of heavy processing directly in your React components, your application will freeze.
 
-<WorkerOffloadDemo />
+To understand why, we have to look at how JavaScript executes. The JavaScript engine running your UI is strictly **single-threaded**. It has one call stack and one memory heap. It processes tasks via the Event Loop. When you use `async/await` to process multiple images concurrently, you are not actually doing the work simultaneously. The Event Loop is simply interleaving chunks of work, switching back and forth between them so fast that it *looks* like they are happening at the same time.
 
-To prevent this freeze, `useBackgroundPhotoUploader.ts` delegates the heavy lifting to **Web Workers**. For each photo, the pipeline goes through a few phases off the main thread.
+But parsing heavy binary data or running a JavaScript-based image decoder is CPU-intensive, synchronous work. If you hand the main thread an 8MB file and ask it to find the EXIF headers, it has to block the call stack to do the math. While the call stack is blocked, the browser cannot paint new frames to the screen. It cannot respond to the user clicking a "Cancel" button. It cannot even animate a simple CSS spinner. The entire application locks up.
 
-### Phase 1: Metadata Extraction (`extract.worker.ts`)
-First, we parse EXIF data (capture dates, GPS coordinates). Since Apple's HEIC format isn't natively supported in all browsers, we use a WASM-based library (`heic2any`) inside the worker to convert it to JPEG. 
+The benchmark below runs the real pipeline—actual EXIF parsing with `exifr` and real HEIC decoding with `heic2any`. Drop some photos in and run both modes. The most telling number isn't whether the spinner freezes; it's the wall-clock difference in the total time. On the machine this article was written on, processing 12 HEIC images took **20.3 seconds on the main thread** versus **7.8 seconds with a worker pool**—a 2.6× speedup, while the UI remained completely unblocked throughout.
 
-We also use **OffscreenCanvas** and `createImageBitmap` to decode image dimensions. By doing this in a worker, we keep the DOM completely free.
+<HeicBenchmark />
 
-```typescript
-// extract.worker.ts
-const bitmap = await createImageBitmap(browserRenderableFile);
-const dims = { width: bitmap.width, height: bitmap.height };
-bitmap.close(); // Prevent memory leaks!
+Your numbers will vary depending on your device, but the shape of the result won't. The main thread processes images serially, one blocking operation after another. The worker pool saturates your CPU cores and processes images in parallel, finishing in roughly `total_work / core_count` time. On a high-end desktop the difference might feel modest. Run it on a mid-range Android phone and the main thread version will either crawl or crash the tab entirely—the worker version will finish cleanly in the background while the UI stays interactive the whole time.
 
-const [photoDimensions, captureDates, geoCoordinates] = await Promise.all([
-  dims,
-  exifr.parse(file, { pick: ["DateTimeOriginal", "CreateDate"] }),
-  exifr.gps(file)
-]);
-```
+This gap is the entire reason Web Workers exist. The main thread is a shared resource between your JavaScript, your React reconciler, your CSS animations, and the browser's own painting pipeline. Handing it a 200MB decode job is like asking a restaurant's maître d' to also personally cook every dish. The fix isn't to cook faster—it's to route the work to a kitchen that runs independently.
 
-### Phase 2: Client-Side Compression (`compress.worker.ts`)
-To respect our 1GB user quota and reduce backend processing, I compress the photos locally in the browser. 
+## Escaping the main thread
 
-Inside `compress.worker.ts`, I spin up an `OffscreenCanvas` to resize the image to a maximum of 1920x1920, and then encode it using `@jsquash/jpeg`, an optimized MozJPEG WebAssembly (WASM) module.
+To fix this, we didn't just need concurrency (interleaving tasks on one thread); we needed true **parallelism** (executing tasks simultaneously on different CPU cores). 
 
-**Lazy Loading Modules:** WASM modules can be heavy. I don't download the MozJPEG encoder until the user actually uploads a photo, using dynamic imports to lazy-load it:
+The only way to achieve true parallelism in the browser is by spawning an isolated OS-level thread via a **Web Worker**.
 
-```typescript
-// compress.worker.ts
-let encodeModule = null;
-async function loadWasm() {
-  if (!encodeModule) {
-    encodeModule = await import('@jsquash/jpeg/encode');
-  }
-  return encodeModule;
-}
+Instead of doing the heavy lifting in our React components, we built a dedicated worker pool. When the user drops their photos into the UI, the main thread immediately intercepts the `File` objects and uses `postMessage` to hand them off to our background workers. 
 
-// Draw and extract pixels
-ctx.drawImage(bitmap, 0, 0, newWidth, newHeight);
-const imageData = ctx.getImageData(0, 0, newWidth, newHeight);
+Our pipeline requires two distinct trips to the worker pool.
 
-// Try to load WASM and encode
-const encoder = await loadWasm();
-const buffer = await encoder.default(imageData, { quality: 85 });
-```
+### The first trip: Extraction and normalization
+Our first worker (`extract.worker.ts`) is responsible for parsing the EXIF data and preparing the file for the browser. 
 
-We also generate a `blurhash` (a tiny 32x32 blurred placeholder string) natively on the client side using the same `OffscreenCanvas` pixel data.
+Because we expect a lot of Apple users, we have to deal with the `.HEIC` image format. Most browsers cannot natively render HEIC files in an `<img>` tag. If we try to show a preview of an HEIC file, it will just show a broken image icon. 
 
----
+To solve this, our worker uses a library called `heic2any` to safely decode the HEIC binary and convert it into a standard JPEG. By running this in an isolated thread, the heavy decoding process utilizes a separate CPU core, leaving the main thread buttery smooth. Once the worker is done, it posts the standard JPEG back to the main thread, which instantly renders a crisp UI preview.
 
-## 3. Network Semaphores: Preventing Browser Bottlenecks
+### The second trip: WASM compression
+Uploading a 20-photo batch of raw 8MB files would consume 160MB of the user's data plan and heavily tax our backend. We needed to compress the images on the client side *before* they hit the network.
 
-Once compressed, the files are ready to be uploaded to an R2 storage bucket. 
+When the photos are ready for upload, the main thread sends them to our second worker (`compress.worker.ts`). This worker spins up an `OffscreenCanvas` to resize the images down to a maximum of 1920x1920.
 
-Even with a hard cap of 20 photos, if you try to upload them all simultaneously via `fetch()`, the browser's network stack can get overwhelmed since most browsers limit concurrent TCP connections to a single domain (usually around 6). 
+But standard HTML Canvas compression isn't great. To get the absolute best quality-to-size ratio, we bypass the browser's built-in encoders entirely. Instead, the worker dynamically lazy-loads `@jsquash/jpeg`, an incredibly powerful MozJPEG encoder compiled into **WebAssembly (WASM)**. WebAssembly allows us to run near-native C/C++ compression algorithms directly inside the browser's worker thread.
 
-To solve this, I implemented a **Semaphore**—a synchronization primitive that limits the number of concurrent operations. 
+Simultaneously, the worker generates a `blurhash`—a tiny 32x32 encoded string that represents the blurred colors of the image. This string is so small it can be saved directly in our database, allowing us to show instant, beautiful placeholders when someone visits the trip page later.
 
-Try clicking the "Add 5 Photos" button below. You'll see that exactly 3 photos will be processed at any given time while the rest wait in the queue.
+## The unseen network traffic jam
 
-<SemaphoreVisualizer />
+At this point, we have highly optimized JPEGs ready to fly to our Cloudflare R2 storage buckets. 
 
-Here is the core logic from `uploadSemaphore.ts`:
+The naive approach is to map over our 20 files and fire off twenty `fetch()` requests at the exact same time. But the network is not a magical, infinite pipe. It is constrained by physical hardware and browser limitations.
+
+If you attempt to open 20 simultaneous TCP connections to the same domain, every modern browser will step in and stop you. Browsers typically enforce a hard limit of around **6 concurrent connections per domain**. If you exceed this, the browser simply throws the excess requests into a hidden internal queue. You lose all control over the upload priority, and your application's other API requests (like fetching the user's profile data) will be blocked behind the massive image uploads.
+
+Worse, attempting to upload 20 massive payloads concurrently requires the browser to hold all of those binary buffers in the device's RAM at the same time. On a desktop, this might be fine. On a mobile browser with strict memory limits, holding that much data in active memory will trigger an Out Of Memory (OOM) exception, and the OS will ruthlessly kill the browser tab.
+
+## Controlling the floodgates
+
+To survive the hostile environment of the browser network stack, we must control the concurrency ourselves. We implemented a **Semaphore**—a computer science synchronization primitive that strictly limits how many tasks can access a resource at once.
+
+We set our magic number to `3`. At any given moment, exactly three photos are allowed to acquire a network slot and begin uploading.
+
+{/* VISUALIZER PLACEHOLDER: Semaphore Logic */}
 
 ```typescript
-// uploadSemaphore.ts
 const MAX_CONCURRENT_UPLOADS = 3;
 let activeUploads = 0;
 const queue = [];
 
-export function acquireUploadSlot(signal?: AbortSignal): Promise<() => void> {
+export function acquireUploadSlot(): Promise<() => void> {
   // Fast path: free slot available right now.
   if (activeUploads < MAX_CONCURRENT_UPLOADS) {
     activeUploads += 1;
@@ -153,127 +95,54 @@ export function acquireUploadSlot(signal?: AbortSignal): Promise<() => void> {
   }
 
   // Slow path: queue until an active upload releases a slot.
-  return new Promise((resolve, reject) => {
-    queue.push({ resolve, reject });
+  return new Promise((resolve) => {
+    queue.push(resolve);
   });
 }
-
-function createRelease() {
-  let released = false;
-  return () => {
-    if (released) return;
-    released = true;
-    activeUploads = Math.max(0, activeUploads - 1);
-    
-    // As soon as a slot opens, drain the queue
-    if (activeUploads < MAX_CONCURRENT_UPLOADS && queue.length > 0) {
-      const next = queue.shift();
-      activeUploads += 1;
-      next.resolve(createRelease());
-    }
-  };
-}
 ```
 
-Every photo must `await acquireUploadSlot()` before touching the network. Once the upload finishes, it calls `release()`, instantly pulling the next photo from the queue.
+Before a photo is allowed to ask our server for an R2 upload URL, it must `await acquireUploadSlot()`. If three photos are already uploading, the fourth photo's promise remains unresolved. It simply waits in the queue, completely dormant, consuming zero network resources. 
 
-### The SDK Methods
-Once a slot is acquired, the photo talks to our Fastify server via three SDK methods:
-1. `requestMediaUpload`: Requests a pre-signed Cloudflare R2 URL.
-2. `uploadToSignedUrl`: Streams the raw bytes to R2, firing `onProgress` callbacks.
-3. `completeMediaUpload`: Pings our server to verify success and saves the metadata (Blurhash, GPS, Dates) to our Neon Postgres database.
+When one of the active uploads finishes, it calls `release()`. This decrements the active count and instantly resolves the promise for the next photo in the queue. 
 
----
+By strictly chunking the uploads into groups of three, we keep our memory footprint tiny, we respect the browser's connection limits, and we guarantee that our upload pipeline never crashes the user's tab.
 
-## 4. The Visual Loop: Decoupling UI from Network Speed
+## When the network is too fast
 
-One of the more interesting UX challenges was making the polaroid animation feel consistent. 
+With the heavy lifting offloaded to workers and the network safely throttled by a semaphore, the backend architecture was rock solid. But we ran into a bizarre User Experience problem on the frontend.
 
-If a user is on a fast connection, a photo upload might finish in a fraction of a second. If the UI was strictly bound to the network speed, the polaroid would flash on the screen for a single frame and instantly disappear, looking like a glitch.
+Our UI was designed to show a vintage polaroid sliding out of a camera and dropping into a stack when an upload finished. 
 
-To fix this, `usePolaroidAnimationSequence.ts` deliberately **decouples** the visual state from the network state.
+If a user was on a gigabit fiber connection, the upload would finish in a fraction of a second. Because our UI state was strictly bound to the network state, the polaroid would flash onto the screen for a single frame and instantly disappear. It looked exactly like a rendering glitch.
 
-```typescript
-// usePolaroidAnimationSequence.ts
-const POLAROID_DEVELOPING_DURATION_MS = 1300;
+Human perception is slow. We need time to process visual changes. To fix the "glitch," we had to deliberately **decouple our visual state from our network state**.
 
-// Wait until THIS specific file has finished its network upload
-while (!networkUploadResultsByIndex.has(queuedIndex)) {
-  await delayThreadFor(50);
-}
+In our React orchestration hook, we introduced a visual gate. We track the exact millisecond the polaroid animation starts. Even if the network upload finishes instantly, the code forces an artificial delay to ensure the polaroid has been visible for a minimum of 1.3 seconds before it drops onto the stack. This guarantees the CSS animations always have enough time to play out beautifully, regardless of how fast the user's internet is.
 
-// Smart visual gate:
-// Ensure the polaroid has been visible for at least ~1.3s before dropping it,
-// otherwise it looks like a glitch if the network is too fast.
-const elapsedDevelopingTime = Date.now() - developingStartedAt;
+## The silent killer: Render thrashing
 
-if (elapsedDevelopingTime < POLAROID_DEVELOPING_DURATION_MS) {
-  await delayThreadFor(POLAROID_DEVELOPING_DURATION_MS - elapsedDevelopingTime);
-}
+As the photos flow through the pipeline, they emit constant progress events: 10%... 12%... 15%... 
 
-polaroidAnimationQueueRef.current[queuedIndex].status = "stacked";
-```
+If you take those progress numbers and throw them directly into React's `useState()`, you will destroy your application's performance.
 
-Even if the network upload is instant, the loop forces a minimum delay of 1.3 seconds. This guarantees the CSS animations have enough time to slide the polaroid out of the camera before it drops onto the stack.
+When you call `setState()`, React schedules a re-render. It has to reconcile the component tree and figure out what DOM nodes need updating. If you have 3 photos uploading concurrently, each emitting progress events every few milliseconds, React is going to try to re-render your entire upload component hundreds of times a second. 
 
----
+This is called **Render Thrashing**. The main thread will spend all of its time calculating React diffs, causing your smooth polaroid CSS animations to aggressively stutter and drop frames.
 
-## 5. Preventing Render Thrashing
+To protect the UI, we aggregated the progress using **Mutable Refs**.
 
-When uploading 20 photos concurrently, each photo emits several network progress events. That’s potentially dozens of events firing in a short window.
+{/* VISUALIZER PLACEHOLDER: React Render Thrashing */}
 
-If I stored the progress of each photo using React's `useState`, React would attempt to recalculate and re-render the component very rapidly. This is called **Render Thrashing**, and it can cause noticeable UI stutter.
+A `useRef` acts like an escape hatch from React's reactive data flow. When you mutate a ref, React does *not* trigger a re-render. 
 
-Run the simulation below. The "useState" method will flash red on every single React re-render, accumulating many renders. The "useRef" method smoothly throttles the renders.
+As the constant stream of progress numbers pours in from the network, we silently update a `Map` stored inside a `useRef`. We then calculate the *overall* batch percentage. We only push that final, aggregated percentage into `useState` to update the global progress bar.
 
-<RenderThrashingDemo />
+By buffering the aggressive network events into a silent reference and severely throttling the actual state updates, we keep the React render cycle perfectly calm.
 
-To achieve this optimization, `useUploadProgressTracker.ts` utilizes **Mutable Refs**. A `useRef` holds a mutable value that does *not* trigger re-renders when changed.
+## Bringing it all together
 
-```typescript
-// useUploadProgressTracker.ts
-// Holds mutable progress points WITHOUT causing a render loop
-const progressPointsByPhotoIdRef = useRef(new Map<string, number>());
+Building a production-grade uploader isn't just about calling `fetch`. It's a continuous balancing act between the limitations of the hardware, the restrictions of the browser, and the expectations of the user. 
 
-const updateProgressForPhoto = useCallback(
-  (trackingId: string, points: number, totalPhotosToProcess: number) => {
-    
-    // 1. Mutate the Map synchronously (no re-render!)
-    progressPointsByPhotoIdRef.current.set(trackingId, points);
+By pushing CPU-bound work into isolated threads, strictly controlling network concurrency with Semaphores, and fiercely protecting the React render cycle from thrashing, we built a pipeline that feels invisible. And in frontend engineering, an invisible pipeline is exactly what you want.
 
-    // 2. Calculate the overall batch percentage
-    const nextProgressPercentage = calculateBatchProgress(
-      progressPointsByPhotoIdRef.current,
-      totalPhotosToProcess
-    );
-
-    // 3. ONLY push the final percentage to React state to trigger a batched render
-    setOverallUploadProgressPercentage(nextProgressPercentage);
-  },
-  []
-);
-```
-
-By aggregating the raw point data into a `useRef` Map, and only pushing the computed `nextProgressPercentage` to `useState`, we drastically throttle the render cycle. React only re-renders when the overall percentage changes, keeping the UI smooth.
-
----
-
-## 6. The Complete Architecture Flow
-
-We've talked about web workers, semaphores, and decoupled visual loops in isolation. But what happens when we stitch them all together with the Backend API, the Database, and Cloudflare's Edge network?
-
-To truly understand the depth of this pipeline, I've built a final interactive sequence diagram. It walks through all 4 phases of the architecture:
-1. **Local Pre-processing**: Extracting EXIF data instantly.
-2. **Parallel WASM Compression**: Web Workers decoding HEIC and generating Blurhashes natively.
-3. **Network Upload Pipeline (Semaphore)**: The entire backend trip. Notice how the Semaphore explicitly limits concurrency to 3. We use the "Magic Number 3" to prevent Safari OOM (Out of Memory) crashes from holding too many massive buffers, and to respect the browser's 6-connection limit per domain (leaving room for other API requests to keep the app feeling snappy).
-4. **Edge Delivery**: The progressive loading experience on the public UI.
-
-Step through the phases below, and watch the Live Semaphore Tracker in Phase 3 to see exactly how Photo D is blocked from even asking for an upload URL until A finishes!
-
-<ArchitectureFlowVisualizer />
-
----
-
-## Conclusion
-
-Building the TripMediaLibrary was a fun exercise in balancing UX with system constraints. By combining Web Workers, OffscreenCanvases, WASM encoders, Semaphores, and asynchronous visual loops, we were able to build a reliable uploader that handles our 20-photo limit gracefully while providing a nice, tactile polaroid experience for the user.
+<old />

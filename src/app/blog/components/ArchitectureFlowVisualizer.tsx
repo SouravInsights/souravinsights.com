@@ -103,8 +103,8 @@ export default function ArchitectureFlowVisualizer() {
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
   // Calculate coordinates with spread for multiple items
-  const getCoords = (stationRef: React.RefObject<HTMLDivElement>, offsetIndex = 0, total = 1, isPhoto = true) => {
-    if (!stationRef.current || !containerRef.current) return { x: 0, y: 0 };
+  const getCoords = (stationRef: React.RefObject<HTMLDivElement>, offsetIndex = 0, total = 1, isPhoto = true): { x: number; y: number } | null => {
+    if (!stationRef.current || !containerRef.current) return null;
     const containerRect = containerRef.current.getBoundingClientRect();
     const stationRect = stationRef.current.getBoundingClientRect();
     
@@ -134,6 +134,7 @@ export default function ArchitectureFlowVisualizer() {
   const moveApiPill = (tl: gsap.core.Timeline, from: React.RefObject<HTMLDivElement>, to: React.RefObject<HTMLDivElement>, label: string, position?: string | number) => {
     const fromCoords = getCoords(from, 0, 1, false);
     const toCoords = getCoords(to, 0, 1, false);
+    if (!fromCoords || !toCoords) return;
 
     tl.set(apiPillRef.current, { x: fromCoords.x, y: fromCoords.y, opacity: 0 }, position);
     
@@ -188,12 +189,16 @@ export default function ArchitectureFlowVisualizer() {
     const B = photoBRef.current;
     const C = photoCRef.current;
     const D = photoDRef.current;
+    
+    // Guard: if the component hasn't fully laid out yet, bail out of the animation
+    if (!getCoords(mainRef)) return;
 
     if (phaseIndex === 1) {
       // Step 0: Drop photos into Media Library UI
       tl.call(() => setCurrentStep(0));
       allPhotos.forEach((p, i) => {
         const coords = getCoords(userRef, i, 4);
+        if (!coords) return;
         gsap.set(p.current, { x: coords.x, y: coords.y, opacity: 0, scale: 0.5, backgroundColor: "white", color: "#111827", filter: "blur(0px)" });
       });
       tl.to([A, B, C, D], { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1, ease: "back.out(1.7)" });
@@ -202,8 +207,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(1), undefined, "+=0.2");
       tl.to([A, B, C, D], {
         duration: 0.4,
-        x: (i) => getCoords(mainRef, i, 4).x,
-        y: (i) => getCoords(mainRef, i, 4).y,
+        x: (i) => getCoords(mainRef, i, 4)?.x ?? 0,
+        y: (i) => getCoords(mainRef, i, 4)?.y ?? 0,
         stagger: 0.1,
         ease: "power2.inOut"
       });
@@ -212,8 +217,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(2), undefined, "+=0.1");
       tl.to([A, B, C, D], {
         duration: 0.4,
-        x: (i) => getCoords(workerRef, i, 4).x,
-        y: (i) => getCoords(workerRef, i, 4).y,
+        x: (i) => getCoords(workerRef, i, 4)?.x ?? 0,
+        y: (i) => getCoords(workerRef, i, 4)?.y ?? 0,
         stagger: 0.1,
         ease: "power2.inOut"
       });
@@ -231,8 +236,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(5));
       tl.to([A, B, C, D], {
         duration: 0.6,
-        x: (i) => getCoords(mainRef, i, 4).x,
-        y: (i) => getCoords(mainRef, i, 4).y,
+        x: (i) => getCoords(mainRef, i, 4)?.x ?? 0,
+        y: (i) => getCoords(mainRef, i, 4)?.y ?? 0,
         stagger: 0.1,
         ease: "power2.inOut"
       }, "+=0.2");
@@ -242,8 +247,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(0));
       tl.to([A, B, C, D], {
         duration: 0.5,
-        x: (i) => getCoords(workerRef, i, 4).x,
-        y: (i) => getCoords(workerRef, i, 4).y,
+        x: (i) => getCoords(workerRef, i, 4)?.x ?? 0,
+        y: (i) => getCoords(workerRef, i, 4)?.y ?? 0,
         stagger: 0.1,
         ease: "power2.inOut"
       });
@@ -265,8 +270,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(4));
       tl.to([A, B, C, D], {
         duration: 0.5,
-        x: (i) => getCoords(mainRef, i, 4).x,
-        y: (i) => getCoords(mainRef, i, 4).y,
+        x: (i) => getCoords(mainRef, i, 4)?.x ?? 0,
+        y: (i) => getCoords(mainRef, i, 4)?.y ?? 0,
         stagger: 0.1,
         ease: "power2.inOut"
       }, "+=0.2");
@@ -293,8 +298,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(2));
       tl.to([A, B, C], {
         duration: 0.8,
-        x: (i) => getCoords(r2Ref, i, 3).x,
-        y: (i) => getCoords(r2Ref, i, 3).y,
+        x: (i) => getCoords(r2Ref, i, 3)?.x ?? 0,
+        y: (i) => getCoords(r2Ref, i, 3)?.y ?? 0,
         stagger: 0.1,
         ease: "back.out(1.2)"
       });
@@ -325,8 +330,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(2));
       tl.to(D, {
         duration: 0.6,
-        x: getCoords(r2Ref, 0, 3).x,
-        y: getCoords(r2Ref, 0, 3).y,
+        x: getCoords(r2Ref, 0, 3)?.x ?? 0,
+        y: getCoords(r2Ref, 0, 3)?.y ?? 0,
         ease: "power2.out"
       }, "+=0.1");
       
@@ -348,8 +353,8 @@ export default function ArchitectureFlowVisualizer() {
       tl.call(() => setCurrentStep(0));
       tl.to([A, B, C, D], {
         duration: 0.8,
-        x: (i) => getCoords(uiRef, i, 4).x,
-        y: (i) => getCoords(uiRef, i, 4).y,
+        x: (i) => getCoords(uiRef, i, 4)?.x ?? 0,
+        y: (i) => getCoords(uiRef, i, 4)?.y ?? 0,
         stagger: 0.15,
         ease: "power2.inOut"
       });
@@ -424,6 +429,9 @@ export default function ArchitectureFlowVisualizer() {
       const cApi = getCoords(apiRef, 0, 1, false);
       const cDb = getCoords(dbRef, 0, 1, false);
       const cR2 = getCoords(r2Ref, 0, 1, false);
+
+      // If any node hasn't mounted yet, skip — we'll be called again by ResizeObserver
+      if (!cUser || !cWorker || !cMain || !cUi || !cApi || !cDb || !cR2) return;
 
       const setLine = (ref: React.RefObject<SVGLineElement>, p1: {x: number, y: number}, p2: {x: number, y: number}) => {
         if (ref.current) {
