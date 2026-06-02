@@ -72,21 +72,45 @@ Simultaneously, the worker generates a `blurhash`—a tiny 32x32 encoded string 
 
 At this point, we have highly optimized JPEGs ready to fly to our Cloudflare R2 storage buckets. 
 
-The naive approach is to map over our 20 files and fire off twenty `fetch()` requests at the exact same time. But the network is not a magical, infinite pipe. It is constrained by physical hardware and browser limitations.
+The naive approach is to map over our files and fire off multiple `fetch()` requests at the exact same time. But the network is not a magical, infinite pipe. It is constrained by physical hardware and browser limitations.
 
-If you attempt to open 20 simultaneous TCP connections to the same domain, every modern browser will step in and stop you. Browsers typically enforce a hard limit of around **6 concurrent connections per domain**. If you exceed this, the browser simply throws the excess requests into a hidden internal queue. You lose all control over the upload priority, and your application's other API requests (like fetching the user's profile data) will be blocked behind the massive image uploads.
+### What actually happens when you call fetch()
 
-Worse, attempting to upload 20 massive payloads concurrently requires the browser to hold all of those binary buffers in the device's RAM at the same time. On a desktop, this might be fine. On a mobile browser with strict memory limits, holding that much data in active memory will trigger an Out Of Memory (OOM) exception, and the OS will ruthlessly kill the browser tab.
+When your code calls `fetch()` to upload a photo, the browser opens a network connection to a server and starts sending data through it. That connection costs real resources—memory, an open socket, bandwidth.
+
+Now imagine you drop 8 photos and your code does this:
+
+```typescript
+photos.forEach(photo => fetch(uploadUrl, { body: photo }))
+```
+
+You just told the browser to open 8 connections simultaneously. The browser looks at that and says: *I'm not doing that.* Browsers have a hard limit—around 6 concurrent connections to the same domain at once. So it opens 6, and quietly holds the other 2 back internally.
+
+That internal holding area? That's the browser's queue. You didn't create it. You can't see it. You can't touch it.
+
+### So what's the actual problem with that?
+
+Leaving concurrency to the browser's internal queue introduces two critical problems:
+
+1. **Memory Exhaustion (OOM):** Each upload means the browser is holding that photo's binary data in RAM while it sends it. 6 photos × 8MB = ~48MB sitting in active memory simultaneously. On a desktop that's fine. On a mid-range phone, the OS sees that ballooning memory and immediately kills your tab.
+2. **You Lost Control:** This is the most crucial part. When one of those 6 uploads fails, what happens? Nothing. The browser's internal queue has no idea what "failure" means for your application. It doesn't retry. It doesn't tell the next photo waiting in the queue to go. You have no handle on any of it.
 
 ## Controlling the floodgates
 
 To survive the hostile environment of the browser network stack, we must control the concurrency ourselves. We implemented a **Semaphore**—a computer science synchronization primitive that strictly limits how many tasks can access a resource at once.
 
-We set our magic number to `3`. At any given moment, exactly three photos are allowed to acquire a network slot and begin uploading.
+Forget the browser queue for a moment. Here's what your code does instead. 
 
-<SemaphoreBenchmark />
+Our `uploadSemaphore.ts` creates a simple counter and an array:
 
-<SemaphoreVisualizer />
+```typescript
+let activeUploads = 0;
+const queue = [];
+```
+
+That is the entire semaphore: a number and a list.
+
+When a photo wants to start uploading, it calls `acquireUploadSlot()`. That function checks: is `activeUploads` less than 3? If yes, increment the counter and go. If no, stop and wait—push yourself onto `queue`.
 
 ```typescript
 const MAX_CONCURRENT_UPLOADS = 3;
@@ -107,11 +131,53 @@ export function acquireUploadSlot(): Promise<() => void> {
 }
 ```
 
-Before a photo is allowed to ask our server for an R2 upload URL, it must `await acquireUploadSlot()`. If three photos are already uploading, the fourth photo's promise remains unresolved. It simply waits in the queue, completely dormant, consuming zero network resources. 
+The photo that can't go yet returns a Promise that just... sits there. Unresolved. The photo is paused at that line of code, waiting.
 
-When one of the active uploads finishes, it calls `release()`. This decrements the active count and instantly resolves the promise for the next photo in the queue. 
+### What is the release function?
 
-By strictly chunking the uploads into groups of three, we keep our memory footprint tiny, we respect the browser's connection limits, and we guarantee that our upload pipeline never crashes the user's tab.
+`acquireUploadSlot()` returns a `release` function. The photo holds onto it. When the upload finishes—success *or* failure—it calls `release()`.
+
+`release()` does two things: decrements `activeUploads` by 1, then looks at `queue` and resolves the next waiting Promise.
+
+That next photo was paused at `await acquireUploadSlot()`. Now it wakes up and starts uploading.
+
+### The failure case—this is the key part
+
+In `useBackgroundPhotoUploader.ts`, look at how `release()` is called:
+
+```typescript
+const releaseSlot = await acquireUploadSlot();
+try {
+  // ... do the upload ...
+} finally {
+  releaseSlot();
+}
+```
+
+`finally` runs no matter what. Upload succeeded? `releaseSlot()` runs. Upload threw an error? `releaseSlot()` still runs. The slot is always returned. The queue always drains.
+
+In the naive approach, there is no equivalent of this. When a `fetch()` fails, that's it—the browser's internal slot just disappears quietly. Nothing triggers the next photo to go.
+
+### Telemetry and visual proof
+
+To prove the power of this architecture, let's look at it in action. Below are two different ways to visualize this concurrency.
+
+First, the **Semaphore Benchmark** runs a live telemetry comparison simulating how both approaches handle a bulk batch under realistic network conditions:
+
+<SemaphoreBenchmark />
+
+Next, the **Semaphore Visualizer** models the internals of both queues side-by-side, specifically demonstrating how they handle failure:
+
+<SemaphoreVisualizer />
+
+When playing with the visualizer above, notice how the code translates directly to the UI:
+
+- **The blue pills** in the semaphore queue are photos sitting at `await acquireUploadSlot()`—paused, waiting.
+- **When a slot lights up**, that photo's Promise has resolved, and it is now actively uploading.
+- **When you inject a failure**, watch the scrolling console log say `finally {} calls releaseSlot()`—that's the exact `finally` block above firing.
+- **Immediately after**, the next blue pill disappears from the queue and an active slot lights up—that's the next Promise waking up and resuming execution.
+
+On the naive side, injecting a failure just makes a slot go dark. Nothing wakes up. The queue the browser was managing silently had no mechanism to handle it, leaving your queue jammed.
 
 ## When the network is too fast
 
@@ -150,5 +216,3 @@ By buffering the aggressive network events into a silent reference and severely 
 Building a production-grade uploader isn't just about calling `fetch`. It's a continuous balancing act between the limitations of the hardware, the restrictions of the browser, and the expectations of the user. 
 
 By pushing CPU-bound work into isolated threads, strictly controlling network concurrency with Semaphores, and fiercely protecting the React render cycle from thrashing, we built a pipeline that feels invisible. And in frontend engineering, an invisible pipeline is exactly what you want.
-
-<old />
