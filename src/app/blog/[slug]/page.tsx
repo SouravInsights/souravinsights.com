@@ -14,6 +14,7 @@ import VideoPlayer from "../components/VideoPlayer";
 import ConcurrencyVisualizer from "../components/ConcurrencyVisualizer";
 import RenderThrashingDemo from "../components/RenderThrashingDemo";
 import SemaphoreVisualizer from "../components/SemaphoreVisualizer";
+import ConceptTip from "../components/ConceptTip";
 
 const Playground = dynamic(() => import("../components/Playground"), {
   ssr: false,
@@ -85,7 +86,21 @@ export default function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, ConcurrencyVisualizer, RenderThrashingDemo, ArchitectureFlowVisualizer, HeicBenchmark, SemaphoreBenchmark, SemaphoreVisualizer }}
+      components={{
+        Playground,
+        GistLink,
+        SideBySide,
+        HtmlNestingVisualizer,
+        DomTreeAnimator,
+        VideoPlayer,
+        ConcurrencyVisualizer,
+        RenderThrashingDemo,
+        ArchitectureFlowVisualizer,
+        HeicBenchmark,
+        SemaphoreBenchmark,
+        SemaphoreVisualizer,
+        ConceptTip,
+      }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],

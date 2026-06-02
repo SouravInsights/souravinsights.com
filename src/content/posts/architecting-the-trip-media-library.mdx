@@ -29,13 +29,17 @@ Before we go deep, here's the complete picture. This diagram shows all four phas
 
 Let's start at the beginning, because most explanations of web workers skip the step that actually makes them make sense.
 
-JavaScript — all of it, including your React components, your event listeners, your `async/await` functions — runs on a single thread. There is one call stack. One at a time. Always.
+At any given moment, the JavaScript engine divides its work between two structures: the <ConceptTip id="call-stack">Call Stack</ConceptTip> and the <ConceptTip id="heap-memory">Heap Memory</ConceptTip>. 
+
+The <ConceptTip id="call-stack">Call Stack</ConceptTip> is single-threaded and executes functions sequentially (one execution frame at a time). The <ConceptTip id="heap-memory">Heap Memory</ConceptTip> is a large, unstructured memory region where the engine stores objects, variables, and massive binary allocations (like our Apple HEIC `File` or `Blob` buffers).
+
+JavaScript — all of it, including your React components, your event listeners, your `async/await` functions — runs on a single thread. There is one Call Stack. One function runs at a time. Always.
 
 This is actually fine for most things. The event loop is clever. When you `await` a network request, JavaScript doesn't sit there waiting — it parks that task and moves on to other work, picking it back up when the response arrives. That's why your UI stays responsive during a slow API call. The thread isn't blocked; it's just waiting on I/O, which is handled outside the JS engine by the browser's networking layer.
 
-The problem is CPU work. Parsing a binary file, running a decoder algorithm, crunching pixels — none of that can be parked and resumed. It has to run to completion, continuously, on the call stack. And while it's running, nothing else can.
+The problem is CPU work. Parsing a binary file, running a decoder algorithm, crunching pixels — none of that can be parked and resumed. It has to run to completion, continuously, on the Call Stack. And while it's running, nothing else can.
 
-When the call stack is occupied, the browser cannot paint a new frame. It cannot respond to a click. It cannot move a CSS animation forward. The whole page freezes until the work is done.
+When the Call Stack is occupied, the browser is starved of resources. Specifically, the browser's UI paint updates are scheduled as <ConceptTip id="macrotasks">Macrotasks</ConceptTip> on the <ConceptTip id="event-loop">Event Loop</ConceptTip>. If a heavy synchronous function is hogging the Call Stack, the Event Loop is locked. It cannot yield to the browser's rendering task queue, which means it cannot paint a new frame, respond to a user click, or move a CSS animation forward. The whole page freezes until the stack clears.
 
 This is exactly what happens when you try to process HEIC files on the main thread. HEIC is Apple's image format, and most browsers can't natively render it. You have to decode it yourself — run a JavaScript library that reads the binary, decodes the codec, and spits out a JPEG. On an 8MB file, that takes somewhere between 1–4 seconds of pure CPU time.
 
@@ -55,9 +59,12 @@ Your numbers will vary by device. On a high-end desktop the gap feels significan
 
 The fix isn't to make the decoding faster. It's to move it off the main thread entirely.
 
-A **Web Worker** is a background thread the browser gives you. You can spin one up, hand it a `File` object via `postMessage`, and it will do its work on a completely separate CPU core while your UI does whatever it wants. When the worker is done, it posts the result back.
+A **Web Worker** is a background thread the browser gives you. When you spin one up, the OS allocates an entirely new execution environment with its own **independent Call Stack** and **isolated Heap Memory**. You can hand it a file via `postMessage`, and it will do its work on a completely separate CPU core, leaving the main thread's Call Stack entirely free. When the worker is done, it posts the result back.
 
-The constraint worth understanding: workers don't share memory with the main thread. You can't just reference a variable from your React component inside a worker. You have to explicitly pass data back and forth as messages. This feels awkward at first but it's actually the right design — it forces you to think clearly about what data needs to move and when, and it means workers can't accidentally corrupt your UI state.
+The constraint worth understanding: workers do not share memory with the main thread. This boundary dictates how data is sent:
+
+* **The Structured Clone Algorithm:** By default, calling `postMessage(file)` triggers a deep clone. The JavaScript engine serializes the file object, sends the serialized bytes across the thread boundary, and parses it into a new object on the worker's Heap. For a brief moment, you are **doubling the memory footprint** of that file in RAM. Wrapping this boundary using the <ConceptTip id="structured-cloning">Structured Clone Algorithm</ConceptTip> is the source of this clone cost.
+* **Transferable Objects:** To avoid this cloning overhead, JavaScript allows us to transfer ownership of certain objects (like `ArrayBuffer`, `MessagePort`, or `OffscreenCanvas`). Instead of copying the bytes, the engine simply detaches the memory pointer from the main thread's Heap and attaches it to the worker's Heap. Using <ConceptTip id="transferables">Transferable Objects</ConceptTip> is a zero-copy, instantaneous operation — but once transferred, the object becomes completely unusable on the sending thread.
 
 Our pipeline needs two separate worker trips.
 
@@ -151,7 +158,11 @@ function drainQueue() {
 }
 ```
 
-The photo that can't go yet returns a Promise that just... sits there. Unresolved. The photo is paused at that line of code, waiting.
+### Promises under the hood: The Deferred Promise Pattern
+
+To understand why this pauses execution, we have to look at what a <ConceptTip id="promises">Promise</ConceptTip> actually is in memory. When our code calls `new Promise((resolve) => { queue.push(resolve); })`, the V8 engine allocates a Promise object on the Heap with an internal state of `[[PromiseState]]: "pending"`. 
+
+Normally, a Promise executes an async operation immediately and resolves itself. Here, we do something different: we capture the Promise's `resolve` function and push it onto our `queue` array. By holding onto the `resolve` callback, we keep the Promise permanently `pending` in the Heap. The calling code that runs `await acquireUploadSlot()` is forced to pause execution, suspending its Call Stack frame indefinitely.
 
 ### What is the release function?
 
@@ -178,6 +189,18 @@ try {
 The `finally` block is the critical detail. It runs no matter what. Upload succeeded? `releaseSlot()` runs. Upload threw an error? `releaseSlot()` still runs. The slot is always returned. The queue always drains.
 
 In the naive approach, there is no equivalent of this. When a `fetch()` fails, that's it — the browser's internal slot just disappears quietly. Nothing triggers the next photo to go.
+
+### Draining the Queue: Macrotasks vs. Microtasks
+
+How does the JS event loop handle resuming our paused uploads when `release()` is called? 
+
+The engine divides asynchronous tasks into two queues:
+* <ConceptTip id="macrotasks">Macrotasks</ConceptTip>: Things like network I/O events, timeouts, and page rendering cycles.
+* <ConceptTip id="microtasks">Microtasks</ConceptTip>: Promise callbacks (`.then`, `await` resumptions).
+
+When an active upload finishes, the network event executes as a **Macrotask**. Inside that task, we call `releaseSlot()`, which invokes `resolve()` on the next waiting Promise in our queue. 
+
+Calling `resolve()` queues a **Microtask**. Crucially, the Event Loop is designed to drain the *entire* Microtask queue immediately after the current task finishes, before yielding back to the browser for rendering or picking up the next Macrotask. Because Promise resumption is a microtask, the next waiting photo wakes up and starts its fetch request in the exact same tick of the Event Loop. There is absolute zero CPU or network idle time between slots.
 
 ### Telemetry and visual proof
 
@@ -235,11 +258,15 @@ The tempting code is:
 onProgress: (percent) => setProgress(percent)
 ```
 
-This calls `setState` on every event. React doesn't batch those calls the way you might hope. Each one schedules a reconciliation. With three uploads running, React ends up re-rendering your progress UI hundreds of times a second. This is called render thrashing, and it will make your CSS animations stutter and drop frames even though the actual upload logic is working perfectly.
+This calls `setState` on every event. At the V8 engine level, mutating React state is expensive. Each `setState` call pushes a task onto the React scheduler, which must run reconciliation diffs on the virtual DOM tree, allocate new virtual node objects on the Heap, and schedule repaint macrotasks. Under high-frequency progress events, V8 spends all its time processing React scheduler cycles and running garbage collection to clean up discarded virtual DOM nodes. This is called <ConceptTip id="render-thrashing">Render Thrashing</ConceptTip>, and it will make your CSS animations stutter and drop frames even though the actual upload logic is working perfectly.
 
-The fix is to make progress events invisible to React until there's something worth rendering. We accumulate all progress points into a `Map` stored in a `useRef` — a ref mutation never triggers a re-render. A separate, throttled interval reads that accumulated value and pushes a single aggregated percentage into `useState` at most a few times per second.
+The fix is to bypass the React scheduler entirely during high-frequency events.
 
-The network events are still coming in at full frequency. React just doesn't see them. It only sees the smoothed result.
+Instead of state, we use **direct Heap references via `useRef`**. A mutable ref is simply a stable reference pointing to a single mutable object on the V8 Heap. Mutating a ref (e.g., updating a `Map` stored inside it) is a synchronous pointer write in memory. It schedules zero tasks, allocates no virtual nodes, and is invisible to the React reconciler.
+
+We accumulate all high-frequency network events into this silent Heap map. Then, we use a single throttled interval (`setInterval`) running a few times per second to read the accumulated value and push a single aggregated percentage into `useState`.
+
+The network events are still coming in at full frequency. React just doesn't see them. It only sees the smoothed result, allowing the V8 engine to keep the animation rendering loop buttery smooth.
 
 ---
 
