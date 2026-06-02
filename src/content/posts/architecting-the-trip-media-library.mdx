@@ -29,13 +29,13 @@ Before we go deep, here's the complete picture. This diagram shows all four phas
 
 Let's start at the beginning, because most explanations of web workers skip the step that actually makes them make sense.
 
-At any given moment, the JavaScript engine divides its work between two structures: the <ConceptTip id="call-stack">Call Stack</ConceptTip> and the <ConceptTip id="heap-memory">Heap Memory</ConceptTip>. 
+At any given moment, the JavaScript engine divides its work between two structures: the <ConceptTip id="call-stack">Call Stack</ConceptTip> and the <ConceptTip id="heap-memory">Heap Memory</ConceptTip>.
 
-The <ConceptTip id="call-stack">Call Stack</ConceptTip> is single-threaded and executes functions sequentially (one execution frame at a time). The <ConceptTip id="heap-memory">Heap Memory</ConceptTip> is a large, unstructured memory region where the engine stores objects, variables, and massive binary allocations (like our Apple HEIC `File` or `Blob` buffers).
+The <ConceptTip id="call-stack">Call Stack</ConceptTip> is single-threaded and executes functions sequentially — one execution frame at a time. The <ConceptTip id="heap-memory">Heap Memory</ConceptTip> is a large, unstructured memory region where the engine stores objects, variables, and massive binary allocations (like our Apple HEIC `File` or `Blob` buffers).
 
 JavaScript — all of it, including your React components, your event listeners, your `async/await` functions — runs on a single thread. There is one Call Stack. One function runs at a time. Always.
 
-This is actually fine for most things. The event loop is clever. When you `await` a network request, JavaScript doesn't sit there waiting — it parks that task and moves on to other work, picking it back up when the response arrives. That's why your UI stays responsive during a slow API call. The thread isn't blocked; it's just waiting on I/O, which is handled outside the JS engine by the browser's networking layer.
+This is actually fine for most things. The <ConceptTip id="event-loop">Event Loop</ConceptTip> is clever. When you `await` a network request, JavaScript doesn't sit there waiting — it parks that task and moves on to other work, picking it back up when the response arrives. That's why your UI stays responsive during a slow API call. The thread isn't blocked; it's just waiting on I/O, which is handled outside the JS engine by the browser's networking layer.
 
 The problem is CPU work. Parsing a binary file, running a decoder algorithm, crunching pixels — none of that can be parked and resumed. It has to run to completion, continuously, on the Call Stack. And while it's running, nothing else can.
 
@@ -63,14 +63,14 @@ A **Web Worker** is a background thread the browser gives you. When you spin one
 
 The constraint worth understanding: workers do not share memory with the main thread. This boundary dictates how data is sent:
 
-* **The Structured Clone Algorithm:** By default, calling `postMessage(file)` triggers a deep clone. The JavaScript engine serializes the file object, sends the serialized bytes across the thread boundary, and parses it into a new object on the worker's Heap. For a brief moment, you are **doubling the memory footprint** of that file in RAM. Wrapping this boundary using the <ConceptTip id="structured-cloning">Structured Clone Algorithm</ConceptTip> is the source of this clone cost.
-* **Transferable Objects:** To avoid this cloning overhead, JavaScript allows us to transfer ownership of certain objects (like `ArrayBuffer`, `MessagePort`, or `OffscreenCanvas`). Instead of copying the bytes, the engine simply detaches the memory pointer from the main thread's Heap and attaches it to the worker's Heap. Using <ConceptTip id="transferables">Transferable Objects</ConceptTip> is a zero-copy, instantaneous operation — but once transferred, the object becomes completely unusable on the sending thread.
+- **The <ConceptTip id="structured-cloning">Structured Clone Algorithm</ConceptTip>:** By default, calling `postMessage(file)` triggers a deep clone. The JavaScript engine serializes the file object, sends the serialized bytes across the thread boundary, and parses it into a new object on the worker's Heap. For a brief moment, you are **doubling the memory footprint** of that file in RAM.
+- **<ConceptTip id="transferables">Transferable Objects</ConceptTip>:** To avoid this cloning overhead, JavaScript allows transferring ownership of certain objects (like `ArrayBuffer`, `MessagePort`, or `OffscreenCanvas`). Instead of copying the bytes, the engine simply detaches the memory pointer from the main thread's Heap and attaches it to the worker's Heap. A zero-copy, instantaneous operation — but once transferred, the object becomes completely unusable on the sending thread.
 
 Our pipeline needs two separate worker trips.
 
-**The extraction worker** (`extract.worker.ts`) receives the raw HEIC files. It runs `heic2any` to convert them to browser-renderable JPEGs, and `exifr` to pull the EXIF metadata — GPS coordinates, capture date, camera model. It posts back a standard JPEG that the main thread can immediately show as a preview, plus a metadata object. This is the step that unlocks the "polaroid developing" animation: as soon as this worker returns, the UI has something to show.
+**The extraction worker** (`extract.worker.ts`) receives the raw HEIC files. It runs `heic2any` to convert them to browser-renderable JPEGs, and `exifr` to pull the EXIF metadata — GPS coordinates, capture date, camera model. It posts back a standard JPEG that the main thread can immediately show as a preview — via a temporary <ConceptTip id="object-url">Object URL</ConceptTip>, plus a metadata object. This is the step that unlocks the "polaroid developing" animation: as soon as this worker returns, the UI has something to show.
 
-**The compression worker** (`compress.worker.ts`) receives the renderable JPEGs. It runs them through `OffscreenCanvas` to resize down to 1920×1920, then hands them to `@jsquash/jpeg` — a MozJPEG encoder compiled to WebAssembly — for real compression. It also generates a `blurhash`, a tiny encoded string that represents the image's blurred color palette. That string gets stored in the database and used to render an instant placeholder before the actual image loads. This one step is why trip pages feel smooth for viewers even on slow connections.
+**The compression worker** (`compress.worker.ts`) receives the renderable JPEGs. It runs them through <ConceptTip id="offscreen-canvas">OffscreenCanvas</ConceptTip> to resize down to 1920×1920, then hands them to `@jsquash/jpeg` — a MozJPEG encoder compiled to WebAssembly — for real compression. It also generates a <ConceptTip id="blurhash">blurhash</ConceptTip>, a tiny encoded string that represents the image's blurred color palette. That string gets stored in the database and used to render an instant placeholder before the actual image loads. This one step is why trip pages feel smooth for viewers even on slow connections.
 
 Neither of these things could happen on the main thread without making the UI unusable. Moving them to workers makes them invisible.
 
@@ -160,9 +160,9 @@ function drainQueue() {
 
 ### Promises under the hood: The Deferred Promise Pattern
 
-To understand why this pauses execution, we have to look at what a <ConceptTip id="promises">Promise</ConceptTip> actually is in memory. When our code calls `new Promise((resolve) => { queue.push(resolve); })`, the V8 engine allocates a Promise object on the Heap with an internal state of `[[PromiseState]]: "pending"`. 
+To understand why this pauses execution, we have to look at what a <ConceptTip id="promises">Promise</ConceptTip> actually is in memory. When our code calls `new Promise((resolve) => { queue.push(resolve); })`, the V8 engine allocates a Promise object on the Heap with an internal state of `[[PromiseState]]: "pending"`.
 
-Normally, a Promise executes an async operation immediately and resolves itself. Here, we do something different: we capture the Promise's `resolve` function and push it onto our `queue` array. By holding onto the `resolve` callback, we keep the Promise permanently `pending` in the Heap. The calling code that runs `await acquireUploadSlot()` is forced to pause execution, suspending its Call Stack frame indefinitely.
+Normally, a Promise executes an async operation immediately and resolves itself. Here, we do something different: we capture the Promise's `resolve` function and push it onto our `queue` array. This is the <ConceptTip id="deferred-promise">Deferred Promise</ConceptTip> pattern — by holding onto `resolve` ourselves, we keep the Promise permanently `pending` in the Heap. The calling code that runs `await acquireUploadSlot()` is forced to pause execution, suspending its Call Stack frame indefinitely.
 
 ### What is the release function?
 
@@ -192,13 +192,14 @@ In the naive approach, there is no equivalent of this. When a `fetch()` fails, t
 
 ### Draining the Queue: Macrotasks vs. Microtasks
 
-How does the JS event loop handle resuming our paused uploads when `release()` is called? 
+How does the JS event loop handle resuming our paused uploads when `release()` is called?
 
 The engine divides asynchronous tasks into two queues:
-* <ConceptTip id="macrotasks">Macrotasks</ConceptTip>: Things like network I/O events, timeouts, and page rendering cycles.
-* <ConceptTip id="microtasks">Microtasks</ConceptTip>: Promise callbacks (`.then`, `await` resumptions).
 
-When an active upload finishes, the network event executes as a **Macrotask**. Inside that task, we call `releaseSlot()`, which invokes `resolve()` on the next waiting Promise in our queue. 
+- <ConceptTip id="macrotasks">Macrotasks</ConceptTip>: Things like network I/O events, timeouts, and page rendering cycles.
+- <ConceptTip id="microtasks">Microtasks</ConceptTip>: Promise callbacks (`.then`, `await` resumptions).
+
+When an active upload finishes, the network event executes as a **Macrotask**. Inside that task, we call `releaseSlot()`, which invokes `resolve()` on the next waiting Promise in our queue.
 
 Calling `resolve()` queues a **Microtask**. Crucially, the Event Loop is designed to drain the *entire* Microtask queue immediately after the current task finishes, before yielding back to the browser for rendering or picking up the next Macrotask. Because Promise resumption is a microtask, the next waiting photo wakes up and starts its fetch request in the exact same tick of the Event Loop. There is absolute zero CPU or network idle time between slots.
 
@@ -210,12 +211,12 @@ To see this difference in action, click "Run both" on the comparison below, then
 
 Notice how the mechanics of our code map directly to the visualizer:
 
-* **The blue pills** in the semaphore queue are photos sitting at `await acquireUploadSlot()` — paused, waiting.
-* **When a slot lights up**, that photo's Promise has resolved, and it is now actively uploading.
-* **When you inject the failure**, watch the log say `finally {} calls releaseSlot()` — that's the exact line in our `finally` block firing.
-* **Immediately after**, the next blue pill disappears from the queue and a slot lights up — that's the next Promise waking up.
+- **The blue pills** in the semaphore queue are photos sitting at `await acquireUploadSlot()` — paused, waiting.
+- **When a slot lights up**, that photo's Promise has resolved, and it is now actively uploading.
+- **When you inject the failure**, watch the log say `finally {} calls releaseSlot()` — that's the exact line in our `finally` block firing.
+- **Immediately after**, the next blue pill disappears from the queue and a slot lights up — that's the next Promise waking up.
 
-On the naive side, the failure just makes a slot go dark. Nothing wakes up. The queue the browser was managing silently had no mechanism to handle it, leaving your queue jammed.
+On the naive side, the failure just makes a slot go dark. Nothing wakes up. The queue the browser was managing silently had no mechanism to handle it.
 
 This is what "owning the queue" means in practice. It's not about the number 3 versus 6. It's about the failure path being structurally guaranteed — by the shape of the code — rather than something you hope works.
 
@@ -223,15 +224,23 @@ This is what "owning the queue" means in practice. It's not about the number 3 v
 
 ## The UI has its own timeline
 
-With workers handling CPU work and the semaphore handling network concurrency, the backend pipeline was solid. Then we hit a problem I didn't expect at all.
+With workers handling CPU work and the semaphore handling network concurrency, the backend pipeline was solid. Then we hit a problem I didn't expect at all — one that has nothing to do with networking or threads. It's a problem about *time*, and about who gets to decide how long something takes.
 
-When a photo finishes uploading, our UI plays a polaroid animation: the photo slides out of a camera and drops onto a stack. On a fast connection, the upload takes maybe 200–400ms. The polaroid animation needs 1.3 seconds to play out fully.
+When a photo finishes uploading, our UI plays a polaroid animation: the photo slides out of a camera, develops from a blurry chemical wash into a sharp image, then drops onto a fanned stack. On a fast connection, the upload completes in maybe 200–400ms. The polaroid animation needs 1.3 seconds to play out fully.
 
-If you bind the animation trigger directly to the network event — "upload done → animate" — on a gigabit connection the upload fires so fast that the polaroid appears and disappears in a single frame. It looks like a rendering bug.
+If you bind the animation trigger directly to the network event — "upload done → animate" — on a gigabit connection the polaroid appears and disappears in a single frame. It looks like a rendering bug. The user sees nothing. The "camera" metaphor collapses.
 
-The fix is to decouple the visual state from the network state. They have different timelines and different audiences. The network doesn't care about 1.3 seconds. The user does.
+A simple progress bar would have avoided this problem entirely. So why build the polaroid animation at all?
 
-In `useTripMediaUpload.ts`, we run two concurrent loops:
+Because the animation isn't decoration. It's a contract with the user.
+
+When someone drops 15 photos from a trip to Thailand, they're not thinking about network concurrency or signed URLs. They're thinking about those memories. A progress bar says "your files are transferring." A polaroid sliding out of a camera and slowly developing says "your photos are becoming part of your story." That's a completely different feeling — and it's worth engineering correctly.
+
+But building it correctly means confronting a real problem: **the network has no opinion about how long things should feel to a human being**. On a fast connection, an upload that takes 200ms is "done." To a person watching an animation, 200ms is invisible. The UI has to enforce its own minimum pace, independent of network speed.
+
+### Two loops, two clocks
+
+The solution is to decouple the visual state from the network state entirely. In `useTripMediaUpload.ts`, we launch two concurrent loops:
 
 ```ts
 const networkUploadPromise = processNetworkUploads(tasks, resultMap, callbacks);
@@ -240,9 +249,50 @@ const visualLoopPromise = runPolaroidAnimationLoop(count, resultMap, () => netwo
 await Promise.all([networkUploadPromise, visualLoopPromise]);
 ```
 
-The network loop uploads as fast as it can. The visual loop runs on its own clock — it checks the result map to see which photos have finished, but it enforces a minimum display time for each polaroid regardless of how quickly the upload actually completed. We wait for *both* loops to finish before declaring the upload session complete.
+The network loop (`processNetworkUploads`) uploads as fast as it can. It writes results into a shared `Map` — `networkUploadResultsByIndex` — and moves on. It has no awareness of animations, timers, or human perception.
+
+The visual loop (`runPolaroidAnimationLoop`) runs on its own clock. It picks up photos from the queue one at a time, transitions each through `queued → developing → developed → stacked`, and checks the results Map to know whether each upload succeeded or failed. But it doesn't just check and move on — it enforces a minimum time each polaroid must be visible before it drops onto the stack.
+
+```ts
+const developingStartedAt = Date.now();
+
+// Wait until THIS specific file has finished its network upload
+while (!networkUploadResultsByIndex.has(queuedIndex)) {
+  await delayThreadFor(50);
+}
+
+// Smart visual gate: ensure the polaroid has been visible long enough
+const elapsedDevelopingTime = Date.now() - developingStartedAt;
+const minimumDevelopingDurationMs = POLAROID_DEVELOPING_DURATION_MS * currentDurationMultiplier;
+
+if (elapsedDevelopingTime < minimumDevelopingDurationMs) {
+  await delayThreadFor(minimumDevelopingDurationMs - elapsedDevelopingTime);
+}
+```
+
+The `developingStartedAt` timestamp is captured *before* the loop starts waiting on the network result. This means if the upload completes halfway through the animation, the elapsed time already counts toward the 1.3 second minimum. The gate only adds the *remaining* difference — not a fresh 1.3 seconds on top. If the network takes longer than 1.3 seconds, the gate adds nothing at all.
 
 The user's internet speed is no longer allowed to dictate the pacing of the UI. The UI has its own schedule.
+
+### What happens when the network is too fast
+
+There's one more detail worth knowing: the visual loop has two speeds, and it switches between them automatically.
+
+```ts
+const currentDurationMultiplier = hasAllNetworkUploadsFinished()
+  ? FAST_DEVELOPING_DURATION_MULTIPLIER   // 0.1×
+  : NORMAL_DEVELOPING_DURATION_MULTIPLIER // 1.0×
+```
+
+If all network uploads have already completed by the time the visual loop starts processing them — say the user is on gigabit and all 8 photos landed in R2 before the animation queue even began — the loop shifts to `0.1×` speed. The GSAP ejection and development animations play 10× faster, draining the backlog without making the user sit through a full 1.3 seconds × 8 photos of artificial waiting. The 1.3 second minimum still applies per photo, but the animations themselves accelerate so the experience feels responsive rather than stalled.
+
+This is a small thing in the code — one ternary. But it represents a real design principle: **enforcing a floor on visibility is not the same as enforcing a ceiling on speed.** You're protecting the user from things disappearing too fast, not punishing them for having a fast connection.
+
+### The broader lesson
+
+This decoupling pattern generalizes. Any time you have a background process and a foreground animation tied to its result, you're dealing with two timelines that happen to intersect at one point — the completion event. The naive approach fuses them at that point. The correct approach lets them run independently, with a deliberate gate at the intersection that reconciles the two clocks on *human* terms.
+
+The `Promise.all([networkUploadPromise, visualLoopPromise])` at the top of `useTripMediaUpload` is that gate. We wait for both loops to finish before declaring the upload session complete. The session isn't done when the last byte lands in R2. It's done when the last polaroid drops onto the stack and the user can see it.
 
 ---
 
@@ -252,7 +302,18 @@ There's one more failure mode worth knowing about, even though it's invisible wh
 
 The upload pipeline emits progress events constantly — 12%, 14%, 17% — as bytes move across the wire. Three concurrent uploads means potentially hundreds of progress events per second flowing into the component.
 
-The tempting code is:
+Before those events touch React at all, they go through a translation layer: the **100-point pipeline system** in `uploadProgressMath.ts`. Rather than tracking raw network bytes per photo and averaging them, every photo is worth exactly 100 points across its entire pipeline journey, with fixed milestones baked in:
+
+```
+[0  → 15  points] : EXIF extraction complete
+[15 → 30  points] : Compression complete
+[30 → 95  points] : Network bytes in flight (mapped from XHR upload percent)
+[95 → 100 points] : Server DB confirmation received
+```
+
+Batch progress is then `sum of all points / (totalPhotos × 100)`. This means the progress bar reflects *actual pipeline work done* — extraction and compression contribute meaningful movement before a single byte hits the wire, and the final DB confirmation gives a satisfying nudge to 100%. It never stalls at 99% waiting for a server roundtrip.
+
+But even with this translation layer, the events are still arriving fast. And here's the subtle trap: the tempting code is:
 
 ```ts
 onProgress: (percent) => setProgress(percent)
@@ -262,11 +323,21 @@ This calls `setState` on every event. At the V8 engine level, mutating React sta
 
 The fix is to bypass the React scheduler entirely during high-frequency events.
 
-Instead of state, we use **direct Heap references via `useRef`**. A mutable ref is simply a stable reference pointing to a single mutable object on the V8 Heap. Mutating a ref (e.g., updating a `Map` stored inside it) is a synchronous pointer write in memory. It schedules zero tasks, allocates no virtual nodes, and is invisible to the React reconciler.
+Instead of state, we use **direct Heap references via `useRef`**. A mutable ref is simply a stable reference pointing to a single mutable object on the V8 Heap. Mutating a ref (updating the points `Map` stored inside it) is a synchronous pointer write in memory — it schedules zero tasks, allocates no virtual nodes, and is invisible to the React reconciler.
 
-We accumulate all high-frequency network events into this silent Heap map. Then, we use a single throttled interval (`setInterval`) running a few times per second to read the accumulated value and push a single aggregated percentage into `useState`.
+```ts
+// Silent accumulation — React never sees this
+progressPointsByPhotoIdRef.current.set(trackingId, points);
 
-The network events are still coming in at full frequency. React just doesn't see them. It only sees the smoothed result, allowing the V8 engine to keep the animation rendering loop buttery smooth.
+// Single throttled read, a few times per second
+const nextProgressPercentage = calculateBatchProgress(
+  progressPointsByPhotoIdRef.current,
+  totalPhotosToProcess
+);
+setOverallUploadProgressPercentage(nextProgressPercentage);
+```
+
+The network events still arrive at full frequency. React sees only the smoothed result, a few times per second. The V8 engine keeps the animation rendering loop buttery smooth because it isn't spending every tick on scheduler overhead and garbage collection.
 
 ---
 
@@ -286,4 +357,4 @@ Each decision is simple in isolation. The architecture is just what you end up w
 
 That's the part that took the most time: not figuring out that workers exist, or that semaphores exist. It was figuring out the right order to reach for them, and the right boundary between each one.
 
-If you're building something similar — any kind of batch media processing pipeline in the browser — the constraints you'll hit are the same ones. The exact numbers (3 concurrent slots, 1.3 second minimum animation time) are tuned to my use case. The shape of the solution generalizes.
+If you're building something similar — any kind of batch media processing pipeline in the browser — the constraints you'll hit are the same ones. The exact numbers (3 concurrent slots, 1.3 second minimum animation time) are tuned to this use case. The shape of the solution generalizes.
