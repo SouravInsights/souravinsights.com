@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight, Maximize2, Minimize2 } from 'lucide-react';
 
 interface VideoPlayerProps {
   src?: string;
@@ -38,6 +38,7 @@ export default function VideoPlayer({
   const [progress, setProgress] = useState(0);
 
   const [isScrubbing, setIsScrubbing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const wasPlayingBeforeScrollOut = useRef(false);
   const wasPlayingRef = useRef(false);
   const hasInteractedRef = useRef(false);
@@ -265,7 +266,7 @@ export default function VideoPlayer({
   return (
     <div className="my-10 flex flex-col items-center w-full">
       <div 
-        className="w-full relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm group focus-visible:border-gray-400 dark:focus-visible:border-gray-500 focus-visible:ring-1 focus-visible:ring-gray-400/20 dark:focus-visible:ring-gray-500/20 outline-none transition-all duration-200"
+        className={`w-full relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm group focus-visible:border-gray-400 dark:focus-visible:border-gray-500 focus-visible:ring-1 focus-visible:ring-gray-400/20 dark:focus-visible:ring-gray-500/20 outline-none transition-all duration-300 ${isExpanded ? 'max-w-full' : 'max-w-3xl'}`}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         onKeyDown={handleKeyDown}
@@ -413,13 +414,29 @@ export default function VideoPlayer({
               />
             </div>
 
-            <button 
-              onClick={handleReplay} 
-              className="flex items-center justify-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors focus:outline-none"
-              aria-label="Replay"
-            >
-              <RotateCcw size={16} />
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Size Toggle Button (Only on sm screens and up) */}
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)} 
+                className="hidden sm:flex items-center justify-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors focus:outline-none"
+                aria-label={isExpanded ? "Collapse video player size" : "Expand video player size"}
+                title={isExpanded ? "Collapse player size" : "Expand player size"}
+              >
+                {isExpanded ? (
+                  <Minimize2 size={16} />
+                ) : (
+                  <Maximize2 size={16} />
+                )}
+              </button>
+
+              <button 
+                onClick={handleReplay} 
+                className="flex items-center justify-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors focus:outline-none"
+                aria-label="Replay"
+              >
+                <RotateCcw size={16} />
+              </button>
+            </div>
           </div>
         )}
       </div>
