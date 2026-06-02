@@ -384,7 +384,7 @@ export default function HeicBenchmark() {
             <br/>
             <span className="opacity-80 inline-block mt-1">
               (Relax, your photos never leave your device. Everything happens locally in your browser. 
-              You don't have trust me. <a href="https://github.com/SouravInsights/souravinsights.com/tree/main/src/app/blog/components/HeicBenchmark.tsx" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-900 dark:hover:text-gray-200">Peek at the source code</a>.)
+              You don&apos;t have to trust me. <a href="https://github.com/SouravInsights/souravinsights.com/tree/main/src/app/blog/components/HeicBenchmark.tsx" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-900 dark:hover:text-gray-200">Peek at the source code</a>.)
             </span>
           </p>
         </div>
