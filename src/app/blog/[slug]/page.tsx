@@ -12,9 +12,8 @@ import HtmlNestingVisualizer from "../components/HtmlNestingVisualizer";
 import DomTreeAnimator from "../components/DomTreeAnimator";
 import VideoPlayer from "../components/VideoPlayer";
 import ConcurrencyVisualizer from "../components/ConcurrencyVisualizer";
-import SemaphoreVisualizer from "../components/SemaphoreVisualizer";
-import WorkerOffloadDemo from "../components/WorkerOffloadDemo";
 import RenderThrashingDemo from "../components/RenderThrashingDemo";
+import SemaphoreVisualizer from "../components/SemaphoreVisualizer";
 
 const Playground = dynamic(() => import("../components/Playground"), {
   ssr: false,
@@ -27,6 +26,13 @@ const HeicBenchmark = dynamic(() => import("../components/HeicBenchmark"), {
   ssr: false,
   loading: () => (
     <div className="my-8 h-[200px] w-full rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse border border-gray-200 dark:border-gray-700" />
+  ),
+});
+
+const SemaphoreBenchmark = dynamic(() => import("../components/SemaphoreBenchmark"), {
+  ssr: false,
+  loading: () => (
+    <div className="my-8 h-[300px] w-full rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse border border-gray-200 dark:border-gray-700" />
   ),
 });
 
@@ -79,7 +85,7 @@ export default function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, ConcurrencyVisualizer, SemaphoreVisualizer, WorkerOffloadDemo, RenderThrashingDemo, ArchitectureFlowVisualizer, HeicBenchmark }}
+      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, ConcurrencyVisualizer, RenderThrashingDemo, ArchitectureFlowVisualizer, HeicBenchmark, SemaphoreBenchmark, SemaphoreVisualizer }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],

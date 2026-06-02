@@ -84,7 +84,9 @@ To survive the hostile environment of the browser network stack, we must control
 
 We set our magic number to `3`. At any given moment, exactly three photos are allowed to acquire a network slot and begin uploading.
 
-{/* VISUALIZER PLACEHOLDER: Semaphore Logic */}
+<SemaphoreBenchmark />
+
+<SemaphoreVisualizer />
 
 ```typescript
 const MAX_CONCURRENT_UPLOADS = 3;
