@@ -8,18 +8,18 @@ readingTime: 18 min read
 
 <VideoPlayer
   src="/blog/architecting-the-trip-media-library/media-upload-demo-high.mp4"
-  caption="BeenThere's media upload flow — polaroids developing as photos upload in the background"
+  caption="BeenThere's media upload flow - polaroids developing as photos upload in the background"
 />
 
 I've built photo uploaders before. You wire up an `<input type="file" />`, call `fetch`, show a progress bar. It's one of those features that feels solved. Documented to death. Boring, even.
 
-Then I tried to build one that had to handle 15–20 high-resolution HEIC photos from an iPhone, process them locally, upload them to edge storage, and do all of it while a skeuomorphic "polaroid camera" UI animates smoothly in the foreground — without freezing, crashing, or flickering on a mid-range phone.
+Then I tried to build one that had to handle 15–20 high-resolution HEIC photos from an iPhone, process them locally, upload them to edge storage, and do all of it while a skeuomorphic "polaroid camera" UI animates smoothly in the foreground - without freezing, crashing, or flickering on a mid-range phone.
 
 It stopped being boring very quickly.
 
-This is a write-up of what I built for **BeenThere**, a travel storytelling platform where users compose trip pages with their own photos. The media library that powers it went through four distinct architectural decisions, each one forced by a failure mode I didn't anticipate. I'll explain each decision from first principles — not as a list of clever tricks, but as the sequence of problems I hit and why the solution I reached is the right shape for the problem.
+This is a write-up of what I built for **BeenThere**, a travel storytelling platform where users compose trip pages with their own photos. The media library that powers it went through four distinct architectural decisions, each one forced by a failure mode I didn't anticipate. I'll explain each decision from first principles - not as a list of clever tricks, but as the sequence of problems I hit and why the solution I reached is the right shape for the problem.
 
-Before we go deep, here's the complete picture. This diagram shows all four phases your photos travel through — from the moment you drop them into the browser to the moment a viewer sees them on your published trip page. Step through it to build a mental map before we unpack the theory.
+Before we go deep, here's the complete picture. This diagram shows all four phases your photos travel through - from the moment you drop them into the browser to the moment a viewer sees them on your published trip page. Step through it to build a mental map before we unpack the theory.
 
 <ArchitectureFlowVisualizer />
 
@@ -31,17 +31,17 @@ Let's start at the beginning, because most explanations of web workers skip the 
 
 At any given moment, the JavaScript engine divides its work between two structures: the <ConceptTip id="call-stack">Call Stack</ConceptTip> and the <ConceptTip id="heap-memory">Heap Memory</ConceptTip>.
 
-The <ConceptTip id="call-stack">Call Stack</ConceptTip> is single-threaded and executes functions sequentially — one execution frame at a time. The <ConceptTip id="heap-memory">Heap Memory</ConceptTip> is a large, unstructured memory region where the engine stores objects, variables, and massive binary allocations (like our Apple HEIC `File` or `Blob` buffers).
+The <ConceptTip id="call-stack">Call Stack</ConceptTip> is single-threaded and executes functions sequentially - one execution frame at a time. The <ConceptTip id="heap-memory">Heap Memory</ConceptTip> is a large, unstructured memory region where the engine stores objects, variables, and massive binary allocations (like our Apple HEIC `File` or `Blob` buffers).
 
-JavaScript — all of it, including your React components, your event listeners, your `async/await` functions — runs on a single thread. There is one Call Stack. One function runs at a time. Always.
+JavaScript - all of it, including your React components, your event listeners, your `async/await` functions - runs on a single thread. There is one Call Stack. One function runs at a time. Always.
 
-This is actually fine for most things. The <ConceptTip id="event-loop">Event Loop</ConceptTip> is clever. When you `await` a network request, JavaScript doesn't sit there waiting — it parks that task and moves on to other work, picking it back up when the response arrives. That's why your UI stays responsive during a slow API call. The thread isn't blocked; it's just waiting on I/O, which is handled outside the JS engine by the browser's networking layer.
+This is actually fine for most things. The <ConceptTip id="event-loop">Event Loop</ConceptTip> is clever. When you `await` a network request, JavaScript doesn't sit there waiting - it parks that task and moves on to other work, picking it back up when the response arrives. That's why your UI stays responsive during a slow API call. The thread isn't blocked; it's just waiting on I/O, which is handled outside the JS engine by the browser's networking layer.
 
-The problem is CPU work. Parsing a binary file, running a decoder algorithm, crunching pixels — none of that can be parked and resumed. It has to run to completion, continuously, on the Call Stack. And while it's running, nothing else can.
+The problem is CPU work. Parsing a binary file, running a decoder algorithm, crunching pixels - none of that can be parked and resumed. It has to run to completion, continuously, on the Call Stack. And while it's running, nothing else can.
 
 When the Call Stack is occupied, the browser is starved of resources. Specifically, the browser's UI paint updates are scheduled as <ConceptTip id="macrotasks">Macrotasks</ConceptTip> on the <ConceptTip id="event-loop">Event Loop</ConceptTip>. If a heavy synchronous function is hogging the Call Stack, the Event Loop is locked. It cannot yield to the browser's rendering task queue, which means it cannot paint a new frame, respond to a user click, or move a CSS animation forward. The whole page freezes until the stack clears.
 
-This is exactly what happens when you try to process HEIC files on the main thread. HEIC is Apple's image format, and most browsers can't natively render it. You have to decode it yourself — run a JavaScript library that reads the binary, decodes the codec, and spits out a JPEG. On an 8MB file, that takes somewhere between 1–4 seconds of pure CPU time.
+This is exactly what happens when you try to process HEIC files on the main thread. HEIC is Apple's image format, and most browsers can't natively render it. You have to decode it yourself - run a JavaScript library that reads the binary, decodes the codec, and spits out a JPEG. On an 8MB file, that takes somewhere between 1–4 seconds of pure CPU time.
 
 Try doing that for 15 photos and your UI doesn't freeze for a moment. It freezes for half a minute.
 
@@ -49,7 +49,7 @@ The benchmark below runs the real pipeline. It uses actual `exifr` parsing and r
 
 <HeicBenchmark />
 
-The spinner is there for a reason. When you run on the main thread, watch it stop. That's not a slow computer — that's the browser telling you it literally cannot spare a single millisecond to rotate an element while the call stack is occupied. When you run with workers, the spinner never stops. The processing is happening in a completely separate OS thread, on a separate CPU core, in a separate memory space. The main thread never feels it.
+The spinner is there for a reason. When you run on the main thread, watch it stop. That's not a slow computer - that's the browser telling you it literally cannot spare a single millisecond to rotate an element while the call stack is occupied. When you run with workers, the spinner never stops. The processing is happening in a completely separate OS thread, on a separate CPU core, in a separate memory space. The main thread never feels it.
 
 Your numbers will vary by device. On a high-end desktop the gap feels significant. On a mid-range phone it's the difference between "usable" and "tab crash."
 
@@ -64,13 +64,13 @@ A **Web Worker** is a background thread the browser gives you. When you spin one
 The constraint worth understanding: workers do not share memory with the main thread. This boundary dictates how data is sent:
 
 - **The <ConceptTip id="structured-cloning">Structured Clone Algorithm</ConceptTip>:** By default, calling `postMessage(file)` triggers a deep clone. The JavaScript engine serializes the file object, sends the serialized bytes across the thread boundary, and parses it into a new object on the worker's Heap. For a brief moment, you are **doubling the memory footprint** of that file in RAM.
-- **<ConceptTip id="transferables">Transferable Objects</ConceptTip>:** To avoid this cloning overhead, JavaScript allows transferring ownership of certain objects (like `ArrayBuffer`, `MessagePort`, or `OffscreenCanvas`). Instead of copying the bytes, the engine simply detaches the memory pointer from the main thread's Heap and attaches it to the worker's Heap. A zero-copy, instantaneous operation — but once transferred, the object becomes completely unusable on the sending thread.
+- **<ConceptTip id="transferables">Transferable Objects</ConceptTip>:** To avoid this cloning overhead, JavaScript allows transferring ownership of certain objects (like `ArrayBuffer`, `MessagePort`, or `OffscreenCanvas`). Instead of copying the bytes, the engine simply detaches the memory pointer from the main thread's Heap and attaches it to the worker's Heap. A zero-copy, instantaneous operation - but once transferred, the object becomes completely unusable on the sending thread.
 
 Our pipeline needs two separate worker trips.
 
-**The extraction worker** (`extract.worker.ts`) receives the raw HEIC files. It runs `heic2any` to convert them to browser-renderable JPEGs, and `exifr` to pull the EXIF metadata — GPS coordinates, capture date, camera model. It posts back a standard JPEG that the main thread can immediately show as a preview — via a temporary <ConceptTip id="object-url">Object URL</ConceptTip>, plus a metadata object. This is the step that unlocks the "polaroid developing" animation: as soon as this worker returns, the UI has something to show.
+**The extraction worker** (`extract.worker.ts`) receives the raw HEIC files. It runs `heic2any` to convert them to browser-renderable JPEGs, and `exifr` to pull the EXIF metadata - GPS coordinates, capture date, camera model. It posts back a standard JPEG that the main thread can immediately show as a preview - via a temporary <ConceptTip id="object-url">Object URL</ConceptTip>, plus a metadata object. This is the step that unlocks the "polaroid developing" animation: as soon as this worker returns, the UI has something to show.
 
-**The compression worker** (`compress.worker.ts`) receives the renderable JPEGs. It runs them through <ConceptTip id="offscreen-canvas">OffscreenCanvas</ConceptTip> to resize down to 1920×1920, then hands them to `@jsquash/jpeg` — a MozJPEG encoder compiled to WebAssembly — for real compression. It also generates a <ConceptTip id="blurhash">blurhash</ConceptTip>, a tiny encoded string that represents the image's blurred color palette. That string gets stored in the database and used to render an instant placeholder before the actual image loads. This one step is why trip pages feel smooth for viewers even on slow connections.
+**The compression worker** (`compress.worker.ts`) receives the renderable JPEGs. It runs them through <ConceptTip id="offscreen-canvas">OffscreenCanvas</ConceptTip> to resize down to 1920×1920, then hands them to `@jsquash/jpeg` - a MozJPEG encoder compiled to WebAssembly - for real compression. It also generates a <ConceptTip id="blurhash">blurhash</ConceptTip>, a tiny encoded string that represents the image's blurred color palette. That string gets stored in the database and used to render an instant placeholder before the actual image loads. This one step is why trip pages feel smooth for viewers even on slow connections.
 
 Neither of these things could happen on the main thread without making the UI unusable. Moving them to workers makes them invisible.
 
@@ -86,9 +86,9 @@ photos.forEach(photo => fetch(uploadUrl, { body: photo }))
 
 To understand why this breaks when you have 15 or 20 photos, we have to start with **what actually happens when you call `fetch()`**.
 
-When your code calls `fetch()`, the browser opens a network connection to a server and starts sending data through it. That connection costs real resources — memory, an open socket, and bandwidth.
+When your code calls `fetch()`, the browser opens a network connection to a server and starts sending data through it. That connection costs real resources - memory, an open socket, and bandwidth.
 
-Now imagine you drop 8 photos and your code does that `forEach`. You just told the browser to open 8 connections simultaneously. The browser looks at that and says: *I'm not doing that.* Browsers have a hard limit — around 6 connections to the same domain at once. So it opens 6, and quietly holds the other 2 back internally.
+Now imagine you drop 8 photos and your code does that `forEach`. You just told the browser to open 8 connections simultaneously. The browser looks at that and says: *I'm not doing that.* Browsers have a hard limit - around 6 connections to the same domain at once. So it opens 6, and quietly holds the other 2 back internally.
 
 That internal holding area? That's the browser's queue. You didn't create it. You can't see it. You can't touch it.
 
@@ -96,7 +96,7 @@ Leaving control to the browser's hidden queue causes two major issues:
 
 **1. Memory.** Each upload means the browser holds that photo's binary buffer in RAM while it sends it. Even after compression, 6 photos × 3MB = ~18MB (and 20 uncompressed photos × 8MB = 160MB) sitting in active memory simultaneously. On a desktop, no problem. On a mid-range phone, the mobile OS sees that sudden memory spike and ruthlessly kills your tab without warning.
 
-**2. You lost control.** This is the more critical one. When one of those 6 uploads fails, what happens? Nothing. The browser's internal queue has no idea what "failure" means for your app. It doesn't retry, and it doesn't notify the next waiting photo to go. You have no handle on any of it. While those connections are choked, all other requests in your app — like saving draft text — are blocked behind the massive media queue.
+**2. You lost control.** This is the more critical one. When one of those 6 uploads fails, what happens? Nothing. The browser's internal queue has no idea what "failure" means for your app. It doesn't retry, and it doesn't notify the next waiting photo to go. You have no handle on any of it. While those connections are choked, all other requests in your app - like saving draft text - are blocked behind the massive media queue.
 
 Both problems have the same root cause: you handed control to the browser. The fix is to take it back.
 
@@ -104,9 +104,9 @@ Both problems have the same root cause: you handed control to the browser. The f
 
 ## Owning the queue
 
-The tool for this is called a **Semaphore**. It's a classic computer science concept — a mechanism that limits how many tasks can access a shared resource at once. Here's the idea in plain terms before looking at any code:
+The tool for this is called a **Semaphore**. It's a classic computer science concept - a mechanism that limits how many tasks can access a shared resource at once. Here's the idea in plain terms before looking at any code:
 
-Imagine a parking lot with exactly 3 spaces. When you arrive, you check if a space is free. If yes, you take it. If no, you wait. When someone leaves, they don't just drive away — they hand their space key to the next person in line. The lot never has more than 3 cars in it. People waiting in line are not circling the lot or blocking traffic. They're just parked around the corner, dormant, until a key arrives.
+Imagine a parking lot with exactly 3 spaces. When you arrive, you check if a space is free. If yes, you take it. If no, you wait. When someone leaves, they don't just drive away - they hand their space key to the next person in line. The lot never has more than 3 cars in it. People waiting in line are not circling the lot or blocking traffic. They're just parked around the corner, dormant, until a key arrives.
 
 In our code, the "parking spaces" are upload slots, and the "key" is a `release` function. To manage this parking lot logic in JavaScript, our upload pipeline starts with a simple counter and an array:
 
@@ -117,7 +117,7 @@ const queue = [];
 
 That is the entire semaphore: a number and a list.
 
-When a photo wants to start uploading, it calls `acquireUploadSlot()`. That function checks: is `activeUploads` less than 3? If yes, increment the counter and go. If no, stop and wait — push the waiting task onto `queue`.
+When a photo wants to start uploading, it calls `acquireUploadSlot()`. That function checks: is `activeUploads` less than 3? If yes, increment the counter and go. If no, stop and wait - push the waiting task onto `queue`.
 
 Here is the implementation:
 
@@ -162,17 +162,17 @@ function drainQueue() {
 
 To understand why this pauses execution, we have to look at what a <ConceptTip id="promises">Promise</ConceptTip> actually is in memory. When our code calls `new Promise((resolve) => { queue.push(resolve); })`, the V8 engine allocates a Promise object on the Heap with an internal state of `[[PromiseState]]: "pending"`.
 
-Normally, a Promise executes an async operation immediately and resolves itself. Here, we do something different: we capture the Promise's `resolve` function and push it onto our `queue` array. This is the <ConceptTip id="deferred-promise">Deferred Promise</ConceptTip> pattern — by holding onto `resolve` ourselves, we keep the Promise permanently `pending` in the Heap. The calling code that runs `await acquireUploadSlot()` is forced to pause execution, suspending its Call Stack frame indefinitely.
+Normally, a Promise executes an async operation immediately and resolves itself. Here, we do something different: we capture the Promise's `resolve` function and push it onto our `queue` array. This is the <ConceptTip id="deferred-promise">Deferred Promise</ConceptTip> pattern - by holding onto `resolve` ourselves, we keep the Promise permanently `pending` in the Heap. The calling code that runs `await acquireUploadSlot()` is forced to pause execution, suspending its Call Stack frame indefinitely.
 
 ### What is the release function?
 
-`acquireUploadSlot()` returns a `release` function. The photo holds onto it. When the upload finishes — success *or* failure — it calls `release()`.
+`acquireUploadSlot()` returns a `release` function. The photo holds onto it. When the upload finishes - success *or* failure - it calls `release()`.
 
 `release()` does two things: decrements `activeUploads` by 1, then looks at `queue` and resolves the next waiting Promise.
 
 That next photo was paused at `await acquireUploadSlot()`. Now it wakes up and starts uploading.
 
-### The failure case — this is the key part
+### The failure case - this is the key part
 
 In our React upload hook, look at how `release()` is called:
 
@@ -188,7 +188,7 @@ try {
 
 The `finally` block is the critical detail. It runs no matter what. Upload succeeded? `releaseSlot()` runs. Upload threw an error? `releaseSlot()` still runs. The slot is always returned. The queue always drains.
 
-In the naive approach, there is no equivalent of this. When a `fetch()` fails, that's it — the browser's internal slot just disappears quietly. Nothing triggers the next photo to go.
+In the naive approach, there is no equivalent of this. When a `fetch()` fails, that's it - the browser's internal slot just disappears quietly. Nothing triggers the next photo to go.
 
 ### Draining the Queue: Macrotasks vs. Microtasks
 
@@ -211,30 +211,30 @@ To see this difference in action, click "Run both" on the comparison below, then
 
 Notice how the mechanics of our code map directly to the visualizer:
 
-- **The blue pills** in the semaphore queue are photos sitting at `await acquireUploadSlot()` — paused, waiting.
+- **The blue pills** in the semaphore queue are photos sitting at `await acquireUploadSlot()` - paused, waiting.
 - **When a slot lights up**, that photo's Promise has resolved, and it is now actively uploading.
-- **When you inject the failure**, watch the log say `finally {} calls releaseSlot()` — that's the exact line in our `finally` block firing.
-- **Immediately after**, the next blue pill disappears from the queue and a slot lights up — that's the next Promise waking up.
+- **When you inject the failure**, watch the log say `finally {} calls releaseSlot()` - that's the exact line in our `finally` block firing.
+- **Immediately after**, the next blue pill disappears from the queue and a slot lights up - that's the next Promise waking up.
 
 On the naive side, the failure just makes a slot go dark. Nothing wakes up. The queue the browser was managing silently had no mechanism to handle it.
 
-This is what "owning the queue" means in practice. It's not about the number 3 versus 6. It's about the failure path being structurally guaranteed — by the shape of the code — rather than something you hope works.
+This is what "owning the queue" means in practice. It's not about the number 3 versus 6. It's about the failure path being structurally guaranteed - by the shape of the code - rather than something you hope works.
 
 ---
 
 ## The UI has its own timeline
 
-With workers handling CPU work and the semaphore handling network concurrency, the backend pipeline was solid. Then we hit a problem I didn't expect at all — one that has nothing to do with networking or threads. It's a problem about *time*, and about who gets to decide how long something takes.
+With workers handling CPU work and the semaphore handling network concurrency, the backend pipeline was solid. Then we hit a problem I didn't expect at all - one that has nothing to do with networking or threads. It's a problem about *time*, and about who gets to decide how long something takes.
 
 When a photo finishes uploading, our UI plays a polaroid animation: the photo slides out of a camera, develops from a blurry chemical wash into a sharp image, then drops onto a fanned stack. On a fast connection, the upload completes in maybe 200–400ms. The polaroid animation needs 1.3 seconds to play out fully.
 
-If you bind the animation trigger directly to the network event — "upload done → animate" — on a gigabit connection the polaroid appears and disappears in a single frame. It looks like a rendering bug. The user sees nothing. The "camera" metaphor collapses.
+If you bind the animation trigger directly to the network event - "upload done → animate" - on a gigabit connection the polaroid appears and disappears in a single frame. It looks like a rendering bug. The user sees nothing. The "camera" metaphor collapses.
 
 A simple progress bar would have avoided this problem entirely. So why build the polaroid animation at all?
 
 Because the animation isn't decoration. It's a contract with the user.
 
-When someone drops 15 photos from a trip to Thailand, they're not thinking about network concurrency or signed URLs. They're thinking about those memories. A progress bar says "your files are transferring." A polaroid sliding out of a camera and slowly developing says "your photos are becoming part of your story." That's a completely different feeling — and it's worth engineering correctly.
+When someone drops 15 photos from a trip to Thailand, they're not thinking about network concurrency or signed URLs. They're thinking about those memories. A progress bar says "your files are transferring." A polaroid sliding out of a camera and slowly developing says "your photos are becoming part of your story." That's a completely different feeling - and it's worth engineering correctly.
 
 But building it correctly means confronting a real problem: **the network has no opinion about how long things should feel to a human being**. On a fast connection, an upload that takes 200ms is "done." To a person watching an animation, 200ms is invisible. The UI has to enforce its own minimum pace, independent of network speed.
 
@@ -249,9 +249,9 @@ const visualLoopPromise = runPolaroidAnimationLoop(count, resultMap, () => netwo
 await Promise.all([networkUploadPromise, visualLoopPromise]);
 ```
 
-The network loop (`processNetworkUploads`) uploads as fast as it can. It writes results into a shared `Map` — `networkUploadResultsByIndex` — and moves on. It has no awareness of animations, timers, or human perception.
+The network loop (`processNetworkUploads`) uploads as fast as it can. It writes results into a shared `Map` - `networkUploadResultsByIndex` - and moves on. It has no awareness of animations, timers, or human perception.
 
-The visual loop (`runPolaroidAnimationLoop`) runs on its own clock. It picks up photos from the queue one at a time, transitions each through `queued → developing → developed → stacked`, and checks the results Map to know whether each upload succeeded or failed. But it doesn't just check and move on — it enforces a minimum time each polaroid must be visible before it drops onto the stack.
+The visual loop (`runPolaroidAnimationLoop`) runs on its own clock. It picks up photos from the queue one at a time, transitions each through `queued → developing → developed → stacked`, and checks the results Map to know whether each upload succeeded or failed. But it doesn't just check and move on - it enforces a minimum time each polaroid must be visible before it drops onto the stack.
 
 ```ts
 const developingStartedAt = Date.now();
@@ -270,7 +270,7 @@ if (elapsedDevelopingTime < minimumDevelopingDurationMs) {
 }
 ```
 
-The `developingStartedAt` timestamp is captured *before* the loop starts waiting on the network result. This means if the upload completes halfway through the animation, the elapsed time already counts toward the 1.3 second minimum. The gate only adds the *remaining* difference — not a fresh 1.3 seconds on top. If the network takes longer than 1.3 seconds, the gate adds nothing at all.
+The `developingStartedAt` timestamp is captured *before* the loop starts waiting on the network result. This means if the upload completes halfway through the animation, the elapsed time already counts toward the 1.3 second minimum. The gate only adds the *remaining* difference - not a fresh 1.3 seconds on top. If the network takes longer than 1.3 seconds, the gate adds nothing at all.
 
 The user's internet speed is no longer allowed to dictate the pacing of the UI. The UI has its own schedule.
 
@@ -284,13 +284,13 @@ const currentDurationMultiplier = hasAllNetworkUploadsFinished()
   : NORMAL_DEVELOPING_DURATION_MULTIPLIER // 1.0×
 ```
 
-If all network uploads have already completed by the time the visual loop starts processing them — say the user is on gigabit and all 8 photos landed in R2 before the animation queue even began — the loop shifts to `0.1×` speed. The GSAP ejection and development animations play 10× faster, draining the backlog without making the user sit through a full 1.3 seconds × 8 photos of artificial waiting. The 1.3 second minimum still applies per photo, but the animations themselves accelerate so the experience feels responsive rather than stalled.
+If all network uploads have already completed by the time the visual loop starts processing them - say the user is on gigabit and all 8 photos landed in R2 before the animation queue even began - the loop shifts to `0.1×` speed. The GSAP ejection and development animations play 10× faster, draining the backlog without making the user sit through a full 1.3 seconds × 8 photos of artificial waiting. The 1.3 second minimum still applies per photo, but the animations themselves accelerate so the experience feels responsive rather than stalled.
 
-This is a small thing in the code — one ternary. But it represents a real design principle: **enforcing a floor on visibility is not the same as enforcing a ceiling on speed.** You're protecting the user from things disappearing too fast, not punishing them for having a fast connection.
+This is a small thing in the code - one ternary. But it represents a real design principle: **enforcing a floor on visibility is not the same as enforcing a ceiling on speed.** You're protecting the user from things disappearing too fast, not punishing them for having a fast connection.
 
 ### The broader lesson
 
-This decoupling pattern generalizes. Any time you have a background process and a foreground animation tied to its result, you're dealing with two timelines that happen to intersect at one point — the completion event. The naive approach fuses them at that point. The correct approach lets them run independently, with a deliberate gate at the intersection that reconciles the two clocks on *human* terms.
+This decoupling pattern generalizes. Any time you have a background process and a foreground animation tied to its result, you're dealing with two timelines that happen to intersect at one point - the completion event. The naive approach fuses them at that point. The correct approach lets them run independently, with a deliberate gate at the intersection that reconciles the two clocks on *human* terms.
 
 The `Promise.all([networkUploadPromise, visualLoopPromise])` at the top of `useTripMediaUpload` is that gate. We wait for both loops to finish before declaring the upload session complete. The session isn't done when the last byte lands in R2. It's done when the last polaroid drops onto the stack and the user can see it.
 
@@ -300,7 +300,7 @@ The `Promise.all([networkUploadPromise, visualLoopPromise])` at the top of `useT
 
 There's one more failure mode worth knowing about, even though it's invisible when it works correctly.
 
-The upload pipeline emits progress events constantly — 12%, 14%, 17% — as bytes move across the wire. Three concurrent uploads means potentially hundreds of progress events per second flowing into the component.
+The upload pipeline emits progress events constantly - 12%, 14%, 17% - as bytes move across the wire. Three concurrent uploads means potentially hundreds of progress events per second flowing into the component.
 
 Before those events touch React at all, they go through a translation layer: the **100-point pipeline system** in `uploadProgressMath.ts`. Rather than tracking raw network bytes per photo and averaging them, every photo is worth exactly 100 points across its entire pipeline journey, with fixed milestones baked in:
 
@@ -311,7 +311,7 @@ Before those events touch React at all, they go through a translation layer: the
 [95 → 100 points] : Server DB confirmation received
 ```
 
-Batch progress is then `sum of all points / (totalPhotos × 100)`. This means the progress bar reflects *actual pipeline work done* — extraction and compression contribute meaningful movement before a single byte hits the wire, and the final DB confirmation gives a satisfying nudge to 100%. It never stalls at 99% waiting for a server roundtrip.
+Batch progress is then `sum of all points / (totalPhotos × 100)`. This means the progress bar reflects *actual pipeline work done* - extraction and compression contribute meaningful movement before a single byte hits the wire, and the final DB confirmation gives a satisfying nudge to 100%. It never stalls at 99% waiting for a server roundtrip.
 
 But even with this translation layer, the events are still arriving fast. And here's the subtle trap: the tempting code is:
 
@@ -323,10 +323,10 @@ This calls `setState` on every event. At the V8 engine level, mutating React sta
 
 The fix is to bypass the React scheduler entirely during high-frequency events.
 
-Instead of state, we use **direct Heap references via `useRef`**. A mutable ref is simply a stable reference pointing to a single mutable object on the V8 Heap. Mutating a ref (updating the points `Map` stored inside it) is a synchronous pointer write in memory — it schedules zero tasks, allocates no virtual nodes, and is invisible to the React reconciler.
+Instead of state, we use **direct Heap references via `useRef`**. A mutable ref is simply a stable reference pointing to a single mutable object on the V8 Heap. Mutating a ref (updating the points `Map` stored inside it) is a synchronous pointer write in memory - it schedules zero tasks, allocates no virtual nodes, and is invisible to the React reconciler.
 
 ```ts
-// Silent accumulation — React never sees this
+// Silent accumulation - React never sees this
 progressPointsByPhotoIdRef.current.set(trackingId, points);
 
 // Single throttled read, a few times per second
@@ -357,4 +357,4 @@ Each decision is simple in isolation. The architecture is just what you end up w
 
 That's the part that took the most time: not figuring out that workers exist, or that semaphores exist. It was figuring out the right order to reach for them, and the right boundary between each one.
 
-If you're building something similar — any kind of batch media processing pipeline in the browser — the constraints you'll hit are the same ones. The exact numbers (3 concurrent slots, 1.3 second minimum animation time) are tuned to this use case. The shape of the solution generalizes.
+If you're building something similar - any kind of batch media processing pipeline in the browser - the constraints you'll hit are the same ones. The exact numbers (3 concurrent slots, 1.3 second minimum animation time) are tuned to this use case. The shape of the solution generalizes.
