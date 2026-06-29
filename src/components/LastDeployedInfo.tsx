@@ -96,16 +96,17 @@ export default function DeploymentStatus() {
     );
   }
 
-  if (!deploymentInfo) {
+  if (!deploymentInfo && !weatherInfo && !songInfo) {
     return null;
   }
 
   // Format the deployment date
-  const formattedDate = format(
-    new Date(deploymentInfo.createdAt),
-    "MMMM d, yyyy"
-  );
-  const formattedTime = format(new Date(deploymentInfo.createdAt), "h:mm a");
+  const formattedDate = deploymentInfo
+    ? format(new Date(deploymentInfo.createdAt), "MMMM d, yyyy")
+    : null;
+  const formattedTime = deploymentInfo
+    ? format(new Date(deploymentInfo.createdAt), "h:mm a")
+    : null;
 
   // Get the appropriate weather icon based on the description
   const getWeatherIcon = (description: string) => {
@@ -158,10 +159,14 @@ export default function DeploymentStatus() {
         <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-500 flex-shrink-0 mr-2" />
         <div className="flex flex-wrap">
           <span>
-            This site was last deployed on {formattedDate} at {formattedTime}
+            {deploymentInfo && (
+              <>
+                This site was last deployed on {formattedDate} at {formattedTime}
+              </>
+            )}
             {songInfo && (
               <>
-                {" while listening to "}
+                {deploymentInfo ? " while listening to " : "Currently listening to "}
                 <a
                   href={songInfo.url}
                   target="_blank"
@@ -175,7 +180,8 @@ export default function DeploymentStatus() {
             )}
             {weatherInfo && (
               <>
-                {songInfo ? "." : ""} The weather was{" "}
+                {deploymentInfo || songInfo ? ". " : ""}
+                {deploymentInfo ? "The weather was " : "The weather is "}
                 {getWeatherDescription(weatherInfo.description)}
                 {getWeatherIcon(weatherInfo.description)}
                 {" at "}

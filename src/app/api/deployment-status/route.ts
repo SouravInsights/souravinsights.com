@@ -8,35 +8,42 @@ export async function GET() {
     // Fetch the latest deployment from Vercel API
     const vercelToken = process.env.VERCEL_TOKEN;
     const vercelProjectId = process.env.VERCEL_PROJECT_ID;
-    if (!vercelToken || !vercelProjectId) {
-      throw new Error("Missing Vercel API configuration");
-    }
 
-    // the latest **production** deployment and disable fetch caching
-    const params = new URLSearchParams({
-      projectId: vercelProjectId,
-      limit: "1",
-      state: "READY",
-      target: "production",
-    });
-    const deploymentRes = await fetch(
-      `https://api.vercel.com/v6/deployments?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${vercelToken}` },
-        cache: "no-store",
+    let latest = null;
+    let deployedAtMs = null;
+
+    try {
+      if (!vercelToken || !vercelProjectId) {
+        console.warn("Missing Vercel API configuration");
+      } else {
+        // the latest **production** deployment and disable fetch caching
+        const params = new URLSearchParams({
+          projectId: vercelProjectId,
+          limit: "1",
+          state: "READY",
+          target: "production",
+        });
+        const deploymentRes = await fetch(
+          `https://api.vercel.com/v6/deployments?${params.toString()}`,
+          {
+            headers: { Authorization: `Bearer ${vercelToken}` },
+            cache: "no-store",
+          }
+        );
+
+        if (!deploymentRes.ok) {
+          console.error(`Failed to fetch deployment data from Vercel: ${deploymentRes.status}`);
+        } else {
+          const deploymentJson = await deploymentRes.json();
+          latest = deploymentJson.deployments?.[0];
+          
+          // Prefer the "ready" timestamp (when it went live), then fallback
+          deployedAtMs = latest?.ready ?? latest?.readyAt ?? latest?.created ?? null;
+        }
       }
-    );
-
-    if (!deploymentRes.ok) {
-      throw new Error("Failed to fetch deployment data from Vercel");
+    } catch (e) {
+      console.error("Error fetching Vercel deployment:", e);
     }
-
-    const deploymentJson = await deploymentRes.json();
-    const latest = deploymentJson.deployments?.[0];
-
-    // Prefer the "ready" timestamp (when it went live), then fallback
-    const deployedAtMs =
-      latest?.ready ?? latest?.readyAt ?? latest?.created ?? null;
 
     // Fetch weather data from WeatherAPI.com API (free tier)
     const weatherApiKey = process.env.WEATHERAPI_KEY;
