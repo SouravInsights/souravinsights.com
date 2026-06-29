@@ -54,7 +54,9 @@ export async function GET() {
     }
 
     if (!spotifyResponse.ok) {
-      throw new Error(`Spotify API error: ${spotifyResponse.status}`);
+      const errorText = await spotifyResponse.text();
+      console.error(`Spotify API error body:`, errorText);
+      throw new Error(`Spotify API error: ${spotifyResponse.status} - ${errorText}`);
     }
 
     const songData = await spotifyResponse.json();

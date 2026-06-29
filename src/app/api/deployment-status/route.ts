@@ -32,7 +32,8 @@ export async function GET() {
         );
 
         if (!deploymentRes.ok) {
-          console.error(`Failed to fetch deployment data from Vercel: ${deploymentRes.status}`);
+          const errorText = await deploymentRes.text();
+          console.error(`Failed to fetch deployment data from Vercel: ${deploymentRes.status}`, errorText);
         } else {
           const deploymentJson = await deploymentRes.json();
           latest = deploymentJson.deployments?.[0];
