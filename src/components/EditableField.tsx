@@ -40,9 +40,9 @@ export function EditableField({
       contentEditable
       suppressContentEditableWarning
       className={cn(
-        "outline-none transition-all border border-transparent rounded px-1 -mx-1",
-        "focus:border-white/20 focus:bg-white/5",
-        "hover:border-white/20 hover:bg-white/5",
+        "outline-none transition-all rounded-[4px] px-1 -mx-1",
+        "focus:bg-muted/80 focus:ring-1 focus:ring-border",
+        "hover:bg-muted/50 cursor-text",
         className
       )}
       onBlur={(e: React.FocusEvent<HTMLElement>) => {
