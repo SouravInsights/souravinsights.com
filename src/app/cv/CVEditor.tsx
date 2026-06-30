@@ -71,7 +71,7 @@ export function CVEditor({ initialData, isEditing, secretToLogin }: CVEditorProp
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans px-5 py-12 sm:py-20 selection:bg-primary/20">
+    <div className="min-h-screen bg-background text-foreground font-sans px-5 pb-12 pt-28 sm:pb-20 sm:pt-36 selection:bg-primary/20">
       
       {/* Floating Save Bar for Admin */}
       {isEditing && (
