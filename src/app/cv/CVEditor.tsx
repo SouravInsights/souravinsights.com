@@ -5,7 +5,7 @@ import { CVData } from "@/types/cv";
 import { EditableField } from "@/components/EditableField";
 import { saveCVData, loginAdmin } from "./actions";
 import { cn } from "@/lib/utils";
-import { Download, Check, Loader2, Edit2 } from "lucide-react";
+import { Download, Check, Loader2, Eye, Edit2 } from "lucide-react";
 
 interface CVEditorProps {
   initialData: CVData;
@@ -13,10 +13,14 @@ interface CVEditorProps {
   secretToLogin?: string;
 }
 
-export function CVEditor({ initialData, isEditing, secretToLogin }: CVEditorProps) {
+export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretToLogin }: CVEditorProps) {
   const [data, setData] = useState<CVData>(initialData);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  
+  // Derived state: we only show edit controls if they are authenticated AND not previewing
+  const isEditing = isUserAuthenticated && !isPreviewMode;
   
   // Track if initial mount happened so we don't auto-save the initial data immediately
   const isFirstRender = React.useRef(true);
@@ -98,8 +102,19 @@ export function CVEditor({ initialData, isEditing, secretToLogin }: CVEditorProp
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans px-5 pb-12 pt-28 sm:pb-20 sm:pt-36 selection:bg-primary/20">
+    <div className="min-h-screen bg-background text-foreground font-sans px-5 pb-12 pt-28 sm:pb-20 sm:pt-36 selection:bg-primary/20 relative">
       
+      {/* Floating Preview Toggle for Authenticated Users */}
+      {isUserAuthenticated && (
+        <button
+          onClick={() => setIsPreviewMode(!isPreviewMode)}
+          className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-background/90 backdrop-blur-md border border-border/50 shadow-[0_0_15px_rgba(0,0,0,0.1)] hover:bg-muted transition-all text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          title={isPreviewMode ? "Back to Edit Mode" : "Preview Mode"}
+        >
+          {isPreviewMode ? <Edit2 className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+        </button>
+      )}
+
       {/* Sleek Auto-Save Status Indicator */}
       {isEditing && saveStatus !== "idle" && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-background/90 backdrop-blur-md border border-border/50 px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)]">
