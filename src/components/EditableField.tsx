@@ -10,6 +10,7 @@ interface EditableFieldProps {
   className?: string;
   multiline?: boolean;
   as?: React.ElementType;
+  href?: string;
 }
 
 export function EditableField({
@@ -19,6 +20,7 @@ export function EditableField({
   className,
   multiline = false,
   as: Component = "span",
+  href,
 }: EditableFieldProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -29,6 +31,17 @@ export function EditableField({
   }, [value, isEditing]);
 
   if (!isEditing) {
+    if (href) {
+      return (
+        <a 
+          href={href} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className={className} 
+          dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }} 
+        />
+      );
+    }
     return (
       <Component className={className} dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }} />
     );

@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
-  title: "CV | Harshit Beniwal",
-  description: "Product Designer CV",
+  title: "CV | Sourav Kumar Nanda",
+  description: "Product Engineer with 4+ years of experience in Frontend Engineering.",
 };
 
 export default async function CVPage({

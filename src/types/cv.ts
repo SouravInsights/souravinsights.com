@@ -17,6 +17,7 @@ export interface CVWorkExperience {
   location: string;
   bullets: string[];
   logoUrl?: string; // Added for the requested feature
+  companyUrl?: string; // Link to the company
 }
 
 export interface CVProject {
@@ -27,6 +28,7 @@ export interface CVProject {
   name: string;
   bullets: string[];
   logoUrl?: string;
+  projectUrl?: string;
 }
 
 export interface CVEducation {

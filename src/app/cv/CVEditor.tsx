@@ -5,7 +5,7 @@ import { CVData } from "@/types/cv";
 import { EditableField } from "@/components/EditableField";
 import { saveCVData, loginAdmin } from "./actions";
 import { cn } from "@/lib/utils";
-import { Download, Check, Loader2, Eye, Edit2 } from "lucide-react";
+import { Download, Check, Loader2, Eye, Edit2, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
 
 interface CVEditorProps {
   initialData: CVData;
@@ -69,35 +69,30 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
   };
 
   const LogoPlaceholder = ({ 
-    url, 
-    onChange 
+    imgUrl, 
+    linkUrl,
   }: { 
-    url?: string, 
-    onChange: (val: string) => void 
+    imgUrl?: string, 
+    linkUrl?: string,
   }) => {
+    
+    const Wrapper = ({ children }: { children: React.ReactNode }) => {
+      const href = linkUrl ? (linkUrl.startsWith('http') ? linkUrl : `https://${linkUrl}`) : undefined;
+      if (!isEditing && href) {
+        return <a href={href} target="_blank" rel="noopener noreferrer" className="block relative group shrink-0 w-10 h-10 rounded-full border border-border/50 bg-secondary/30 flex items-center justify-center overflow-hidden hover:opacity-80 transition-opacity">{children}</a>;
+      }
+      return <div className="relative group shrink-0 w-10 h-10 rounded-full border border-border/50 bg-secondary/30 flex items-center justify-center overflow-hidden">{children}</div>;
+    };
+
     return (
-      <div className="relative group shrink-0 w-10 h-10 rounded-full border border-border/50 bg-secondary/30 flex items-center justify-center overflow-hidden">
-        {url ? (
+      <Wrapper>
+        {imgUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={url} alt="Logo" className="w-full h-full object-cover" />
+          <img src={imgUrl} alt="Logo" className="w-full h-full object-cover" />
         ) : (
-          isEditing && <span className="text-xs text-muted-foreground/50">+</span>
+          isEditing && <ImageIcon className="w-3.5 h-3.5 text-muted-foreground/30" />
         )}
-        {isEditing && (
-          <div className={cn(
-            "absolute inset-0 bg-background/90 flex flex-col items-center justify-center transition-opacity",
-            url ? "opacity-0 group-hover:opacity-100" : "opacity-100"
-          )}>
-            <input 
-              type="text" 
-              value={url || ""}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="URL"
-              className="w-full text-[9px] bg-transparent text-center outline-none px-1 text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
-        )}
-      </div>
+      </Wrapper>
     );
   };
 
@@ -166,6 +161,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   value={data.header.email}
                   onChange={(val) => updateHeader("email", val)}
                   isEditing={isEditing}
+                  href={`mailto:${data.header.email}`}
                   className="hover:text-foreground transition-colors"
                 />
               </div>
@@ -175,6 +171,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   value={data.header.website}
                   onChange={(val) => updateHeader("website", val)}
                   isEditing={isEditing}
+                  href={data.header.website.startsWith('http') ? data.header.website : `https://${data.header.website}`}
                   className="hover:text-foreground transition-colors"
                 />
                 <span className="text-muted-foreground/30">·</span>
@@ -182,6 +179,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   value={data.header.linkedin}
                   onChange={(val) => updateHeader("linkedin", val)}
                   isEditing={isEditing}
+                  href={data.header.linkedin.startsWith('http') ? data.header.linkedin : `https://${data.header.linkedin}`}
                   className="hover:text-foreground transition-colors"
                 />
                 <span className="text-muted-foreground/30">·</span>
@@ -189,6 +187,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   value={data.header.twitter}
                   onChange={(val) => updateHeader("twitter", val)}
                   isEditing={isEditing}
+                  href={data.header.twitter.startsWith('http') ? data.header.twitter : `https://${data.header.twitter}`}
                   className="hover:text-foreground transition-colors"
                 />
               </div>
@@ -241,14 +240,10 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                 
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    {(job.logoUrl || isEditing) && (
+                    {(job.logoUrl || job.companyUrl || isEditing) && (
                       <LogoPlaceholder 
-                        url={job.logoUrl} 
-                        onChange={(val) => {
-                          const newExp = [...data.workExperience];
-                          newExp[index].logoUrl = val;
-                          setData((prev) => ({ ...prev, workExperience: newExp }));
-                        }} 
+                        imgUrl={job.logoUrl} 
+                        linkUrl={job.companyUrl}
                       />
                     )}
                     
@@ -273,6 +268,8 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                             setData((prev) => ({ ...prev, workExperience: newExp }));
                           }}
                           isEditing={isEditing}
+                          href={job.companyUrl ? (job.companyUrl.startsWith('http') ? job.companyUrl : `https://${job.companyUrl}`) : undefined}
+                          className="hover:text-foreground transition-colors"
                         />
                         <span className="text-muted-foreground/30">·</span>
                         <EditableField
@@ -286,6 +283,39 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                           className="text-muted-foreground"
                         />
                       </div>
+                      
+                      {isEditing && (
+                        <div className="flex items-center gap-4 pt-1.5 opacity-40 focus-within:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-1.5">
+                            <ImageIcon className="w-3 h-3 text-muted-foreground" />
+                            <input 
+                              type="text" 
+                              value={job.logoUrl || ""}
+                              onChange={(e) => {
+                                const newExp = [...data.workExperience];
+                                newExp[index].logoUrl = e.target.value;
+                                setData((prev) => ({ ...prev, workExperience: newExp }));
+                              }}
+                              placeholder="Paste logo URL..." 
+                              className="text-xs bg-transparent outline-none border-b border-transparent focus:border-border w-24 focus:w-48 transition-all placeholder:text-muted-foreground" 
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <LinkIcon className="w-3 h-3 text-muted-foreground" />
+                            <input 
+                              type="text" 
+                              value={job.companyUrl || ""}
+                              onChange={(e) => {
+                                const newExp = [...data.workExperience];
+                                newExp[index].companyUrl = e.target.value;
+                                setData((prev) => ({ ...prev, workExperience: newExp }));
+                              }}
+                              placeholder="Paste company URL..." 
+                              className="text-xs bg-transparent outline-none border-b border-transparent focus:border-border w-24 focus:w-48 transition-all placeholder:text-muted-foreground" 
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -379,14 +409,10 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                 
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    {(project.logoUrl || isEditing) && (
+                    {(project.logoUrl || project.projectUrl || isEditing) && (
                       <LogoPlaceholder 
-                        url={project.logoUrl} 
-                        onChange={(val) => {
-                          const newProj = [...data.projects];
-                          newProj[index].logoUrl = val;
-                          setData((prev) => ({ ...prev, projects: newProj }));
-                        }} 
+                        imgUrl={project.logoUrl} 
+                        linkUrl={project.projectUrl}
                       />
                     )}
                     
@@ -400,6 +426,8 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                             setData((prev) => ({ ...prev, projects: newProj }));
                           }}
                           isEditing={isEditing}
+                          href={project.projectUrl ? (project.projectUrl.startsWith('http') ? project.projectUrl : `https://${project.projectUrl}`) : undefined}
+                          className="hover:text-foreground transition-colors"
                         />
                       </div>
                       <div className="text-sm font-medium text-foreground/70">
@@ -413,6 +441,39 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                           isEditing={isEditing}
                         />
                       </div>
+
+                      {isEditing && (
+                        <div className="flex items-center gap-4 pt-1.5 opacity-40 focus-within:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-1.5">
+                            <ImageIcon className="w-3 h-3 text-muted-foreground" />
+                            <input 
+                              type="text" 
+                              value={project.logoUrl || ""}
+                              onChange={(e) => {
+                                const newProj = [...data.projects];
+                                newProj[index].logoUrl = e.target.value;
+                                setData((prev) => ({ ...prev, projects: newProj }));
+                              }}
+                              placeholder="Paste logo URL..." 
+                              className="text-xs bg-transparent outline-none border-b border-transparent focus:border-border w-24 focus:w-48 transition-all placeholder:text-muted-foreground" 
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <LinkIcon className="w-3 h-3 text-muted-foreground" />
+                            <input 
+                              type="text" 
+                              value={project.projectUrl || ""}
+                              onChange={(e) => {
+                                const newProj = [...data.projects];
+                                newProj[index].projectUrl = e.target.value;
+                                setData((prev) => ({ ...prev, projects: newProj }));
+                              }}
+                              placeholder="Paste project URL..." 
+                              className="text-xs bg-transparent outline-none border-b border-transparent focus:border-border w-24 focus:w-48 transition-all placeholder:text-muted-foreground" 
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
