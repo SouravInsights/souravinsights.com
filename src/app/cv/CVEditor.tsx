@@ -5,7 +5,7 @@ import { CVData } from "@/types/cv";
 import { EditableField } from "@/components/EditableField";
 import { saveCVData, loginAdmin } from "./actions";
 import { cn } from "@/lib/utils";
-import { Download } from "lucide-react";
+import { Download, Check, Loader2, Edit2 } from "lucide-react";
 
 interface CVEditorProps {
   initialData: CVData;
@@ -15,7 +15,11 @@ interface CVEditorProps {
 
 export function CVEditor({ initialData, isEditing, secretToLogin }: CVEditorProps) {
   const [data, setData] = useState<CVData>(initialData);
-  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  
+  // Track if initial mount happened so we don't auto-save the initial data immediately
+  const isFirstRender = React.useRef(true);
 
   React.useEffect(() => {
     if (secretToLogin) {
@@ -24,14 +28,37 @@ export function CVEditor({ initialData, isEditing, secretToLogin }: CVEditorProp
     }
   }, [secretToLogin]);
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    const res = await saveCVData(data);
-    setIsSaving(false);
-    if (!res.success) {
-      alert("Failed to save: " + res.error);
+  // Auto-save logic
+  React.useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
     }
-  };
+    
+    if (!isEditing) return;
+
+    setSaveStatus("saving");
+    
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      const res = await saveCVData(data);
+      if (!res.success) {
+        alert("Failed to save: " + res.error);
+        setSaveStatus("idle");
+      } else {
+        setSaveStatus("saved");
+        // Revert back to idle after a few seconds
+        setTimeout(() => setSaveStatus("idle"), 2500);
+      }
+    }, 1500); // 1.5s debounce
+
+    return () => {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    };
+  }, [data, isEditing]);
 
   const updateHeader = (key: keyof CVData["header"], value: string) => {
     setData((prev) => ({ ...prev, header: { ...prev.header, [key]: value } }));
@@ -73,18 +100,21 @@ export function CVEditor({ initialData, isEditing, secretToLogin }: CVEditorProp
   return (
     <div className="min-h-screen bg-background text-foreground font-sans px-5 pb-12 pt-28 sm:pb-20 sm:pt-36 selection:bg-primary/20">
       
-      {/* Floating Save Bar for Admin */}
-      {isEditing && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-background/80 backdrop-blur-md border border-border px-4 py-3 rounded-full shadow-2xl">
-          <span className="text-sm font-medium text-muted-foreground ml-2">Edit Mode Active</span>
-          <div className="w-[1px] h-4 bg-border mx-2"></div>
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-medium transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-          >
-            {isSaving ? "Saving…" : "Save Changes"}
-          </button>
+      {/* Sleek Auto-Save Status Indicator */}
+      {isEditing && saveStatus !== "idle" && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-background/90 backdrop-blur-md border border-border/50 px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+          {saveStatus === "saving" && (
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Saving...</span>
+            </div>
+          )}
+          {saveStatus === "saved" && (
+            <div className="flex items-center gap-2 text-xs font-medium text-emerald-500">
+              <Check className="w-3.5 h-3.5" />
+              <span>Saved</span>
+            </div>
+          )}
         </div>
       )}
 
