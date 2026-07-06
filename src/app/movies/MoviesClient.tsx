@@ -20,6 +20,8 @@ import {
   Upload,
   Check,
   ExternalLink,
+  Maximize2,
+  ChevronLeft,
 } from "lucide-react";
 
 type DraggableType = Draggable | null;
@@ -143,6 +145,55 @@ function NativeTextarea({
   );
 }
 
+function FocusModeEditor({
+  title,
+  value,
+  onChange,
+  onClose,
+}: {
+  title: string;
+  value: string;
+  onChange: (val: string) => void;
+  onClose: () => void;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  React.useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+      // Move cursor to end
+      textareaRef.current.selectionStart = textareaRef.current.value.length;
+      textareaRef.current.selectionEnd = textareaRef.current.value.length;
+    }
+  }, []);
+
+  return (
+    <div 
+      className="fixed inset-0 z-[100] bg-background flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-200"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex items-center justify-between px-3 py-3 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0">
+        <div className="flex items-center gap-2">
+          <button onClick={onClose} className="p-1.5 -ml-1.5 rounded-full hover:bg-muted text-muted-foreground transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/60">{title}</span>
+        </div>
+        <button onClick={onClose} className="text-[11px] font-medium text-green-600 dark:text-green-500 bg-green-600/10 dark:bg-green-500/10 px-3 py-1.5 rounded-full hover:bg-green-600/20 transition-colors">
+          Done
+        </button>
+      </div>
+      <textarea
+        ref={textareaRef}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="flex-1 w-full p-4 sm:p-6 sm:max-w-3xl sm:mx-auto bg-transparent outline-none resize-none text-base sm:text-lg leading-relaxed text-foreground placeholder:text-muted-foreground/30"
+        placeholder="Start writing... (Distraction free)"
+      />
+    </div>
+  );
+}
+
 function MovieDialog({
   movie,
   open,
@@ -159,6 +210,7 @@ function MovieDialog({
   onDelete: (id: string) => void;
 }) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [focusModeField, setFocusModeField] = useState<"personalNote" | "longNote" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = useCallback(
@@ -284,9 +336,20 @@ function MovieDialog({
 
 
               {/* Personal note */}
-              <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50 mb-1.5">
-                  Why it stays with me
+              <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 group/field relative">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50">
+                    Why it stays with me
+                  </div>
+                  {isEditing && (
+                    <button 
+                      onClick={() => setFocusModeField("personalNote")}
+                      className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-muted-foreground/40 hover:bg-muted hover:text-foreground"
+                      title="Focus Mode"
+                    >
+                      <Maximize2 className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
                 <NativeTextarea
                   value={movie.personalNote}
@@ -297,11 +360,22 @@ function MovieDialog({
                 />
               </div>
 
-              {/* Extended Thoughts */}
+              {/* Notes & Thoughts */}
               {(isEditing || !!movie.longNote) && (
-                <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 mt-4">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50 mb-1.5">
-                    Extended Thoughts
+                <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 mt-4 group/field relative">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50">
+                      Notes & Thoughts
+                    </div>
+                    {isEditing && (
+                      <button 
+                        onClick={() => setFocusModeField("longNote")}
+                        className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-muted-foreground/40 hover:bg-muted hover:text-foreground"
+                        title="Focus Mode"
+                      >
+                        <Maximize2 className="w-3 h-3" />
+                      </button>
+                    )}
                   </div>
                   <NativeTextarea
                     value={movie.longNote ?? ""}
@@ -566,6 +640,15 @@ function MovieDialog({
           )}
         </div>
       </div>
+
+      {focusModeField && (
+        <FocusModeEditor
+          title={focusModeField === "personalNote" ? "Why it stays with me" : "Notes & Thoughts"}
+          value={movie[focusModeField] ?? ""}
+          onChange={(val) => onUpdate(movie.id, { [focusModeField]: val })}
+          onClose={() => setFocusModeField(null)}
+        />
+      )}
     </div>
   );
 }
