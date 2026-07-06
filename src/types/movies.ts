@@ -23,11 +23,24 @@ export function generateId(): string {
   return Math.random().toString(36).substring(2, 10);
 }
 
+export interface MoviesHeader {
+  title: string;
+  description: string;
+}
+
 export interface MoviesData {
+  header: MoviesHeader;
   movies: MovieEntry[];
 }
 
+export const defaultMoviesHeader: MoviesHeader = {
+  title: "The Films That Stay",
+  description:
+    "I don't watch movies to pass time. I watch them to feel something real — to be unsettled, reshaped, and reminded that other lives, other truths exist. These are the ones that left a mark.",
+};
+
 export const emptyMoviesData: MoviesData = {
+  header: defaultMoviesHeader,
   movies: [],
 };
 
