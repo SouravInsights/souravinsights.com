@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { MoviesData, MovieEntry, emptyMovie, generateId, defaultMoviesHeader } from "@/types/movies";
 import { EditableField } from "@/components/EditableField";
-import { saveMoviesData, loginAdmin } from "./actions";
+import { saveMoviesData, loginAdmin, uploadPoster } from "./actions";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable, isSortable } from "@dnd-kit/react/sortable";
 import type { Draggable } from "@dnd-kit/dom";
@@ -100,6 +100,49 @@ function SortablePoster({
   );
 }
 
+function NativeTextarea({
+  value,
+  onChange,
+  placeholder,
+  className,
+  isEditing,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  placeholder?: string;
+  className?: string;
+  isEditing: boolean;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  React.useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [value, isEditing]);
+
+  if (!isEditing) {
+    return (
+      <div 
+        className={className} 
+        dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }} 
+      />
+    );
+  }
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className={`w-full resize-none overflow-hidden bg-transparent outline-none focus:bg-muted/80 focus:ring-1 focus:ring-border rounded-[4px] px-1 -mx-1 transition-all ${className || ""}`}
+      rows={1}
+    />
+  );
+}
+
 function MovieDialog({
   movie,
   open,
@@ -115,17 +158,31 @@ function MovieDialog({
   onUpdate: (id: string, updates: Partial<MovieEntry>) => void;
   onDelete: (id: string) => void;
 }) {
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        onUpdate(movie.id, { posterData: event.target?.result as string });
-      };
-      reader.readAsDataURL(file);
+      
+      setIsUploadingImage(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await uploadPoster(formData);
+        
+        if (res.success && res.url) {
+          onUpdate(movie.id, { posterData: res.url });
+        } else {
+          alert("Failed to upload image: " + (res.error || "Unknown error"));
+        }
+      } catch (err) {
+        console.error("Upload failed", err);
+        alert("Failed to upload image.");
+      } finally {
+        setIsUploadingImage(false);
+      }
       e.target.value = "";
     },
     [movie.id, onUpdate]
@@ -170,7 +227,14 @@ function MovieDialog({
           <div className="flex flex-col sm:flex-row">
             {/* Poster */}
             <div className="shrink-0 w-full sm:w-44 aspect-[2/3] sm:aspect-auto sm:min-h-[360px] bg-secondary relative group/upload sm:sticky sm:top-0 border-b sm:border-b-0 sm:border-r border-border">
-              {movie.posterData ? (
+              {isUploadingImage ? (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2 absolute inset-0">
+                  <Loader2 className="w-8 h-8 text-muted-foreground/30 animate-spin" />
+                  <span className="text-[10px] text-muted-foreground/50 font-medium px-4 text-center">
+                    Uploading...
+                  </span>
+                </div>
+              ) : movie.posterData ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={movie.posterData}
@@ -185,10 +249,11 @@ function MovieDialog({
                   </span>
                 </div>
               )}
-              {isEditing && (
+              {isEditing && !isUploadingImage && (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-colors flex items-center justify-center group/btn"
+                  disabled={isUploadingImage}
+                  className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-colors flex items-center justify-center group/btn cursor-pointer"
                 >
                   <div className="flex flex-col items-center gap-1.5 opacity-0 group-hover/btn:opacity-100 transition-opacity">
                     <Upload className="w-5 h-5 text-white" />
@@ -223,16 +288,30 @@ function MovieDialog({
                 <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50 mb-1.5">
                   Why it stays with me
                 </div>
-                <EditableField
-                  as="p"
+                <NativeTextarea
                   value={movie.personalNote}
                   onChange={(val) => onUpdate(movie.id, { personalNote: val })}
                   isEditing={isEditing}
-                  multiline
                   placeholder="What did this one do to you?"
                   className="text-sm leading-relaxed text-muted-foreground"
                 />
               </div>
+
+              {/* Extended Thoughts */}
+              {(isEditing || !!movie.longNote) && (
+                <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 mt-4">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50 mb-1.5">
+                    Extended Thoughts
+                  </div>
+                  <NativeTextarea
+                    value={movie.longNote ?? ""}
+                    onChange={(val) => onUpdate(movie.id, { longNote: val })}
+                    isEditing={isEditing}
+                    placeholder="Write a longer reflection or review..."
+                    className="text-sm leading-relaxed text-muted-foreground min-h-[40px]"
+                  />
+                </div>
+              )}
 
               {/* Quotes */}
               <div>

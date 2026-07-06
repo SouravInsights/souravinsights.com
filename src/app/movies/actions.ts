@@ -3,6 +3,7 @@
 import redis from "@/app/lib/redis";
 import { MoviesData, emptyMoviesData } from "@/types/movies";
 import { isAdminAuthenticated, loginAdmin } from "@/lib/admin-auth";
+import { put } from "@vercel/blob";
 
 export { loginAdmin };
 
@@ -32,5 +33,26 @@ export async function saveMoviesData(
   } catch (error) {
     console.error("Error saving movies data to Redis:", error);
     return { success: false, error: "Failed to save data" };
+  }
+}
+
+export async function uploadPoster(formData: FormData): Promise<{ success: boolean; url?: string; error?: string }> {
+  if (!isAdminAuthenticated()) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const file = formData.get("file") as File;
+  if (!file) {
+    return { success: false, error: "No file provided" };
+  }
+
+  try {
+    const blob = await put(`posters/${Date.now()}-${file.name}`, file, {
+      access: "public",
+    });
+    return { success: true, url: blob.url };
+  } catch (error) {
+    console.error("Error uploading to blob:", error);
+    return { success: false, error: "Failed to upload image" };
   }
 }

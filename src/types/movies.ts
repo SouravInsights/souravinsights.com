@@ -14,6 +14,7 @@ export interface MovieEntry {
   title: string;
   posterData?: string;
   personalNote: string;
+  longNote?: string;
   quotes: MovieQuote[];
   tags: string[];
   links: MovieLink[];
@@ -49,6 +50,7 @@ export const emptyMovie = (id: string): MovieEntry => ({
   title: "",
   posterData: undefined,
   personalNote: "What did this film make you feel? Why does it stay with you?",
+  longNote: "",
   quotes: [{ id: generateId(), text: "A line that stayed with you..." }],
   tags: [],
   links: [],
