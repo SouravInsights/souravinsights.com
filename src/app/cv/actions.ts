@@ -2,16 +2,16 @@
 
 import redis from "@/app/lib/redis";
 import { CVData, defaultCVData } from "@/types/cv";
-import { cookies } from "next/headers";
+import { isAdminAuthenticated, loginAdmin } from "@/lib/admin-auth";
+
+export { loginAdmin };
 
 const CV_REDIS_KEY = "cv:data";
 
 export async function getCVData(): Promise<CVData> {
   try {
     const data = await redis.get<CVData>(CV_REDIS_KEY);
-    if (!data) {
-      return defaultCVData;
-    }
+    if (!data) return defaultCVData;
     return data;
   } catch (error) {
     console.error("Error fetching CV data from Redis:", error);
@@ -19,27 +19,10 @@ export async function getCVData(): Promise<CVData> {
   }
 }
 
-export async function loginAdmin(secret: string): Promise<boolean> {
-  const expectedSecret = process.env.CV_EDIT_SECRET || process.env.ADMIN_API_KEY;
-  if (!expectedSecret || secret !== expectedSecret) {
-    return false;
-  }
-
-  cookies().set("admin_session", secret, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 365, // 1 year
-    path: "/",
-  });
-  
-  return true;
-}
-
-export async function saveCVData(data: CVData): Promise<{ success: boolean; error?: string }> {
-  const expectedSecret = process.env.CV_EDIT_SECRET || process.env.ADMIN_API_KEY;
-  const sessionCookie = cookies().get("admin_session");
-  
-  if (!expectedSecret || sessionCookie?.value !== expectedSecret) {
+export async function saveCVData(
+  data: CVData
+): Promise<{ success: boolean; error?: string }> {
+  if (!isAdminAuthenticated()) {
     return { success: false, error: "Unauthorized" };
   }
 

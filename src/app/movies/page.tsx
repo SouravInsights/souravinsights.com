@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getMoviesData } from "./actions";
 import { MoviesClient } from "./MoviesClient";
-import { cookies } from "next/headers";
+import { isAdminAuthenticated, getAdminSecret } from "@/lib/admin-auth";
 
 export const metadata: Metadata = {
   title: "Movies | Sourav Kumar Nanda",
@@ -15,19 +15,13 @@ export default async function MoviesPage({
 }) {
   const data = await getMoviesData();
 
-  const expectedSecret = process.env.CV_EDIT_SECRET || process.env.ADMIN_API_KEY;
-  const sessionCookie = cookies().get("admin_session");
+  const expectedSecret = getAdminSecret();
+  let isEditing = isAdminAuthenticated();
+  let secretToLogin: string | undefined = undefined;
 
-  let isEditing = false;
-  let secretToLogin = undefined;
-
-  if (expectedSecret) {
-    if (sessionCookie?.value === expectedSecret) {
-      isEditing = true;
-    } else if (searchParams.edit === expectedSecret) {
-      isEditing = true;
-      secretToLogin = expectedSecret;
-    }
+  if (!isEditing && expectedSecret && searchParams.edit === expectedSecret) {
+    isEditing = true;
+    secretToLogin = expectedSecret;
   }
 
   return (
