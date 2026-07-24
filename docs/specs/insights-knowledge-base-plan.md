@@ -145,14 +145,14 @@ Turn the insights page into a **queryable knowledge base** that:
 
 ### Current Data Model
 ```typescript
-// curatedLinks table
+// curatedLinks table — ONLY contains manually curated links (with notes/stars)
 {
   id: serial (PK)
   title: text
   url: text
   description: text
   category: varchar(100)    // discord channel name
-  notes: text               // admin annotations
+  notes: text               // admin annotations (sparse — most links have no notes)
   creatorTwitter: varchar(100)
   clickCount: integer
   newsletterStatus: varchar(20)
@@ -161,6 +161,15 @@ Turn the insights page into a **queryable knowledge base** that:
   updatedAt: timestamp
 }
 ```
+
+### The Problem with Current Schema
+
+**~800+ Discord links are NOT stored in the database.** They're fetched live from the Discord API at request time and rendered directly. Only links you manually curate (add notes, star) end up in `curated_links`.
+
+This means:
+- The search system as previously planned would only search ~20-30 curated links
+- Missing 95%+ of the collection
+- The knowledge base would be nearly useless
 
 ### Current Search
 ```typescript
@@ -182,11 +191,11 @@ const filterLinks = (links: LinkData[]) => {
 ┌─────────────────┐     ┌──────────────────┐     ┌──────────────┐
 │  Discord API    │────▶│  Trigger.dev Job  │────▶│  Neon Postgres│
 │  (8 channels)   │     │  (polls + embeds) │     │              │
-└─────────────────┘     └──────────────────┘     │  curated_links│
+└─────────────────┘     └──────────────────┘     │  all_links    │
                                                   │  link_embeddings│
-                    ┌──────────────────┐          │  (pgvector)  │
-                    │  Content Fetcher │─────────▶│              │
-                    │  (Trigger.dev)   │          └──────┬───────┘
+                    ┌──────────────────┐          │  curated_links│
+                    │  Content Fetcher │─────────▶│  (pgvector)  │
+                    │  (Jina + Readab.)│          └──────┬───────┘
                     └──────────────────┘                 │
                                                          │
           ┌──────────────────┐                           │
@@ -213,46 +222,62 @@ const filterLinks = (links: LinkData[]) => {
 
 ---
 
-## 4. Phase 1 — pgvector & Embeddings Infrastructure
+## 4. Phase 1 — Schema Evolution & pgvector Infrastructure
 
-### 4.1 Enable pgvector Extension
+### 4.1 The Core Problem
 
-Run in Neon SQL Editor:
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-```
+The search system must work on **every link**, not just curated ones. A link about "microservices architecture" that you shared in Discord 2 years ago — never starred, never annotated — should still surface when someone searches "distributed systems patterns."
 
-### 4.2 Add Embedding Column to Schema
+Currently, ~800+ Discord links are fetched live from the API and **never stored in Postgres**. Only ~20-30 manually curated links exist in `curated_links`. The search system as previously planned would only search those 20-30 links, missing 95%+ of the collection.
+
+### 4.2 New Schema: `all_links` Table
+
+We need a table that stores **every Discord link**, regardless of curation status. The existing `curated_links` table stays as-is (it has newsletter-specific fields we don't want to lose), and `all_links` becomes the canonical source for search.
 
 **File: `src/db/schema.ts`**
 
 ```typescript
-import { vector, index } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, varchar, integer, boolean, index } from "drizzle-orm/pg-core";
+import { vector } from "drizzle-orm/pg-core";
 
-export const curatedLinks = pgTable("curated_links", {
-  // ... existing columns ...
-  embedding: vector("embedding", { dimensions: 1536 }),
+/**
+ * ALL links — every link from Discord, stored permanently.
+ * This is the canonical source for search and embeddings.
+ * Curation (notes, favorites) is an enrichment, not a filter.
+ */
+export const allLinks = pgTable("all_links", {
+  id: serial("id").primaryKey(),
+  url: text("url").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  // Source tracking
+  source: varchar("source", { length: 50 }).default("discord"),
+  discordMessageId: varchar("discord_message_id", { length: 100 }).unique(),
+  discordChannelId: varchar("discord_channel_id", { length: 100 }),
+  // Curation enrichment (optional — merged from curated_links when applicable)
+  notes: text("notes"),
+  creatorTwitter: varchar("creator_twitter", { length: 100 }),
+  clickCount: integer("click_count").default(0),
+  isFavorited: boolean("is_favorited").default(false),
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
-  index("embedding_cosine_idx").using(
-    "hnsw",
-    table.embedding.op("vector_cosine_ops")
-  ),
+  index("url_idx").on(table.url),
+  index("category_idx").on(table.category),
+  index("discord_message_idx").on(table.discordMessageId),
 ]);
-```
 
-This adds a 1536-dimensional vector column (matching `text-embedding-3-small`) and a HNSW index for fast cosine similarity search.
-
-### 4.3 Create Embedding-Only Table (Alternative Approach)
-
-If we don't want to modify the existing `curated_links` table, we can create a separate table:
-
-```typescript
-// src/db/schema.ts
+/**
+ * Vector embeddings for semantic search.
+ * Separate table — allows re-embedding without touching core data.
+ */
 export const linkEmbeddings = pgTable("link_embeddings", {
   id: serial("id").primaryKey(),
-  linkId: integer("link_id").references(() => curatedLinks.id),
+  linkId: integer("link_id").references(() => allLinks.id).unique(),
   url: text("url").notNull(),
-  content: text("content"),  // enriched content summary
+  content: text("content"),  // enriched content (title + description + notes + fetched article text)
   embedding: vector("embedding", { dimensions: 1536 }),
   embeddedAt: timestamp("embedded_at").defaultNow(),
 }, (table) => [
@@ -260,13 +285,29 @@ export const linkEmbeddings = pgTable("link_embeddings", {
     "hnsw",
     table.embedding.op("vector_cosine_ops")
   ),
-  index("link_id_idx").on(table.linkId),
 ]);
 ```
 
-**Recommendation:** Use the separate table approach. It keeps the existing schema clean, allows re-embedding without touching core data, and supports multiple embedding strategies if needed later.
+### 4.3 Why Separate Tables (Not Merging into `curated_links`)
 
-### 4.4 Generate Migration
+| Concern | `all_links` | `curated_links` |
+|---------|-------------|-----------------|
+| Stores Discord links | All of them | Only curated subset |
+| Has newsletter fields | No | Yes (`newsletterStatus`, `buttondownEmailId`) |
+| Schema complexity | Simple | More complex |
+| Search target | Yes (canonical) | No (display overlay) |
+| Admin curation | Optional enrichment | Core purpose |
+
+**The relationship:** When a link in `all_links` also exists in `curated_links` (matched by URL), we merge the curation metadata (notes, favorites) for display. Search always runs against `all_links`.
+
+### 4.4 Enable pgvector Extension
+
+Run in Neon SQL Editor:
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+### 4.5 Generate Migration
 
 ```bash
 npx drizzle-kit generate
@@ -274,17 +315,134 @@ npx drizzle-kit generate
 
 Apply manually in Neon SQL Editor (Drizzle's HTTP driver doesn't support DDL directly).
 
-### 4.5 Install Dependencies
+### 4.6 Seed: Populate `all_links` from Discord
 
-```bash
-npm install @ai-sdk/openai ai @modelcontextprotocol/sdk@1.26.0 mcp-handler zod@3
+The Discord polling job needs to be updated to **write links to the DB** instead of just fetching them live. We also need a one-time seed job to backfill existing links.
+
+**File: `src/trigger/seed-discord-links.ts`** (one-time job)
+
+```typescript
+import { logger } from "@trigger.dev/sdk/v3";
+import { db } from "@/db";
+import { allLinks } from "@/db/schema";
+import { getChannels, getMessagesFromChannel, extractUrl, extractTitle, extractDescription } from "@/app/curated-links/utils/discordApi";
+import { eq } from "drizzle-orm";
+
+export const seedDiscordLinks = async () => {
+  logger.info("Starting Discord links seed — backfilling all_links table");
+
+  const channels = await getChannels();
+  let insertedCount = 0;
+  let skippedCount = 0;
+
+  for (const channel of channels) {
+    const messages = await getMessagesFromChannel(channel.id);
+
+    for (const msg of messages) {
+      const url = extractUrl(msg.content, msg.embeds);
+      const title = extractTitle(msg.embeds);
+      const description = extractDescription(msg.embeds);
+
+      if (!url) continue;
+
+      // Skip if already exists (by discord message ID)
+      const existing = await db
+        .select({ id: allLinks.id })
+        .from(allLinks)
+        .where(eq(allLinks.discordMessageId, msg.id))
+        .limit(1);
+
+      if (existing.length > 0) {
+        skippedCount++;
+        continue;
+      }
+
+      await db.insert(allLinks).values({
+        url,
+        title: title || url,
+        description: description || null,
+        category: channel.name,
+        source: "discord",
+        discordMessageId: msg.id,
+        discordChannelId: channel.id,
+      });
+
+      insertedCount++;
+    }
+  }
+
+  logger.info(`Seed complete: ${insertedCount} inserted, ${skippedCount} skipped`);
+  return { insertedCount, skippedCount };
+};
 ```
 
-### 4.6 Environment Variables
+### 4.7 Update Discord Polling Job to Write to DB
+
+**File: `src/trigger/discord-links.ts`** (modify existing)
+
+The existing job fetches Discord messages and triggers ISR revalidation. We need to also **insert new links into `all_links`**:
+
+```typescript
+// After detecting new messages in a channel:
+for (const msg of newMessages) {
+  const url = extractUrl(msg.content, msg.embeds);
+  const title = extractTitle(msg.embeds);
+  const description = extractDescription(msg.embeds);
+
+  if (!url) continue;
+
+  await db.insert(allLinks).values({
+    url,
+    title: title || url,
+    description: description || null,
+    category: channel.name,
+    source: "discord",
+    discordMessageId: msg.id,
+    discordChannelId: channel.id,
+  }).onConflictDoNothing(); // skip if already exists
+}
+
+// Then trigger revalidation as before
+```
+
+### 4.8 Merge Curated Links into `all_links`
+
+For links that are already in `curated_links` (with notes, favorites), we need to sync them into `all_links` with their curation metadata:
+
+```typescript
+// One-time sync: copy curated_links into all_links with enriched metadata
+const curated = await db.select().from(curatedLinks);
+for (const link of curated) {
+  await db.insert(allLinks).values({
+    url: link.url,
+    title: link.title,
+    description: link.description,
+    category: link.category,
+    source: "admin",
+    notes: link.notes,
+    creatorTwitter: link.creatorTwitter,
+    clickCount: link.clickCount,
+  }).onConflictDoNothing();
+}
+```
+
+### 4.9 Install Dependencies
+
+```bash
+npm install @ai-sdk/openai ai @modelcontextprotocol/sdk@1.26.0 mcp-handler zod@3 @mozilla/readability jsdom
+```
+
+### 4.10 Environment Variables
 
 ```env
-OPENAI_API_KEY=sk-...           # For embeddings
-MCP_API_KEY=...                 # Bearer token for MCP auth (generate a random secret)
+# Existing (no change)
+DATABASE_URL=postgresql://...
+ADMIN_API_KEY=...
+
+# New
+OPENAI_API_KEY=sk-...          # For embeddings (text-embedding-3-small)
+MCP_API_KEY=<random-secret>    # Bearer token for MCP server auth
+JINA_API_KEY=...               # Optional — for higher Jina Reader rate limits
 ```
 
 ---
@@ -343,9 +501,10 @@ export function buildEmbeddingInput(link: {
 ```typescript
 import { schedules, logger } from "@trigger.dev/sdk/v3";
 import { db } from "@/db";
-import { curatedLinks, linkEmbeddings } from "@/db/schema";
+import { allLinks, linkEmbeddings } from "@/db/schema";
 import { isNull, eq } from "drizzle-orm";
 import { generateEmbedding, buildEmbeddingInput } from "@/lib/embedding";
+import { fetchPageContent } from "@/lib/contentFetcher";
 
 export const embedLinks = schedules.task({
   id: "embed-links",
@@ -353,28 +512,37 @@ export const embedLinks = schedules.task({
   run: async (payload) => {
     logger.info("Starting embedding job");
 
-    // Find all curated links without embeddings
+    // Find ALL links without embeddings — not just curated ones
     const links = await db
       .select({
-        id: curatedLinks.id,
-        title: curatedLinks.title,
-        url: curatedLinks.url,
-        description: curatedLinks.description,
-        notes: curatedLinks.notes,
+        id: allLinks.id,
+        title: allLinks.title,
+        url: allLinks.url,
+        description: allLinks.description,
+        notes: allLinks.notes,
       })
-      .from(curatedLinks)
+      .from(allLinks)
       .leftJoin(
         linkEmbeddings,
-        eq(curatedLinks.id, linkEmbeddings.linkId)
+        eq(allLinks.id, linkEmbeddings.linkId)
       )
       .where(isNull(linkEmbeddings.id));
 
     logger.info(`Found ${links.length} links to embed`);
 
     let embeddedCount = 0;
+    let failCount = 0;
+
     for (const link of links) {
       try {
-        const inputText = buildEmbeddingInput(link);
+        // Fetch actual page content for richer embeddings
+        const content = await fetchPageContent(link.url);
+
+        const inputText = buildEmbeddingInput({
+          ...link,
+          content,
+        });
+
         const embedding = await generateEmbedding(inputText);
 
         await db.insert(linkEmbeddings).values({
@@ -385,29 +553,40 @@ export const embedLinks = schedules.task({
         });
 
         embeddedCount++;
+
+        // Small delay to avoid OpenAI rate limiting
+        await new Promise((r) => setTimeout(r, 200));
       } catch (error) {
+        failCount++;
         logger.error(`Failed to embed link ${link.id}: ${link.title}`, { error });
       }
     }
 
-    logger.info(`Embedded ${embeddedCount}/${links.length} links`);
-    return { success: true, embeddedCount };
+    logger.info(`Embedded ${embeddedCount}/${links.length} links (${failCount} failed)`);
+    return { success: true, embeddedCount, failCount };
   },
 });
 ```
 
 ### 5.3 Embed Existing Links
 
-After deploying, trigger the job manually:
+After deploying, run the seed job first to populate `all_links`, then trigger embedding:
 ```bash
-npx trigger dev --run embed-links
+npx trigger dev --run seed-discord-links   # Step 1: populate all_links from Discord
+npx trigger dev --run embed-links           # Step 2: embed everything
 ```
 
-Or call the Trigger.dev API to trigger it once. This will process all existing `curated_links` rows and generate embeddings for them.
+This will process ALL links (not just curated ones) and generate embeddings for them.
 
-### 5.4 Re-embed on Link Add
+### 5.4 Re-embed on New Discord Links
 
-When a new link is added via the admin API (`POST /api/curated-links`), trigger embedding asynchronously:
+When the Discord polling job detects new messages, it now writes them to `all_links` AND triggers embedding:
+
+```typescript
+// In discord-links.ts, after inserting new links:
+// Trigger embedding for newly added links
+await embedLinks.trigger();
+```
 
 **File: `src/app/api/curated-links/route.ts`** (modify POST handler)
 
@@ -430,8 +609,8 @@ triggerEmbeddingAsync(result[0].id); // fire-and-forget
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { curatedLinks, linkEmbeddings } from "@/db/schema";
-import { cosineDistance, desc, gt, sql } from "drizzle-orm";
+import { allLinks, linkEmbeddings } from "@/db/schema";
+import { cosineDistance, desc, gt, sql, eq } from "drizzle-orm";
 import { generateEmbedding } from "@/lib/embedding";
 
 const MAX_RESULTS = 20;
@@ -455,23 +634,23 @@ export async function GET(request: NextRequest) {
     // Generate embedding for the query
     const queryEmbedding = await generateEmbedding(query);
 
-    // Compute cosine similarity and rank
+    // Compute cosine similarity and rank — searches ALL links, not just curated
     const similarity = sql<number>`
       1 - (${cosineDistance(linkEmbeddings.embedding, queryEmbedding)})
     `;
 
     const results = await db
       .select({
-        id: curatedLinks.id,
-        title: curatedLinks.title,
-        url: curatedLinks.url,
-        description: curatedLinks.description,
-        category: curatedLinks.category,
-        notes: curatedLinks.notes,
+        id: allLinks.id,
+        title: allLinks.title,
+        url: allLinks.url,
+        description: allLinks.description,
+        category: allLinks.category,
+        notes: allLinks.notes,
         similarity,
       })
       .from(linkEmbeddings)
-      .innerJoin(curatedLinks, eq(linkEmbeddings.linkId, curatedLinks.id))
+      .innerJoin(allLinks, eq(linkEmbeddings.linkId, allLinks.id))
       .where(gt(similarity, MIN_SIMILARITY))
       .orderBy(desc(similarity))
       .limit(limit);
@@ -543,26 +722,65 @@ function checkRateLimit(ip: string, limit = 30, windowMs = 60000): boolean {
 
 ## 7. Phase 4 — Content Enrichment
 
-### 7.1 Content Fetcher Utility
+> **This is the most critical phase.** Since notes are sparse, the search quality depends entirely on how well we extract content from URLs. A weak extractor = a weak knowledge base.
+
+### 7.1 Content Fetcher — Dual Strategy
+
+**Primary: Jina Reader API** — handles JS-rendered pages, returns clean markdown.
+**Fallback: @mozilla/readability + jsdom** — for when Jina is down/rate-limited.
 
 **File: `src/lib/contentFetcher.ts`**
 
 ```typescript
-// Fetch page content and extract readable text
-// Uses a simple approach: fetch HTML, extract text from <p>, <h1>-<h6>, <li>, <blockquote>
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
 
-export async function fetchPageContent(
-  url: string,
-  maxChars = 3000
-): Promise<string | null> {
+const JINA_READER_URL = "https://r.jina.ai";
+const MAX_CHARS = 4000; // ~1000 tokens for embedding
+const FETCH_TIMEOUT = 15000; // 15s
+
+/**
+ * Fetch page content using Jina Reader API (primary).
+ * Returns clean markdown extracted from the page.
+ * Handles JS-rendered SPAs, complex layouts, etc.
+ */
+async function fetchViaJina(url: string): Promise<string | null> {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+    const response = await fetch(`${JINA_READER_URL}/${url}`, {
+      signal: controller.signal,
+      headers: {
+        Accept: "text/markdown",
+        "X-No-Cache": "true",
+      },
+    });
+    clearTimeout(timeout);
+
+    if (!response.ok) return null;
+
+    const text = await response.text();
+    return text.slice(0, MAX_CHARS);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fallback: Fetch raw HTML and extract via Mozilla Readability.
+ * Good for static pages and articles. Doesn't handle JS-rendered content.
+ */
+async function fetchViaReadability(url: string): Promise<string | null> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
 
     const response = await fetch(url, {
       signal: controller.signal,
       headers: {
-        "User-Agent": "SouravInsights/1.0 (link-curator)",
+        "User-Agent":
+          "Mozilla/5.0 (compatible; SouravInsights/1.0; +https://souravinsights.com)",
       },
     });
     clearTimeout(timeout);
@@ -570,25 +788,33 @@ export async function fetchPageContent(
     if (!response.ok) return null;
 
     const html = await response.text();
+    const dom = new JSDOM(html, { url });
+    const reader = new Readability(dom.window.document);
+    const article = reader.parse();
 
-    // Simple text extraction (no heavy dependencies)
-    const text = html
-      .replace(/<script[\s\S]*?<\/script>/gi, "")
-      .replace(/<style[\s\S]*?<\/style>/gi, "")
-      .replace(/<[^>]+>/g, "\n")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&#\d+;/g, "")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim();
+    if (!article?.textContent) return null;
 
-    return text.slice(0, maxChars);
-  } catch (error) {
-    console.error(`Failed to fetch content for ${url}:`, error);
+    return article.textContent.slice(0, MAX_CHARS);
+  } catch {
     return null;
   }
+}
+
+/**
+ * Fetch page content with automatic fallback.
+ * Tries Jina Reader first, falls back to Readability.
+ * Returns null only if both fail.
+ */
+export async function fetchPageContent(url: string): Promise<string | null> {
+  // Try Jina first — handles JS, returns clean markdown
+  const jinaResult = await fetchViaJina(url);
+  if (jinaResult && jinaResult.length > 100) return jinaResult;
+
+  // Fallback to Readability — static pages only
+  const readabilityResult = await fetchViaReadability(url);
+  if (readabilityResult && readabilityResult.length > 100) return readabilityResult;
+
+  return null;
 }
 ```
 
@@ -599,7 +825,7 @@ export async function fetchPageContent(
 ```typescript
 import { schedules, logger } from "@trigger.dev/sdk/v3";
 import { db } from "@/db";
-import { curatedLinks, linkEmbeddings } from "@/db/schema";
+import { allLinks, linkEmbeddings } from "@/db/schema";
 import { isNull, eq } from "drizzle-orm";
 import { fetchPageContent } from "@/lib/contentFetcher";
 import { generateEmbedding, buildEmbeddingInput } from "@/lib/embedding";
@@ -609,17 +835,17 @@ export const enrichAndEmbed = schedules.task({
   run: async (payload) => {
     logger.info("Starting enrichment + embedding job");
 
-    // Find links without embeddings
+    // Find ALL links without embeddings — not just curated ones
     const links = await db
       .select({
-        id: curatedLinks.id,
-        title: curatedLinks.title,
-        url: curatedLinks.url,
-        description: curatedLinks.description,
-        notes: curatedLinks.notes,
+        id: allLinks.id,
+        title: allLinks.title,
+        url: allLinks.url,
+        description: allLinks.description,
+        notes: allLinks.notes,
       })
-      .from(curatedLinks)
-      .leftJoin(linkEmbeddings, eq(curatedLinks.id, linkEmbeddings.linkId))
+      .from(allLinks)
+      .leftJoin(linkEmbeddings, eq(allLinks.id, linkEmbeddings.linkId))
       .where(isNull(linkEmbeddings.id));
 
     logger.info(`Found ${links.length} links to enrich + embed`);
@@ -666,15 +892,24 @@ export const enrichAndEmbed = schedules.task({
 });
 ```
 
+### 7.2 Why This Matters
+
+Most of your links don't have notes. That means the embedding signal comes almost entirely from:
+1. **Title** — usually short, sometimes vague ("Awesome CSS tricks")
+2. **Description** — from Discord embed, often truncated
+3. **Fetched content** — the actual article body (THIS is what makes or breaks search quality)
+
+Without content extraction, searching "how to handle state in React" won't surface an article titled "Modern前端架构 patterns" even if that article is entirely about React state management. With content extraction, the embedding captures the *substance* of the article, not just its title.
+
 ### 7.3 Fallback Strategy
 
-Some URLs will be inaccessible (403, paywalled, slow, etc.). The system gracefully falls back:
+The system has a 3-tier fallback:
 
-1. **Try** to fetch page content
-2. **If successful**: embed title + description + notes + content
-3. **If failed**: embed title + description + notes only
+1. **Jina Reader** (primary) — tries first, handles JS-rendered pages
+2. **Mozilla Readability** (fallback) — if Jina fails/rate-limited, tries static extraction
+3. **Metadata only** (last resort) — if both fail, embeds title + description + notes
 
-This means every link gets embedded regardless of content fetch success.
+This means every link gets embedded regardless of content fetch success — but the *quality* of the embedding varies. The enrichment job logs which tier succeeded, so you can monitor and re-try failures later.
 
 ---
 
@@ -690,7 +925,7 @@ This follows the `mcp-handler` package pattern for Vercel-deployed Next.js.
 import { createMcpHandler, withMcpAuth } from "mcp-handler";
 import { z } from "zod";
 import { db } from "@/db";
-import { curatedLinks, linkEmbeddings } from "@/db/schema";
+import { allLinks, linkEmbeddings } from "@/db/schema";
 import { cosineDistance, desc, gt, sql, eq } from "drizzle-orm";
 import { generateEmbedding } from "@/lib/embedding";
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
@@ -704,16 +939,16 @@ async function searchInsights(query: string, limit?: number) {
 
   const results = await db
     .select({
-      id: curatedLinks.id,
-      title: curatedLinks.title,
-      url: curatedLinks.url,
-      description: curatedLinks.description,
-      category: curatedLinks.category,
-      notes: curatedLinks.notes,
+      id: allLinks.id,
+      title: allLinks.title,
+      url: allLinks.url,
+      description: allLinks.description,
+      category: allLinks.category,
+      notes: allLinks.notes,
       similarity,
     })
     .from(linkEmbeddings)
-    .innerJoin(curatedLinks, eq(linkEmbeddings.linkId, curatedLinks.id))
+    .innerJoin(allLinks, eq(linkEmbeddings.linkId, allLinks.id))
     .where(gt(similarity, 0.3))
     .orderBy(desc(similarity))
     .limit(limit ?? 10);
@@ -726,7 +961,6 @@ async function searchInsights(query: string, limit?: number) {
 
 // ─── MCP Tool: get_related_links ──────────────────────────────
 async function getRelatedLinks(linkId: number, limit?: number) {
-  // Get the embedding for the given link
   const [sourceLink] = await db
     .select()
     .from(linkEmbeddings)
@@ -741,16 +975,16 @@ async function getRelatedLinks(linkId: number, limit?: number) {
 
   const results = await db
     .select({
-      id: curatedLinks.id,
-      title: curatedLinks.title,
-      url: curatedLinks.url,
-      description: curatedLinks.description,
-      category: curatedLinks.category,
-      notes: curatedLinks.notes,
+      id: allLinks.id,
+      title: allLinks.title,
+      url: allLinks.url,
+      description: allLinks.description,
+      category: allLinks.category,
+      notes: allLinks.notes,
       similarity,
     })
     .from(linkEmbeddings)
-    .innerJoin(curatedLinks, eq(linkEmbeddings.linkId, curatedLinks.id))
+    .innerJoin(allLinks, eq(linkEmbeddings.linkId, allLinks.id))
     .where(
       gt(similarity, 0.5)
       // Exclude the source link itself
@@ -770,8 +1004,8 @@ async function getRelatedLinks(linkId: number, limit?: number) {
 async function browseByCategory(category: string, limit?: number) {
   const links = await db
     .select()
-    .from(curatedLinks)
-    .where(eq(curatedLinks.category, category))
+    .from(allLinks)
+    .where(eq(allLinks.category, category))
     .limit(limit ?? 20);
 
   return links.map((l) => ({
@@ -787,8 +1021,8 @@ async function browseByCategory(category: string, limit?: number) {
 async function getLinkDetails(linkId: number) {
   const [link] = await db
     .select()
-    .from(curatedLinks)
-    .where(eq(curatedLinks.id, linkId))
+    .from(allLinks)
+    .where(eq(allLinks.id, linkId))
     .limit(1);
 
   return link || null;
@@ -1046,7 +1280,7 @@ This is a stretch goal — the search + related links provide most of the value.
 ### New Dependencies
 
 ```bash
-npm install @ai-sdk/openai ai mcp-handler zod@3 @modelcontextprotocol/sdk@1.26.0
+npm install @ai-sdk/openai ai mcp-handler zod@3 @modelcontextprotocol/sdk@1.26.0 @mozilla/readability jsdom
 ```
 
 | Package | Purpose |
@@ -1056,6 +1290,8 @@ npm install @ai-sdk/openai ai mcp-handler zod@3 @modelcontextprotocol/sdk@1.26.0
 | `mcp-handler` | Vercel's MCP adapter for Next.js |
 | `@modelcontextprotocol/sdk` | MCP protocol SDK |
 | `zod` | Schema validation for MCP tools |
+| `@mozilla/readability` | Fallback content extraction (Firefox Reader View algorithm) |
+| `jsdom` | DOM implementation for Node.js (needed by Readability) |
 
 ### Environment Variables
 
@@ -1067,6 +1303,7 @@ ADMIN_API_KEY=...
 # New
 OPENAI_API_KEY=sk-...          # For embeddings (text-embedding-3-small)
 MCP_API_KEY=<random-secret>    # Bearer token for MCP server auth
+JINA_API_KEY=...               # Optional — for higher Jina Reader rate limits (free tier: 20 RPM without key, 500 RPM with key)
 ```
 
 ### Neon Setup
@@ -1085,7 +1322,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 src/
 ├── lib/
 │   ├── embedding.ts                    # Embedding utility functions
-│   ├── contentFetcher.ts               # Fetch + extract page content
+│   ├── contentFetcher.ts               # Fetch + extract page content (Jina + Readability)
 │   └── rateLimit.ts                    # Simple rate limiter
 ├── app/
 │   ├── api/
@@ -1099,17 +1336,20 @@ src/
 │       └── components/
 │           └── SemanticSearch.tsx       # Search bar component
 ├── trigger/
+│   ├── seed-discord-links.ts           # One-time seed: backfill all Discord links to DB
 │   ├── embed-links.ts                  # Embedding background job
 │   └── enrich-links.ts                 # Content enrichment + embedding
 └── db/
-    └── schema.ts                       # (modified) + linkEmbeddings table
+    └── schema.ts                       # (modified) + allLinks + linkEmbeddings tables
 ```
 
 ### Modified Files
 ```
 src/
 ├── db/
-│   └── schema.ts                       # Add linkEmbeddings table
+│   └── schema.ts                       # Add allLinks + linkEmbeddings tables
+├── trigger/
+│   └── discord-links.ts                # Update to write new links to allLinks table
 ├── app/
 │   ├── curated-links/
 │   │   ├── components/
@@ -1176,12 +1416,16 @@ src/
 
 ## 15. Open Questions
 
-1. **Should we embed the Discord-sourced links AND the curated links, or only curated?** Discord links are ephemeral (fetched live, not stored). We'd need to store them in the DB first to embed them. Recommendation: embed only `curated_links` initially; if you want Discord links too, add a step to persist them.
+1. ~~**Should we embed the Discord-sourced links AND the curated links, or only curated?**~~ — **Resolved.** The `all_links` table stores EVERY Discord link. Search works on all of them. Curation is just enrichment metadata.
 
-2. **Content enrichment: fetch on-demand or batch?** Batch (Trigger.dev) is simpler. On-demand (fetch when embedding) is more flexible. Recommendation: batch via Trigger.dev, re-run periodically.
+2. **Content enrichment: fetch on-demand or batch?** Batch (Trigger.dev) is simpler. On-demand (fetch when embedding) is more flexible. Recommendation: batch via Trigger.dev, re-run periodically. Already reflected in the plan.
 
 3. **Do you want the MCP server to be public or require auth?** Recommendation: require bearer token auth. The public search API is separate and doesn't need auth.
 
-4. **Should the search API also search non-curated Discord links?** Currently Discord links aren't in the DB. If you want to include them, we'd need to store them first. Recommendation: start with curated links, expand later.
+4. ~~**Should the search API also search non-curated Discord links?**~~ — **Resolved.** All Discord links are now in `all_links`. Search covers everything.
 
-5. **Dimension reduction?** `text-embedding-3-small` supports dimension reduction via the `dimensions` parameter. 1536 is the default; you could go to 512 for faster search with minimal quality loss. Recommendation: use 1536 for best quality.
+5. **Dimension reduction?** `text-embedding-3-small` supports dimension reduction via the `dimensions` parameter. 1536 is the default; you could go to 512 for faster search with minimal quality loss. Recommendation: use 1536 for best quality. Can optimize later if needed.
+
+6. **How to handle duplicate URLs?** A link might appear in multiple Discord channels, or be shared multiple times. Should `all_links` deduplicate by URL, or allow duplicates (different messages, different context)? Recommendation: deduplicate by URL (use `url` as unique constraint). Keep the most recent version.
+
+7. **Re-embedding when content changes?** If you add notes to a link later, the embedding should be regenerated. Should this happen automatically when notes are saved? Recommendation: yes — trigger re-embedding when `notes` or `isFavorited` changes in `all_links`.
