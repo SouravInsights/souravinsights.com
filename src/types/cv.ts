@@ -20,6 +20,11 @@ export interface CVWorkExperience {
   companyUrl?: string; // Link to the company
 }
 
+export interface CVProjectLink {
+  label: string;
+  url: string;
+}
+
 export interface CVProject {
   id: string;
   startDate: string;
@@ -29,6 +34,7 @@ export interface CVProject {
   bullets: string[];
   logoUrl?: string;
   projectUrl?: string;
+  links?: CVProjectLink[];
 }
 
 export interface CVEducation {
@@ -65,24 +71,23 @@ export const defaultCVData: CVData = {
     linkedin: "linkedin.com/in/souravinsights/",
     twitter: "x.com/souravinsights",
   },
-  about: "Product Engineer with 4+ years of experience in Frontend Engineering. I enjoy building simple, easy-to-use, underwhelming interfaces, and I care about open-source software. I like fast-moving teams where I can wear multiple hats, take ownership of messy problems, and move from idea to deployment without unnecessary overhead.",
+  about: "Product Engineer with 4+ years of experience building and shipping products end-to-end, from data model and API design to interface and deployment. Proven track record of taking ownership of messy problems across the stack. Currently building open-source developer tooling for WebMCP and writing a handbook on reliable software in the age of AI agents. Thrives in small fast-moving teams and contributes to open-source ecosystems.",
   workExperience: [
     {
       id: "1",
-      startDate: "June 2024",
-      endDate: "Aug 2025",
+      startDate: "Jul 2024",
+      endDate: "Feb 2025",
       role: "Software Engineer",
       company: "Paragraph",
       location: "Remote",
       logoUrl: "",
+      companyUrl: "https://paragraph.com/home",
       bullets: [
-        "Contributed to the migration from Next.js Pages Router to App Router, focusing on refactoring key pages with Server Components to reduce JavaScript payload and improve load performance. Used Client Components selectively to preserve interactivity where needed, balancing UX and performance.",
-        "Redesigned the editor dashboard UI and improved the publishing flow in collaboration with our product designer and other engineers.",
-        "Contributed to a state management migration from Redux to Jotai by modularizing large state objects into granular atoms, improving maintainability and clarity.",
-        "Refactored UI components by abstracting business logic into custom React hooks and utility functions, creating a cleaner, reusable component library.",
-        "Actively participated in reviewing frontend & backend PRs, offering constructive feedback and hands-on refactors when necessary.",
-        "Took ownership of investigating and fixing quirky, hard-to-reproduce bugs by talking to users, gathering context, and handling multiple edge cases.",
-        "Helped build a backend feature for bulk importing subscribers via CSV. Worked on strategies to handle large datasets (40,000+ rows) reliably in Firestore by using batched writes and basic chunking, in collaboration with another backend engineer.",
+        "Architected and refined the WYSIWYG editor and public blog UI, collaborating with design to overhaul the dashboard and publishing workflow for improved user experience.",
+        "Reduced JavaScript bundle size by 35% and improved Largest Contentful Paint (LCP) by 400ms, and improved SEO for public blog pages by migrating core public blog pages from Next.js Pages to the App Router using React Server Components.",
+        "Contributed to a state management migration from Redux to Jotai by modularizing large state objects into granular atoms, which improved maintainability and reduced hard-to-trace state bugs.",
+        "Reviewed frontend and backend PRs with constructive feedback and refactors where necessary.",
+        "Took ownership of investigating and fixing quirky, hard-to-reproduce bugs by talking directly to power users, gathering context, and handling the edge cases.",
       ],
     },
     {
@@ -93,27 +98,27 @@ export const defaultCVData: CVData = {
       company: "Pimlico",
       location: "Remote",
       logoUrl: "",
+      companyUrl: "https://www.pimlico.io/",
       bullets: [
-        "Built create-permissionless-app, an open-source CLI tool to scaffold dApps using Account Abstraction via Pimlico's infrastructure — inspired by create-next-app",
-        "Enabled developers to configure their setup by selecting an account system, signer, bundler, and paymaster, and generated a clean, ready-to-use project",
-        "The generated boilerplate included Next.js, TypeScript, Viem, Wagmi, Permissionless.js, and relevant provider packages, offering a streamlined starting point for ERC-4337-based applications",
+        "Built an open-source CLI tool that reduced developer onboarding time by providing optimized boilerplate projects and sensible defaults for dApp scaffolding.",
       ],
     },
     {
       id: "3",
-      startDate: "July 2023",
+      startDate: "Jul 2023",
       endDate: "Nov 2023",
       role: "Frontend Engineer",
       company: "Gallery",
       location: "Remote",
       logoUrl: "",
+      companyUrl: "https://gallery.so/",
       bullets: [
-        "Worked extensively with Relay and GraphQL, writing scalable, type-safe queries, ensuring components declared their own data requirements for optimal fetch granularity.",
-        "Utilized graphql-codegen to generate TypeScript types from the GraphQL schema, improving code confidence and reducing runtime errors",
-        "Contributed to both web and React Native apps, fixing cross-platform UI bugs and building reusable components using styled-components",
-        "Took ownership of improving comment UI, notification logic, hover cards, and community display modules across mobile and web, shipping over 45 pull requests in 2 months, including fixes, UI enhancements, and new feature implementations",
-        "Collaborated cross-functionally to ship features like markdown support, community profile enhancements, and NFT content previews",
-        "Worked on scalable data fetching patterns and optimized loading strategies to reduce redundant queries and improve perceived performance",
+        "Worked on the social platform for creators, contributing across web and React Native on primary UI surfaces: feeds, profile pages, gallery views, and community pages.",
+        "The platform relied on heavily inter-related data, so a large part of the work was writing scalable, type-safe queries with Relay and GraphQL that let components declare their own data requirements and avoid over-fetching or fragile queries.",
+        "Increased feature velocity by shipping 45+ pull requests in 60 days, delivering UI work across comments, notifications, and community modules on both platforms.",
+        "Collaborated cross-functionally to ship markdown support, community profile enhancements, and NFT content previews.",
+        "Implemented data-fetching and loading patterns that cut redundant queries and improved perceived performance.",
+        "Contributed to fixing cross-platform UI bugs and building the shared component library with styled-components.",
       ],
     },
     {
@@ -124,34 +129,71 @@ export const defaultCVData: CVData = {
       company: "RabbitHole",
       location: "Remote",
       logoUrl: "",
+      companyUrl: "https://rabbithole.gg/",
       bullets: [
-        "Redesigned the v1 client app from scratch, with a focus on improving the onboarding experience and reducing user friction during first-time setup.",
-        "Took ownership of maintaining UI consistency across the product suite by building and maintaining an internal design system, developing composable and maintainable components aligned with our design tokens and accessibility guidelines.",
-        "Collaborated closely with designers and contributed to UX decisions, helping shape flows that improved user engagement and reduced drop-offs during onboarding.",
-        "Took ownership of decentralization efforts by integrating Ceramic into the client stack for decentralized identity and data storage, and building subgraphs using The Graph Protocol to query blockchain data efficiently.",
-        "Contributed to the backend API for our notification system, designing and implementing GraphQL resolvers using Prisma and PostgreSQL. Focused on modeling flexible notification types, handling user targeting logic, and ensuring queries remained performant at scale",
-        "Contributed to our internal React hooks package — built hooks for wallet connections, ENS resolution, smart contract interactions, and signing flows using Ethers.js — made sure they were generic enough to reuse across features.",
+        "Redesigned the v1 client app from scratch, focused on improving onboarding and reducing friction during first-time setup.",
+        "Owned UI consistency across the product suite by building and maintaining an internal design system: composable components aligned with design tokens and accessibility guidelines.",
+        "Worked closely with designers and contributed to UX decisions, shaping flows that improved engagement and reduced drop-offs during onboarding.",
+        "Owned the decentralization workstream: integrated Ceramic into the client stack for decentralized identity and data storage, and built subgraphs on The Graph protocol to query blockchain data efficiently.",
+        "Contributed to the backend notification API, designing and implementing GraphQL resolvers with Prisma and PostgreSQL.",
       ],
     }
   ],
   projects: [
     {
       id: "1",
-      startDate: "Jan 2025",
+      startDate: "Aug 2026",
       endDate: "Present",
-      role: "Founder, Solo Developer",
-      name: "FairForms",
-      logoUrl: "",
-      bullets: [
-        "Built a comprehensive form builder SaaS product from scratch, handling all aspects from concept to deployment including frontend, backend, database architecture, and DevOps",
-        "Designed and implemented a drag-and-drop form builder interface with React, TypeScript and Next.js App Router, featuring a component-based architecture for maintainability and intuitive UX",
-        "Developed a robust backend with PostgreSQL and Drizzle ORM for form data, user management, and response analytics",
-        "Implemented advanced form features including file uploads, conditional logic, multi-step navigation, and themed UI customization",
-        "Built a public responses dashboard with filtering capabilities and visualization tools for form submission insights",
-        "Designed a collaboration system allowing users to invite team members with different permission levels",
-        "Implemented secure sharing mechanisms for distributing forms and viewing responses while maintaining data privacy",
+      role: "Creator & Maintainer",
+      name: "webmcp-stack",
+      logoUrl: "https://webmcp.souravinsights.com/icon.svg",
+      projectUrl: "https://webmcp.souravinsights.com",
+      links: [
+        { label: "webmcp.souravinsights.com", url: "https://webmcp.souravinsights.com" },
+        { label: "npm", url: "https://www.npmjs.com/package/@webmcp-stack/codegen" },
+        { label: "GitHub", url: "https://github.com/SouravInsights/webmcp-stack" },
       ],
-    }
+      bullets: [
+        "Built and published an open-source CLI (MIT, on npm) that turns the API contract a team already maintains into WebMCP tools agents can call in the browser, written into their own repo so there is no runtime to depend on.",
+        "Made safety the product rather than a wrapper: auth, admin and webhook paths stay off the agent surface until a developer opts in, and payments and deletes stop at a human confirmation.",
+        "Proved it on a real production API: 73 tools generated, including a payment webhook that would otherwise have become callable by an agent.",
+      ],
+    },
+    {
+      id: "2",
+      startDate: "Jul 2025",
+      endDate: "Present",
+      role: "Engineering, Design & Infrastructure",
+      name: "BeenThere",
+      logoUrl: "",
+      projectUrl: "https://www.beenthere.page",
+      links: [
+        { label: "beenthere.page", url: "https://www.beenthere.page" },
+        { label: "api.beenthere.page/reference", url: "https://api.beenthere.page/reference/" },
+      ],
+      bullets: [
+        "Built and launched BeenThere, a travel storytelling product where people publish trips as journals on a canvas timeline, as the sole engineer across product, design, API, database and deployment.",
+        "Led the end-to-end product design and developed the block-based editor the product is built around, supporting 16 content types (e.g., photo clusters, checklists) inside a modular, extensible component architecture, with opinionated UX like a horizontal scroll canvas, seamless inline editing and a morphing block picker.",
+        "Elevated the editor with fluid layout animations and micro-interactions using Motion for a premium, app-like feel, and managed its state with Zustand, handling optimistic UI updates, field-level diffing so only changed fields are synced, and safe background cleanup of unreferenced media.",
+        "Designed a media pipeline that handles concurrent batch uploads, converting HEIC photos and reading EXIF in a web worker, keeping the editor responsive under load and eliminating layout shifts via Blurhashes.",
+        "Built an AI story generation engine that turns a trip's photos, dates and field notes into a publishable journal draft, using a dedicated generator per block type and skipping the model entirely for blocks that don't need it.",
+        "Configured a reliable CI/CD pipeline using GitHub Actions, enforcing strict type-drift, API schema and linting checks. Set up observability and analytics using Sentry, BetterStack, and PostHog for error tracking, uptime monitoring, and data-driven UX decisions.",
+      ],
+    },
+    {
+      id: "3",
+      startDate: "Aug 2026",
+      endDate: "Present",
+      role: "Author",
+      name: "Safe to Merge",
+      logoUrl: "",
+      projectUrl: "https://safetomerge.com",
+      links: [{ label: "safetomerge.com", url: "https://safetomerge.com" }],
+      bullets: [
+        "Writing a practical handbook for teams shipping software as AI agents write more of the code, built around one loop: Observe, Understand, Change, Verify, Ship and Learn.",
+        "Writing it by studying teams who are actually doing it, and separating emerging practice from established practice instead of publishing speculation. One example: a team whose PR volume went from 1,441 to 4,725 a month, with agent-authored PRs going from around 20% to over 70%.",
+      ],
+    },
   ],
   education: [
     {
@@ -167,20 +209,30 @@ export const defaultCVData: CVData = {
     {
       id: "1",
       category: "Languages & Frameworks",
-      items: "TypeScript, JavaScript, React, React Native, Next.js (App Router), TailwindCSS, Shadcn UI, Zod, TanStack, Jotai, Zustland",
+      items: "TypeScript, JavaScript, React, React Native, Next.js (App Router), Expo, Node.js, TailwindCSS, NativeWind, Shadcn, Radix UI, TanStack, Zustand, Jotai",
     },
     {
       id: "2",
-      category: "Backend & Data",
-      items: "PostgreSQL, Drizzle ORM, Prisma, GraphQL (Relay, Apollo), REST APIs",
+      category: "UI & Interaction",
+      items: "Motion, GSAP, TipTap, dnd-kit, Web Workers",
     },
     {
       id: "3",
-      category: "Tooling & Infrastructure",
-      items: "Vercel, GitHub Actions, TurboRepo, PostHog Analytics, Sentry",
+      category: "Backend & Data",
+      items: "Fastify, PostgreSQL, Drizzle ORM, Neon, TypeBox, Zod, REST / OpenAPI, GraphQL (Relay, Apollo), Prisma, Better Auth, Razorpay, Google Maps API, Resend",
     },
     {
       id: "4",
+      category: "AI & Agents",
+      items: "Agent skills, agent evals, OpenRouter, Replicate, vLLM",
+    },
+    {
+      id: "5",
+      category: "Tooling & Infrastructure",
+      items: "Turborepo, GitHub Actions, Docker, Vercel, AWS (Lightsail), Cloudflare (R2, Workers, Image Transformations), CLI design and code generation, npm publishing, Sentry, BetterStack, PostHog",
+    },
+    {
+      id: "6",
       category: "Remote Work & Collaboration",
       items: [
         "Timezone Flexibility: 3+ years working with US-based startups in EST/PST",

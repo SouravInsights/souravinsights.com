@@ -5,7 +5,7 @@ import { isAdminAuthenticated, getAdminSecret } from "@/lib/admin-auth";
 
 export const metadata: Metadata = {
   title: "CV | Sourav Kumar Nanda",
-  description: "Product Engineer with 4+ years of experience in Frontend Engineering.",
+  description: "Product Engineer with 4+ years of experience building and shipping products end-to-end.",
 };
 
 export default async function CVPage({

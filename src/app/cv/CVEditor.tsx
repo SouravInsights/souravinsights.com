@@ -68,6 +68,21 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
     setData((prev) => ({ ...prev, header: { ...prev.header, [key]: value } }));
   };
 
+  /**
+   * Company and project logos default to the site's favicon, the same way the
+   * safetomerge landing page resolves favicons. An explicit logoUrl always wins,
+   * so you can still drop in a proper asset for any entry.
+   */
+  const faviconFor = (url?: string): string | undefined => {
+    if (!url) return undefined;
+    try {
+      const hostname = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
+      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
+    } catch {
+      return undefined;
+    }
+  };
+
   const LogoPlaceholder = ({ 
     imgUrl, 
     linkUrl,
@@ -75,6 +90,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
     imgUrl?: string, 
     linkUrl?: string,
   }) => {
+    const resolvedImgUrl = imgUrl || faviconFor(linkUrl);
     
     const Wrapper = ({ children }: { children: React.ReactNode }) => {
       const href = linkUrl ? (linkUrl.startsWith('http') ? linkUrl : `https://${linkUrl}`) : undefined;
@@ -86,9 +102,9 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
 
     return (
       <Wrapper>
-        {imgUrl ? (
+        {resolvedImgUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imgUrl} alt="Logo" className="w-full h-full object-cover" />
+          <img src={resolvedImgUrl} alt="Logo" className="w-full h-full object-cover" />
         ) : (
           isEditing && <ImageIcon className="w-3.5 h-3.5 text-muted-foreground/30" />
         )}
@@ -193,10 +209,13 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
               </div>
             </div>
 
-            <button className="shrink-0 inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg border border-border bg-background hover:bg-muted transition-colors text-foreground font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <a
+              href="/cv/pdf"
+              className="shrink-0 inline-flex items-center gap-2 text-sm px-4 py-2 rounded-lg border border-border bg-background hover:bg-muted transition-colors text-foreground font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
               <Download className="w-4 h-4" />
               Download PDF
-            </button>
+            </a>
           </div>
         </header>
 
