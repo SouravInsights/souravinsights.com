@@ -148,8 +148,9 @@ export const defaultCVData: CVData = {
       name: "webmcp-stack",
       logoUrl: "https://webmcp.souravinsights.com/icon.svg",
       projectUrl: "https://webmcp.souravinsights.com",
+      // The project name above already links to the site; links here are
+      // extra destinations only.
       links: [
-        { label: "webmcp.souravinsights.com", url: "https://webmcp.souravinsights.com" },
         { label: "npm", url: "https://www.npmjs.com/package/@webmcp-stack/codegen" },
         { label: "GitHub", url: "https://github.com/SouravInsights/webmcp-stack" },
       ],
@@ -168,7 +169,7 @@ export const defaultCVData: CVData = {
       logoUrl: "",
       projectUrl: "https://www.beenthere.page",
       links: [
-        { label: "beenthere.page", url: "https://www.beenthere.page" },
+        { label: "stamps.beenthere.page", url: "https://stamps.beenthere.page/" },
         { label: "api.beenthere.page/reference", url: "https://api.beenthere.page/reference/" },
       ],
       bullets: [
@@ -188,7 +189,7 @@ export const defaultCVData: CVData = {
       name: "Safe to Merge",
       logoUrl: "",
       projectUrl: "https://safetomerge.com",
-      links: [{ label: "safetomerge.com", url: "https://safetomerge.com" }],
+      links: [],
       bullets: [
         "Writing a practical handbook for teams shipping software as AI agents write more of the code, built around one loop: Observe, Understand, Change, Verify, Ship and Learn.",
         "Writing it by studying teams who are actually doing it, and separating emerging practice from established practice instead of publishing speculation. One example: a team whose PR volume went from 1,441 to 4,725 a month, with agent-authored PRs going from around 20% to over 70%.",
@@ -224,12 +225,14 @@ export const defaultCVData: CVData = {
     {
       id: "4",
       category: "AI & Agents",
-      items: "Agent skills, agent evals, OpenRouter, Replicate, vLLM",
+      items: "Agent skills, Agent evals, OpenRouter, Replicate, vLLM",
     },
     {
       id: "5",
       category: "Tooling & Infrastructure",
-      items: "Turborepo, GitHub Actions, Docker, Vercel, AWS (Lightsail), Cloudflare (R2, Workers, Image Transformations), CLI design and code generation, npm publishing, Sentry, BetterStack, PostHog",
+      // Items stay short and name-like so the row keeps its rhythm; the
+      // proofs live in the webmcp-stack bullets in Independent projects.
+      items: "Turborepo, GitHub Actions, Docker, Vercel, AWS (Lightsail), Cloudflare (R2, Workers, Image Transformations), CLI dev tools, npm packages, Sentry, BetterStack, PostHog",
     },
     {
       id: "6",

@@ -135,40 +135,34 @@ export function CVDocument({ data }: { data: CVData }) {
 
         <Text style={styles.section}>EXPERIENCE &amp; PROJECTS</Text>
 
-        {data.projects.map((project) => {
-          const links =
-            project.links && project.links.length > 0
-              ? project.links
-              : project.projectUrl
-                ? [
-                    {
-                      label: project.projectUrl.replace(/^https?:\/\//, ""),
-                      url: project.projectUrl,
-                    },
-                  ]
-                : [];
-
-          return (
-            <View key={project.id} style={styles.entry} wrap={false}>
-              <EntryHead
-                role={project.role}
-                dates={`${project.startDate} - ${project.endDate}`}
-              />
-              <Text style={styles.org}>
-                {project.name}
-                {links.map((item) => (
-                  <Text key={item.url}>
-                    {" | "}
-                    <Link src={item.url} style={styles.link}>
-                      {item.label}
-                    </Link>
-                  </Text>
-                ))}
-              </Text>
-              <Bullets items={project.bullets} />
-            </View>
-          );
-        })}
+        {data.projects.map((project) => (
+          // The name itself carries the primary link (projectUrl), the same
+          // rule as the web page; links[] holds only extra destinations.
+          <View key={project.id} style={styles.entry} wrap={false}>
+            <EntryHead
+              role={project.role}
+              dates={`${project.startDate} - ${project.endDate}`}
+            />
+            <Text style={styles.org}>
+              {project.projectUrl ? (
+                <Link src={withProtocol(project.projectUrl)} style={styles.link}>
+                  {project.name}
+                </Link>
+              ) : (
+                project.name
+              )}
+              {(project.links ?? []).map((item) => (
+                <Text key={item.url}>
+                  {" | "}
+                  <Link src={item.url} style={styles.link}>
+                    {item.label}
+                  </Link>
+                </Text>
+              ))}
+            </Text>
+            <Bullets items={project.bullets} />
+          </View>
+        ))}
 
         {data.workExperience.map((job) => (
           <View key={job.id} style={styles.entry} wrap={false}>

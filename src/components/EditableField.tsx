@@ -34,12 +34,17 @@ export function EditableField({
 
   if (!isEditing) {
     if (href) {
+      // Only true web URLs get a new tab: mailto:/tel: with target="_blank"
+      // can open a dead tab in some browsers.
+      const isExternal = /^https?:/i.test(href);
       return (
         <a
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={className}
+          {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          className={cn(
+            "rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className
+          )}
           dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }}
         />
       );
