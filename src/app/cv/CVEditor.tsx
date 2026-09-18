@@ -24,6 +24,15 @@ const FOCUS_RING =
 
 const META = "text-[13px] leading-[1.5] text-muted-foreground";
 
+/** Pipe separator, the same punctuation the CV PDF uses between meta items. */
+function Sep() {
+  return (
+    <span aria-hidden="true" className="select-none text-muted-foreground">
+      |
+    </span>
+  );
+}
+
 function withProtocol(url: string) {
   return url.startsWith("http") ? url : `https://${url}`;
 }
@@ -327,13 +336,13 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   onChange={(val) => updateHeader("location", val)}
                   isEditing={isEditing}
                 />
-                <span className="text-muted-foreground/30">·</span>
+                <Sep />
                 <EditableField
                   value={data.header.phone}
                   onChange={(val) => updateHeader("phone", val)}
                   isEditing={isEditing}
                 />
-                <span className="text-muted-foreground/30">·</span>
+                <Sep />
                 <EditableField
                   value={data.header.email}
                   onChange={(val) => updateHeader("email", val)}
@@ -351,7 +360,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   href={withProtocol(data.header.website)}
                   className={linkClass}
                 />
-                <span className="text-muted-foreground/30">·</span>
+                <Sep />
                 <EditableField
                   value={data.header.linkedin}
                   onChange={(val) => updateHeader("linkedin", val)}
@@ -359,7 +368,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   href={withProtocol(data.header.linkedin)}
                   className={linkClass}
                 />
-                <span className="text-muted-foreground/30">·</span>
+                <Sep />
                 <EditableField
                   value={data.header.twitter}
                   onChange={(val) => updateHeader("twitter", val)}
@@ -453,7 +462,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                       />
                       {job.location && (
                         <>
-                          <span className="text-muted-foreground/30">·</span>
+                          <Sep />
                           <EditableField
                             value={job.location}
                             onChange={(val) => mutateAt("workExperience", index, (item) => { item.location = val; })}
@@ -580,7 +589,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                         <>
                           {project.links.map((link) => (
                             <React.Fragment key={link.url}>
-                              <span className="text-muted-foreground/30">·</span>
+                              <Sep />
                               <a
                                 href={link.url}
                                 target="_blank"
@@ -693,7 +702,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                     />
                     {edu.location && (
                       <>
-                        <span className="text-muted-foreground/30">·</span>
+                        <Sep />
                         <EditableField
                           value={edu.location}
                           onChange={(val) => mutateAt("education", index, (item) => { item.location = val; })}

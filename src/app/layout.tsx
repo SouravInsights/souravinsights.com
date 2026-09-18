@@ -21,6 +21,9 @@ const DESCRIPTION = `And this is my tiny home on the internet, a place to tell m
     expanded by them, so it’s instrumental that our websites progress along with us.`;
 
 export const metadata: Metadata = {
+  // Resolves relative Open Graph image URLs to the production domain, so shared
+  // links unfurl with the right absolute image instead of the deploy URL.
+  metadataBase: new URL("https://souravinsights.com"),
   title: "Hello world! I’m Sourav 👋",
   description: DESCRIPTION,
   openGraph: {

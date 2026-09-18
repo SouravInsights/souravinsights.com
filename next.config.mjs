@@ -45,6 +45,19 @@ const nextConfig = {
   images: {
     domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
   },
+
+  experimental: {
+    // pdfkit (used by @react-pdf/renderer) loads its standard fonts through a
+    // dynamic path, so the serverless file tracer never sees them. Without this
+    // the /cv/pdf route crashes on Vercel with "Cannot find module
+    // /var/task/node_modules/pdfkit/js/standard-fonts/Helvetica.cjs".
+    outputFileTracingIncludes: {
+      "/cv/pdf": [
+        "./node_modules/pdfkit/js/standard-fonts/**/*",
+        "./node_modules/pdfkit/js/data/**/*",
+      ],
+    },
+  },
 };
 
 export default withMDX(nextConfig);
