@@ -329,13 +329,14 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
           : "Download PDF";
 
   return (
-    <div className="relative min-h-screen bg-background px-5 pb-16 pt-28 text-foreground antialiased selection:bg-primary/20 sm:pb-24 sm:pt-36">
+    <div className="relative min-h-screen bg-background px-5 pb-12 pt-10 text-foreground antialiased selection:bg-primary/20 sm:pb-24 sm:pt-36">
       {/* Floating preview toggle for the authenticated user */}
       {isUserAuthenticated && (
         <button
           onClick={() => setIsPreviewMode(!isPreviewMode)}
           className={cn(
-            "fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full",
+            // On mobile the site nav sits at bottom-right, so this moves left to stay clear of it.
+            "fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full sm:bottom-6 sm:left-auto sm:right-6",
             "border border-border/60 bg-background/80 text-muted-foreground backdrop-blur-md",
             "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-8px_rgba(0,0,0,0.16)]",
             "transition-[background-color,color,transform] duration-200",
@@ -373,17 +374,26 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
       )}
 
       <div className="mx-auto max-w-[760px]">
-        <header className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <EditableField
-              as="h1"
-              value={data.header.name}
-              onChange={(val) => updateHeader("name", val)}
-              isEditing={isEditing}
-              className="text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-foreground sm:text-[44px]"
+        <header className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+          <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/sourav-avatar.jpg"
+              alt=""
+              aria-hidden="true"
+              className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-border/60 sm:h-20 sm:w-20"
             />
 
-            <div className="mt-4 space-y-1.5">
+            <div className="min-w-0">
+              <EditableField
+                as="h1"
+                value={data.header.name}
+                onChange={(val) => updateHeader("name", val)}
+                isEditing={isEditing}
+                className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-foreground sm:text-[44px]"
+              />
+
+              <div className="mt-3 space-y-1.5 sm:mt-4">
               <div className={cn("flex flex-wrap items-center gap-x-2.5 gap-y-1", META)}>
                 <EditableField
                   value={data.header.location}
@@ -431,6 +441,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   className={linkClass}
                 />
               </div>
+              </div>
             </div>
           </div>
 
@@ -477,7 +488,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
         </header>
 
         {/* About */}
-        <section className="mt-14 sm:mt-16">
+        <section className="mt-12 sm:mt-16">
           <SectionHead title="About" />
           <p className="mt-5 text-[15px] leading-[1.7] text-foreground">
             <EditableField
@@ -491,10 +502,10 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
         </section>
 
         {/* Experience */}
-        <section className="mt-14 sm:mt-16">
+        <section className="mt-12 sm:mt-16">
           <SectionHead title="Experience" span={spanOf(data.workExperience)} />
 
-          <div className="mt-8 space-y-10">
+          <div className="mt-8 space-y-8 sm:space-y-10">
             {data.workExperience.map((job, index) => {
               const showLogo = Boolean(job.logoUrl || job.companyUrl) || isEditing;
 
@@ -503,15 +514,19 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   key={job.id}
                   className={cn(
                     "group/entry grid gap-x-5",
-                    showLogo ? "grid-cols-[40px_1fr]" : "grid-cols-1"
+                    // The gutter is desktop-only: on a phone it steals 60px from the
+                    // bullets, which are the part people actually read.
+                    showLogo ? "grid-cols-1 sm:grid-cols-[40px_1fr]" : "grid-cols-1"
                   )}
                 >
                   {showLogo && (
-                    <Logo imgUrl={job.logoUrl} linkUrl={job.companyUrl} isEditing={isEditing} />
+                    <div className="hidden sm:block">
+                      <Logo imgUrl={job.logoUrl} linkUrl={job.companyUrl} isEditing={isEditing} />
+                    </div>
                   )}
 
                   <div className="min-w-0">
-                    <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                       <EditableField
                         value={job.role}
                         onChange={(val) => mutateAt("workExperience", index, (item) => { item.role = val; })}
@@ -612,10 +627,10 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
         </section>
 
         {/* Independent projects */}
-        <section className="mt-14 sm:mt-16">
+        <section className="mt-12 sm:mt-16">
           <SectionHead title="Independent projects" span={spanOf(data.projects)} />
 
-          <div className="mt-8 space-y-10">
+          <div className="mt-8 space-y-8 sm:space-y-10">
             {data.projects.map((project, index) => {
               const showLogo = Boolean(project.logoUrl || project.projectUrl) || isEditing;
 
@@ -624,19 +639,21 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                   key={project.id}
                   className={cn(
                     "group/entry grid gap-x-5",
-                    showLogo ? "grid-cols-[40px_1fr]" : "grid-cols-1"
+                    showLogo ? "grid-cols-1 sm:grid-cols-[40px_1fr]" : "grid-cols-1"
                   )}
                 >
                   {showLogo && (
-                    <Logo
-                      imgUrl={project.logoUrl}
-                      linkUrl={project.projectUrl}
-                      isEditing={isEditing}
-                    />
+                    <div className="hidden sm:block">
+                      <Logo
+                        imgUrl={project.logoUrl}
+                        linkUrl={project.projectUrl}
+                        isEditing={isEditing}
+                      />
+                    </div>
                   )}
 
                   <div className="min-w-0">
-                    <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                       <EditableField
                         value={project.name}
                         onChange={(val) => mutateAt("projects", index, (item) => { item.name = val; })}
@@ -742,17 +759,17 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
         </section>
 
         {/* Education */}
-        <section className="mt-14 sm:mt-16">
+        <section className="mt-12 sm:mt-16">
           <SectionHead title="Education" span={spanOf(data.education)} />
 
           <div className="mt-8 space-y-8">
             {data.education.map((edu, index) => (
-              <div key={edu.id} className="grid grid-cols-[40px_1fr] gap-x-5">
+              <div key={edu.id} className="grid grid-cols-1 gap-x-5 sm:grid-cols-[40px_1fr]">
                 {/* Keeps the text column aligned with the entries above */}
-                <div aria-hidden="true" />
+                <div aria-hidden="true" className="hidden sm:block" />
 
                 <div className="min-w-0">
-                  <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                     <EditableField
                       value={edu.degree}
                       onChange={(val) => mutateAt("education", index, (item) => { item.degree = val; })}
@@ -822,13 +839,13 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
         </section>
 
         {/* Skills */}
-        <section className="mt-14 sm:mt-16">
+        <section className="mt-12 sm:mt-16">
           <SectionHead title="Skills" />
 
           <div className="mt-8 space-y-6">
             {data.skills.map((skillGroup, index) => (
-              <div key={skillGroup.id} className="grid grid-cols-[40px_1fr] gap-x-5">
-                <div aria-hidden="true" />
+              <div key={skillGroup.id} className="grid grid-cols-1 gap-x-5 sm:grid-cols-[40px_1fr]">
+                <div aria-hidden="true" className="hidden sm:block" />
 
                 <div className="min-w-0">
                   <EditableField
