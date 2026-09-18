@@ -6,6 +6,7 @@ import { EditableField } from "@/components/EditableField";
 import { saveCVData, loginAdmin } from "./actions";
 import { cn } from "@/lib/utils";
 import { Download, Check, Loader2, Eye, Edit2, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CVEditorProps {
   initialData: CVData;
@@ -274,6 +275,59 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
   const linkClass =
     "underline decoration-border decoration-1 underline-offset-[3px] transition-colors hover:text-foreground hover:decoration-foreground";
 
+  const [downloadStatus, setDownloadStatus] = useState<"idle" | "preparing" | "done" | "error">("idle");
+
+  /**
+   * The PDF is rendered on the server, so there is a real wait. We fetch it here
+   * to own the progress state, then hand the blob to the browser. The element
+   * stays an anchor, so modified clicks and "save link as" still behave natively.
+   */
+  const handleDownload = async (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+
+    event.preventDefault();
+    if (downloadStatus === "preparing") return;
+
+    setDownloadStatus("preparing");
+
+    try {
+      const response = await fetch("/cv/pdf");
+      if (!response.ok) throw new Error(`Request failed with ${response.status}`);
+
+      const objectUrl = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = "sourav-nanda-cv.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      // Revoking too early can cancel the download in some browsers.
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
+
+      setDownloadStatus("done");
+    } catch {
+      setDownloadStatus("error");
+    }
+  };
+
+  React.useEffect(() => {
+    if (downloadStatus !== "done" && downloadStatus !== "error") return;
+    const timer = setTimeout(
+      () => setDownloadStatus("idle"),
+      downloadStatus === "error" ? 4000 : 2600
+    );
+    return () => clearTimeout(timer);
+  }, [downloadStatus]);
+
+  const downloadLabel =
+    downloadStatus === "preparing"
+      ? "Preparing"
+      : downloadStatus === "done"
+        ? "Downloaded"
+        : downloadStatus === "error"
+          ? "Try again"
+          : "Download PDF";
+
   return (
     <div className="relative min-h-screen bg-background px-5 pb-16 pt-28 text-foreground antialiased selection:bg-primary/20 sm:pb-24 sm:pt-36">
       {/* Floating preview toggle for the authenticated user */}
@@ -382,17 +436,43 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
 
           <a
             href="/cv/pdf"
+            download
+            onClick={handleDownload}
+            aria-busy={downloadStatus === "preparing"}
             className={cn(
-              "group inline-flex h-9 shrink-0 items-center gap-2 self-start rounded-lg px-3.5",
-              "bg-primary text-[13px] font-medium text-primary-foreground",
+              "group inline-flex h-9 shrink-0 items-center justify-center gap-2 self-start rounded-lg px-3.5",
+              // Fixed width so the label swap cannot shift the layout
+              "min-w-[152px] text-[13px] font-medium",
               "shadow-[0_1px_2px_rgba(0,0,0,0.06),0_6px_16px_-6px_rgba(0,0,0,0.28)]",
-              "transition-[transform,box-shadow,opacity] duration-200",
-              "hover:opacity-90 active:scale-[0.98] motion-reduce:active:scale-100",
+              "transition-[transform,box-shadow,background-color,opacity] duration-200",
+              "active:scale-[0.98] motion-reduce:active:scale-100",
+              downloadStatus === "error"
+                ? "bg-destructive text-destructive-foreground"
+                : "bg-primary text-primary-foreground hover:opacity-90",
               FOCUS_RING
             )}
           >
-            <Download className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-[1px]" />
-            Download PDF
+            <span aria-hidden="true" className="relative flex h-3.5 w-3.5 items-center justify-center">
+              <AnimatePresence initial={false}>
+                <motion.span
+                  key={downloadStatus}
+                  className="absolute inset-0 flex items-center justify-center"
+                  initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                  transition={{ type: "spring", duration: 0.3, bounce: 0 }}
+                >
+                  {downloadStatus === "preparing" ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : downloadStatus === "done" ? (
+                    <Check className="h-3.5 w-3.5" />
+                  ) : (
+                    <Download className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-[1px]" />
+                  )}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+            <span aria-live="polite">{downloadLabel}</span>
           </a>
         </header>
 
