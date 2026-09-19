@@ -11,7 +11,7 @@ const ClientFooterWrapper: React.FC = () => {
 
   if (isCvPage) return null;
 
-  return <FooterWithSnakeGame withGame={!isSnakeGamePage} />;
+  return <FooterWithSnakeGame withGame={!isSnakeGamePage} withCat={!isSnakeGamePage} />;
 };
 
 export default ClientFooterWrapper;

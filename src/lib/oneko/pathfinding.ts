@@ -22,7 +22,7 @@ export function collectObstacles(): ObstacleRect[] {
   const vh = window.innerHeight;
   const rects: ObstacleRect[] = [];
 
-  for (const node of document.querySelectorAll(OBSTACLE_SELECTOR)) {
+  for (const node of Array.from(document.querySelectorAll(OBSTACLE_SELECTOR))) {
     if (node.closest('[data-oneko-zone="attract"]')) continue;
     const r = node.getBoundingClientRect();
     if (shouldIncludeObstacleRect(r, vw, vh)) {

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import { motion } from "framer-motion";
+import Oneko from "@/components/oneko";
 import {
   Tooltip,
   TooltipContent,
@@ -13,6 +14,7 @@ import {
 
 interface FooterWithSnakeGameProps {
   withGame?: boolean;
+  withCat?: boolean;
 }
 
 const SOCIALS = [
@@ -35,9 +37,30 @@ const SOCIALS = [
 
 const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   withGame = true,
+  withCat = true,
 }) => {
   return (
     <footer className="relative bg-card border-t border-border">
+      {/*
+        The cat is a fixed, viewport-wide cursor companion. It zips around the
+        whole page, so keep it below the navbar/modals (z-50) and out of the
+        footer links via `data-oneko-zone="avoid"`.
+      */}
+      {withCat && (
+        <Oneko
+          skin="classic"
+          meow={false}
+          zIndex={30}
+          bubbleChance={0.35}
+          bubbleText={[
+            "meow.",
+            "this site is open source, you know.",
+            "bored? there's a game around here.",
+            "nice cursor.",
+          ]}
+        />
+      )}
+
       <div className="container mx-auto max-w-5xl px-4 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           {/* Connect */}
@@ -65,6 +88,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
           {/* Socials */}
           <motion.div
             className="flex items-center justify-center gap-1"
+            data-oneko-zone="avoid"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -99,7 +123,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
           <p className="text-xs italic text-muted-foreground text-center sm:text-left">
             "The only way to do great work is to love what you do." — Steve Jobs
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4" data-oneko-zone="avoid">
             {withGame && (
               <Link
                 href="/play"

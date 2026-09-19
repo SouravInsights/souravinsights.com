@@ -31,7 +31,7 @@ function messageForIdleAnimation(deps: CatAnimationDeps): string | undefined {
   if (typeof s.customBubbleText === "string") {
     if (s.customBubbleText.trim()) return s.customBubbleText;
   } else {
-    const thoughts = [...new Set(s.customBubbleText.filter((text) => text.trim()))];
+    const thoughts = Array.from(new Set(s.customBubbleText.filter((text) => text.trim())));
     if (thoughts.length) return pickFromPool(deps, thoughts);
   }
   if (s.idleAnimation === "tired") {
