@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Safe to Merge">
+  <rect width="512" height="512" rx="112" fill="#1e2530" />
+  <path
+    d="M138 264 L216 344 L374 168"
+    fill="none"
+    stroke="#6fd08c"
+    stroke-width="46"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

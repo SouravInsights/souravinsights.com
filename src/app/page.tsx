@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
+import { featuredProjects } from "@/app/projects/projects-data";
 import { useState } from "react";
 import {
   Docker,
@@ -33,7 +34,7 @@ import {
 const companies = [
   {
     name: "Paragraph",
-    logo: "https://pbs.twimg.com/profile_images/1906799996864974848/1ObSVOOC_400x400.jpg",
+    logo: "https://pbs.twimg.com/profile_images/2098098654347243525/bGWz6wKc_400x400.jpg",
     website: "https://paragraph.xyz/",
   },
   {
@@ -48,65 +49,10 @@ const companies = [
   },
   {
     name: "RabbitHole",
-    logo: "https://pbs.twimg.com/profile_images/1740493721601232896/3B7Nytzl_400x400.png",
+    logo: "https://pbs.twimg.com/profile_images/2090749736764497920/jUEcfiH8_400x400.jpg",
     website: "https://rabbithole.gg",
   },
 ];
-
-const projects = [
-  {
-    name: "Beenthere",
-    logo: "/projects/beenthere-logo.png",
-    website: "https://www.beenthere.page/",
-  },
-  {
-    name: "BeenThere Stamps",
-    logo: "/projects/stamps-beenthere-logo.png",
-    website: "https://stamps.beenthere.page/",
-  },
-  {
-    name: "Poetik",
-    logo: "/projects/poetik-logo.png",
-    website: "https://poetik.vercel.app/",
-  },
-  {
-    name: "FairForms",
-    logo: "/projects/fairforms-logo.png",
-    website: "https://fairforms.vercel.app/",
-  },
-  {
-    name: "Waitroom",
-    logo: "/projects/waitroom-logo.png",
-    website: "https://waitroom-api.vercel.app/",
-  },
-  {
-    name: "3Reads",
-    logo: "/projects/3reads-logo.png",
-    website: "https://3reads.vercel.app/",
-  },
-];
-
-// const projects = [
-//   {
-//     name: "FairForms",
-//     repoUrl: "https://github.com/SouravInsights/fairforms",
-//     liveUrl: "https://www.fairforms.xyz/",
-//   },
-//   {
-//     name: "Vendorly",
-//     repoUrl: "https://github.com/SouravInsights/vendorly",
-//     liveUrl: "https://vendorly.vercel.app/",
-//   },
-//   {
-//     name: "justanotherday",
-//     liveUrl: "https://justanotherday.vercel.app/",
-//   },
-//   {
-//     name: "levelmeup",
-//     repoUrl: "https://github.com/SouravInsights/levelmeup",
-//     liveUrl: "https://levelmeup.vercel.app/",
-//   },
-// ];
 
 const blogHighlights = [
   {
@@ -461,40 +407,48 @@ export default function Home() {
                 scratch a personal itch.
               </p>
             </div>
-            <div className="grid grid-cols-2 md:flex flex-wrap justify-center gap-4">
-              {projects.map((project, index) => (
-                <motion.a
-                  key={project.name}
-                  href={project.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group border border-border rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                >
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-20 h-20 relative">
-                      <Image
-                        src={project.logo}
-                        alt={`${project.name} logo`}
-                        fill
-                        className="rounded-full object-cover"
-                      />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {featuredProjects.map((project, index) => {
+                const logoIsSvg = project.logo.endsWith(".svg");
+
+                return (
+                  <motion.a
+                    key={project.slug}
+                    href={`/projects#${project.slug}`}
+                    className="group border border-border rounded-lg p-5 hover:bg-accent hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border bg-secondary shrink-0">
+                        <Image
+                          src={project.logo}
+                          alt={`${project.name} logo`}
+                          fill
+                          unoptimized={logoIsSvg}
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                          {project.name}
+                        </h3>
+                      </div>
                     </div>
-                    <span className="text-sm font-medium text-foreground transition-colors text-center">
-                      {project.name}
-                    </span>
-                  </div>
-                </motion.a>
-              ))}
+                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+                      {project.note}
+                    </p>
+                  </motion.a>
+                );
+              })}
             </div>
             <div className="mt-8 text-center">
               <a
-                href="https://github.com/SouravInsights"
+                href="/projects"
                 className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
               >
-                View all projects <ChevronRight className="w-4 h-4" />
+                Read the notes <ChevronRight className="w-4 h-4" />
               </a>
             </div>
           </div>

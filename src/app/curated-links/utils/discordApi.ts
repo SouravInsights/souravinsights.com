@@ -67,11 +67,12 @@ export async function getChannels(): Promise<DiscordChannel[]> {
 }
 
 export async function getMessagesFromChannel(
-  channelId: string
+  channelId: string,
+  limit = 100
 ): Promise<DiscordMessage[]> {
   try {
     const messages = (await rest.get(Routes.channelMessages(channelId), {
-      query: new URLSearchParams({ limit: "100" }),
+      query: new URLSearchParams({ limit: String(limit) }),
     })) as DiscordMessage[];
     return messages.filter((message) => message.content.includes("http"));
   } catch (error) {

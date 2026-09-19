@@ -10,7 +10,6 @@ interface FavoriteLink {
   url: string;
   description: string | null;
   category: string | null;
-  createdAt: string;
 }
 
 export function FavoriteLinks() {
@@ -21,17 +20,10 @@ export function FavoriteLinks() {
   useEffect(() => {
     async function fetchFavorites() {
       try {
-        const response = await fetch("/api/favorite-links/public");
+        const response = await fetch("/api/curated-links/latest");
         const data = await response.json();
         if (data.success) {
-          const sorted = data.favorites
-            .sort(
-              (a: FavoriteLink, b: FavoriteLink) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
-            .slice(0, 6);
-          setFavorites(sorted);
+          setFavorites(data.links.slice(0, 8));
         }
       } catch (error) {
         console.error("Error fetching favorite links:", error);
@@ -56,7 +48,7 @@ export function FavoriteLinks() {
       <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Favorite Links</h2>
+            <h2 className="text-2xl font-bold mb-2">Curated Links</h2>
             <p className="text-muted-foreground">
               Curated resources and tools I find valuable
             </p>
@@ -99,7 +91,7 @@ export function FavoriteLinks() {
     <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
       <div className="space-y-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Favorite Links</h2>
+          <h2 className="text-2xl font-bold mb-2">Curated Links</h2>
           <p className="text-muted-foreground">
             Curated resources, articles and tools I find valuable
           </p>

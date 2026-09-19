@@ -13,11 +13,13 @@ import {
   Gamepad2,
   Terminal,
   BookText,
+  Boxes,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
+  { name: "Projects", path: "/projects", icon: Boxes },
   { name: "Blog", path: "/blog", icon: BookText },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
