@@ -116,7 +116,9 @@ export default function BlogPostContent({
     <div className="max-w-7xl mx-auto">
       {/* Navigation - aligns with the article column in both layouts */}
       <div
-        className={`mb-6 px-4 lg:px-0 ${hasTOC ? "" : "lg:w-2/3 lg:mx-auto"}`}
+        className={`mb-6 px-4 lg:px-0 ${
+          hasTOC ? "" : "hidden lg:block lg:w-2/3 lg:mx-auto"
+        }`}
       >
         <Link
           href="/blog"
@@ -128,12 +130,8 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div
-        className={`lg:hidden sticky top-0 z-30 bg-background p-4 border-b border-border flex items-center ${
-          hasTOC ? "justify-between" : "justify-end"
-        }`}
-      >
-        {hasTOC && (
+      <div className="lg:hidden sticky top-0 z-30 bg-background p-4 border-b border-border flex items-center justify-between">
+        {hasTOC ? (
           <button
             onClick={() => setMobileMenuOpen(true)}
             className="flex items-center gap-2 px-3 py-1.5 text-sm border border-border rounded-md text-muted-foreground"
@@ -141,6 +139,14 @@ export default function BlogPostContent({
             <Menu size={16} />
             <span>Contents</span>
           </button>
+        ) : (
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-green-600 dark:text-green-500 hover:underline"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            <span>Back to all posts</span>
+          </Link>
         )}
 
         <motion.div
