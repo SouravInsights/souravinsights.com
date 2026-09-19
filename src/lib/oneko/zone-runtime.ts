@@ -154,6 +154,19 @@ function updateWanderTarget(s: CatRuntimeState, random: () => number): void {
     zones.movementTarget = { x: s.nekoPosX, y: s.nekoPosY };
     return;
   }
+
+  // A pointer inside the region takes over: the cat comes to play. Moving the
+  // cursor back out hands control to the wander loop again.
+  const cursor = { x: s.mousePosX, y: s.mousePosY };
+  if (s.followCursorCfg && containsPoint(bounds, cursor)) {
+    zones.movementTarget = cursor;
+    s.wanderTarget = cursor;
+    s.wanderPause = 0;
+    s.wanderRetarget = cfg.retargetAfter ?? WANDER_RETARGET_FRAMES;
+    s.wanderStuck = 0;
+    return;
+  }
+
   if (s.wanderPause > 0) {
     s.wanderPause--;
     zones.movementTarget = { x: s.nekoPosX, y: s.nekoPosY };
