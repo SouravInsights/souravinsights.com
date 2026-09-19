@@ -106,10 +106,18 @@ export default function BlogPostContent({
 
   const isDraft = post.status === "draft";
 
+  // Detect headings from the raw MDX up front (not just the post-render DOM)
+  // so posts without any headings skip the sidebar layout without a flicker.
+  const hasTOC = /^#{1,6}\s|<h[1-6][\s>]/m.test(
+    post.content.replace(/```[\s\S]*?```/g, "")
+  );
+
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Navigation */}
-      <div className="mb-6 px-4 lg:px-0">
+      {/* Navigation - aligns with the article column in both layouts */}
+      <div
+        className={`mb-6 px-4 lg:px-0 ${hasTOC ? "" : "lg:w-2/3 lg:mx-auto"}`}
+      >
         <Link
           href="/blog"
           className="inline-flex items-center text-green-600 dark:text-green-500 hover:underline"
@@ -120,14 +128,20 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div className="lg:hidden sticky top-0 z-30 bg-background p-4 border-b border-border flex justify-between items-center">
-        <button
-          onClick={() => setMobileMenuOpen(true)}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm border border-border rounded-md text-muted-foreground"
-        >
-          <Menu size={16} />
-          <span>Contents</span>
-        </button>
+      <div
+        className={`lg:hidden sticky top-0 z-30 bg-background p-4 border-b border-border flex items-center ${
+          hasTOC ? "justify-between" : "justify-end"
+        }`}
+      >
+        {hasTOC && (
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm border border-border rounded-md text-muted-foreground"
+          >
+            <Menu size={16} />
+            <span>Contents</span>
+          </button>
+        )}
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -193,9 +207,11 @@ export default function BlogPostContent({
       <div className="flex flex-col lg:flex-row pt-12 lg:pt-0">
         {/* Main Content - Dynamic width based on TOC state */}
         <article
-          className={`transition-all duration-500 ease-in-out w-full ${
-            isTOCCollapsed ? "lg:w-[90%]" : "lg:w-2/3"
-          } px-4 lg:px-0 lg:pr-12`}
+          className={`transition-all duration-500 ease-in-out w-full px-4 lg:px-0 ${
+            hasTOC
+              ? `${isTOCCollapsed ? "lg:w-[90%]" : "lg:w-2/3"} lg:pr-12`
+              : "lg:w-2/3 lg:mx-auto"
+          }`}
           ref={contentRef}
         >
           <motion.div
@@ -223,6 +239,13 @@ export default function BlogPostContent({
 
                 {/* View Counter */}
                 <ViewCounter slug={post.slug} />
+
+                {/* Like Button - inline on desktop when there's no TOC sidebar */}
+                {!hasTOC && (
+                  <div className="hidden lg:block ml-auto">
+                    <ThreeDLikeButton slug={post.slug} />
+                  </div>
+                )}
               </div>
 
               {/* Hacker News Button */}
@@ -268,7 +291,8 @@ export default function BlogPostContent({
           )}
         </article>
 
-        {/* Right Sidebar - Dynamic width based on TOC state */}
+        {/* Right Sidebar - only rendered when the post actually has headings */}
+        {hasTOC && (
         <aside
           className={`hidden lg:flex flex-col transition-all duration-500 ease-in-out ${
             isTOCCollapsed ? "lg:w-[10%]" : "lg:w-1/3"
@@ -297,6 +321,7 @@ export default function BlogPostContent({
             </motion.div>
           </div>
         </aside>
+        )}
       </div>
     </div>
   );

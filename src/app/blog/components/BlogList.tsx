@@ -70,9 +70,9 @@ export default function BlogList({ posts }: BlogListProps) {
                   {post.title}
                 </h2>
 
-                <p className="text-muted-foreground mb-4">
-                  {post.excerpt}
-                </p>
+                {post.excerpt && (
+                  <p className="text-muted-foreground mb-4">{post.excerpt}</p>
+                )}
 
                 <div className="inline-flex px-3 py-1 text-sm rounded-full bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300">
                   Read article

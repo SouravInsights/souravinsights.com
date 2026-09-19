@@ -79,7 +79,7 @@ export default function PostPage({ params }: PostPageProps) {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
-    description: post.excerpt,
+    ...(post.excerpt ? { description: post.excerpt } : {}),
     datePublished: post.date,
     dateModified: post.date,
     image: ogImageUrl,

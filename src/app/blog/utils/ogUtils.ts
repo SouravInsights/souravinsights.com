@@ -30,14 +30,14 @@ export function generateBlogMetadata(
 
   return {
     title: post.title,
-    description: post.excerpt,
+    description: post.excerpt || undefined,
     keywords: post.tags,
     alternates: {
       canonical: postUrl,
     },
     openGraph: {
       title: post.title,
-      description: post.excerpt,
+      description: post.excerpt || undefined,
       type: "article" as const,
       publishedTime: post.date,
       authors: ["Sourav Kumar Nanda"],
@@ -55,7 +55,7 @@ export function generateBlogMetadata(
     twitter: {
       card: "summary_large_image" as const,
       title: post.title,
-      description: post.excerpt,
+      description: post.excerpt || undefined,
       images: [ogImageUrl],
       creator: "@souravinsights",
       site: "@souravinsights",

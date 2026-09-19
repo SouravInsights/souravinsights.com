@@ -48,34 +48,6 @@ function parseFrontmatter(fileContents: string) {
   return { matterData, content };
 }
 
-// Helper function to extract excerpt from content if not provided
-function extractExcerptFromContent(content: string, maxLength: number = 160): string {
-  // Remove markdown syntax for a cleaner excerpt
-  const cleanContent = content
-    .replace(/^#{1,6}\s+/gm, "") // Remove headers
-    .replace(/\*\*(.+?)\*\*/g, "$1") // Remove bold
-    .replace(/\*(.+?)\*/g, "$1") // Remove italic
-    .replace(/\[(.+?)\]\(.+?\)/g, "$1") // Remove links but keep text
-    .replace(/`(.+?)`/g, "$1") // Remove inline code
-    .replace(/^>\s+/gm, "") // Remove blockquotes
-    .replace(/\n+/g, " ") // Replace newlines with spaces
-    .trim();
-
-  // Find the first meaningful sentence or paragraph
-  const firstParagraph = cleanContent.split(/\.\s+/)[0];
-  
-  if (firstParagraph && firstParagraph.length > 20) {
-    return firstParagraph.length > maxLength
-      ? firstParagraph.slice(0, maxLength).trim() + "..."
-      : firstParagraph + ".";
-  }
-
-  // Fallback to truncating the content
-  return cleanContent.length > maxLength
-    ? cleanContent.slice(0, maxLength).trim() + "..."
-    : cleanContent;
-}
-
 // Function to get all blog posts with metadata
 export function getBlogPosts(): PostMetadata[] {
   const postsDirectory = path.join(process.cwd(), "src/content/posts");
@@ -99,10 +71,10 @@ export function getBlogPosts(): PostMetadata[] {
     const fileContents = fs.readFileSync(fullPath, "utf8");
 
     // Parse frontmatter
-    const { matterData, content } = parseFrontmatter(fileContents);
+    const { matterData } = parseFrontmatter(fileContents);
 
-    // Generate excerpt from content if not provided
-    const excerpt = matterData.excerpt || extractExcerptFromContent(content);
+    // Excerpt is opt-in: without one, listing cards show just the title.
+    const excerpt = matterData.excerpt || "";
 
     // Return post metadata with defaults for missing fields
     return {
@@ -135,8 +107,7 @@ export function getPostBySlug(slug: string): PostData | null {
 
     const { matterData, content } = parseFrontmatter(fileContents);
 
-    // Generate excerpt from content if not provided
-    const excerpt = matterData.excerpt || extractExcerptFromContent(content);
+    const excerpt = matterData.excerpt || "";
 
     return {
       slug,
