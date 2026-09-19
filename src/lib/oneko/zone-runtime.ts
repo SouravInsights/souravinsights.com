@@ -155,16 +155,31 @@ function updateWanderTarget(s: CatRuntimeState, random: () => number): void {
     return;
   }
 
-  // A pointer inside the region takes over: the cat comes to play. Moving the
-  // cursor back out hands control to the wander loop again.
-  const cursor = { x: s.mousePosX, y: s.mousePosY };
-  if (s.followCursorCfg && containsPoint(bounds, cursor)) {
-    zones.movementTarget = cursor;
-    s.wanderTarget = cursor;
-    s.wanderPause = 0;
-    s.wanderRetarget = cfg.retargetAfter ?? WANDER_RETARGET_FRAMES;
-    s.wanderStuck = 0;
-    return;
+  // Pointer activity has a short memory. While it is fresh the cat reacts to
+  // it; after POINTER_INTEREST_FRAMES of stillness it goes back to wandering,
+  // so a parked cursor never holds the cat hostage.
+  if (s.pointerInterest > 0) s.pointerInterest--;
+  const pointer = s.pointerTarget;
+  if (s.followCursorCfg && s.pointerInterest > 0 && pointer) {
+    let aim: PathPoint | null = null;
+    if (containsPoint(bounds, pointer)) {
+      aim = pointer;
+    } else if (window.matchMedia?.("(hover: none)")?.matches) {
+      // Touch screens have no hover, so a tap anywhere should still nudge the
+      // cat. Aim at the nearest point inside the region, keeping its x.
+      aim = {
+        x: Math.min(Math.max(pointer.x, bounds.left + margin), bounds.right - margin),
+        y: Math.min(Math.max(pointer.y, bounds.top + margin), bounds.bottom - margin),
+      };
+    }
+    if (aim) {
+      zones.movementTarget = aim;
+      s.wanderTarget = aim;
+      s.wanderPause = 0;
+      s.wanderRetarget = cfg.retargetAfter ?? WANDER_RETARGET_FRAMES;
+      s.wanderStuck = 0;
+      return;
+    }
   }
 
   if (s.wanderPause > 0) {

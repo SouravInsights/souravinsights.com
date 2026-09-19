@@ -40,6 +40,8 @@ type RuntimeConfigStateFields = Pick<
   | "wanderRetarget"
   | "wanderPause"
   | "wanderStuck"
+  | "pointerTarget"
+  | "pointerInterest"
 >;
 
 export function defaultRuntimeConfigState(): RuntimeConfigStateFields {
@@ -80,6 +82,8 @@ export function defaultRuntimeConfigState(): RuntimeConfigStateFields {
     wanderRetarget: 0,
     wanderPause: 0,
     wanderStuck: 0,
+    pointerTarget: null,
+    pointerInterest: 0,
   };
 }
 

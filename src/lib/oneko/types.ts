@@ -190,4 +190,7 @@ export interface CatRuntimeState {
   wanderRetarget: number;
   wanderPause: number;
   wanderStuck: number;
+  /** Last pointer position, and how many frames it still counts as active. */
+  pointerTarget: PathPoint | null;
+  pointerInterest: number;
 }

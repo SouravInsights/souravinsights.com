@@ -1,4 +1,4 @@
-import { MOUSE_LOOP_MIN_STEP, MOUSE_LOOP_WINDING_CAP } from "../constants";
+import { MOUSE_LOOP_MIN_STEP, MOUSE_LOOP_WINDING_CAP, POINTER_INTEREST_FRAMES } from "../constants";
 import type { CatAnimationDeps } from "./deps";
 
 export function createMouseMoveHandler(deps: CatAnimationDeps) {
@@ -32,5 +32,8 @@ export function createMouseMoveHandler(deps: CatAnimationDeps) {
     }
     s.mousePosX = mx;
     s.mousePosY = my;
+    // Wander mode reads this: recent pointer activity, wherever it happened.
+    s.pointerTarget = { x: mx, y: my };
+    s.pointerInterest = POINTER_INTEREST_FRAMES;
   };
 }
