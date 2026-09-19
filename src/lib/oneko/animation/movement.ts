@@ -5,9 +5,11 @@ import {
   MAX_VEL_FACTOR,
   STEER_LERP,
   TILE,
+  WANDER_EDGE_MARGIN,
   WAYPOINT_REACH_DIST,
 } from "../constants";
 import { findRoute, nearestWalkable, worldToCell } from "../pathfinding";
+import type { CatRuntimeState } from "../types";
 import type { CatAnimationDeps } from "./deps";
 import { maybeStartIdleAnimation } from "./idle";
 import { clearRotation, directionFromDelta, setSprite } from "./sprites";
@@ -57,6 +59,24 @@ function getNextWaypointTarget(deps: CatAnimationDeps) {
   return path[s.pathWaypointIdx];
 }
 
+function clampToBounds(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max));
+}
+
+/** Window edges by default; the wander region's edges once one is active. */
+function movementBounds(s: CatRuntimeState) {
+  const b = s.wanderBounds;
+  if (b) {
+    return {
+      minX: b.left + WANDER_EDGE_MARGIN,
+      maxX: b.right - WANDER_EDGE_MARGIN,
+      minY: b.top + WANDER_EDGE_MARGIN,
+      maxY: b.bottom - WANDER_EDGE_MARGIN,
+    };
+  }
+  return { minX: 16, maxX: window.innerWidth - 16, minY: 16, maxY: window.innerHeight - 16 };
+}
+
 function moveToward(deps: CatAnimationDeps, targetX: number, targetY: number) {
   const s = deps.stateRef.current;
   const dx = targetX - s.nekoPosX;
@@ -78,9 +98,10 @@ function moveToward(deps: CatAnimationDeps, targetX: number, targetY: number) {
     s.nekoVelY = (s.nekoVelY / velMag) * maxVel;
   }
   const from = { x: s.nekoPosX, y: s.nekoPosY };
+  const bounds = movementBounds(s);
   const proposed = {
-    x: Math.max(16, Math.min(window.innerWidth - 16, s.nekoPosX + s.nekoVelX)),
-    y: Math.max(16, Math.min(window.innerHeight - 16, s.nekoPosY + s.nekoVelY)),
+    x: clampToBounds(s.nekoPosX + s.nekoVelX, bounds.minX, bounds.maxX),
+    y: clampToBounds(s.nekoPosY + s.nekoVelY, bounds.minY, bounds.maxY),
   };
   const safe = constrainZoneMovement(from, proposed, s.zoneState.blocked);
   if (safe.x !== proposed.x || safe.y !== proposed.y) {
@@ -93,8 +114,8 @@ function moveToward(deps: CatAnimationDeps, targetX: number, targetY: number) {
   }
   s.nekoPosX = safe.x;
   s.nekoPosY = safe.y;
-  s.nekoPosX = Math.max(16, Math.min(window.innerWidth - 16, s.nekoPosX));
-  s.nekoPosY = Math.max(16, Math.min(window.innerHeight - 16, s.nekoPosY));
+  s.nekoPosX = clampToBounds(s.nekoPosX, bounds.minX, bounds.maxX);
+  s.nekoPosY = clampToBounds(s.nekoPosY, bounds.minY, bounds.maxY);
   deps.el.style.left = `${Math.floor(s.nekoPosX - TILE / 2)}px`;
   deps.el.style.top = `${Math.floor(s.nekoPosY - TILE / 2)}px`;
   const dir = directionFromDelta(s.nekoVelX, s.nekoVelY) ?? "idle";

@@ -31,6 +31,7 @@ import type { CatActivityState, CatLiveState, OnekoProps } from "@/lib/oneko/typ
 export type { CatActivityState, CatLiveState, OnekoProps };
 export type { OnekoSkin } from "@/lib/oneko/skins";
 export type { OnekoZone } from "@/lib/oneko/zones";
+export type { OnekoWanderConfig } from "@/lib/oneko/types";
 
 export default function Oneko({
   paused = false,
@@ -69,6 +70,7 @@ export default function Oneko({
   bubbleText = "",
   volume = DEFAULT_VOLUME,
   laserPointer = false,
+  wander = null,
 }: OnekoProps) {
   const elRef = useRef<HTMLDivElement | null>(null);
   const lastStateRef = useRef<CatActivityState>("idle");
@@ -105,6 +107,7 @@ export default function Oneko({
     meow,
     volume,
     laserPointer: laserPointer && followCursor && !paused,
+    wander,
   };
 
   const [initialState] = useState(() => createInitialCatState({ initialPos, ...config }));

@@ -1,6 +1,6 @@
 import { EMPTY_ZONES } from "./zone-runtime";
 import type { OnekoZone } from "./zones";
-import type { CatRuntimeState, OnekoProps } from "./types";
+import type { CatRuntimeState, OnekoProps, OnekoWanderConfig } from "./types";
 
 type RuntimeConfigStateFields = Pick<
   CatRuntimeState,
@@ -34,6 +34,12 @@ type RuntimeConfigStateFields = Pick<
   | "lastBubbleMsg"
   | "laserPointerCfg"
   | "laserCaught"
+  | "wanderCfg"
+  | "wanderBounds"
+  | "wanderTarget"
+  | "wanderRetarget"
+  | "wanderPause"
+  | "wanderStuck"
 >;
 
 export function defaultRuntimeConfigState(): RuntimeConfigStateFields {
@@ -68,6 +74,12 @@ export function defaultRuntimeConfigState(): RuntimeConfigStateFields {
     lastBubbleMsg: -1,
     laserPointerCfg: false,
     laserCaught: false,
+    wanderCfg: null,
+    wanderBounds: null,
+    wanderTarget: { x: 0, y: 0 },
+    wanderRetarget: 0,
+    wanderPause: 0,
+    wanderStuck: 0,
   };
 }
 
@@ -95,6 +107,7 @@ export type CatRuntimeConfig = Pick<
   meow: boolean;
   volume: number;
   laserPointer: boolean;
+  wander?: OnekoWanderConfig | null;
 };
 
 export function applyRuntimeConfig(state: CatRuntimeState, config: CatRuntimeConfig): void {
@@ -141,6 +154,8 @@ export function applyRuntimeConfig(state: CatRuntimeState, config: CatRuntimeCon
   state.enableMeow = config.meow;
   state.soundVolumeCfg = config.volume;
   state.laserPointerCfg = config.laserPointer;
+  state.wanderCfg = config.wander ?? null;
+  if (!state.wanderCfg) state.wanderBounds = null;
   if (!config.laserPointer) {
     state.laserCaught = false;
   }

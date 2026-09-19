@@ -93,6 +93,8 @@ export interface OnekoProps {
   volume?: number;
   /** Show a red laser dot in place of the system cursor. Default false */
   laserPointer?: boolean;
+  /** Roam a region autonomously instead of chasing the cursor. */
+  wander?: OnekoWanderConfig | null;
 }
 
 export interface ObstacleRect {
@@ -100,6 +102,20 @@ export interface ObstacleRect {
   top: number;
   right: number;
   bottom: number;
+}
+
+/** Roam a fixed region on its own instead of following the cursor. */
+export interface OnekoWanderConfig {
+  /** CSS selector for the region. Re-resolved every frame, so scroll/resize just work. */
+  selector?: string;
+  /** Explicit viewport rect, used when `selector` is absent or matches nothing. */
+  rect?: ObstacleRect;
+  /** Extra inset from the region edges, in pixels. */
+  padding?: number;
+  /** Frames to rest between wandering to a new spot. Default WANDER_PAUSE_FRAMES. */
+  pause?: number;
+  /** Frames after which the cat gives up and picks a fresh spot. Default WANDER_RETARGET_FRAMES. */
+  retargetAfter?: number;
 }
 
 export interface PathPoint {
@@ -168,4 +184,10 @@ export interface CatRuntimeState {
   lastFreerunMsg: number;
   laserPointerCfg: boolean;
   laserCaught: boolean;
+  wanderCfg: OnekoWanderConfig | null;
+  wanderBounds: ObstacleRect | null;
+  wanderTarget: PathPoint;
+  wanderRetarget: number;
+  wanderPause: number;
+  wanderStuck: number;
 }

@@ -42,22 +42,18 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   return (
     <footer className="relative bg-card border-t border-border">
       {/*
-        The cat is a fixed, viewport-wide cursor companion. It zips around the
-        whole page, so keep it below the navbar/modals (z-50) and out of the
-        footer links via `data-oneko-zone="avoid"`.
+        The cat is a fixed overlay that roams the footer on its own (`wander`).
+        It lives below the navbar/modals (z-50) and routes around the footer
+        links via `data-oneko-zone="avoid"`.
       */}
       {withCat && (
         <Oneko
           skin="classic"
           meow={false}
           zIndex={30}
-          bubbleChance={0.35}
-          bubbleText={[
-            "meow.",
-            "this site is open source, you know.",
-            "bored? there's a game around here.",
-            "nice cursor.",
-          ]}
+          persistPosition={false}
+          wander={{ selector: "footer", padding: 4 }}
+          bubbleChance={0.3}
         />
       )}
 
@@ -121,7 +117,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
         {/* Bottom bar */}
         <div className="mt-8 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs italic text-muted-foreground text-center sm:text-left">
-            "The only way to do great work is to love what you do." — Steve Jobs
+            "The only way to do great work is to love what you do." - Steve Jobs
           </p>
           <div className="flex items-center gap-4" data-oneko-zone="avoid">
             {withGame && (
