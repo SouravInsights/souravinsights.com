@@ -2,7 +2,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin, Twitter } from "lucide-react";
 import { motion } from "framer-motion";
 import Oneko from "@/components/oneko";
 import {
@@ -83,34 +83,48 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
 
           {/* Socials */}
           <motion.div
-            className="flex items-center justify-center gap-1"
+            className="flex flex-col items-center gap-2"
             data-oneko-zone="avoid"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            {SOCIALS.map((social) => (
-              <TooltipProvider key={social.label}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.a
-                      href={social.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={social.label}
-                      className="p-2 rounded-lg text-muted-foreground hover:text-green-600 dark:hover:text-green-500 hover:bg-accent transition-colors duration-200"
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <social.icon size={18} />
-                    </motion.a>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="font-medium">
-                    <p>{social.label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))}
+            <div className="flex items-center justify-center gap-1">
+              {SOCIALS.map((social) => (
+                <TooltipProvider key={social.label}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.a
+                        href={social.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={social.label}
+                        className="p-2 rounded-lg text-muted-foreground hover:text-green-600 dark:hover:text-green-500 hover:bg-accent transition-colors duration-200"
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <social.icon size={18} />
+                      </motion.a>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="font-medium">
+                      <p>{social.label}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
+            <a
+              href="https://github.com/SouravInsights/souravinsights.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-green-600 dark:hover:text-green-500 hover:underline"
+            >
+              source code
+              <ArrowUpRight
+                size={12}
+                className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+            </a>
           </motion.div>
         </div>
 
@@ -120,24 +134,28 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
             "The only way to do great work is to love what you do." - Steve Jobs
           </p>
           <div className="flex items-center gap-4" data-oneko-zone="avoid">
-            {withGame && (
+            <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+              Bored?
+              {withGame && (
+                <>
+                  <Link
+                    href="/play"
+                    className="inline-flex items-center gap-1 font-medium text-green-600 dark:text-green-500 underline-offset-4 hover:underline"
+                  >
+                    <span aria-hidden="true">🎮</span>
+                    Play a game
+                  </Link>
+                  <span aria-hidden="true">or</span>
+                </>
+              )}
               <Link
-                href="/play"
-                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                href="/movies"
+                className="inline-flex items-center gap-1 font-medium text-green-600 dark:text-green-500 underline-offset-4 hover:underline"
               >
-                <span aria-hidden="true">🎮</span>
-                Bored? Try the game
+                <span aria-hidden="true">🎬</span>
+                watch a movie
               </Link>
-            )}
-            <a
-              href="https://github.com/SouravInsights/souravinsights.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Github size={13} className="flex-shrink-0" />
-              Open source
-            </a>
+            </span>
           </div>
         </div>
       </div>

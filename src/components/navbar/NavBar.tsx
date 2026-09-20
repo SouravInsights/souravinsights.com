@@ -10,7 +10,6 @@ import {
   Home,
   BookOpen,
   BookmarkCheck,
-  Gamepad2,
   Terminal,
   BookText,
   Boxes,
@@ -23,7 +22,6 @@ const navItems = [
   { name: "Blog", path: "/blog", icon: BookText },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
-  { name: "Play", path: "/play", icon: Gamepad2 },
 ];
 
 const Navbar: React.FC = () => {
