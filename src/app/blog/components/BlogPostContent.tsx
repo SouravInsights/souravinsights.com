@@ -11,6 +11,7 @@ import ViewCounter from "./ViewCounter";
 import CollapsibleTOC from "./CollapsibleTOC";
 import DraftPostIndicator from "./DraftPostIndicator";
 import HackerNewsButton from "./HackerNewsButton";
+import HackerNewsComments from "./HackerNewsComments";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -284,17 +285,8 @@ export default function BlogPostContent({
             )}
           </motion.div>
 
-          {/* Hacker News Button at Bottom */}
-          {post.hnUrl && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-12 pt-8 border-t border-border"
-            >
-              <HackerNewsButton url={post.hnUrl} />
-            </motion.div>
-          )}
+          {/* Hacker News discussion thread */}
+          {post.hnUrl && <HackerNewsComments hnUrl={post.hnUrl} />}
         </article>
 
         {/* Right Sidebar - only rendered when the post actually has headings */}
