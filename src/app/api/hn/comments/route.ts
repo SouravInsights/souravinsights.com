@@ -14,12 +14,11 @@ const ALGOLIA_ITEM_URL = "https://hn.algolia.com/api/v1/items";
 // Same provider, and far lighter than Firebase's user endpoint, which ships the
 // user's entire `submitted` list (hundreds of KB). Algolia returns ~700 bytes.
 const ALGOLIA_USER_URL = "https://hn.algolia.com/api/v1/users";
-const CACHE_TTL_SECONDS = 15 * 60; // 15 minutes
-const USER_CACHE_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 
-// Bump when the cached thread shape changes so stale entries from an older
-// deploy are ignored instead of served.
-const CACHE_VERSION = "v2";
+// Karma is the only thing worth caching: it changes slowly and costs one
+// upstream request per unique author. Comment content is always fetched fresh
+// so a new reply shows up on refresh.
+const USER_CACHE_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 
 // Karma requires one user lookup per unique author. Cap how many we fetch
 // for a single thread so a 1000-comment front-page thread stays bounded, and
@@ -118,8 +117,7 @@ async function fetchAuthorInfo(
   await withConcurrency(missing, AUTHOR_FETCH_CONCURRENCY, async (username) => {
     try {
       const response = await fetch(
-        `${ALGOLIA_USER_URL}/${encodeURIComponent(username)}`,
-        { next: { revalidate: USER_CACHE_TTL_SECONDS } }
+        `${ALGOLIA_USER_URL}/${encodeURIComponent(username)}`
       );
       if (!response.ok) throw new Error(`Algolia responded ${response.status}`);
 
@@ -157,26 +155,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const cacheKey = `hn:thread:${CACHE_VERSION}:${id}`;
-
-  try {
-    const cached = await redis.get<HnThread>(cacheKey);
-    if (cached) {
-      return NextResponse.json(cached, {
-        headers: {
-          "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
-        },
-      });
-    }
-  } catch (error) {
-    // Redis is best-effort; never let a cache failure break the endpoint.
-    console.warn("HN comments cache read failed:", error);
-  }
-
   try {
     const response = await fetch(`${ALGOLIA_ITEM_URL}/${id}`, {
       headers: { Accept: "application/json" },
-      next: { revalidate: CACHE_TTL_SECONDS },
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -199,16 +181,8 @@ export async function GET(request: NextRequest) {
       authors,
     };
 
-    try {
-      await redis.set(cacheKey, thread, { ex: CACHE_TTL_SECONDS });
-    } catch (error) {
-      console.warn("HN comments cache write failed:", error);
-    }
-
     return NextResponse.json(thread, {
-      headers: {
-        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
-      },
+      headers: { "Cache-Control": "no-store" },
     });
   } catch (error) {
     console.error("Failed to fetch Hacker News thread:", error);
