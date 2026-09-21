@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import {
   countComments,
   extractHnItemId,
+  HnAuthorInfo,
   HnBlock,
   HnComment,
   HnInlineNode,
@@ -218,6 +219,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
                     key={comment.id}
                     comment={comment}
                     storyAuthor={thread?.author ?? null}
+                    authors={thread?.authors ?? {}}
                     depth={0}
                     ancestors={[]}
                   />
@@ -308,6 +310,7 @@ function CommentsSkeleton() {
 interface HnCommentNodeProps {
   comment: HnComment;
   storyAuthor: string | null;
+  authors: Record<string, HnAuthorInfo>;
   depth: number;
   ancestors: number[];
 }
@@ -315,6 +318,7 @@ interface HnCommentNodeProps {
 function HnCommentNode({
   comment,
   storyAuthor,
+  authors,
   depth,
   ancestors,
 }: HnCommentNodeProps) {
@@ -334,6 +338,8 @@ function HnCommentNode({
   const isOp = storyAuthor != null && comment.author === storyAuthor;
   const isOnActivePath = activePath.includes(comment.id);
   const initial = comment.author.charAt(0).toUpperCase();
+  const authorInfo = authors[comment.author];
+  const karma = authorInfo?.karma;
   const bodyId = `hn-comment-body-${comment.id}`;
 
   // Indentation compounds with every level, so soften it past a few levels to
@@ -380,6 +386,8 @@ function HnCommentNode({
                   author
                 </span>
               )}
+
+              {typeof karma === "number" && <KarmaToken karma={karma} />}
 
               <span aria-hidden="true" className="text-border">
                 ·
@@ -455,6 +463,7 @@ function HnCommentNode({
                 key={child.id}
                 comment={child}
                 storyAuthor={storyAuthor}
+                authors={authors}
                 depth={depth + 1}
                 ancestors={pathToHere}
               />
@@ -474,7 +483,6 @@ interface AvatarProps {
   onToggle: () => void;
   bodyId: string;
 }
-
 function Avatar({
   author,
   initial,
@@ -511,6 +519,26 @@ function Avatar({
     >
       {circle}
     </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Reputation token
+//
+// Karma is an attribute of the *author*, so it sits in the identity cluster
+// next to the name rather than in the timestamp cluster. The visible value is
+// abbreviated to keep the byline width stable; the exact figure lives in the
+// tooltip and in the screen-reader text.
+// ---------------------------------------------------------------------------
+
+function KarmaToken({ karma }: { karma: number }) {
+  const exact = karma.toLocaleString("en-US");
+
+  return (
+    <span className="tabular-nums" title={`${exact} karma on Hacker News`}>
+      <span aria-hidden="true">{formatKarma(karma)} karma</span>
+      <span className="sr-only">{exact} karma on Hacker News</span>
+    </span>
   );
 }
 
@@ -631,6 +659,16 @@ function avatarClass(name: string): string {
     hash = (hash * 31 + name.charCodeAt(index)) >>> 0;
   }
   return AVATAR_CLASSES[hash % AVATAR_CLASSES.length];
+}
+
+function formatKarma(karma: number): string {
+  if (karma < 1000) return String(karma);
+  if (karma < 1_000_000) return `${trimTrailingZero((karma / 1000).toFixed(1))}k`;
+  return `${trimTrailingZero((karma / 1_000_000).toFixed(1))}M`;
+}
+
+function trimTrailingZero(value: string): string {
+  return value.replace(/\.0$/, "");
 }
 
 function timeAgo(iso: string): string {

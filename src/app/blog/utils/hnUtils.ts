@@ -24,6 +24,10 @@ export interface HnComment {
   replyUrl: string;
 }
 
+export interface HnAuthorInfo {
+  karma: number | null;
+}
+
 export interface HnThread {
   id: number;
   title: string;
@@ -33,6 +37,8 @@ export interface HnThread {
   commentCount: number;
   hnUrl: string;
   comments: HnComment[];
+  /** Karma / account age keyed by username, for the authors in this thread. */
+  authors: Record<string, HnAuthorInfo>;
 }
 
 /**
