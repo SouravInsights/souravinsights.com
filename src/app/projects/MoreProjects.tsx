@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import type { SmallProject } from "./projects-data";
+import { FadeIn } from "@/components/FadeIn";
 
 /** Hostname only, without protocol or `www.`, to hint at the source. */
 const shortDomain = (url: string) => {
@@ -19,7 +20,7 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
   return (
     <div className="flex flex-col">
       {projects.map((project, index) => (
-        <div key={project.name}>
+        <FadeIn key={project.name} delay={index * 0.03}>
           {index > 0 && (
             <div className="rule my-5 sm:my-6" aria-hidden="true" />
           )}
@@ -47,7 +48,7 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
             </span>
             <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-600 dark:group-hover:text-green-500" />
           </a>
-        </div>
+        </FadeIn>
       ))}
     </div>
   );

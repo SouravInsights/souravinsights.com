@@ -41,7 +41,7 @@ export default function BlogList({ posts }: BlogListProps) {
               key={post.slug}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.02 }}
+              transition={{ duration: 0.3, delay: index * 0.03 }}
             >
               <Link
                 href={`/blog/${post.slug}`}

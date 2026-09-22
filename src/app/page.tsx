@@ -8,6 +8,7 @@ import { ChevronRight, Twitter, Github, Bike, Footprints, Coffee, Music } from "
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
 import { SectionHeader } from "@/components/SectionHeader";
+import { FadeIn } from "@/components/FadeIn";
 import { featuredProjects } from "@/app/projects/projects-data";
 import {
   Docker,
@@ -322,23 +323,18 @@ export default function Home() {
 
       <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-32 space-y-16 sm:space-y-24">
         {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <FadeIn y={20} duration={0.5}>
           <HeroSection />
-        </motion.div>
+        </FadeIn>
 
         {/* Experience Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <SectionHeader
-            title="Companies"
-            description="I've had the chance to work with some great teams building things people use"
-          />
+        <section>
+          <FadeIn y={20} duration={0.5}>
+            <SectionHeader
+              title="Companies"
+              description="I've had the chance to work with some great teams building things people use"
+            />
+          </FadeIn>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
             {companies.map((company, index) => (
               <motion.a
@@ -347,9 +343,9 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
+                transition={{ duration: 0.3, delay: index * 0.03 }}
               >
                 <div className="relative w-6 h-6 shrink-0">
                   <Image
@@ -365,18 +361,16 @@ export default function Home() {
               </motion.a>
             ))}
           </div>
-        </motion.section>
+        </section>
 
         {/* Projects Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <SectionHeader
-            title="Side Projects"
-            description="Things I build when I'm curious about something or need to scratch a personal itch."
-          />
+        <section>
+          <FadeIn y={20} duration={0.5}>
+            <SectionHeader
+              title="Side Projects"
+              description="Things I build when I'm curious about something or need to scratch a personal itch."
+            />
+          </FadeIn>
           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
             {featuredProjects.map((project, index) => {
               const logoIsSvg = project.logo.endsWith(".svg");
@@ -386,9 +380,9 @@ export default function Home() {
                   key={project.slug}
                   href={`/projects#${project.slug}`}
                   className="group flex flex-col"
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
+                  transition={{ duration: 0.3, delay: index * 0.03 }}
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
@@ -417,18 +411,16 @@ export default function Home() {
               Read the notes <ChevronRight className="w-4 h-4" />
             </a>
           </div>
-        </motion.section>
+        </section>
 
         {/* Blog Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <SectionHeader
-            title="Recent Essays"
-            description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
-          />
+        <section>
+          <FadeIn y={20} duration={0.5}>
+            <SectionHeader
+              title="Recent Essays"
+              description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
+            />
+          </FadeIn>
           <div className="flex flex-col">
             {blogHighlights.map((blog, index) => (
               <motion.a
@@ -437,7 +429,7 @@ export default function Home() {
                 className="list-row group"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + index * 0.05 }}
+                transition={{ duration: 0.3, delay: index * 0.03 }}
               >
                 <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
                   {blog.title}
@@ -459,31 +451,27 @@ export default function Home() {
               Read all posts <ChevronRight className="w-4 h-4" />
             </a>
           </div>
-        </motion.section>
+        </section>
 
         {/* Favorite Links Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 }}
-        >
-          <SectionHeader
-            title="Curated Links"
-            description="Curated resources, articles and tools I find valuable"
-          />
+        <section>
+          <FadeIn y={20} duration={0.5}>
+            <SectionHeader
+              title="Curated Links"
+              description="Curated resources, articles and tools I find valuable"
+            />
+          </FadeIn>
           <FavoriteLinks />
-        </motion.section>
+        </section>
 
         {/* Unpopular Opinions Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <SectionHeader
-            title="Unpopular Opinions"
-            description="Things I've felt, noticed and often keep circling back to."
-          />
+        <section>
+          <FadeIn y={20} duration={0.5}>
+            <SectionHeader
+              title="Unpopular Opinions"
+              description="Things I've felt, noticed and often keep circling back to."
+            />
+          </FadeIn>
           <div className="flex flex-col gap-1">
             {unpopularOpinions.map((opinion, index) => (
               <div key={index} className="flex items-start gap-4">
@@ -496,18 +484,16 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </motion.section>
+        </section>
 
         {/* My Toolkit Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <SectionHeader
-            title="Things I Use"
-            description="The software, tools, and habits that help me get things done"
-          />
+        <section>
+          <FadeIn y={20} duration={0.5}>
+            <SectionHeader
+              title="Things I Use"
+              description="The software, tools, and habits that help me get things done"
+            />
+          </FadeIn>
           <div className="flex flex-col gap-5">
             {Object.entries(myToolkit).map(([key, category]) => (
               <div
@@ -564,7 +550,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </motion.section>
+        </section>
       </div>
     </div>
   );
