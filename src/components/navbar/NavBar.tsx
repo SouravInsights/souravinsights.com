@@ -32,15 +32,25 @@ const Navbar: React.FC = () => {
   // (the Insights tabs) can own the top edge, then returns on the way up.
   const direction = useScrollDirection();
   const [atTop, setAtTop] = useState(true);
+  const [subBarStuck, setSubBarStuck] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setAtTop(window.scrollY < 96);
+    const onScroll = () => {
+      setAtTop(window.scrollY < 96);
+
+      // A page-level sticky sub-bar (e.g. the Insights tabs) owns the top edge
+      // while it's pinned. Keep the navbar hidden until it unpins so the two
+      // never overlap on scroll-up.
+      const subBar = document.querySelector<HTMLElement>(".sticky-tabs");
+      setSubBarStuck(!!subBar && subBar.getBoundingClientRect().top <= 1);
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navHidden = direction === "down" && !atTop;
+  const navHidden = subBarStuck || (direction === "down" && !atTop);
 
   useEffect(() => {
     document.documentElement.dataset.nav = navHidden ? "hidden" : "visible";

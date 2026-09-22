@@ -56,7 +56,7 @@ const getDiscordData = unstable_cache(
 
     return { channels, linkData: Object.fromEntries(entries) };
   },
-  ["insights-discord-data"],
+  ["insights-discord-data-v2"],
   { revalidate: 300 }
 );
 

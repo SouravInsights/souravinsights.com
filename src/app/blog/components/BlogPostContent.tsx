@@ -143,7 +143,7 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div className="lg:hidden sticky top-0 z-30 overflow-hidden bg-background/85 px-4 py-3 backdrop-blur-md flex items-center justify-between md:relative">
+      <div className="lg:hidden sticky top-0 z-30 overflow-hidden bg-background px-4 py-3 flex items-center justify-between md:relative">
         {hasTOC ? (
           <Popover open={tocOpen} onOpenChange={setTocOpen}>
             <PopoverTrigger asChild>

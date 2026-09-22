@@ -68,9 +68,15 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
 
   const sortedChannels = useMemo(
     () =>
-      [...channels].sort(
-        (a, b) => CHANNEL_ORDER.indexOf(a.name) - CHANNEL_ORDER.indexOf(b.name)
-      ),
+      channels
+        // Only surface channels we have a label/order for. Anything else
+        // (e.g. a stale cached channel list) would otherwise leak in as a raw
+        // channel name like "opportunities".
+        .filter((channel) => channel.name in CHANNEL_LABELS)
+        .sort(
+          (a, b) =>
+            CHANNEL_ORDER.indexOf(a.name) - CHANNEL_ORDER.indexOf(b.name)
+        ),
     [channels]
   );
 
@@ -79,7 +85,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
       { name: "all", label: "All" },
       ...sortedChannels.map((channel) => ({
         name: channel.name,
-        label: CHANNEL_LABELS[channel.name] ?? channel.name,
+        label: CHANNEL_LABELS[channel.name],
       })),
     ],
     [sortedChannels]
@@ -210,7 +216,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
       {/* Toolbar — the tabs lead, especially on mobile where search is a tap
           away rather than a permanent full-width row. It sticks under the
           navbar, and takes the top edge once the navbar scrolls away. */}
-      <div className="sticky-tabs -mx-5 flex items-center gap-2 bg-background/85 px-5 py-3 backdrop-blur-md sm:-mx-6 sm:justify-between sm:px-6">
+      <div className="sticky-tabs -mx-5 flex items-center gap-2 bg-background px-5 py-3 sm:-mx-6 sm:justify-between sm:px-6">
         {!searchOpen && (
           <div className="no-scrollbar -mx-1 flex flex-1 gap-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
             {filters.map((filter) => (
