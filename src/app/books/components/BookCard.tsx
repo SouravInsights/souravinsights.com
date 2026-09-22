@@ -1,68 +1,43 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Book } from "@/app/books/types/bookTypes";
 import { BookCoverFallback } from "./BookCoverFallback";
 
 interface BookCardProps {
   book: Book;
-  status: "reading" | "want to read" | "read";
   forceGenerativeCover?: boolean;
 }
 
-export const BookCard: React.FC<BookCardProps> = ({ book, status, forceGenerativeCover = false }) => {
+/**
+ * A single cover on the shelf. The status lives in the section heading, so the
+ * card is just the artwork — outlined, no shadow, no badge.
+ */
+export const BookCard: React.FC<BookCardProps> = ({
+  book,
+  forceGenerativeCover = false,
+}) => {
   const [imageError, setImageError] = useState(false);
-  
-  const statusConfig = {
-    reading: {
-      label: "Reading",
-      color: "bg-blue-500/90",
-    },
-    "want to read": {
-      label: "Want to Read",
-      color: "bg-amber-500/90",
-    },
-    read: {
-      label: "Read",
-      color: "bg-green-500/90",
-    },
-  };
-
-  const config = statusConfig[status];
   const hasCover = book.cover && !imageError;
   const showGenerative = forceGenerativeCover || !hasCover;
 
   return (
-    <motion.div
-      className="group relative"
-      whileHover={{ y: -8 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-    >
-      {/* Book Cover */}
-      <div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg shadow-lg">
-        {!showGenerative && hasCover ? (
-          <Image
-            src={book.cover}
-            alt={book.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            unoptimized
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <BookCoverFallback 
-            title={book.title} 
-            author={book.authors?.[0]?.name}
-          />
-        )}
-        
-        {/* Status Badge */}
-        <div className="absolute top-2 right-2">
-          <span className={`${config.color} text-white text-xs px-2 py-1 rounded-full font-medium shadow-md`}>
-            {config.label}
-          </span>
-        </div>
-      </div>
-    </motion.div>
+    <div className="group relative aspect-[2/3] w-full overflow-hidden rounded-lg border border-border bg-secondary">
+      {!showGenerative && hasCover ? (
+        <Image
+          src={book.cover}
+          alt={book.title}
+          fill
+          sizes="(max-width: 640px) 50vw, 20vw"
+          className="object-cover transition-[transform,filter] duration-300 group-hover:scale-[1.03] group-hover:brightness-110 dark:brightness-[0.7] dark:group-hover:brightness-100"
+          unoptimized
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <BookCoverFallback
+          title={book.title}
+          author={book.authors?.[0]?.name}
+        />
+      )}
+    </div>
   );
 };
