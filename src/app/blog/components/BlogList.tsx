@@ -21,10 +21,10 @@ export default function BlogList({ posts }: BlogListProps) {
         transition={{ duration: 0.5 }}
       >
         <header className="mb-10 sm:mb-12 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 sm:mb-4">
+          <h1 className="type-display mb-3 sm:mb-4">
             Notes &amp; Essays
           </h1>
-          <p className="text-base sm:text-lg text-muted-foreground">
+          <p className="type-body text-muted-foreground">
             Interactive tutorials, stories, deep dives on startups, movies,
             human behavior, and whatever random thing I get curious about at
             2 AM 🦉
@@ -45,7 +45,7 @@ export default function BlogList({ posts }: BlogListProps) {
                 href={`/blog/${post.slug}`}
                 className="group block rounded-lg border border-border p-4 transition-colors hover:bg-accent sm:p-5"
               >
-                <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <div className="mb-2 flex flex-wrap items-center gap-2 type-caption">
                   <time dateTime={post.date}>
                     {format(new Date(post.date), "MMMM d, yyyy")}
                   </time>
@@ -60,12 +60,12 @@ export default function BlogList({ posts }: BlogListProps) {
                   )}
                 </div>
 
-                <h2 className="text-base font-semibold text-balance text-foreground transition-colors group-hover:text-green-600 dark:group-hover:text-green-500 sm:text-lg">
+                <h2 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
                   {post.title}
                 </h2>
 
                 {post.excerpt && (
-                  <p className="mt-1.5 text-sm text-pretty text-muted-foreground line-clamp-2">
+                  <p className="type-caption mt-1.5 line-clamp-2">
                     {post.excerpt}
                   </p>
                 )}
@@ -74,7 +74,7 @@ export default function BlogList({ posts }: BlogListProps) {
           ))
         ) : (
           <div className="py-16 text-center">
-            <h3 className="text-xl text-muted-foreground">
+            <h3 className="type-title text-muted-foreground">
               No blog posts yet. Check back soon!
             </h3>
           </div>

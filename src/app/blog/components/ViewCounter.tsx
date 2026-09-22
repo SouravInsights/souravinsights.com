@@ -50,7 +50,7 @@ const ViewCounter = ({ slug }: ViewCounterProps) => {
       className="flex items-center gap-1.5 text-muted-foreground"
     >
       <Eye size={16} className="text-muted-foreground" />
-      <span className="text-sm font-mono">
+      <span className="text-[13px] font-mono tabular-nums">
         {isLoading ? (
           <span className="animate-pulse">...</span>
         ) : (

@@ -64,10 +64,10 @@ export function NewsletterSignup() {
           <Mail className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-foreground">
+          <h3 className="type-title">
             My Weekly Internet Treasures
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="type-caption">
             Curated treasures from the overlooked corners of the internet
           </p>
         </div>
@@ -77,19 +77,19 @@ export function NewsletterSignup() {
         <div className="flex flex-col space-y-2">
           <div className="flex items-start">
             <Check className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-muted-foreground">
+            <p className="type-caption text-gray-700 dark:text-muted-foreground">
               Hand-picked resources that algorithms don't prioritize
             </p>
           </div>
           <div className="flex items-start">
             <Check className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-muted-foreground">
+            <p className="type-caption text-gray-700 dark:text-muted-foreground">
               Thoughtful summaries that respect your time and attention
             </p>
           </div>
           <div className="flex items-start">
             <Check className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-gray-700 dark:text-muted-foreground">
+            <p className="type-caption text-gray-700 dark:text-muted-foreground">
               Weekly delivery with zero spam, ever
             </p>
           </div>
@@ -117,21 +117,21 @@ export function NewsletterSignup() {
             className="overflow-hidden mb-6"
           >
             <div className="border-l-2 border-primary/30 pl-4 mb-4">
-              <p className="text-sm text-gray-600 dark:text-muted-foreground italic mb-2">
+              <p className="type-caption text-gray-600 dark:text-muted-foreground italic mb-2">
                 "We live in a paradox of abundance: an endless ocean of content,
                 yet somehow the truly valuable gems often remain hidden in
                 overlooked corners of the internet."
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="type-caption text-gray-600 dark:text-gray-300">
                 Each week, I scour the internet, searching for treasures that
                 deserve attention but don't always get it.
               </p>
             </div>
             <div className="bg-muted/50 p-3 rounded border border-border">
-              <p className="text-sm font-medium mb-1 text-gray-700 dark:text-foreground">
+              <p className="type-caption font-medium mb-1 text-gray-700 dark:text-foreground">
                 What you'll receive:
               </p>
-              <ul className="text-sm text-gray-600 dark:text-muted-foreground space-y-1 list-disc pl-5">
+              <ul className="type-caption text-gray-600 dark:text-muted-foreground space-y-1 list-disc pl-5">
                 <li>5-7 curated links spanning tech, design, and creativity</li>
                 <li>Brief, thoughtful commentary on why each matters</li>
                 <li>Occasional exclusive insights and resources</li>
@@ -172,7 +172,7 @@ export function NewsletterSignup() {
           <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`text-sm ${
+            className={`type-caption ${
               status === "success"
                 ? "text-green-600 dark:text-green-500"
                 : "text-red-600 dark:text-red-400"
@@ -182,7 +182,7 @@ export function NewsletterSignup() {
           </motion.p>
         )}
 
-        <p className="text-xs text-gray-500 dark:text-muted-foreground text-center mt-2">
+        <p className="type-caption text-gray-500 dark:text-muted-foreground text-center mt-2">
           Join the readers who value depth over algorithms. Unsubscribe anytime.
         </p>
       </form>

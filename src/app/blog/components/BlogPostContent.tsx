@@ -164,7 +164,7 @@ export default function BlogPostContent({
         <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm">
           <div className="absolute right-0 top-0 h-full w-4/5 max-w-xs bg-card shadow-xl p-5 overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="type-heading">
                 Table of Contents
               </h3>
               <button
@@ -227,11 +227,11 @@ export default function BlogPostContent({
             transition={{ duration: 0.5 }}
           >
             <header className="mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              <h1 className="type-display mb-4">
                 {post.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-4 type-caption">
                 <div className="flex items-center">
                   <Calendar className="mr-1 h-4 w-4" />
                   <time dateTime={post.date}>

@@ -177,7 +177,7 @@ function FocusModeEditor({
           <button onClick={onClose} className="p-1.5 -ml-1.5 rounded-full hover:bg-muted text-muted-foreground transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/60">{title}</span>
+          <span className="type-label text-muted-foreground/60">{title}</span>
         </div>
         <button onClick={onClose} className="text-[11px] font-medium text-green-600 dark:text-green-500 bg-green-600/10 dark:bg-green-500/10 px-3 py-1.5 rounded-full hover:bg-green-600/20 transition-colors">
           Done
@@ -331,14 +331,14 @@ function MovieDialog({
                 onChange={(val) => onUpdate(movie.id, { title: val })}
                 isEditing={isEditing}
                 placeholder="Film title"
-                className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-snug"
+                className="type-title leading-snug"
               />
 
 
               {/* Personal note */}
               <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 group/field relative">
                 <div className="flex items-center justify-between mb-1.5">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50">
+                  <div className="type-label text-green-600/60 dark:text-green-500/50">
                     Why it stays with me
                   </div>
                   {isEditing && (
@@ -364,7 +364,7 @@ function MovieDialog({
               {(isEditing || !!movie.longNote) && (
                 <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 mt-4 group/field relative">
                   <div className="flex items-center justify-between mb-1.5">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-green-600/60 dark:text-green-500/50">
+                    <div className="type-label text-green-600/60 dark:text-green-500/50">
                       Notes & Thoughts
                     </div>
                     {isEditing && (
@@ -390,7 +390,7 @@ function MovieDialog({
               {/* Quotes */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <h3 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/50">
+                  <h3 className="type-label text-muted-foreground/50">
                     Lines
                   </h3>
                   {isEditing && (
@@ -440,7 +440,7 @@ function MovieDialog({
               <div className="flex flex-wrap gap-x-8 gap-y-4 text-[13px] pt-1">
                 {/* Tags */}
                 <div className="space-y-2 min-w-0 flex-1">
-                  <h3 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
+                  <h3 className="type-label text-muted-foreground/40">
                     Tags
                   </h3>
                   {(movie.tags?.length ?? 0) > 0 ? (
@@ -506,7 +506,7 @@ function MovieDialog({
 
                 {/* Links */}
                 <div className="space-y-2 min-w-0 flex-1">
-                  <h3 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40">
+                  <h3 className="type-label text-muted-foreground/40">
                     Links
                   </h3>
                   {(movie.links?.length ?? 0) === 0 && !isEditing && (
@@ -825,7 +825,7 @@ export function MoviesClient({
                 onChange={(val) => updateHeader("title", val)}
                 isEditing={isEditing}
                 placeholder="Page title"
-                className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3"
+                className="type-display mb-3"
               />
               <EditableField
                 as="p"
@@ -834,10 +834,10 @@ export function MoviesClient({
                 isEditing={isEditing}
                 multiline
                 placeholder="What this page means to you..."
-                className="text-sm sm:text-base leading-relaxed text-muted-foreground max-w-xl"
+                className="type-body text-muted-foreground max-w-xl"
               />
               {data.movies.length > 0 && (
-                <p className="mt-4 text-xs text-muted-foreground/40 font-mono">
+                <p className="type-caption mt-4 font-mono tabular-nums text-muted-foreground/40">
                   {data.movies.length}{" "}
                   {data.movies.length === 1 ? "film" : "films"} collected
                 </p>

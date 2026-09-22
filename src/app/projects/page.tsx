@@ -22,10 +22,10 @@ export default function ProjectsPage() {
       <div className="max-w-4xl mx-auto space-y-12 pt-16">
         {/* Header */}
         <header className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+          <h1 className="type-display">
             Projects
           </h1>
-          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="type-body text-muted-foreground mt-4 max-w-2xl mx-auto">
             A few things I'm spending my time on lately.
           </p>
         </header>
@@ -58,7 +58,7 @@ export default function ProjectsPage() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-xl md:text-2xl font-bold text-foreground">
+                      <h2 className="type-title">
                         <a
                           href={project.url}
                           target="_blank"
@@ -81,24 +81,24 @@ export default function ProjectsPage() {
                         </a>
                       )}
                     </div>
-                    <p className="mt-2 text-foreground/80 leading-relaxed">
+                    <p className="type-body mt-2 text-foreground/80">
                       {project.tagline}
                     </p>
 
                     <div className="mt-5 grid gap-5 sm:grid-cols-2">
                       <div>
-                        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <h3 className="type-label">
                           What it is
                         </h3>
-                        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                        <p className="type-caption mt-2">
                           {project.what}
                         </p>
                       </div>
                       <div>
-                        <h3 className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <h3 className="type-label">
                           Why I'm working on it
                         </h3>
-                        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                        <p className="type-caption mt-2">
                           {project.why}
                         </p>
                       </div>
@@ -114,10 +114,10 @@ export default function ProjectsPage() {
         {/* Progressively disclosed smaller projects */}
         <section className="border border-border rounded-lg p-5 sm:p-6 md:p-8">
           <div className="text-center mb-6">
-            <h2 className="text-xl md:text-2xl font-bold text-foreground">
+            <h2 className="type-title">
               Smaller things
             </h2>
-            <p className="mt-2 text-muted-foreground">
+            <p className="type-body text-muted-foreground mt-2">
               Older experiments and side projects that didn't need more than a
               weekend.
             </p>

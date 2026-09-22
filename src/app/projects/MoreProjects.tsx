@@ -64,7 +64,7 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
                       className="rounded-full object-cover"
                     />
                   </div>
-                  <span className="text-xs font-medium text-center text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                  <span className="type-caption font-medium text-center text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
                     {project.name}
                   </span>
                 </motion.a>

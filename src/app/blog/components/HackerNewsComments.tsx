@@ -138,11 +138,11 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
           <div>
             <h2
               id="hn-discussion-heading"
-              className="text-balance text-base font-semibold text-foreground sm:text-lg"
+              className="text-balance type-heading"
             >
               Discussion on Hacker News
             </h2>
-            <p className="mt-0.5 text-sm text-muted-foreground">
+            <p className="type-caption mt-0.5">
               {status === "ready" ? (
                 <span className="tabular-nums">
                   {commentCount} {commentCount === 1 ? "comment" : "comments"}
@@ -369,7 +369,7 @@ function HnCommentNode({
           />
 
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 type-caption">
               <a
                 href={`https://news.ycombinator.com/user?id=${encodeURIComponent(
                   comment.author
@@ -382,7 +382,7 @@ function HnCommentNode({
               </a>
 
               {isOp && (
-                <span className="rounded-full border border-[#ff6600]/40 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-[#ff6600]">
+                <span className="rounded-full border border-[#ff6600]/40 px-1.5 py-px type-label text-[#ff6600]">
                   author
                 </span>
               )}

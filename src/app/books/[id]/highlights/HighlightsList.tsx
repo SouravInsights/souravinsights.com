@@ -63,13 +63,13 @@ export default function HighlightsList({
           transition={{ delay: index * 0.1 }}
           className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4"
         >
-          <p className="text-gray-800 dark:text-white mb-2">{highlight.text}</p>
+          <p className="type-body text-gray-800 dark:text-white mb-2">{highlight.text}</p>
           {highlight.note && (
-            <p className="text-gray-600 dark:text-gray-400 italic mb-2">
+            <p className="type-body text-gray-600 dark:text-gray-400 italic mb-2">
               Note: {highlight.note}
             </p>
           )}
-          <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex justify-between type-caption text-gray-500 dark:text-gray-400">
             <span>Location: {highlight.location}</span>
             <span>
               Date: {new Date(highlight.highlighted_at).toLocaleDateString()}

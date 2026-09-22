@@ -48,8 +48,8 @@ export function FavoriteLinks() {
       <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Curated Links</h2>
-            <p className="text-muted-foreground">
+            <h2 className="type-title mb-2">Curated Links</h2>
+            <p className="type-body text-muted-foreground">
               Curated resources and tools I find valuable
             </p>
           </div>
@@ -91,8 +91,8 @@ export function FavoriteLinks() {
     <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
       <div className="space-y-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Curated Links</h2>
-          <p className="text-muted-foreground">
+          <h2 className="type-title mb-2">Curated Links</h2>
+          <p className="type-body text-muted-foreground">
             Curated resources, articles and tools I find valuable
           </p>
         </div>
@@ -114,20 +114,20 @@ export function FavoriteLinks() {
               >
                 <div>
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
+                    <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
                       {favorites[currentIndex]?.title}
                     </h3>
                     <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors flex-shrink-0 ml-2" />
                   </div>
 
                   {favorites[currentIndex]?.description && (
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                    <p className="type-caption mb-3 line-clamp-2">
                       {favorites[currentIndex].description}
                     </p>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <div className="flex items-center justify-between type-caption">
                   {favorites[currentIndex]?.category && (
                     <span className="bg-secondary px-2 py-1 rounded text-xs">
                       {favorites[currentIndex].category}
@@ -172,7 +172,7 @@ export function FavoriteLinks() {
             </button>
           </div>
 
-          <p className="text-xs text-muted-foreground text-center mt-3 opacity-70">
+          <p className="type-caption text-center mt-3 opacity-70">
             {currentIndex + 1} of {favorites.length}
           </p>
         </div>
@@ -191,19 +191,19 @@ export function FavoriteLinks() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-sm group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
+                <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
                   {favorite.title}
                 </h3>
                 <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors flex-shrink-0 ml-2" />
               </div>
 
               {favorite.description && (
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                <p className="type-caption mb-3 line-clamp-2">
                   {favorite.description}
                 </p>
               )}
 
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between type-caption">
                 {favorite.category && (
                   <span className="bg-secondary px-2 py-1 rounded text-xs">
                     {favorite.category}

@@ -119,10 +119,10 @@ export default function DraftPostIndicator({
             {visibleContent}
 
             <div className="mt-8 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
-              <h4 className="text-lg font-medium text-foreground mb-2">
+              <h4 className="type-heading mb-2">
                 This post is still being drafted
               </h4>
-              <p className="text-muted-foreground">
+              <p className="type-body text-muted-foreground">
                 Check back later for the complete article!
               </p>
             </div>

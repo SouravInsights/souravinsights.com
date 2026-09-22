@@ -204,8 +204,8 @@ const HeroSection = () => (
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
-            <div className="mt-6 md:mt-8 space-y-4 text-foreground dark:text-muted-foreground text-sm md:text-base">
-              <p className="leading-relaxed">
+            <div className="mt-6 md:mt-8 space-y-4 type-body text-foreground dark:text-muted-foreground">
+              <p>
                 Hey there! This is my{" "}
                 <a
                   href="https://matthiasott.com/articles/into-the-personal-website-verse"
@@ -230,7 +230,7 @@ const HeroSection = () => (
                 </a>{" "}
                 about it.
               </p>
-              <p className="leading-relaxed">
+              <p>
                 I spend my days writing code, tinkering with side projects, and
                 figuring out{" "}
                 <a
@@ -352,10 +352,10 @@ export default function Home() {
         >
           <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              <h2 className="type-title mb-3">
                 Companies
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
                 I've had the chance to work with some great teams building
                 things people use
               </p>
@@ -381,7 +381,7 @@ export default function Home() {
                         className="rounded-full object-cover"
                       />
                     </div>
-                    <span className="text-sm font-medium text-foreground transition-colors text-center">
+                    <span className="type-caption font-medium text-foreground text-center transition-colors">
                       {company.name}
                     </span>
                   </div>
@@ -399,10 +399,10 @@ export default function Home() {
         >
           <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              <h2 className="type-title mb-3">
                 Side Projects
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
                 Things I build when I'm curious about something or need to
                 scratch a personal itch.
               </p>
@@ -431,12 +431,12 @@ export default function Home() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-semibold text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                        <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
                           {project.name}
                         </h3>
                       </div>
                     </div>
-                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+                    <p className="type-caption mt-4">
                       {project.note}
                     </p>
                   </motion.a>
@@ -462,10 +462,10 @@ export default function Home() {
         >
           <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              <h2 className="type-title mb-3">
                 Recent Essays
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
                 Some thoughts on life, learning, and whatever random things I
                 get curious about at 2 AM
               </p>
@@ -474,17 +474,17 @@ export default function Home() {
               {blogHighlights.map((blog) => (
                 <div key={blog.title} className="group">
                   <div className="border border-border rounded-lg p-3 sm:p-6 hover:bg-accent transition-all duration-300 h-full">
-                    <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3 mb-3 type-caption">
                       <span>{blog.date}</span>
                       <span>•</span>
                       <span>{blog.readingTime}</span>
                     </div>
-                    <h3 className="group-hover:text-green-600 dark:group-hover:text-green-500 font-semibold text-foreground mb-3 transition-colors">
+                    <h3 className="group-hover:text-green-600 dark:group-hover:text-green-500 type-heading mb-3 transition-colors">
                       <a href={blog.url} className="block">
                         {blog.title}
                       </a>
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3">
+                    <p className="type-caption line-clamp-3">
                       {blog.excerpt}
                     </p>
                   </div>
@@ -520,10 +520,10 @@ export default function Home() {
         >
           <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              <h2 className="type-title mb-3">
                 Unpopular Opinions
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
                 Things I've felt, noticed and often keep circling back to.
               </p>
             </div>
@@ -541,10 +541,10 @@ export default function Home() {
                     className="group hover:bg-accent border border-border rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-card/50 hover:border-input bg-card h-[140px] flex items-center w-full"
                   >
                     <div className="flex items-start gap-4 w-full">
-                      <span className="text-sm font-mono text-green-600 dark:text-green-500 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
+                      <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
                         {String(currentOpinionIndex + 1).padStart(2, "0")}
                       </span>
-                      <p className="text-sm text-muted-foreground italic leading-relaxed group-hover:text-foreground transition-colors">
+                      <p className="type-body text-muted-foreground italic group-hover:text-foreground transition-colors">
                         {unpopularOpinions[currentOpinionIndex]}
                       </p>
                     </div>
@@ -586,7 +586,7 @@ export default function Home() {
                 </button>
               </div>
 
-              <p className="text-xs text-muted-foreground text-center mt-3 opacity-70">
+              <p className="type-caption text-center mt-3 opacity-70">
                 {currentOpinionIndex + 1} of {unpopularOpinions.length}
               </p>
             </div>
@@ -599,10 +599,10 @@ export default function Home() {
                   className="group hover:bg-accent border border-border rounded-xl p-3 sm:p-4 md:p-6 transition-all duration-300 hover:shadow-sm hover:shadow-card/50 hover:-translate-y-0.5 hover:border-input bg-card"
                 >
                   <div className="flex items-start gap-4">
-                    <span className="text-xs font-mono text-green-600 dark:text-green-500 mt-1 w-6 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
+                    <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-6 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <p className="text-sm text-muted-foreground italic leading-relaxed group-hover:text-foreground transition-colors">
+                    <p className="type-body text-muted-foreground italic group-hover:text-foreground transition-colors">
                       {opinion}
                     </p>
                   </div>
@@ -621,17 +621,17 @@ export default function Home() {
         >
           <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              <h2 className="type-title mb-3">
                 Things I Use
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
                 The software, tools, and habits that help me get things done
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Object.entries(myToolkit).map(([key, category]) => (
                 <div key={key} className="space-y-3">
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="type-heading">
                     {category.title}
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -652,7 +652,7 @@ export default function Home() {
                               }
                             : {})}
                           className={`
-                            px-3 py-2 text-xs bg-secondary text-secondary-foreground rounded-md
+                            px-3 py-2 text-[13px] bg-secondary text-secondary-foreground rounded-md
                             flex items-center gap-2
                             ${item.url ? "hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer" : ""}
                           `}

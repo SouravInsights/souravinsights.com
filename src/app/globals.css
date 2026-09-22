@@ -92,3 +92,45 @@
     @apply bg-background text-foreground;
   }
 }
+
+/*
+  Type scale
+  ----------
+  One role per line, so every route reads from the same six sizes.
+  Hierarchy is display > title > heading > body > caption > label.
+  Keep page-level sizes here instead of repeating them inline.
+
+  Interactive chrome (buttons, nav, tabs, inputs) uses Tailwind's
+  `text-sm` at 14px. It is the one size outside this scale, reserved
+  for controls — never use it for prose or descriptions.
+*/
+@layer components {
+  .type-display {
+    @apply text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground sm:text-[34px];
+    text-wrap: balance;
+  }
+
+  .type-title {
+    @apply text-[20px] font-semibold leading-[1.25] tracking-[-0.015em] text-foreground sm:text-[24px];
+    text-wrap: balance;
+  }
+
+  .type-heading {
+    @apply text-base font-semibold leading-snug tracking-[-0.01em] text-foreground;
+    text-wrap: balance;
+  }
+
+  .type-body {
+    @apply text-[15px] leading-[1.65];
+    text-wrap: pretty;
+  }
+
+  .type-caption {
+    @apply text-[13px] leading-[1.5] text-muted-foreground;
+    text-wrap: pretty;
+  }
+
+  .type-label {
+    @apply font-mono text-[11px] font-medium uppercase leading-normal tracking-[0.14em] text-muted-foreground;
+  }
+}

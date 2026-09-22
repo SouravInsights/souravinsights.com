@@ -66,10 +66,10 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-base font-semibold text-foreground mb-1.5">
+            <h3 className="type-heading mb-1.5">
               Get in touch
             </h3>
-            <p className="text-sm text-muted-foreground max-w-sm">
+            <p className="type-caption max-w-sm">
               Have a project in mind, or just want to say hi? Write to me at{" "}
               <a
                 href="mailto:souravinsights@gmail.com"

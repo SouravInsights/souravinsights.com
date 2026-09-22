@@ -975,7 +975,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
                 value={data.header.name}
                 onChange={(val) => updateHeader("name", val)}
                 isEditing={isEditing}
-                className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-foreground [text-wrap:balance] sm:text-[44px]"
+                className="type-display"
               />
 
               {/* Contact cluster: icons carry the scanning load, so no

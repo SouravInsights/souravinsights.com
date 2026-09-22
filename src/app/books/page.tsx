@@ -20,10 +20,10 @@ const KindleImageDisplay: React.FC = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="flex flex-col space-y-2 mb-4 md:mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-foreground text-center">
+        <h2 className="type-title text-center">
           My Reading Companion
         </h2>
-        <p className="text-center text-muted-foreground">
+        <p className="type-body text-muted-foreground text-center">
           It's like carrying a whole library without the backache! One digital
           page at a time... 😬
         </p>
@@ -59,14 +59,14 @@ const BookshelfPage: React.FC = () => {
     <ApolloProvider client={client}>
       <div className="md:px-6 md:py-8 px-2 py-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-4 text-foreground">
+          <h1 className="type-display text-center mb-4">
             Library
           </h1>
-          <p className="text-center text-muted-foreground mb-2 max-w-2xl mx-auto">
+          <p className="type-body text-muted-foreground text-center mb-2 max-w-2xl mx-auto">
             Books I'm reading and have read lately.
           </p>
           {totalBooks !== null && (
-            <p className="text-center text-sm text-muted-foreground/70 mb-8">
+            <p className="type-caption text-center text-muted-foreground/70 mb-8">
               Total read: {totalBooks}
             </p>
           )}
@@ -114,7 +114,7 @@ const BookshelfPage: React.FC = () => {
                 </div>
                 
                 <div className="flex-1 text-center md:text-left">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="type-caption">
                     I use Literal Club to track my reading. They have a nice API that powers this page.
                   </p>
                 </div>
