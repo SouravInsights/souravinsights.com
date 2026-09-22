@@ -117,7 +117,6 @@
 
   .type-heading {
     @apply text-base font-semibold leading-snug tracking-[-0.01em] text-foreground;
-    text-wrap: balance;
   }
 
   .type-body {
@@ -137,7 +136,7 @@
   /* The shared list unit: a title row with an optional quiet meta value.
      Background only appears on hover, so a list reads as text until touched. */
   .list-row {
-    @apply -mx-3 flex flex-col gap-0.5 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-foreground/5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6;
+    @apply -mx-3 flex flex-col gap-1 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-foreground/5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6;
   }
 
   /* Hairline rule: a fine dash pattern, kept subtle so dividers read as

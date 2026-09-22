@@ -47,7 +47,7 @@ export default function BlogList({ posts }: BlogListProps) {
                 href={`/blog/${post.slug}`}
                 className="list-row group"
               >
-                <span className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                <span className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
                   {post.title}
                 </span>
 

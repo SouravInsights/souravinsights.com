@@ -431,7 +431,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.03 }}
               >
-                <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
                   {blog.title}
                 </h3>
                 <time
