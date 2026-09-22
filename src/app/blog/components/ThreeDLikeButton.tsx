@@ -133,9 +133,11 @@ function HeartFace({
 
 interface ThreeDLikeButtonProps {
   slug: string;
+  /** Tighter footprint for compact bars (e.g. the mobile article toolbar). */
+  compact?: boolean;
 }
 
-const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
+const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
   const { totalLikes, userLikes, addLike, isLoading } = usePostLikes({
     slug,
     initialTotalLikes: 0,
@@ -154,7 +156,7 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
   const waveBack = useMemo(() => buildWavePath(2.6, Math.PI), []);
 
   const ramp = isDarkMode ? LOVE_RAMP_DARK : LOVE_RAMP_LIGHT;
-  const { burst, particles } = useLikeBurst({ ramp });
+  const { burst, particles } = useLikeBurst({ ramp, scale: compact ? 0.6 : 1 });
   const ink = isDarkMode ? FACE_INK.dark : FACE_INK.light;
   // The eye glint contrasts with the ink, not the page, so it survives a
   // theme flip.
@@ -245,7 +247,7 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
     : { type: "spring" as const, duration: TIMING.release, bounce: 0.12 };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center ${compact ? "gap-2" : "gap-3"}`}>
       <div className="relative">
         {/* Particle stage, anchored to the heart's centre */}
         {!prefersReducedMotion && <LikeBurst particles={particles} />}
@@ -269,7 +271,11 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
 
             <svg
               viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
-              className="relative h-12 w-12 md:h-14 md:w-14"
+              className={
+                compact
+                  ? "relative h-8 w-8"
+                  : "relative h-12 w-12 md:h-14 md:w-14"
+              }
               aria-hidden
             >
               <defs>
@@ -355,7 +361,9 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
       <div className="relative">
         <motion.div
           animate={countControls}
-          className="font-mono text-xl tabular-nums tracking-tight text-gray-700 dark:text-gray-200 md:text-2xl"
+          className={`font-mono tabular-nums tracking-tight text-gray-700 dark:text-gray-200 ${
+            compact ? "text-base" : "text-xl md:text-2xl"
+          }`}
           aria-live="polite"
           aria-atomic="true"
         >
@@ -367,7 +375,11 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
           {plusKey > 0 && (
             <motion.span
               key={plusKey}
-              className="pointer-events-none absolute -top-1 left-full ml-1 text-sm font-semibold text-rose-600 dark:text-rose-300"
+              className={`pointer-events-none absolute -top-1 text-sm font-semibold text-rose-600 dark:text-rose-300 ${
+                // In the compact mobile bar the count is the right-most element,
+                // so a right-anchored "+1" stays inside the viewport.
+                compact ? "right-0" : "left-full ml-1"
+              }`}
               initial={{ opacity: 0, y: 2 }}
               animate={{ opacity: [0, 1, 1, 0], y: -11 }}
               exit={{ opacity: 0 }}

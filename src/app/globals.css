@@ -168,4 +168,21 @@
       transparent 3px 9px
     );
   }
+
+  /* Horizontal scrollers that shouldn't show a scrollbar. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* A page-level sticky sub-bar. Sits at the very top so it never shifts; the
+     navbar gets out of its way on scroll-down. */
+  .sticky-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
 }

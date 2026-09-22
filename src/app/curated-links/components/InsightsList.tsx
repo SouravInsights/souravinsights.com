@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Pencil, Search } from "lucide-react";
+import { Pencil, Search, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import { appendUTMParams } from "../utils/urlUtils";
 import { NoteEditorModal } from "./NoteEditorModal";
@@ -62,6 +62,7 @@ type EnrichedLink = LinkData & { category?: string };
 export default function InsightsList({ channels, linkData }: InsightsListProps) {
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [curatedLinks, setCuratedLinks] = useState<LinkData[]>([]);
@@ -214,26 +215,47 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
 
   return (
     <div>
-      {/* Toolbar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1">
-          {filters.map((filter) => (
-            <button
-              key={filter.name}
-              type="button"
-              onClick={() => setActiveChannel(filter.name)}
-              className={`shrink-0 rounded-md px-3 py-1.5 type-caption font-medium transition-colors ${
-                activeChannel === filter.name
-                  ? "bg-foreground/10 text-foreground"
-                  : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
+      {/* Toolbar — the tabs lead, especially on mobile where search is a tap
+          away rather than a permanent full-width row. It sticks under the
+          navbar, and takes the top edge once the navbar scrolls away. */}
+      <div className="sticky-tabs -mx-5 flex items-center gap-2 border-b border-border/60 bg-background/85 px-5 py-3 backdrop-blur-md sm:-mx-6 sm:justify-between sm:px-6">
+        {!searchOpen && (
+          <div className="no-scrollbar -mx-1 flex flex-1 gap-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
+            {filters.map((filter) => (
+              <button
+                key={filter.name}
+                type="button"
+                onClick={() => setActiveChannel(filter.name)}
+                className={`shrink-0 rounded-md px-3 py-1.5 type-caption font-medium transition-colors ${
+                  activeChannel === filter.name
+                    ? "bg-foreground/10 text-foreground"
+                    : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        )}
 
-        <div className="relative shrink-0 sm:w-56">
+        {/* Mobile: search lives behind an icon until opened. */}
+        <button
+          type="button"
+          onClick={() => setSearchOpen((open) => !open)}
+          aria-label={searchOpen ? "Close search" : "Search links"}
+          aria-expanded={searchOpen}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
+        >
+          {searchOpen ? (
+            <X className="h-4 w-4" />
+          ) : (
+            <Search className="h-4 w-4" />
+          )}
+        </button>
+
+        <div
+          className={`relative ${searchOpen ? "flex-1" : "hidden"} sm:block sm:w-56`}
+        >
           <Search
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
             aria-hidden="true"
@@ -245,6 +267,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
             placeholder="Search…"
             spellCheck={false}
             aria-label="Search links"
+            autoFocus={searchOpen}
             className="w-full rounded-md border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
           />
         </div>

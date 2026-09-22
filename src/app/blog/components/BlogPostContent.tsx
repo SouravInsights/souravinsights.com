@@ -131,7 +131,7 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div className="lg:hidden sticky top-0 z-30 bg-background p-4 border-b border-border flex items-center justify-between">
+      <div className="lg:hidden sticky top-0 z-30 overflow-hidden border-b border-border bg-background px-4 py-3 flex items-center justify-between md:static">
         {hasTOC ? (
           <button
             onClick={() => setMobileMenuOpen(true)}
@@ -155,7 +155,7 @@ export default function BlogPostContent({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <ThreeDLikeButton slug={post.slug} />
+          <ThreeDLikeButton slug={post.slug} compact />
         </motion.div>
       </div>
 
@@ -211,7 +211,7 @@ export default function BlogPostContent({
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row pt-12 lg:pt-0">
+      <div className="flex flex-col lg:flex-row pt-7 lg:pt-0">
         {/* Main Content - Dynamic width based on TOC state */}
         <article
           className={`transition-all duration-500 ease-in-out w-full px-4 lg:px-0 ${
@@ -226,12 +226,12 @@ export default function BlogPostContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <header className="mb-8">
-              <h1 className="type-display mb-4">
+            <header className="mb-5">
+              <h1 className="type-display mb-2">
                 {post.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 type-caption">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 type-caption">
                 <div className="flex items-center">
                   <Calendar className="mr-1 h-4 w-4" />
                   <time dateTime={post.date}>
@@ -257,7 +257,7 @@ export default function BlogPostContent({
 
               {/* Hacker News Button */}
               {post.hnUrl && (
-                <div className="mt-8 mb-12">
+                <div className="mt-3 mb-5">
                   <HackerNewsButton url={post.hnUrl} />
                 </div>
               )}

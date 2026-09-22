@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,6 +14,7 @@ import {
   Boxes,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
@@ -27,6 +28,24 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  // The navbar gets out of the way on the way down so a page's own sticky bar
+  // (the Insights tabs) can own the top edge, then returns on the way up.
+  const direction = useScrollDirection();
+  const [atTop, setAtTop] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => setAtTop(window.scrollY < 96);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const navHidden = direction === "down" && !atTop;
+
+  useEffect(() => {
+    document.documentElement.dataset.nav = navHidden ? "hidden" : "visible";
+  }, [navHidden]);
+
   return (
     <>
       {/* Desktop Navbar */}
@@ -34,7 +53,7 @@ const Navbar: React.FC = () => {
         <motion.div
           className="flex items-center space-x-2 bg-card p-2 rounded-lg shadow-lg border border-border"
           initial={false}
-          animate={{ y: 0 }}
+          animate={{ y: navHidden ? -120 : 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           {navItems.map((item) => (
