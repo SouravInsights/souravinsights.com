@@ -9,13 +9,14 @@ interface SectionHeaderProps {
  */
 export function SectionHeader({ title, description }: SectionHeaderProps) {
   return (
-    <div className="mb-5">
-      <h2 className="type-title">{title}</h2>
+    <div className="mb-8">
+      <h2 className="type-label">{title}</h2>
       {description ? (
-        <p className="type-body mt-2 max-w-2xl text-muted-foreground">
+        <p className="type-caption mt-2 max-w-2xl text-muted-foreground/70">
           {description}
         </p>
       ) : null}
+      <div className="rule mt-4" aria-hidden="true" />
     </div>
   );
 }

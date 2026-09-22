@@ -2,23 +2,13 @@
 "use client";
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { format } from "date-fns";
-import {
-  ChevronRight,
-  Twitter,
-  Github,
-  ChevronLeft,
-  Bike,
-  Footprints,
-  Coffee,
-  Music,
-} from "lucide-react";
+import { ChevronRight, Twitter, Github, Bike, Footprints, Coffee, Music } from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
 import { SectionHeader } from "@/components/SectionHeader";
 import { featuredProjects } from "@/app/projects/projects-data";
-import { useState } from "react";
 import {
   Docker,
   GitHubDark,
@@ -58,19 +48,23 @@ const companies = [
 
 const blogHighlights = [
   {
-    title: "On Designing Forms That Don't Get in the Way",
-    url: "/blog/on-designing-forms",
-    excerpt:
-      "Notes on validation, accessibility, and the invisible decisions behind a calm sign-in flow.",
-    readingTime: "7 min read",
-    date: "2026-01-17",
+    title: "We are unconsciously becoming someone else",
+    url: "/blog/on-becoming-someone-else",
+    date: "2026-09-19",
+  },
+  {
+    title: "An AI Workflow to Slow Down & Reflect in the Age of Inference-Speed",
+    url: "/blog/learning-with-ai-agents",
+    date: "2026-02-04",
+  },
+  {
+    title: "Why Riding Feels So Liberating",
+    url: "/blog/why-riding-is-like-a-therapy",
+    date: "2025-09-30",
   },
   {
     title: "Building a Brain That Can Do Everything (But Not All at Once)",
     url: "/blog/polymath-mode",
-    excerpt:
-      "A deep and honest exploration into what it means to be a modern-day polymath, the struggle to balance curiosity with deep focus.",
-    readingTime: "10 min read",
     date: "2025-04-19",
   },
 ];
@@ -320,30 +314,13 @@ const HeroSection = () => (
   </div>
 );
 
-const cardBase =
-  "group card card-interactive";
-
 export default function Home() {
-  const [currentOpinionIndex, setCurrentOpinionIndex] = useState(0);
-
-  const nextOpinion = () => {
-    setCurrentOpinionIndex((prev) =>
-      prev === unpopularOpinions.length - 1 ? 0 : prev + 1,
-    );
-  };
-
-  const prevOpinion = () => {
-    setCurrentOpinionIndex((prev) =>
-      prev === 0 ? unpopularOpinions.length - 1 : prev - 1,
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background transition-colors duration-200">
       {/* 0cred verification */}
       <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07"></div>
 
-      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-28 space-y-12 sm:space-y-16">
+      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-28 space-y-16 sm:space-y-24">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -362,19 +339,19 @@ export default function Home() {
             title="Companies"
             description="I've had the chance to work with some great teams building things people use"
           />
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
             {companies.map((company, index) => (
               <motion.a
                 key={company.name}
                 href={company.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${cardBase} flex items-center gap-3 px-3.5 py-2`}
+                className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
               >
-                <div className="relative w-7 h-7 shrink-0">
+                <div className="relative w-6 h-6 shrink-0">
                   <Image
                     src={company.logo}
                     alt={`${company.name} logo`}
@@ -382,7 +359,7 @@ export default function Home() {
                     className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
                   />
                 </div>
-                <span className="type-caption font-medium text-foreground">
+                <span className="type-body text-foreground">
                   {company.name}
                 </span>
               </motion.a>
@@ -400,7 +377,7 @@ export default function Home() {
             title="Side Projects"
             description="Things I build when I'm curious about something or need to scratch a personal itch."
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
             {featuredProjects.map((project, index) => {
               const logoIsSvg = project.logo.endsWith(".svg");
 
@@ -408,13 +385,13 @@ export default function Home() {
                 <motion.a
                   key={project.slug}
                   href={`/projects#${project.slug}`}
-                  className={`${cardBase} flex flex-col p-4`}
+                  className="group flex flex-col"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 shrink-0 overflow-hidden rounded-md bg-secondary">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
                       <Image
                         src={project.logo}
                         alt={`${project.name} logo`}
@@ -427,7 +404,7 @@ export default function Home() {
                       {project.name}
                     </h3>
                   </div>
-                  <p className="type-caption mt-3">{project.note}</p>
+                  <p className="type-caption mt-2">{project.note}</p>
                 </motion.a>
               );
             })}
@@ -452,25 +429,26 @@ export default function Home() {
             title="Recent Essays"
             description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {blogHighlights.map((blog) => (
-              <a
+          <div className="flex flex-col">
+            {blogHighlights.map((blog, index) => (
+              <motion.a
                 key={blog.title}
                 href={blog.url}
-                className={`${cardBase} flex flex-col p-4`}
+                className="list-row group"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + index * 0.05 }}
               >
-                <div className="flex items-center gap-2 type-caption mb-2">
-                  <time dateTime={blog.date}>{formatDate(blog.date)}</time>
-                  <span aria-hidden="true">•</span>
-                  <span>{blog.readingTime}</span>
-                </div>
-                <h3 className="group-hover:text-green-600 dark:group-hover:text-green-500 type-heading transition-colors">
+                <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
                   {blog.title}
                 </h3>
-                <p className="type-caption mt-2 line-clamp-3">
-                  {blog.excerpt}
-                </p>
-              </a>
+                <time
+                  dateTime={blog.date}
+                  className="type-caption shrink-0"
+                >
+                  {formatDate(blog.date)}
+                </time>
+              </motion.a>
             ))}
           </div>
           <div className="mt-6">
@@ -506,83 +484,17 @@ export default function Home() {
             title="Unpopular Opinions"
             description="Things I've felt, noticed and often keep circling back to."
           />
-
-          {/* Mobile: Single opinion with navigation */}
-          <div className="md:hidden">
-            <div className="relative overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentOpinionIndex}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="flex min-h-[120px] items-center card p-4 sm:p-5"
-                >
-                  <div className="flex items-start gap-4 w-full">
-                    <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-8 flex-shrink-0 font-medium">
-                      {String(currentOpinionIndex + 1).padStart(2, "0")}
-                    </span>
-                    <p className="type-body text-muted-foreground italic">
-                      {unpopularOpinions[currentOpinionIndex]}
-                    </p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center justify-between mt-4">
-              <button
-                onClick={prevOpinion}
-                aria-label="Previous opinion"
-                className="flex items-center gap-2 px-3 py-2 type-caption text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-md hover:bg-accent"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                Prev
-              </button>
-
-              {/* Progress dots */}
-              <div className="flex gap-1.5">
-                {unpopularOpinions.map((_, index) => (
-                  <button
-                    key={index}
-                    aria-label={`Show opinion ${index + 1}`}
-                    onClick={() => setCurrentOpinionIndex(index)}
-                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      index === currentOpinionIndex
-                        ? "bg-green-600 dark:bg-green-500"
-                        : "bg-muted hover:bg-muted-foreground/30"
-                    }`}
-                  />
-                ))}
+          <div className="flex flex-col gap-1">
+            {unpopularOpinions.map((opinion, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-6 shrink-0 font-medium">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="type-body text-muted-foreground italic">
+                  {opinion}
+                </p>
               </div>
-
-              <button
-                onClick={nextOpinion}
-                aria-label="Next opinion"
-                className="flex items-center gap-2 px-3 py-2 type-caption text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-md hover:bg-accent"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Desktop: compact list on a single surface */}
-          <div className="hidden card p-4 sm:p-5 md:block">
-            <div className="grid gap-x-8 gap-y-4 md:grid-cols-2">
-              {unpopularOpinions.map((opinion, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-5 flex-shrink-0 font-medium">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="type-body text-muted-foreground italic">
-                    {opinion}
-                  </p>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </motion.section>
 
@@ -596,58 +508,61 @@ export default function Home() {
             title="Things I Use"
             description="The software, tools, and habits that help me get things done"
           />
-          <div className="card p-4 sm:p-5">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-              {Object.entries(myToolkit).map(([key, category]) => (
-                <div key={key} className="space-y-3">
-                  <h3 className="type-label">{category.title}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {category.items.map((item, index) => {
-                      const ItemWrapper = item.url ? "a" : "span";
-                      const logo = item.logo;
-                      const isStringLogo = typeof logo === "string";
-                      const LogoComponent = !isStringLogo ? logo : null;
+          <div className="flex flex-col gap-5">
+            {Object.entries(myToolkit).map(([key, category]) => (
+              <div
+                key={key}
+                className="flex flex-col gap-2 sm:flex-row sm:gap-8"
+              >
+                <h3 className="type-caption font-medium shrink-0 sm:w-36 sm:pt-0.5">
+                  {category.title}
+                </h3>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  {category.items.map((item, index) => {
+                    const ItemWrapper = item.url ? "a" : "span";
+                    const logo = item.logo;
+                    const isStringLogo = typeof logo === "string";
+                    const LogoComponent = !isStringLogo ? logo : null;
 
-                      return (
-                        <ItemWrapper
-                          key={`${key}-${index}`}
-                          {...(item.url
-                            ? {
-                                href: item.url,
-                                target: "_blank",
-                                rel: "noopener noreferrer",
-                              }
-                            : {})}
-                          className={`inline-flex items-center gap-2 rounded-md border border-border/70 px-2.5 py-1.5 type-caption text-foreground/80 ${
-                            item.url
-                              ? "hover:border-foreground/20 hover:bg-accent transition-colors cursor-pointer"
-                              : ""
-                          }`}
-                        >
-                          {logo &&
-                            (isStringLogo ? (
-                              <Image
-                                src={logo}
-                                alt={`${item.name} logo`}
-                                width={16}
-                                height={16}
-                                className="w-4 h-4"
-                                style={{ flexShrink: 0 }}
-                              />
-                            ) : LogoComponent ? (
-                              <LogoComponent
-                                className="w-4 h-4"
-                                style={{ flexShrink: 0 }}
-                              />
-                            ) : null)}
-                          <span>{item.name}</span>
-                        </ItemWrapper>
-                      );
-                    })}
-                  </div>
+                    return (
+                      <ItemWrapper
+                        key={`${key}-${index}`}
+                        {...(item.url
+                          ? {
+                              href: item.url,
+                              target: "_blank",
+                              rel: "noopener noreferrer",
+                            }
+                          : {})}
+                        className={`inline-flex items-center gap-1.5 type-caption ${
+                          item.url
+                            ? "text-foreground/80 hover:text-green-600 dark:hover:text-green-500 transition-colors"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {logo &&
+                          (isStringLogo ? (
+                            <Image
+                              src={logo}
+                              alt={`${item.name} logo`}
+                              width={16}
+                              height={16}
+                              className="w-4 h-4"
+                              style={{ flexShrink: 0 }}
+                            />
+                          ) : LogoComponent ? (
+                            <LogoComponent
+                              className="w-4 h-4"
+                              style={{ flexShrink: 0 }}
+                            />
+                          ) : null)}
+                        <span>{item.name}</span>
+                      </ItemWrapper>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </motion.section>
       </div>

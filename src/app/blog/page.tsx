@@ -6,7 +6,7 @@ export default function BlogPage() {
   const posts = getBlogPosts();
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-5xl">
       <BlogList posts={posts} />
     </div>
   );

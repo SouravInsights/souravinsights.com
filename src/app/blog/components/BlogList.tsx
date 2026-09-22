@@ -45,7 +45,7 @@ export default function BlogList({ posts }: BlogListProps) {
             >
               <Link
                 href={`/blog/${post.slug}`}
-                className="group -mx-3 flex flex-col gap-0.5 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-accent sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+                className="list-row group"
               >
                 <span className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
                   {post.title}

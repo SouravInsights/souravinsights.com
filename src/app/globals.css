@@ -134,13 +134,23 @@
     @apply font-mono text-[11px] font-medium uppercase leading-normal tracking-[0.14em] text-muted-foreground;
   }
 
-  /* Outline surfaces. No fill at rest — the border carries the shape and the
-     fill only appears as interaction feedback, so cards stay quiet. */
-  .card {
-    @apply rounded-lg border border-border transition-colors duration-200;
+  /* The shared list unit: a title row with an optional quiet meta value.
+     Background only appears on hover, so a list reads as text until touched. */
+  .list-row {
+    @apply -mx-3 flex flex-col gap-0.5 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-foreground/5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6;
   }
 
-  .card-interactive {
-    @apply hover:bg-accent;
+  /* Hairline rule that fades at both ends, so section dividers feel airy
+     instead of slicing the page edge to edge. */
+  .rule {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      hsl(var(--border)) 12%,
+      hsl(var(--border)) 88%,
+      transparent
+    );
   }
 }

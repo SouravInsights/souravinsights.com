@@ -12,16 +12,13 @@ import {
 // Discord on every visit. Cache the response at the edge and refresh it.
 export const revalidate = 300;
 
-const CHANNEL_LABELS: Record<string, string> = {
-  "fav-portfolios": "Portfolios",
-  "design-inspo": "Design",
-  tools: "Tools",
-  "product-hunt": "Products",
-  "reading-list": "Reading",
-  newsletters: "Newsletters",
-  opportunities: "Opportunities",
-  resources: "Resources",
-};
+// Only these channels feed the homepage, each contributing a set number of
+// recent links. Portfolios, newsletters and opportunities are intentionally
+// left out so the section stays focused on reading and resources.
+const HOME_CHANNELS: { name: string; label: string; count: number }[] = [
+  { name: "reading-list", label: "Reading", count: 5 },
+  { name: "resources", label: "Resources", count: 3 },
+];
 
 function titleFor(url: string, embedTitle: string): string {
   if (embedTitle && embedTitle !== "Untitled") return embedTitle;
@@ -35,33 +32,39 @@ function titleFor(url: string, embedTitle: string): string {
 export async function GET() {
   try {
     const channels = await getChannels();
+    const byName = new Map(channels.map((channel) => [channel.name, channel]));
 
-    const latestPerChannel = await Promise.all(
-      channels.map(async (channel): Promise<LinkData | null> => {
-        const messages = await getMessagesFromChannel(channel.id, 10);
-        // Discord returns the newest message first.
-        const message = messages[0];
-        if (!message) return null;
+    const groups = await Promise.all(
+      HOME_CHANNELS.map(async ({ name, label, count }): Promise<LinkData[]> => {
+        const channel = byName.get(name);
+        if (!channel) return [];
 
-        const url = extractUrl(message.content, message.embeds);
-        if (!url) return null;
+        // Ask for a few extra so messages without a usable URL don't shrink
+        // the group below its target size.
+        const messages = await getMessagesFromChannel(channel.id, count + 5);
 
-        const description = extractDescription(message.embeds);
+        return messages
+          .map((message): LinkData => {
+            const url = extractUrl(message.content, message.embeds);
+            const description = extractDescription(message.embeds);
 
-        return {
-          id: message.id,
-          url,
-          title: titleFor(url, extractTitle(message.embeds)),
-          description:
-            description === "No description available" ? "" : description,
-          visible: true,
-          category: CHANNEL_LABELS[channel.name] ?? channel.name,
-        };
+            return {
+              id: message.id,
+              url,
+              title: titleFor(url, extractTitle(message.embeds)),
+              description:
+                description === "No description available" ? "" : description,
+              visible: true,
+              category: label,
+            };
+          })
+          .filter((link) => link.url)
+          .slice(0, count);
       })
     );
 
-    const links = latestPerChannel
-      .filter((link): link is LinkData => link !== null)
+    const links = groups
+      .flat()
       .sort((a, b) =>
         BigInt(b.id) > BigInt(a.id) ? 1 : BigInt(b.id) < BigInt(a.id) ? -1 : 0
       );

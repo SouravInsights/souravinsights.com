@@ -21,7 +21,7 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-controls="more-projects"
-          className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground hover:bg-accent transition-colors"
+          className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground hover:bg-foreground/5 transition-colors"
         >
           {open ? "Hide" : `Show ${projects.length} more`}
           <ChevronDown
@@ -43,7 +43,7 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 pt-6">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 sm:grid-cols-3 md:grid-cols-4">
               {projects.map((project, index) => (
                 <motion.a
                   key={project.name}
@@ -54,17 +54,17 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 + index * 0.05, duration: 0.25 }}
-                  className="group card card-interactive flex flex-col items-center gap-3 p-3"
+                  className="group flex items-center gap-2.5"
                 >
-                  <div className="relative w-12 h-12">
+                  <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-md bg-secondary">
                     <Image
                       src={project.logo}
                       alt={`${project.name} logo`}
                       fill
-                      className="rounded-full object-cover"
+                      className="object-cover"
                     />
                   </div>
-                  <span className="type-caption font-medium text-center text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                  <span className="type-caption font-medium text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
                     {project.name}
                   </span>
                 </motion.a>
