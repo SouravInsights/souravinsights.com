@@ -55,7 +55,6 @@ export async function getChannels(): Promise<DiscordChannel[]> {
       "product-hunt",
       "reading-list",
       "newsletters",
-      "opportunities",
       "resources",
     ];
 

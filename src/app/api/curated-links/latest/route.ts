@@ -13,10 +13,10 @@ import {
 export const revalidate = 300;
 
 // Only these channels feed the homepage, each contributing a set number of
-// recent links. Portfolios, newsletters and opportunities are intentionally
-// left out so the section stays focused on reading and resources.
+// recent links. Portfolios and newsletters are intentionally left out so the
+// section stays focused on reading and resources.
 const HOME_CHANNELS: { name: string; label: string; count: number }[] = [
-  { name: "reading-list", label: "Reading", count: 5 },
+  { name: "reading-list", label: "Articles", count: 5 },
   { name: "resources", label: "Resources", count: 3 },
 ];
 

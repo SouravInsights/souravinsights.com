@@ -11,6 +11,7 @@ import {
   extractDescription,
 } from "./utils/discordApi";
 import InsightsList from "@/app/curated-links/components/InsightsList";
+import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { Metadata } from "next";
@@ -18,11 +19,11 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Insights | SouravInsights",
   description:
-    "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles curated from my Discord community.",
+    "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles curated from my Discord community.",
   openGraph: {
     title: "Insights | My Digital Garden",
     description:
-      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles.",
+      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles.",
     type: "website",
     url: "https://www.souravinsights.com/curated-links",
   },
@@ -62,12 +63,18 @@ const getDiscordData = unstable_cache(
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getDiscordData();
 
+  // Grand total across every channel, de-duplicated, so the header can show
+  // how much is in the collection without any per-view noise.
+  const totalLinks = dedupeByUrl(
+    sortByNewestId(channels.flatMap((channel) => linkData[channel.name] || []))
+  ).length;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Insights | My Digital Garden",
     description:
-      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles.",
+      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles.",
     url: "https://www.souravinsights.com/curated-links",
     author: {
       "@type": "Person",
@@ -95,6 +102,14 @@ export default async function CuratedLinksPage() {
           <PageHeader
             title="Insights"
             description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
+            action={
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums">
+                <span className="font-medium text-foreground">
+                  {totalLinks.toLocaleString()}
+                </span>
+                <span className="text-faint-foreground">links</span>
+              </span>
+            }
           />
         </FadeIn>
 

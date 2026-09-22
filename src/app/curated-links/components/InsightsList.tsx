@@ -3,7 +3,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Pencil, Search, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
-import { appendUTMParams } from "../utils/urlUtils";
+import {
+  appendUTMParams,
+  dedupeByUrl,
+  normalizeUrl,
+  sortByNewestId,
+} from "../utils/urlUtils";
 import { NoteEditorModal } from "./NoteEditorModal";
 import { LikeButton } from "./LikeButton";
 import { FadeIn } from "@/components/FadeIn";
@@ -15,13 +20,12 @@ interface InsightsListProps {
 
 /** Human labels for the Discord channel names. */
 const CHANNEL_LABELS: Record<string, string> = {
-  "reading-list": "Reading",
+  "reading-list": "Articles",
   resources: "Resources",
   "product-hunt": "Products",
   newsletters: "Newsletters",
   "fav-portfolios": "Portfolios",
   tools: "Tools",
-  opportunities: "Opportunities",
   "design-inspo": "Design",
 };
 
@@ -32,11 +36,10 @@ const CHANNEL_ORDER = [
   "newsletters",
   "fav-portfolios",
   "tools",
-  "opportunities",
   "design-inspo",
 ];
 
-const ITEMS_PER_PAGE = 30;
+const ITEMS_PER_PAGE = 60;
 
 /** Hostname only, without protocol or `www.`, to hint at the source. */
 const shortDomain = (url: string) => {
@@ -49,13 +52,6 @@ const shortDomain = (url: string) => {
 
 const faviconFor = (url: string) =>
   `https://www.google.com/s2/favicons?domain=${shortDomain(url)}&sz=64`;
-
-const normalizeUrl = (url: string) =>
-  url
-    .toLowerCase()
-    .replace(/^https?:\/\//, "")
-    .replace(/^www\./, "")
-    .replace(/\/$/, "");
 
 type EnrichedLink = LinkData & { category?: string };
 
@@ -104,13 +100,9 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
             category: activeChannel,
           }));
 
-    return source.sort((a, b) => {
-      try {
-        return BigInt(b.id) > BigInt(a.id) ? 1 : -1;
-      } catch {
-        return b.id.localeCompare(a.id);
-      }
-    });
+    // Newest first, then collapse the same URL posted to more than one
+    // channel so a link never appears twice in a view.
+    return dedupeByUrl(sortByNewestId(source));
   }, [activeChannel, sortedChannels, linkData]);
 
   const filteredLinks = useMemo(() => {
@@ -218,7 +210,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
       {/* Toolbar — the tabs lead, especially on mobile where search is a tap
           away rather than a permanent full-width row. It sticks under the
           navbar, and takes the top edge once the navbar scrolls away. */}
-      <div className="sticky-tabs -mx-5 flex items-center gap-2 border-b border-border/60 bg-background/85 px-5 py-3 backdrop-blur-md sm:-mx-6 sm:justify-between sm:px-6">
+      <div className="sticky-tabs -mx-5 flex items-center gap-2 bg-background/85 px-5 py-3 backdrop-blur-md sm:-mx-6 sm:justify-between sm:px-6">
         {!searchOpen && (
           <div className="no-scrollbar -mx-1 flex flex-1 gap-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
             {filters.map((filter) => (
@@ -271,6 +263,11 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
             className="w-full rounded-md border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
           />
         </div>
+
+        <div
+          className="rule absolute inset-x-5 bottom-0 w-auto sm:inset-x-6"
+          aria-hidden="true"
+        />
       </div>
 
       {isAdminMode && (

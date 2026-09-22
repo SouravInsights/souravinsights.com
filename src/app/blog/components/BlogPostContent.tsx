@@ -143,7 +143,7 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div className="lg:hidden sticky top-0 z-30 overflow-hidden border-b border-border/60 bg-background/85 px-4 py-3 backdrop-blur-md flex items-center justify-between md:static">
+      <div className="lg:hidden sticky top-0 z-30 overflow-hidden bg-background/85 px-4 py-3 backdrop-blur-md flex items-center justify-between md:relative">
         {hasTOC ? (
           <Popover open={tocOpen} onOpenChange={setTocOpen}>
             <PopoverTrigger asChild>
@@ -227,6 +227,8 @@ export default function BlogPostContent({
         >
           <ThreeDLikeButton slug={post.slug} compact />
         </motion.div>
+
+        <div className="rule absolute inset-x-0 bottom-0" aria-hidden="true" />
       </div>
 
       <div className="flex flex-col lg:flex-row pt-7 lg:pt-0">
