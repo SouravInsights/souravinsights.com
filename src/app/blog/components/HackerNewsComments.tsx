@@ -111,9 +111,10 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
     <section
       ref={containerRef}
       id="hn-discussion"
-      className="not-prose mt-16 border-t border-border pt-8"
+      className="not-prose mt-16"
       aria-labelledby="hn-discussion-heading"
     >
+      <div className="rule mb-8" aria-hidden="true" />
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <span

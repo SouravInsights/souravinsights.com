@@ -140,17 +140,15 @@
     @apply -mx-3 flex flex-col gap-0.5 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-foreground/5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6;
   }
 
-  /* Hairline rule that fades at both ends, so section dividers feel airy
-     instead of slicing the page edge to edge. */
+  /* Hairline rule: a fine dash pattern, kept subtle so dividers read as
+     texture rather than a hard edge. */
   .rule {
     height: 1px;
     width: 100%;
-    background: linear-gradient(
+    background-image: repeating-linear-gradient(
       to right,
-      transparent,
-      hsl(var(--border)) 12%,
-      hsl(var(--border)) 88%,
-      transparent
+      hsl(var(--border) / 0.6) 0 3px,
+      transparent 3px 9px
     );
   }
 }

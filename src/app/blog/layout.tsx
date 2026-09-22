@@ -45,9 +45,7 @@ export default function BlogLayout({
     <div className="min-h-screen">
       <PHProvider>
         <PostHogPageView />
-        <div className="max-w-7xl mx-auto px-4 pt-12 md:pt-28 pb-12 sm:px-6 lg:px-8">
-          {children}
-        </div>
+        {children}
       </PHProvider>
     </div>
   );

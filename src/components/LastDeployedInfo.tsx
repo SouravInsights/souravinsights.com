@@ -154,7 +154,8 @@ export default function DeploymentStatus() {
   };
 
   return (
-    <div className="type-caption mt-4 italic border-t border-border pt-4">
+    <div className="type-caption mt-4 italic">
+      <div className="rule mb-4" aria-hidden="true" />
       <div className="flex items-start">
         <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-500 flex-shrink-0 mr-2" />
         <div className="flex flex-wrap">

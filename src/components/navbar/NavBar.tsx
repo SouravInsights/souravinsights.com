@@ -10,7 +10,6 @@ import {
   Home,
   BookOpen,
   BookmarkCheck,
-  Terminal,
   BookText,
   Boxes,
 } from "lucide-react";
@@ -33,15 +32,11 @@ const Navbar: React.FC = () => {
       {/* Desktop Navbar */}
       <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden md:block">
         <motion.div
-          className="flex space-x-2 bg-card p-2 rounded-lg shadow-lg border border-border"
+          className="flex items-center space-x-2 bg-card p-2 rounded-lg shadow-lg border border-border"
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          <div className="flex items-center px-3 text-green-600 dark:text-green-500 font-mono text-sm border-r border-border">
-            <Terminal size={16} className="mr-2" />
-            <span>~/nav</span>
-          </div>
           {navItems.map((item) => (
             <Link href={item.path} key={item.name}>
               <motion.div
@@ -88,10 +83,6 @@ const Navbar: React.FC = () => {
             className="fixed inset-x-0 bottom-0 bg-card shadow-lg p-4 z-40 md:hidden rounded-t-lg border-t border-border"
           >
             <div className="flex flex-col space-y-2">
-              <div className="flex items-center px-3 py-2 text-green-600 dark:text-green-500 font-mono text-sm border-b border-border">
-                <Terminal size={16} className="mr-2" />
-                <span>~/nav</span>
-              </div>
               {navItems.map((item) => (
                 <Link href={item.path} key={item.name}>
                   <motion.div

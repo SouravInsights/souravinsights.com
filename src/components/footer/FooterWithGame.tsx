@@ -40,7 +40,8 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   withCat = true,
 }) => {
   return (
-    <footer className="relative bg-card border-t border-border">
+    <footer className="relative bg-card">
+      <div className="rule" aria-hidden="true" />
       {/*
         The cat is a fixed overlay that roams the footer on its own (`wander`).
         It lives below the navbar/modals (z-50) and routes around the footer

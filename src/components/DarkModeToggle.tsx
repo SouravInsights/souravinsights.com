@@ -16,9 +16,10 @@ export function DarkModeToggle() {
   return (
     <button
       onClick={handleOnClick}
-      className="p-2 rounded-full bg-secondary text-foreground shadow-sm"
+      aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+      className="flex items-center justify-center rounded-md p-2 text-foreground transition-colors hover:bg-accent"
     >
-      {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+      {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
     </button>
   );
 }

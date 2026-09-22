@@ -1,78 +1,54 @@
-"use client";
-
 import Image from "next/image";
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { SmallProject } from "./projects-data";
 
+/** Hostname only, without protocol or `www.`, to hint at the source. */
+const shortDomain = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+};
+
 /**
- * Smaller projects stay collapsed by default so they never compete with the
- * featured work. They're one click away for anyone who wants the full list.
+ * Smaller experiments and older side projects, shown inline so they read as a
+ * quiet secondary list rather than something hidden behind a toggle.
  */
 export function MoreProjects({ projects }: { projects: SmallProject[] }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div>
-      <div className="flex">
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          aria-expanded={open}
-          aria-controls="more-projects"
-          className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground hover:bg-foreground/5 transition-colors"
-        >
-          {open ? "Hide" : `Show ${projects.length} more`}
-          <ChevronDown
-            className={`w-4 h-4 transition-transform duration-300 ${
-              open ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-      </div>
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            id="more-projects"
-            key="more-projects"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden"
+    <div className="flex flex-col">
+      {projects.map((project, index) => (
+        <div key={project.name}>
+          {index > 0 && (
+            <div className="rule my-5 sm:my-6" aria-hidden="true" />
+          )}
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-4"
           >
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 sm:grid-cols-3 md:grid-cols-4">
-              {projects.map((project, index) => (
-                <motion.a
-                  key={project.name}
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={project.name}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + index * 0.05, duration: 0.25 }}
-                  className="group flex items-center gap-2.5"
-                >
-                  <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-md bg-secondary">
-                    <Image
-                      src={project.logo}
-                      alt={`${project.name} logo`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <span className="type-caption font-medium text-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
-                    {project.name}
-                  </span>
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-secondary">
+              <Image
+                src={project.logo}
+                alt={`${project.name} logo`}
+                fill
+                className="object-cover"
+              />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="type-heading block group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                {project.name}
+              </span>
+              <span className="type-caption block text-muted-foreground/60">
+                {shortDomain(project.url)}
+              </span>
+            </span>
+            <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-600 dark:group-hover:text-green-500" />
+          </a>
+        </div>
+      ))}
     </div>
   );
 }

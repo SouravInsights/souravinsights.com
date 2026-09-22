@@ -16,6 +16,7 @@ export function PageHeader({ title, description }: PageHeaderProps) {
           {description}
         </p>
       ) : null}
+      <div className="rule mt-5" aria-hidden="true" />
     </header>
   );
 }
