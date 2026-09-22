@@ -36,7 +36,7 @@ export default function ProjectsPage() {
             const logoIsSvg = project.logo.endsWith(".svg");
 
             return (
-              <FadeIn key={project.slug} delay={index * 0.03}>
+              <FadeIn key={project.slug} delay={Math.min(index, 12) * 0.03}>
                 {index > 0 && (
                   <div className="rule my-7 sm:my-8" aria-hidden="true" />
                 )}
@@ -87,7 +87,7 @@ export default function ProjectsPage() {
 
         {/* Smaller projects */}
         <section className="mt-16 sm:mt-24">
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Smaller things"
               description="Older experiments and side projects that didn't need more than a weekend."

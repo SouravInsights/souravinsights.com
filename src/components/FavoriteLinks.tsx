@@ -65,33 +65,35 @@ export function FavoriteLinks() {
   return (
     <div className="flex flex-col">
       {favorites.map((favorite, index) => (
-        <motion.a
-          key={favorite.id}
-          href={favorite.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="list-row group"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.04 }}
-        >
-          <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
-            {favorite.title}
-          </h3>
-          <span className="flex shrink-0 items-center gap-2 type-caption">
-            <span className="text-muted-foreground/60">
-              {shortDomain(favorite.url)}
-            </span>
-            {favorite.category && (
-              <span className="hidden items-center gap-2 sm:flex">
-                <span aria-hidden="true" className="text-border">
-                  ·
-                </span>
-                <span>{favorite.category}</span>
+        <div key={favorite.id}>
+          {index > 0 && <div className="rule" aria-hidden="true" />}
+          <motion.a
+            href={favorite.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="list-row group"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
+          >
+            <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
+              {favorite.title}
+            </h3>
+            <span className="flex shrink-0 items-center gap-2 type-caption">
+              <span className="text-muted-foreground/60">
+                {shortDomain(favorite.url)}
               </span>
-            )}
-          </span>
-        </motion.a>
+              {favorite.category && (
+                <span className="hidden items-center gap-2 sm:flex">
+                  <span aria-hidden="true" className="text-border">
+                    ·
+                  </span>
+                  <span>{favorite.category}</span>
+                </span>
+              )}
+            </span>
+          </motion.a>
+        </div>
       ))}
     </div>
   );

@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     --background: 210 20% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -32,6 +33,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     /* Base background: #0D0F11 - User's chosen dark background */
     --background: 216 20% 6%;
     
@@ -87,6 +89,10 @@
 @layer base {
   * {
     @apply border-border;
+  }
+  html {
+    /* Paint the themed surface immediately, before any content mounts. */
+    background-color: hsl(var(--background));
   }
   body {
     @apply bg-background text-foreground;

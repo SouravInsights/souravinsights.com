@@ -41,7 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen transition-colors duration-200">
       <PHProvider>
         <PostHogPageView />
-        <div className="pt-12 md:pt-28 pb-12">{children}</div>
+        {children}
       </PHProvider>
     </div>
   );

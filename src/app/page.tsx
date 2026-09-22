@@ -329,7 +329,7 @@ export default function Home() {
 
         {/* Experience Section */}
         <section>
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Companies"
               description="I've had the chance to work with some great teams building things people use"
@@ -345,7 +345,7 @@ export default function Home() {
                 className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.03 }}
+                transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
               >
                 <div className="relative w-6 h-6 shrink-0">
                   <Image
@@ -365,7 +365,7 @@ export default function Home() {
 
         {/* Projects Section */}
         <section>
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Side Projects"
               description="Things I build when I'm curious about something or need to scratch a personal itch."
@@ -382,7 +382,7 @@ export default function Home() {
                   className="group flex flex-col"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.03 }}
+                  transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
@@ -415,7 +415,7 @@ export default function Home() {
 
         {/* Blog Section */}
         <section>
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Recent Essays"
               description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
@@ -423,24 +423,26 @@ export default function Home() {
           </FadeIn>
           <div className="flex flex-col">
             {blogHighlights.map((blog, index) => (
-              <motion.a
-                key={blog.title}
-                href={blog.url}
-                className="list-row group"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.03 }}
-              >
-                <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
-                  {blog.title}
-                </h3>
-                <time
-                  dateTime={blog.date}
-                  className="type-caption shrink-0"
+              <div key={blog.title}>
+                {index > 0 && <div className="rule" aria-hidden="true" />}
+                <motion.a
+                  href={blog.url}
+                  className="list-row group"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
                 >
-                  {formatDate(blog.date)}
-                </time>
-              </motion.a>
+                  <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
+                    {blog.title}
+                  </h3>
+                  <time
+                    dateTime={blog.date}
+                    className="type-caption shrink-0"
+                  >
+                    {formatDate(blog.date)}
+                  </time>
+                </motion.a>
+              </div>
             ))}
           </div>
           <div className="mt-6">
@@ -455,7 +457,7 @@ export default function Home() {
 
         {/* Favorite Links Section */}
         <section>
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Curated Links"
               description="Curated resources, articles and tools I find valuable"
@@ -466,7 +468,7 @@ export default function Home() {
 
         {/* Unpopular Opinions Section */}
         <section>
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Unpopular Opinions"
               description="Things I've felt, noticed and often keep circling back to."
@@ -488,7 +490,7 @@ export default function Home() {
 
         {/* My Toolkit Section */}
         <section>
-          <FadeIn y={20} duration={0.5}>
+          <FadeIn>
             <SectionHeader
               title="Things I Use"
               description="The software, tools, and habits that help me get things done"

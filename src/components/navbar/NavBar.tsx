@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
       <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 hidden md:block">
         <motion.div
           className="flex items-center space-x-2 bg-card p-2 rounded-lg shadow-lg border border-border"
-          initial={{ y: -100 }}
+          initial={false}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >

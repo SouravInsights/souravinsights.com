@@ -1,6 +1,7 @@
-export const revalidate = 60; // Revalidate every minute
+export const revalidate = 300;
 
 import React from "react";
+import { unstable_cache } from "next/cache";
 import {
   getChannels,
   getMessagesFromChannel,
@@ -9,16 +10,17 @@ import {
   extractTitle,
   extractDescription,
 } from "./utils/discordApi";
-import CuratedLinksTabs from "@/app/curated-links/components/CuratedLinksTabs";
-import { NewsletterSignup } from "./components/NewsletterSignup";
+import InsightsList from "@/app/curated-links/components/InsightsList";
+import { PageHeader } from "@/components/PageHeader";
+import { FadeIn } from "@/components/FadeIn";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Curated Links | SouravInsights",
+  title: "Insights | SouravInsights",
   description:
     "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles curated from my Discord community.",
   openGraph: {
-    title: "Curated Links | My Digital Garden",
+    title: "Insights | My Digital Garden",
     description:
       "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles.",
     type: "website",
@@ -26,23 +28,36 @@ export const metadata: Metadata = {
   },
 };
 
-async function getDiscordData() {
-  const channels = await getChannels();
-  const linkData: { [key: string]: LinkData[] } = {};
+/**
+ * Discord is the slow part of this page, so the data is cached for five
+ * minutes and every channel is fetched in parallel rather than one after the
+ * other. Sequential fetches were the reason the page felt slow to open.
+ */
+const getDiscordData = unstable_cache(
+  async () => {
+    const channels = await getChannels();
 
-  for (const channel of channels) {
-    const messages = await getMessagesFromChannel(channel.id);
-    linkData[channel.name] = messages.map((msg) => ({
-      id: msg.id,
-      url: extractUrl(msg.content, msg.embeds),
-      title: extractTitle(msg.embeds),
-      description: extractDescription(msg.embeds),
-      visible: true,
-    }));
-  }
+    const entries = await Promise.all(
+      channels.map(async (channel): Promise<[string, LinkData[]]> => {
+        const messages = await getMessagesFromChannel(channel.id);
+        return [
+          channel.name,
+          messages.map((msg) => ({
+            id: msg.id,
+            url: extractUrl(msg.content, msg.embeds),
+            title: extractTitle(msg.embeds),
+            description: extractDescription(msg.embeds),
+            visible: true,
+          })),
+        ];
+      })
+    );
 
-  return { channels, linkData };
-}
+    return { channels, linkData: Object.fromEntries(entries) };
+  },
+  ["insights-discord-data"],
+  { revalidate: 300 }
+);
 
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getDiscordData();
@@ -50,8 +65,9 @@ export default async function CuratedLinksPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Curated Links | My Digital Garden",
-    description: "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles.",
+    name: "Insights | My Digital Garden",
+    description:
+      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, career opportunities, and must-read articles.",
     url: "https://www.souravinsights.com/curated-links",
     author: {
       "@type": "Person",
@@ -68,23 +84,22 @@ export default async function CuratedLinksPage() {
   };
 
   return (
-    <div className="p-4 sm:p-2 md:p-8 transition-colors duration-200">
+    <div className="min-h-screen bg-background transition-colors duration-200">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h1 className="type-display text-center mb-2 sm:mb-4">
-        My Digital Garden
-      </h1>
-      <p className="type-body text-muted-foreground text-center mb-4 sm:mb-8 transition-colors duration-200">
-        A curated collection of useful links and resources
-      </p>
 
-      <div className="max-w-2xl mx-auto mb-8">
-        <NewsletterSignup />
+      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-32">
+        <FadeIn y={20} duration={0.5}>
+          <PageHeader
+            title="Insights"
+            description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
+          />
+        </FadeIn>
+
+        <InsightsList channels={channels} linkData={linkData} />
       </div>
-
-      <CuratedLinksTabs channels={channels} linkData={linkData} />
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
   return (
     <div className="flex flex-col">
       {projects.map((project, index) => (
-        <FadeIn key={project.name} delay={index * 0.03}>
+        <FadeIn key={project.name} delay={Math.min(index, 12) * 0.03}>
           {index > 0 && (
             <div className="rule my-5 sm:my-6" aria-hidden="true" />
           )}

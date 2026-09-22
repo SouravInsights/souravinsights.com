@@ -67,7 +67,7 @@ const Macintosh: React.FC = () => {
       <path
         d="M4.99719 329.397C4.99719 324.337 9.09892 320.235 14.1587 320.235H279.841C284.901 320.235 289.003 324.337 289.003 329.397V395.609C289.003 398.829 286.393 401.439 283.173 401.439H10.8272C7.60736 401.439 4.99719 398.829 4.99719 395.609V329.397Z"
         fill="white"
-        fill-opacity="0.11"
+        fillOpacity="0.11"
       />
       <mask
         id="mask0_59_101"
@@ -137,7 +137,7 @@ const Macintosh: React.FC = () => {
           rx="2.49858"
           transform="rotate(180 265.683 388.113)"
           fill="url(#pattern1)"
-          fill-opacity="0.6"
+          fillOpacity="0.6"
         />
       </g>
       <g filter="url(#filter4_ddi_59_101)">
@@ -148,7 +148,7 @@ const Macintosh: React.FC = () => {
           height="9.99433"
           rx="0.832861"
           stroke="#BCB4A4"
-          stroke-width="0.832861"
+          strokeWidth="0.832861"
           shape-rendering="crispEdges"
         />
       </g>
@@ -368,7 +368,7 @@ const Macintosh: React.FC = () => {
           height="9.99433"
           rx="0.832861"
           stroke="#BCB4A4"
-          stroke-width="0.832861"
+          strokeWidth="0.832861"
           shape-rendering="crispEdges"
         />
       </g>
@@ -549,8 +549,8 @@ const Macintosh: React.FC = () => {
         />
       </g>
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M250.275 368.541C250.045 368.541 249.858 368.728 249.858 368.958V370.624H248.609C248.379 370.624 248.193 370.81 248.193 371.04V373.122H246.943C246.713 373.122 246.527 373.308 246.527 373.538V381.034C246.527 381.264 246.713 381.451 246.943 381.451H257.771C258.001 381.451 258.187 381.264 258.187 381.034V373.538C258.187 373.308 258.001 373.122 257.771 373.122H256.521V371.04C256.521 370.81 256.335 370.624 256.105 370.624H254.856V368.958C254.856 368.728 254.669 368.541 254.439 368.541H250.275Z"
         fill="black"
       />
@@ -571,7 +571,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter46_i_59_101)">
         <rect
@@ -590,7 +590,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter47_i_59_101)">
         <rect
@@ -609,7 +609,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter48_i_59_101)">
         <rect
@@ -628,7 +628,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter49_i_59_101)">
         <rect
@@ -647,7 +647,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter50_i_59_101)">
         <rect
@@ -666,7 +666,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter51_i_59_101)">
         <rect
@@ -685,7 +685,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter52_i_59_101)">
         <rect
@@ -704,7 +704,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter53_i_59_101)">
         <rect
@@ -723,7 +723,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter54_i_59_101)">
         <rect
@@ -742,7 +742,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter55_i_59_101)">
         <rect
@@ -761,7 +761,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter56_i_59_101)">
         <rect
@@ -780,7 +780,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter57_i_59_101)">
         <rect
@@ -799,7 +799,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter58_i_59_101)">
         <rect
@@ -818,7 +818,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter59_i_59_101)">
         <rect
@@ -837,7 +837,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter60_i_59_101)">
         <rect
@@ -856,7 +856,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter61_i_59_101)">
         <rect
@@ -875,7 +875,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter62_i_59_101)">
         <rect
@@ -894,7 +894,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter63_i_59_101)">
         <rect
@@ -913,7 +913,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter64_i_59_101)">
         <rect
@@ -932,7 +932,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter65_i_59_101)">
         <rect
@@ -951,7 +951,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter66_i_59_101)">
         <rect
@@ -970,7 +970,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter67_i_59_101)">
         <rect
@@ -989,7 +989,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter68_i_59_101)">
         <rect
@@ -1008,7 +1008,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter69_i_59_101)">
         <rect
@@ -1027,7 +1027,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter70_i_59_101)">
         <rect
@@ -1046,7 +1046,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter71_i_59_101)">
         <rect
@@ -1065,7 +1065,7 @@ const Macintosh: React.FC = () => {
         height="14.5751"
         rx="1.04108"
         stroke="#D2CAB8"
-        stroke-width="0.416431"
+        strokeWidth="0.416431"
       />
       <g filter="url(#filter72_if_59_101)">
         <circle
@@ -1077,8 +1077,8 @@ const Macintosh: React.FC = () => {
       </g>
       <circle cx="34.9803" cy="335.227" r="12.9093" fill="black" />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M34.1472 323.567C34.1472 323.337 34.3336 323.15 34.5636 323.15H35.3964C35.6264 323.15 35.8129 323.337 35.8129 323.567V324.464C35.8129 324.681 35.98 324.861 36.1958 324.886C36.292 324.897 36.3877 324.91 36.4831 324.924C36.6977 324.955 36.9052 324.824 36.9613 324.615L37.1935 323.748C37.253 323.526 37.4813 323.394 37.7035 323.454L38.508 323.669C38.7301 323.729 38.8619 323.957 38.8024 324.179L38.5706 325.044C38.5145 325.254 38.6291 325.471 38.8308 325.551C38.9206 325.587 39.0099 325.624 39.0985 325.662C39.2979 325.748 39.5325 325.676 39.641 325.488L40.0889 324.712C40.2039 324.513 40.4586 324.445 40.6578 324.56L41.3791 324.976C41.5782 325.091 41.6465 325.346 41.5315 325.545L41.0826 326.323C40.9741 326.511 41.0286 326.749 41.2024 326.879C41.2798 326.937 41.3563 326.996 41.432 327.056C41.6024 327.19 41.8476 327.181 42.0011 327.028L42.636 326.393C42.7987 326.23 43.0623 326.23 43.225 326.393L43.8139 326.982C43.9765 327.144 43.9765 327.408 43.8139 327.571L43.179 328.206C43.0254 328.359 43.0164 328.604 43.1511 328.775C43.2109 328.85 43.2697 328.927 43.3275 329.004C43.4572 329.178 43.6962 329.233 43.884 329.124L44.6615 328.675C44.8607 328.56 45.1154 328.628 45.2304 328.828L45.6468 329.549C45.7618 329.748 45.6936 330.003 45.4944 330.118L44.7187 330.566C44.5307 330.674 44.4585 330.909 44.5445 331.108C44.5826 331.197 44.6196 331.286 44.6554 331.376C44.7358 331.577 44.9526 331.692 45.1622 331.636L46.0273 331.404C46.2494 331.345 46.4778 331.476 46.5373 331.699L46.7529 332.503C46.8124 332.725 46.6805 332.954 46.4584 333.013L45.592 333.245C45.3825 333.301 45.2521 333.509 45.2831 333.723C45.2969 333.819 45.3094 333.915 45.3206 334.011C45.3457 334.227 45.5255 334.394 45.7428 334.394H46.6402C46.8702 334.394 47.0567 334.58 47.0567 334.81V335.643C47.0567 335.873 46.8702 336.059 46.6402 336.059H45.7428C45.5255 336.059 45.3457 336.227 45.3206 336.442C45.3094 336.539 45.2969 336.634 45.2831 336.73C45.2521 336.944 45.3825 337.152 45.592 337.208L46.4584 337.44C46.6805 337.499 46.8124 337.728 46.7529 337.95L46.5373 338.754C46.4778 338.977 46.2494 339.108 46.0273 339.049L45.1623 338.817C44.9527 338.761 44.7359 338.876 44.6555 339.077C44.6197 339.167 44.5827 339.256 44.5445 339.345C44.4586 339.544 44.5307 339.779 44.7188 339.888L45.4943 340.335C45.6935 340.45 45.7618 340.705 45.6468 340.904L45.2303 341.625C45.1153 341.825 44.8607 341.893 44.6615 341.778L43.8842 341.329C43.6963 341.221 43.4574 341.275 43.3276 341.449C43.2698 341.526 43.2109 341.603 43.151 341.679C43.0163 341.849 43.0254 342.094 43.1789 342.248L43.8138 342.883C43.9765 343.045 43.9765 343.309 43.8138 343.472L43.2249 344.061C43.0623 344.223 42.7986 344.223 42.636 344.061L42.0011 343.426C41.8475 343.272 41.6023 343.263 41.432 343.398C41.3563 343.458 41.2798 343.516 41.2024 343.574C41.0286 343.704 40.9741 343.943 41.0825 344.131L41.5313 344.908C41.6463 345.107 41.5781 345.362 41.3789 345.477L40.6576 345.893C40.4585 346.008 40.2038 345.94 40.0888 345.741L39.641 344.965C39.5324 344.777 39.2979 344.705 39.0984 344.791C39.0099 344.829 38.9207 344.866 38.8308 344.902C38.6292 344.982 38.5145 345.199 38.5707 345.409L38.8024 346.274C38.862 346.496 38.7301 346.724 38.508 346.784L37.7035 346.999C37.4813 347.059 37.253 346.927 37.1935 346.705L36.9613 345.839C36.9052 345.629 36.6978 345.499 36.4831 345.53C36.3878 345.544 36.292 345.556 36.1958 345.567C35.98 345.592 35.8129 345.772 35.8129 345.989V346.887C35.8129 347.117 35.6264 347.303 35.3964 347.303H34.5636C34.3336 347.303 34.1472 347.117 34.1472 346.887V345.989C34.1472 345.772 33.98 345.592 33.7642 345.567C33.6681 345.556 33.5724 345.544 33.4771 345.53C33.2624 345.499 33.055 345.629 32.9988 345.839L32.7667 346.705C32.7072 346.927 32.4789 347.059 32.2567 346.999L31.4522 346.784C31.2301 346.724 31.0982 346.496 31.1578 346.274L31.3895 345.409C31.4457 345.199 31.331 344.982 31.1294 344.902C31.0395 344.866 30.9503 344.829 30.8617 344.791C30.6623 344.705 30.4277 344.777 30.3191 344.965L29.8714 345.741C29.7564 345.94 29.5017 346.008 29.3026 345.893L28.5813 345.477C28.3821 345.362 28.3139 345.107 28.4289 344.908L28.8776 344.131C28.9861 343.943 28.9316 343.704 28.7578 343.574C28.6804 343.516 28.6038 343.458 28.5281 343.398C28.3578 343.263 28.1126 343.272 27.959 343.426L27.3241 344.061C27.1614 344.223 26.8978 344.223 26.7352 344.061L26.1462 343.472C25.9836 343.309 25.9836 343.045 26.1462 342.883L26.7812 342.248C26.9347 342.094 26.9438 341.849 26.8091 341.679C26.7492 341.603 26.6903 341.526 26.6325 341.449C26.5028 341.275 26.2638 341.221 26.0759 341.329L25.2986 341.778C25.0994 341.893 24.8447 341.825 24.7297 341.625L24.3133 340.904C24.1983 340.705 24.2666 340.45 24.4657 340.335L25.2413 339.888C25.4294 339.779 25.5016 339.544 25.4156 339.345C25.3774 339.256 25.3404 339.167 25.3046 339.077C25.2242 338.876 25.0074 338.761 24.7978 338.817L23.9329 339.049C23.7107 339.108 23.4824 338.976 23.4229 338.754L23.2073 337.95C23.1478 337.728 23.2796 337.499 23.5018 337.44L24.3681 337.208C24.5776 337.152 24.708 336.944 24.677 336.729C24.6632 336.634 24.6507 336.539 24.6395 336.442C24.6144 336.227 24.4346 336.059 24.2174 336.059H23.3201C23.0901 336.059 22.9037 335.873 22.9037 335.643V334.81C22.9037 334.58 23.0901 334.394 23.3201 334.394H24.2174C24.4346 334.394 24.6144 334.227 24.6395 334.011C24.6507 333.915 24.6632 333.819 24.677 333.724C24.7081 333.509 24.5776 333.301 24.3681 333.245L23.5018 333.013C23.2796 332.954 23.1478 332.725 23.2073 332.503L23.4229 331.699C23.4824 331.477 23.7107 331.345 23.9329 331.404L24.7979 331.636C25.0075 331.692 25.2244 331.578 25.3047 331.376C25.3405 331.286 25.3775 331.197 25.4157 331.108C25.5017 330.909 25.4295 330.674 25.2414 330.566L24.4657 330.118C24.2665 330.003 24.1983 329.748 24.3132 329.549L24.7297 328.828C24.8447 328.628 25.0994 328.56 25.2985 328.675L26.0761 329.124C26.2639 329.233 26.5029 329.178 26.6327 329.004C26.6904 328.927 26.7492 328.85 26.8091 328.775C26.9437 328.604 26.9347 328.359 26.7811 328.206L26.1462 327.571C25.9836 327.408 25.9836 327.144 26.1462 326.982L26.7351 326.393C26.8977 326.23 27.1614 326.23 27.324 326.393L27.959 327.028C28.1125 327.181 28.3577 327.19 28.5281 327.056C28.6038 326.996 28.6804 326.937 28.7578 326.879C28.9316 326.749 28.9861 326.51 28.8776 326.323L28.4287 325.545C28.3137 325.346 28.382 325.091 28.5811 324.976L29.3024 324.56C29.5016 324.445 29.7563 324.513 29.8713 324.712L30.3191 325.488C30.4277 325.676 30.6623 325.748 30.8617 325.662C30.9503 325.624 31.0396 325.587 31.1294 325.551C31.3311 325.471 31.4457 325.254 31.3896 325.044L31.1578 324.179C31.0983 323.957 31.2301 323.729 31.4522 323.669L32.2567 323.454C32.4789 323.394 32.7072 323.526 32.7667 323.748L32.9989 324.615C33.055 324.824 33.2625 324.955 33.4771 324.924C33.5724 324.91 33.6681 324.897 33.7642 324.886C33.98 324.861 34.1472 324.681 34.1472 324.464V323.567Z"
         fill="#A9A294"
       />
@@ -1086,18 +1086,18 @@ const Macintosh: React.FC = () => {
         <path
           d="M25.4023 367.292C25.4023 365.682 26.7074 364.377 28.3173 364.377H41.6431C43.253 364.377 44.5581 365.682 44.5581 367.292V380.618C44.5581 382.227 43.253 383.533 41.6431 383.533H28.3173C26.7074 383.533 25.4023 382.227 25.4023 380.618V367.292Z"
           stroke="#B6AD9A"
-          stroke-width="0.832861"
+          strokeWidth="0.832861"
         />
       </g>
       <g filter="url(#filter74_ddi_59_101)">
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M34.5637 366.042H35.3966V368.557C36.5784 368.647 37.6542 369.116 38.5024 369.844L40.2804 368.066L40.8693 368.655L39.0913 370.433C39.8186 371.281 40.288 372.357 40.3779 373.538H42.8923V374.371H40.3779C40.288 375.553 39.8186 376.629 39.0913 377.477L40.8693 379.255L40.2804 379.844L38.5024 378.066C37.6542 378.793 36.5784 379.263 35.3966 379.353V381.867H34.5637V379.353C33.3818 379.263 32.306 378.793 31.4578 378.066L29.6798 379.844L29.0909 379.255L30.8689 377.477C30.1416 376.629 29.6722 375.553 29.5823 374.371H27.068V373.538H29.5823C29.6722 372.357 30.1416 371.281 30.869 370.433L29.091 368.655L29.6799 368.066L31.4579 369.844C32.306 369.116 33.3818 368.647 34.5637 368.557V366.042ZM39.5609 373.955C39.5609 376.485 37.51 378.536 34.9801 378.536C32.4502 378.536 30.3994 376.485 30.3994 373.955C30.3994 371.425 32.4502 369.374 34.9801 369.374C37.51 369.374 39.5609 371.425 39.5609 373.955Z"
           fill="#B6AD9A"
         />
       </g>
-      <g clip-path="url(#clip0_59_101)">
+      <g clipPath="url(#clip0_59_101)">
         <g filter="url(#filter75_ddd_59_101)">
           <path
             d="M0 287.754H294V333.561C294 338.621 289.898 342.722 284.839 342.722H9.16148C4.10174 342.722 0 338.621 0 333.561V287.754Z"
@@ -1129,7 +1129,7 @@ const Macintosh: React.FC = () => {
           height="342.722"
           rx="9.16147"
           fill="url(#pattern3)"
-          fill-opacity="0.7"
+          fillOpacity="0.7"
         />
         <rect
           width="294"
@@ -1147,12 +1147,12 @@ const Macintosh: React.FC = () => {
           <path
             d="M-44.5581 420.278H338.244L232.512 218.626H62.2736L-44.5581 420.278Z"
             fill="black"
-            fill-opacity="0.18"
+            fillOpacity="0.18"
           />
           <path
             d="M-45.662 419.693L-46.6337 421.527H-44.5581H338.244H340.309L339.35 419.698L233.618 218.046L233.267 217.377H232.512H62.2736H61.5216L61.1696 218.041L-45.662 419.693Z"
             stroke="#D2C9B8"
-            stroke-width="2.49858"
+            strokeWidth="2.49858"
           />
         </g>
       </g>
@@ -1171,7 +1171,7 @@ const Macintosh: React.FC = () => {
         height="310.241"
         rx="4.16431"
         fill="url(#pattern4)"
-        fill-opacity="0.8"
+        fillOpacity="0.8"
       />
       <rect
         x="7.07935"
@@ -1180,7 +1180,7 @@ const Macintosh: React.FC = () => {
         height="310.241"
         rx="4.16431"
         fill="white"
-        fill-opacity="0.12"
+        fillOpacity="0.12"
       />
       <mask
         id="mask3_59_101"
@@ -1229,7 +1229,7 @@ const Macintosh: React.FC = () => {
           />
         </g>
       </g>
-      <g clip-path="url(#clip1_59_101)">
+      <g clipPath="url(#clip1_59_101)">
         <mask
           id="mask4_59_101"
           style={{ maskType: "alpha" }}
@@ -1241,14 +1241,14 @@ const Macintosh: React.FC = () => {
         >
           <mask id="path-124-inside-2_59_101" fill="white">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M248.609 44.142C242.363 43.7016 192.242 40.8105 147 40.8105H147C101.758 40.8105 51.6374 43.7016 45.3909 44.142C39.1445 44.5824 34.4467 47.8899 33.7309 54.761C33.015 61.6321 31.6487 93.4452 31.6487 126.179H147V211.547C192.242 211.547 242.363 208.656 248.609 208.216C254.855 207.775 259.553 204.468 260.269 197.597C260.982 190.755 262.34 158.769 262.351 126.179C262.351 126.109 262.351 126.04 262.351 125.971C262.351 125.901 262.351 125.832 262.351 125.762C262.34 93.1758 260.982 61.6029 260.269 54.761C259.553 47.8899 254.855 44.5824 248.609 44.142ZM147 211.547V126.179H31.6486C31.6486 158.912 33.0148 190.726 33.7307 197.597C34.4466 204.468 39.1443 207.775 45.3908 208.216C51.6372 208.656 101.758 211.547 147 211.547Z"
             />
           </mask>
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M248.609 44.142C242.363 43.7016 192.242 40.8105 147 40.8105H147C101.758 40.8105 51.6374 43.7016 45.3909 44.142C39.1445 44.5824 34.4467 47.8899 33.7309 54.761C33.015 61.6321 31.6487 93.4452 31.6487 126.179H147V211.547C192.242 211.547 242.363 208.656 248.609 208.216C254.855 207.775 259.553 204.468 260.269 197.597C260.982 190.755 262.34 158.769 262.351 126.179C262.351 126.109 262.351 126.04 262.351 125.971C262.351 125.901 262.351 125.832 262.351 125.762C262.34 93.1758 260.982 61.6029 260.269 54.761C259.553 47.8899 254.855 44.5824 248.609 44.142ZM147 211.547V126.179H31.6486C31.6486 158.912 33.0148 190.726 33.7307 197.597C34.4466 204.468 39.1443 207.775 45.3908 208.216C51.6372 208.656 101.758 211.547 147 211.547Z"
             fill="#242424"
           />
@@ -1261,14 +1261,14 @@ const Macintosh: React.FC = () => {
         <g mask="url(#mask4_59_101)">
           <g filter="url(#filter80_i_59_101)">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M248.609 44.142C242.362 43.7016 192.242 40.8106 147 40.8105H147C101.758 40.8106 51.6374 43.7016 45.3909 44.142C39.1444 44.5824 34.4467 47.8899 33.7308 54.761C33.015 61.6321 31.6487 93.4452 31.6487 126.179H147V211.547C192.242 211.547 242.362 208.656 248.609 208.216C254.855 207.775 259.553 204.468 260.269 197.597C260.982 190.755 262.34 158.769 262.351 126.179C262.351 126.109 262.351 126.04 262.351 125.971C262.351 125.901 262.351 125.832 262.351 125.762C262.34 93.1758 260.982 61.6029 260.269 54.761C259.553 47.8899 254.855 44.5824 248.609 44.142ZM147 211.547V126.179H31.6486C31.6486 158.912 33.0148 190.726 33.7307 197.597C34.4466 204.468 39.1443 207.775 45.3908 208.216C51.6372 208.656 101.758 211.547 147 211.547Z"
               fill="#272727"
             />
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M248.609 44.142C242.362 43.7016 192.242 40.8106 147 40.8105H147C101.758 40.8106 51.6374 43.7016 45.3909 44.142C39.1444 44.5824 34.4467 47.8899 33.7308 54.761C33.015 61.6321 31.6487 93.4452 31.6487 126.179H147V211.547C192.242 211.547 242.362 208.656 248.609 208.216C254.855 207.775 259.553 204.468 260.269 197.597C260.982 190.755 262.34 158.769 262.351 126.179C262.351 126.109 262.351 126.04 262.351 125.971C262.351 125.901 262.351 125.832 262.351 125.762C262.34 93.1758 260.982 61.6029 260.269 54.761C259.553 47.8899 254.855 44.5824 248.609 44.142ZM147 211.547V126.179H31.6486C31.6486 158.912 33.0148 190.726 33.7307 197.597C34.4466 204.468 39.1443 207.775 45.3908 208.216C51.6372 208.656 101.758 211.547 147 211.547Z"
               fill="url(#paint3_radial_59_101)"
             />
@@ -1276,8 +1276,8 @@ const Macintosh: React.FC = () => {
           <g filter="url(#filter81_f_59_101)">
             <mask id="path-127-inside-3_59_101" fill="white">
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M248.609 44.1419C242.363 43.7014 192.242 40.8104 147 40.8104H147C101.758 40.8104 51.6375 43.7014 45.391 44.1419C39.1446 44.5823 34.4468 47.8897 33.731 54.7608C33.0151 61.6319 31.6488 93.4451 31.6488 126.179H147V211.547C192.242 211.547 242.363 208.656 248.609 208.216C254.856 207.775 259.553 204.468 260.269 197.597C260.982 190.755 262.34 158.769 262.351 126.179C262.351 126.109 262.351 126.04 262.351 125.97C262.351 125.901 262.351 125.832 262.351 125.762C262.34 93.1757 260.982 61.6028 260.269 54.7608C259.553 47.8897 254.856 44.5823 248.609 44.1419ZM147 211.547V126.179H31.6487C31.6487 158.912 33.0149 190.725 33.7308 197.597C34.4467 204.468 39.1444 207.775 45.3909 208.216C51.6374 208.656 101.758 211.547 147 211.547Z"
               />
             </mask>
@@ -1289,7 +1289,7 @@ const Macintosh: React.FC = () => {
           </g>
         </g>
         <g
-          clip-path="url(#clip2_59_101)"
+          clipPath="url(#clip2_59_101)"
           role="button"
           tabIndex={0}
           onClick={updateImage}
@@ -1323,7 +1323,7 @@ const Macintosh: React.FC = () => {
           height="21.238"
           rx="3.53966"
           stroke="url(#paint4_linear_59_101)"
-          stroke-width="0.416431"
+          strokeWidth="0.416431"
         />
       </g>
       <g filter="url(#filter83_i_59_101)">
@@ -1400,7 +1400,7 @@ const Macintosh: React.FC = () => {
           <path
             d="M39.4364 298.685C39.4598 301.206 41.6478 302.045 41.672 302.055C41.6535 302.115 41.3224 303.251 40.5193 304.425C39.825 305.439 39.1045 306.45 37.9694 306.471C36.854 306.492 36.4954 305.81 35.2202 305.81C33.9455 305.81 33.547 306.45 32.4912 306.492C31.3956 306.533 30.5612 305.395 29.8612 304.384C28.4308 302.315 27.3376 298.54 28.8054 295.991C29.5346 294.725 30.8377 293.924 32.2521 293.903C33.328 293.883 34.3436 294.627 35.0013 294.627C35.6586 294.627 36.8926 293.732 38.19 293.863C38.7331 293.886 40.2576 294.083 41.2365 295.516C41.1577 295.565 39.4175 296.578 39.4364 298.685V298.685ZM37.3402 292.495C37.9219 291.791 38.3134 290.811 38.2066 289.836C37.3682 289.869 36.3543 290.394 35.7529 291.098C35.2139 291.721 34.7419 292.719 34.8692 293.675C35.8038 293.747 36.7585 293.2 37.3402 292.495"
             fill="white"
-            fill-opacity="0.06"
+            fillOpacity="0.06"
           />
         </g>
       </g>
@@ -1414,8 +1414,8 @@ const Macintosh: React.FC = () => {
         height="31"
       >
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M221.541 257.77C219.241 257.77 217.377 259.635 217.377 261.935V263.184C217.377 264.564 216.258 265.683 214.878 265.683H139.504C138.124 265.683 137.006 266.801 137.006 268.181V277.343C137.006 278.723 138.124 279.841 139.504 279.841H214.878C216.258 279.841 217.377 280.96 217.377 282.34V283.589C217.377 285.889 219.241 287.753 221.541 287.753H264.85C267.15 287.753 269.014 285.889 269.014 283.589L269.014 279.841V265.683L269.014 261.935C269.014 259.635 267.15 257.77 264.85 257.77H221.541Z"
           fill="#C4C4C4"
         />
@@ -1423,15 +1423,15 @@ const Macintosh: React.FC = () => {
       <g mask="url(#mask6_59_101)">
         <mask id="path-144-inside-4_59_101" fill="white">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M221.541 257.77C219.241 257.77 217.377 259.635 217.377 261.935V263.184C217.377 264.564 216.258 265.683 214.878 265.683H139.504C138.124 265.683 137.006 266.801 137.006 268.181V277.343C137.006 278.723 138.124 279.841 139.504 279.841H214.878C216.258 279.841 217.377 280.96 217.377 282.34V283.589C217.377 285.889 219.241 287.753 221.541 287.753H264.85C267.15 287.753 269.014 285.889 269.014 283.589L269.014 279.841V265.683L269.014 261.935C269.014 259.635 267.15 257.77 264.85 257.77H221.541Z"
           />
         </mask>
         <g filter="url(#filter86_i_59_101)">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M221.541 257.77C219.241 257.77 217.377 259.635 217.377 261.935V263.184C217.377 264.564 216.258 265.683 214.878 265.683H139.504C138.124 265.683 137.006 266.801 137.006 268.181V277.343C137.006 278.723 138.124 279.841 139.504 279.841H214.878C216.258 279.841 217.377 280.96 217.377 282.34V283.589C217.377 285.889 219.241 287.753 221.541 287.753H264.85C267.15 287.753 269.014 285.889 269.014 283.589L269.014 279.841V265.683L269.014 261.935C269.014 259.635 267.15 257.77 264.85 257.77H221.541Z"
             fill="#BEB7AA"
           />
@@ -1487,8 +1487,8 @@ const Macintosh: React.FC = () => {
             height="20"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M228.62 263.184C227.47 263.184 226.538 264.116 226.538 265.266V268.181C226.538 268.871 225.979 269.43 225.289 269.43H149.915C149.225 269.43 148.666 269.99 148.666 270.68V274.844C148.666 275.534 149.225 276.093 149.915 276.093H225.289C225.979 276.093 226.538 276.653 226.538 277.343V280.257C226.538 281.407 227.47 282.34 228.62 282.34H257.771C258.921 282.34 259.853 281.407 259.853 280.257L259.853 276.093V269.43L259.853 265.266C259.853 264.116 258.921 263.184 257.771 263.184H228.62Z"
               fill="#24231D"
             />
@@ -1496,8 +1496,8 @@ const Macintosh: React.FC = () => {
           <g mask="url(#mask7_59_101)">
             <g filter="url(#filter93_i_59_101)">
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M228.62 263.184C227.47 263.184 226.538 264.116 226.538 265.266V268.181C226.538 268.871 225.979 269.43 225.289 269.43H149.915C149.225 269.43 148.666 269.99 148.666 270.68V274.844C148.666 275.534 149.225 276.093 149.915 276.093H225.289C225.979 276.093 226.538 276.653 226.538 277.343V280.257C226.538 281.407 227.47 282.34 228.62 282.34H257.771C258.921 282.34 259.853 281.407 259.853 280.257L259.853 276.093V269.43L259.853 265.266C259.853 264.116 258.921 263.184 257.771 263.184H228.62Z"
                 fill="black"
               />
@@ -1517,7 +1517,7 @@ const Macintosh: React.FC = () => {
               <path
                 d="M226.538 265.266C226.538 264.116 227.47 263.184 228.62 263.184H257.771C258.92 263.184 259.853 264.116 259.853 265.266V269.43H225.289C225.979 269.43 226.538 268.871 226.538 268.181V265.266Z"
                 fill="url(#pattern6)"
-                fill-opacity="0.8"
+                fillOpacity="0.8"
               />
             </g>
           </g>
@@ -1533,7 +1533,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -1565,7 +1565,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -1586,7 +1586,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -1607,7 +1607,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -1656,7 +1656,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1725,7 +1725,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1794,7 +1794,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1863,7 +1863,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1932,7 +1932,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2001,7 +2001,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2070,7 +2070,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2139,7 +2139,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2208,7 +2208,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2277,7 +2277,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2346,7 +2346,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2415,7 +2415,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2484,7 +2484,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2553,7 +2553,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2622,7 +2622,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2691,7 +2691,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2760,7 +2760,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2829,7 +2829,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2898,7 +2898,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2967,7 +2967,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3036,7 +3036,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3105,7 +3105,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3174,7 +3174,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3243,7 +3243,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3312,7 +3312,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3381,7 +3381,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3450,7 +3450,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3519,7 +3519,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3588,7 +3588,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3657,7 +3657,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3726,7 +3726,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3795,7 +3795,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3864,7 +3864,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3933,7 +3933,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4002,7 +4002,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4071,7 +4071,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4140,7 +4140,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4209,7 +4209,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4230,7 +4230,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4251,7 +4251,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4272,7 +4272,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4321,7 +4321,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4362,7 +4362,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4403,7 +4403,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4444,7 +4444,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4485,7 +4485,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4526,7 +4526,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4567,7 +4567,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4608,7 +4608,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4649,7 +4649,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4690,7 +4690,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4731,7 +4731,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4772,7 +4772,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4813,7 +4813,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4854,7 +4854,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4895,7 +4895,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4936,7 +4936,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -4977,7 +4977,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5018,7 +5018,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5059,7 +5059,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5100,7 +5100,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5141,7 +5141,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5182,7 +5182,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5223,7 +5223,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5264,7 +5264,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5305,7 +5305,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5346,7 +5346,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5387,7 +5387,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5428,7 +5428,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5473,7 +5473,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5541,7 +5541,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5610,7 +5610,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5692,7 +5692,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5713,7 +5713,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5745,7 +5745,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5766,7 +5766,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5787,7 +5787,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5822,7 +5822,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5854,7 +5854,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5875,7 +5875,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -5916,7 +5916,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5975,7 +5975,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6034,7 +6034,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6069,7 +6069,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6090,7 +6090,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6111,7 +6111,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6132,7 +6132,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6153,7 +6153,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6194,7 +6194,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6229,7 +6229,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6264,7 +6264,7 @@ const Macintosh: React.FC = () => {
           filterUnits="userSpaceOnUse"
           color-interpolation-filters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6327,8 +6327,8 @@ const Macintosh: React.FC = () => {
           y2="349.385"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#ADA493" />
-          <stop offset="1" stop-color="#ACA599" />
+          <stop stopColor="#ADA493" />
+          <stop offset="1" stopColor="#ACA599" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_59_101"
@@ -6338,8 +6338,8 @@ const Macintosh: React.FC = () => {
           y2="342.722"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#DFDAC1" />
-          <stop offset="1" stop-color="#9D987D" />
+          <stop stopColor="#DFDAC1" />
+          <stop offset="1" stopColor="#9D987D" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_59_101"
@@ -6349,8 +6349,8 @@ const Macintosh: React.FC = () => {
           y2="342.722"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-opacity="0.14" />
-          <stop offset="1" stop-opacity="0.18" />
+          <stop stopOpacity="0.14" />
+          <stop offset="1" stopOpacity="0.18" />
         </linearGradient>
         <radialGradient
           id="paint3_radial_59_101"
@@ -6360,8 +6360,8 @@ const Macintosh: React.FC = () => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(147 40.8106) rotate(90) scale(116.601 157.553)"
         >
-          <stop stop-color="white" stop-opacity="0.06" />
-          <stop offset="1" stop-color="white" stop-opacity="0" />
+          <stop stopColor="white" stopOpacity="0.06" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
         </radialGradient>
         <linearGradient
           id="paint4_linear_59_101"
@@ -6371,8 +6371,8 @@ const Macintosh: React.FC = () => {
           y2="308.992"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#D8D1B9" />
-          <stop offset="1" stop-color="#FFF8E0" stop-opacity="0.83" />
+          <stop stopColor="#D8D1B9" />
+          <stop offset="1" stopColor="#FFF8E0" stopOpacity="0.83" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_59_101"
@@ -6382,9 +6382,9 @@ const Macintosh: React.FC = () => {
           y2="287.753"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-opacity="0.1" />
-          <stop offset="0.522529" stop-opacity="0.12" />
-          <stop offset="1" stop-color="white" stop-opacity="0.18" />
+          <stop stopOpacity="0.1" />
+          <stop offset="0.522529" stopOpacity="0.12" />
+          <stop offset="1" stopColor="white" stopOpacity="0.18" />
         </linearGradient>
         <clipPath id="clip0_59_101">
           <rect

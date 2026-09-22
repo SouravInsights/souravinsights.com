@@ -54,7 +54,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/*
+          Runs before the first paint so the stored theme is applied with no
+          flash of the wrong background. Kept tiny and inline on purpose.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('darkMode');var d=s===null?true:s==='true';var r=document.documentElement;r.classList.toggle('dark',d);r.style.colorScheme=d?'dark':'light';}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <PHProvider>
           <PostHogPageView />
