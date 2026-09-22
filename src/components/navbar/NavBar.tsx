@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
                 className={`px-3 py-1.5 rounded-md flex items-center space-x-2 font-mono text-sm ${
                   pathname === item.path ||
                   (item.path !== "/" && pathname?.startsWith(item.path))
-                    ? "bg-secondary text-green-600 dark:text-green-500"
+                    ? "bg-secondary text-green-700 dark:text-green-500"
                     : "text-foreground hover:bg-accent"
                 }`}
                 whileHover={{ y: -2 }}
@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
       <nav className="fixed bottom-4 right-4 z-50 md:hidden flex flex-col space-y-2">
         <DarkModeToggle />
         <motion.button
-          className="p-2 bg-card text-green-600 dark:text-green-500 rounded-lg shadow-lg border border-border"
+          className="p-2 bg-card text-green-700 dark:text-green-500 rounded-lg shadow-lg border border-border"
           onClick={() => setIsOpen(!isOpen)}
           whileTap={{ scale: 0.95 }}
         >
@@ -89,7 +89,7 @@ const Navbar: React.FC = () => {
                     className={`px-4 py-3 rounded-md flex items-center space-x-2 font-mono ${
                       pathname === item.path ||
                       (item.path !== "/" && pathname?.startsWith(item.path))
-                        ? "bg-secondary text-green-600 dark:text-green-500"
+                        ? "bg-secondary text-green-700 dark:text-green-500"
                         : "text-foreground"
                     }`}
                     whileHover={{ x: 4 }}

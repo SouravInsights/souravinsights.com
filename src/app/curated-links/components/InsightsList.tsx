@@ -235,7 +235,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
 
         <div className="relative shrink-0 sm:w-56">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
             aria-hidden="true"
           />
           <input
@@ -245,7 +245,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
             placeholder="Search…"
             spellCheck={false}
             aria-label="Search links"
-            className="w-full rounded-md border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
+            className="w-full rounded-md border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
           />
         </div>
       </div>
@@ -301,11 +301,11 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
                       />
                     </span>
 
-                    <span className="min-w-0 flex-1 truncate type-body font-medium text-foreground transition-colors group-hover:text-green-600 dark:group-hover:text-green-500">
+                    <span className="min-w-0 flex-1 truncate type-body font-medium text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
                       {link.title}
                     </span>
 
-                    <span className="hidden w-44 shrink-0 truncate type-caption text-muted-foreground/60 sm:block">
+                    <span className="hidden w-44 shrink-0 truncate type-caption text-faint-foreground sm:block">
                       {shortDomain(link.url)}
                     </span>
                   </a>

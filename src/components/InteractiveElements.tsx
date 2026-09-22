@@ -176,7 +176,7 @@ clear      - Clear terminal`;
               animate={{ opacity: 1, y: 0 }}
               className={`${
                 cmd.isResponse
-                  ? "text-green-600 dark:text-green-500"
+                  ? "text-green-700 dark:text-green-500"
                   : "text-foreground"
               } transition-colors duration-200`}
             >

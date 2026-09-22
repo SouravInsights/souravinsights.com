@@ -88,9 +88,9 @@ export default function CollapsibleTOC({
                   >
                     <a
                       href={`#${heading.id}`}
-                      className={`text-sm hover:text-green-600 dark:hover:text-green-500 transition-colors flex items-center py-1 truncate ${
+                      className={`text-sm hover:text-green-700 dark:hover:text-green-500 transition-colors flex items-center py-1 truncate ${
                         activeHeading === heading.id
-                          ? "text-green-600 dark:text-green-500 font-medium"
+                          ? "text-green-700 dark:text-green-500 font-medium"
                           : "text-muted-foreground"
                       }`}
                       onClick={(e) => {

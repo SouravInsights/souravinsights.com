@@ -26,7 +26,7 @@ export default function HtmlNestingVisualizer() {
             onClick={() => setIsBroken(false)}
             className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all w-full sm:w-auto ${
               !isBroken 
-                ? 'bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 shadow-sm' 
+                ? 'bg-white dark:bg-gray-800 text-green-700 dark:text-green-400 shadow-sm' 
                 : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >

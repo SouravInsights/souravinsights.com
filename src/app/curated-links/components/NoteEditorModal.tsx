@@ -213,7 +213,7 @@ export function NoteEditorModal({
                   <Button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    className="w-full bg-green-700 hover:bg-green-700 text-white"
                   >
                     <Save className="w-4 h-4 mr-2" />
                     {isSaving

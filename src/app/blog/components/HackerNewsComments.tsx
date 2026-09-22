@@ -435,7 +435,7 @@ function HnCommentNode({
 
             <div id={bodyId}>
               {collapsed ? (
-                <p className="mt-1 line-clamp-1 text-sm text-muted-foreground/80">
+                <p className="mt-1 line-clamp-1 text-sm text-faint-foreground">
                   {previewText(comment.blocks)}
                 </p>
               ) : (

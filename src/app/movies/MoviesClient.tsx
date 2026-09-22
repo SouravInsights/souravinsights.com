@@ -27,7 +27,7 @@ import {
 type DraggableType = Draggable | null;
 
 const TAG_STYLES = [
-  "bg-rose-500/10 text-rose-400 border-rose-500/20",
+  "bg-rose-600/10 text-rose-400 border-rose-600/20",
   "bg-violet-500/10 text-violet-400 border-violet-500/20",
   "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   "bg-amber-500/10 text-amber-400 border-amber-500/20",
@@ -74,8 +74,8 @@ function SortablePoster({
         />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
-          <Film className="w-5 h-5 text-muted-foreground/20 mb-2" />
-          <span className="text-[10px] font-medium text-muted-foreground/40 leading-tight line-clamp-3">
+          <Film className="w-5 h-5 text-faint-foreground mb-2" />
+          <span className="text-[10px] font-medium text-faint-foreground leading-tight line-clamp-3">
             {movie.title}
           </span>
         </div>
@@ -177,9 +177,9 @@ function FocusModeEditor({
           <button onClick={onClose} className="p-1.5 -ml-1.5 rounded-full hover:bg-muted text-muted-foreground transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <span className="type-label text-muted-foreground/60">{title}</span>
+          <span className="type-label text-faint-foreground">{title}</span>
         </div>
-        <button onClick={onClose} className="text-[11px] font-medium text-green-600 dark:text-green-500 bg-green-600/10 dark:bg-green-500/10 px-3 py-1.5 rounded-full hover:bg-green-600/20 transition-colors">
+        <button onClick={onClose} className="text-[11px] font-medium text-green-700 dark:text-green-500 bg-green-700/10 dark:bg-green-500/10 px-3 py-1.5 rounded-full hover:bg-green-700/20 transition-colors">
           Done
         </button>
       </div>
@@ -187,7 +187,7 @@ function FocusModeEditor({
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 w-full p-4 sm:p-6 sm:max-w-3xl sm:mx-auto bg-transparent outline-none resize-none text-base sm:text-lg leading-relaxed text-foreground placeholder:text-muted-foreground/30"
+        className="flex-1 w-full p-4 sm:p-6 sm:max-w-3xl sm:mx-auto bg-transparent outline-none resize-none text-base sm:text-lg leading-relaxed text-foreground placeholder:text-faint-foreground"
         placeholder="Start writing... (Distraction free)"
       />
     </div>
@@ -281,8 +281,8 @@ function MovieDialog({
             <div className="shrink-0 w-full sm:w-44 aspect-[2/3] sm:aspect-auto sm:min-h-[360px] bg-secondary relative group/upload sm:sticky sm:top-0 border-b sm:border-b-0 sm:border-r border-border">
               {isUploadingImage ? (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2 absolute inset-0">
-                  <Loader2 className="w-8 h-8 text-muted-foreground/30 animate-spin" />
-                  <span className="text-[10px] text-muted-foreground/50 font-medium px-4 text-center">
+                  <Loader2 className="w-8 h-8 text-faint-foreground animate-spin" />
+                  <span className="text-[10px] text-faint-foreground font-medium px-4 text-center">
                     Uploading...
                   </span>
                 </div>
@@ -295,8 +295,8 @@ function MovieDialog({
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2 absolute inset-0">
-                  <Film className="w-8 h-8 text-muted-foreground/10" />
-                  <span className="text-[10px] text-muted-foreground/25 font-medium px-4 text-center leading-relaxed">
+                  <Film className="w-8 h-8 text-faint-foreground" />
+                  <span className="text-[10px] text-faint-foreground font-medium px-4 text-center leading-relaxed">
                     {movie.title || "No poster yet"}
                   </span>
                 </div>
@@ -336,15 +336,15 @@ function MovieDialog({
 
 
               {/* Personal note */}
-              <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 group/field relative">
+              <div className="border-l-2 border-green-700/30 dark:border-green-500/25 pl-4 group/field relative">
                 <div className="flex items-center justify-between mb-1.5">
-                  <div className="type-label text-green-600/60 dark:text-green-500/50">
+                  <div className="type-label text-green-700/60 dark:text-green-500/50">
                     Why it stays with me
                   </div>
                   {isEditing && (
                     <button 
                       onClick={() => setFocusModeField("personalNote")}
-                      className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-muted-foreground/40 hover:bg-muted hover:text-foreground"
+                      className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-faint-foreground hover:bg-muted hover:text-foreground"
                       title="Focus Mode"
                     >
                       <Maximize2 className="w-3 h-3" />
@@ -362,15 +362,15 @@ function MovieDialog({
 
               {/* Notes & Thoughts */}
               {(isEditing || !!movie.longNote) && (
-                <div className="border-l-2 border-green-600/30 dark:border-green-500/25 pl-4 mt-4 group/field relative">
+                <div className="border-l-2 border-green-700/30 dark:border-green-500/25 pl-4 mt-4 group/field relative">
                   <div className="flex items-center justify-between mb-1.5">
-                    <div className="type-label text-green-600/60 dark:text-green-500/50">
+                    <div className="type-label text-green-700/60 dark:text-green-500/50">
                       Notes & Thoughts
                     </div>
                     {isEditing && (
                       <button 
                         onClick={() => setFocusModeField("longNote")}
-                        className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-muted-foreground/40 hover:bg-muted hover:text-foreground"
+                        className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-faint-foreground hover:bg-muted hover:text-foreground"
                         title="Focus Mode"
                       >
                         <Maximize2 className="w-3 h-3" />
@@ -390,20 +390,20 @@ function MovieDialog({
               {/* Quotes */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <h3 className="type-label text-muted-foreground/50">
+                  <h3 className="type-label text-faint-foreground">
                     Lines
                   </h3>
                   {isEditing && (
                     <button
                       onClick={addQuote}
-                      className="text-[11px] font-medium text-green-600/70 dark:text-green-500/60 hover:text-green-600 dark:hover:text-green-500 transition-colors"
+                      className="text-[11px] font-medium text-green-700/70 dark:text-green-500/60 hover:text-green-700 dark:hover:text-green-500 transition-colors"
                     >
                       + Add
                     </button>
                   )}
                 </div>
                 {(movie.quotes?.length ?? 0) === 0 && !isEditing && (
-                  <p className="text-[12px] text-muted-foreground/30 italic">
+                  <p className="text-[12px] text-faint-foreground italic">
                     No lines captured yet.
                   </p>
                 )}
@@ -421,7 +421,7 @@ function MovieDialog({
                           <X className="w-2.5 h-2.5" />
                         </button>
                       )}
-                      <Quote className="w-3 h-3 text-muted-foreground/25 mb-1" />
+                      <Quote className="w-3 h-3 text-faint-foreground mb-1" />
                       <EditableField
                         as="p"
                         value={quote.text}
@@ -440,7 +440,7 @@ function MovieDialog({
               <div className="flex flex-wrap gap-x-8 gap-y-4 text-[13px] pt-1">
                 {/* Tags */}
                 <div className="space-y-2 min-w-0 flex-1">
-                  <h3 className="type-label text-muted-foreground/40">
+                  <h3 className="type-label text-faint-foreground">
                     Tags
                   </h3>
                   {(movie.tags?.length ?? 0) > 0 ? (
@@ -473,7 +473,7 @@ function MovieDialog({
                     </div>
                   ) : (
                     !isEditing && (
-                      <p className="text-[11px] text-muted-foreground/30 italic">
+                      <p className="text-[11px] text-faint-foreground italic">
                         Not tagged yet.
                       </p>
                     )
@@ -499,18 +499,18 @@ function MovieDialog({
                           e.currentTarget.value = "";
                         }
                       }}
-                      className="w-full text-[11px] bg-transparent outline-none border-b border-transparent focus:border-border/40 py-0.5 placeholder:text-muted-foreground/25 text-muted-foreground/60 transition-colors"
+                      className="w-full text-[11px] bg-transparent outline-none border-b border-transparent focus:border-border/40 py-0.5 placeholder:text-faint-foreground text-faint-foreground transition-colors"
                     />
                   )}
                 </div>
 
                 {/* Links */}
                 <div className="space-y-2 min-w-0 flex-1">
-                  <h3 className="type-label text-muted-foreground/40">
+                  <h3 className="type-label text-faint-foreground">
                     Links
                   </h3>
                   {(movie.links?.length ?? 0) === 0 && !isEditing && (
-                    <p className="text-[11px] text-muted-foreground/30 italic">
+                    <p className="text-[11px] text-faint-foreground italic">
                        Nothing linked yet.
                     </p>
                   )}
@@ -536,7 +536,7 @@ function MovieDialog({
                             <span
                               contentEditable
                               suppressContentEditableWarning
-                              className="inline-block outline-none rounded-[2px] px-0.5 -mx-0.5 focus:bg-muted/80 focus:ring-1 focus:ring-border hover:bg-muted/50 cursor-text text-green-600/80 dark:text-green-500/70"
+                              className="inline-block outline-none rounded-[2px] px-0.5 -mx-0.5 focus:bg-muted/80 focus:ring-1 focus:ring-border hover:bg-muted/50 cursor-text text-green-700/80 dark:text-green-500/70"
                               onBlur={(e) =>
                                 onUpdate(movie.id, {
                                   links: (movie.links ?? []).map((l) =>
@@ -554,13 +554,13 @@ function MovieDialog({
                               }}
                               dangerouslySetInnerHTML={{ __html: link.label }}
                             />
-                            <span className="text-muted-foreground/20 mx-1">
+                            <span className="text-faint-foreground mx-1">
                               &mdash;
                             </span>
                             <span
                               contentEditable
                               suppressContentEditableWarning
-                              className="inline-block outline-none rounded-[2px] px-0.5 -mx-0.5 focus:bg-muted/80 focus:ring-1 focus:ring-border hover:bg-muted/50 cursor-text text-muted-foreground/40 truncate max-w-[180px] align-bottom"
+                              className="inline-block outline-none rounded-[2px] px-0.5 -mx-0.5 focus:bg-muted/80 focus:ring-1 focus:ring-border hover:bg-muted/50 cursor-text text-faint-foreground truncate max-w-[180px] align-bottom"
                               onBlur={(e) =>
                                 onUpdate(movie.id, {
                                   links: (movie.links ?? []).map((l) =>
@@ -584,7 +584,7 @@ function MovieDialog({
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] text-green-600/70 dark:text-green-500/70 hover:text-green-600 dark:hover:text-green-500 transition-colors"
+                            className="inline-flex items-center gap-1 text-[11px] text-green-700/70 dark:text-green-500/70 hover:text-green-700 dark:hover:text-green-500 transition-colors"
                           >
                             <ExternalLink className="w-2.5 h-2.5 shrink-0" />
                             <span className="truncate">{link.label}</span>
@@ -607,7 +607,7 @@ function MovieDialog({
                           ],
                         })
                       }
-                      className="text-[10px] font-medium text-muted-foreground/40 hover:text-green-600 dark:hover:text-green-500 transition-colors"
+                      className="text-[10px] font-medium text-faint-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
                     >
                       + Add link
                     </button>
@@ -622,7 +622,7 @@ function MovieDialog({
         <div className="flex items-center justify-between px-5 sm:px-6 py-3 border-t border-border shrink-0 bg-secondary/30">
           <button
             onClick={onClose}
-            className="text-xs font-medium text-muted-foreground/50 hover:text-foreground transition-colors"
+            className="text-xs font-medium text-faint-foreground hover:text-foreground transition-colors"
           >
             Close
           </button>
@@ -798,7 +798,7 @@ export function MoviesClient({
             </div>
           )}
           {saveStatus === "saved" && (
-            <div className="flex items-center gap-2 text-xs font-medium text-green-600 dark:text-green-500">
+            <div className="flex items-center gap-2 text-xs font-medium text-green-700 dark:text-green-500">
               <Check className="w-3.5 h-3.5" />
               <span>Saved</span>
             </div>
@@ -837,7 +837,7 @@ export function MoviesClient({
                 className="type-body text-muted-foreground max-w-xl"
               />
               {data.movies.length > 0 && (
-                <p className="type-caption mt-4 font-mono tabular-nums text-muted-foreground/40">
+                <p className="type-caption mt-4 font-mono tabular-nums text-faint-foreground">
                   {data.movies.length}{" "}
                   {data.movies.length === 1 ? "film" : "films"} collected
                 </p>
@@ -849,8 +849,8 @@ export function MoviesClient({
         {/* Film grid */}
         {data.movies.length === 0 && !isEditing ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <Film className="w-8 h-8 text-muted-foreground/15 mb-3" />
-            <p className="text-sm text-muted-foreground/40">
+            <Film className="w-8 h-8 text-faint-foreground mb-3" />
+            <p className="text-sm text-faint-foreground">
               No films here yet.
             </p>
           </div>
@@ -869,7 +869,7 @@ export function MoviesClient({
               {isEditing && (
                 <button
                   onClick={addMovie}
-                  className="aspect-[2/3] rounded-lg border border-dashed border-border/50 flex flex-col items-center justify-center gap-2 hover:border-border hover:bg-muted/20 transition-all text-muted-foreground/30 hover:text-muted-foreground/60"
+                  className="aspect-[2/3] rounded-lg border border-dashed border-border/50 flex flex-col items-center justify-center gap-2 hover:border-border hover:bg-muted/20 transition-all text-faint-foreground hover:text-faint-foreground"
                 >
                   <Plus className="w-5 h-5" />
                   <span className="text-[10px] font-medium">Add film</span>

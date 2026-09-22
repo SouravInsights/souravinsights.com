@@ -74,7 +74,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
               Have a project in mind, or just want to say hi? Write to me at{" "}
               <a
                 href="mailto:souravinsights@gmail.com"
-                className="font-medium text-green-600 dark:text-green-500 underline decoration-green-600/40 dark:decoration-green-500/40 underline-offset-4 hover:decoration-green-600 dark:hover:decoration-green-500 transition-colors"
+                className="font-medium text-green-700 dark:text-green-500 underline decoration-green-700/40 dark:decoration-green-500/40 underline-offset-4 hover:decoration-green-700 dark:hover:decoration-green-500 transition-colors"
               >
                 souravinsights@gmail.com
               </a>
@@ -100,7 +100,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={social.label}
-                        className="p-2 rounded-lg text-muted-foreground hover:text-green-600 dark:hover:text-green-500 hover:bg-accent transition-colors duration-200"
+                        className="p-2 rounded-lg text-muted-foreground hover:text-green-700 dark:hover:text-green-500 hover:bg-accent transition-colors duration-200"
                         whileHover={{ y: -2 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -118,7 +118,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
               href="https://github.com/SouravInsights/souravinsights.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-green-600 dark:hover:text-green-500 hover:underline"
+              className="group inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-green-700 dark:hover:text-green-500 hover:underline"
             >
               source code
               <ArrowUpRight
@@ -141,7 +141,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                 <>
                   <Link
                     href="/play"
-                    className="inline-flex items-center gap-1 font-medium text-green-600 dark:text-green-500 underline-offset-4 hover:underline"
+                    className="inline-flex items-center gap-1 font-medium text-green-700 dark:text-green-500 underline-offset-4 hover:underline"
                   >
                     <span aria-hidden="true">🎮</span>
                     Play a game
@@ -151,7 +151,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
               )}
               <Link
                 href="/movies"
-                className="inline-flex items-center gap-1 font-medium text-green-600 dark:text-green-500 underline-offset-4 hover:underline"
+                className="inline-flex items-center gap-1 font-medium text-green-700 dark:text-green-500 underline-offset-4 hover:underline"
               >
                 <span aria-hidden="true">🎬</span>
                 watch a movie

@@ -56,14 +56,14 @@ export default function DraftPostIndicator({
         <div className="bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/50 rounded-full px-4 py-2 inline-flex items-center gap-2 shadow-sm">
           <FileWarning
             size={16}
-            className="text-amber-600 dark:text-amber-400"
+            className="text-amber-700 dark:text-amber-400"
           />
           <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
             Draft Post - Preview Only
           </span>
           <button
             onClick={handleEyeClick}
-            className="ml-1 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+            className="ml-1 text-amber-700 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
             aria-label="Toggle visibility"
           >
             <Eye size={16} />
@@ -88,7 +88,7 @@ export default function DraftPostIndicator({
             >
               <Eye
                 size={18}
-                className="text-amber-600 dark:text-amber-400 mr-1"
+                className="text-amber-700 dark:text-amber-400 mr-1"
               />
             </motion.div>
             <input
@@ -101,7 +101,7 @@ export default function DraftPostIndicator({
             />
             <button
               type="submit"
-              className="px-3 py-1.5 text-sm bg-green-600 dark:bg-green-700 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
+              className="px-3 py-1.5 text-sm bg-green-700 dark:bg-green-600 text-white rounded-md hover:bg-green-800 dark:hover:bg-green-700 transition-colors"
             >
               Unlock
             </button>

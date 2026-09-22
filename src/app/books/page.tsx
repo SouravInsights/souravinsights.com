@@ -99,7 +99,7 @@ export default function BookshelfPage() {
         </FadeIn>
 
         {totalBooks !== null && (
-          <p className="type-caption mb-6 text-muted-foreground/70">
+          <p className="type-caption mb-6 text-faint-foreground">
             {totalBooks} books
           </p>
         )}

@@ -53,7 +53,7 @@ const SnakeGamePage: React.FC = () => {
         {/* <div className="mt-8 flex justify-center space-x-4">
           <Button
             onClick={() => setShowInstructions(!showInstructions)}
-            className="flex items-center bg-green-500 text-white hover:bg-green-600"
+            className="flex items-center bg-green-500 text-white hover:bg-green-700"
           >
             <Gamepad2 className="mr-2" size={18} />
             {showInstructions ? "Hide" : "Show"} Instructions

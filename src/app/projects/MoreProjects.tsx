@@ -39,14 +39,14 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
               />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="type-heading block group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+              <span className="type-heading block group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors">
                 {project.name}
               </span>
-              <span className="type-caption block text-muted-foreground/60">
+              <span className="type-caption block text-faint-foreground">
                 {shortDomain(project.url)}
               </span>
             </span>
-            <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-600 dark:group-hover:text-green-500" />
+            <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-700 dark:group-hover:text-green-500" />
           </a>
         </FadeIn>
       ))}

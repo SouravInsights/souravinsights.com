@@ -293,7 +293,7 @@ const SnakeGame: React.FC = () => {
             className={`px-3 py-1 text-sm transition-colors duration-200
               ${
                 difficulty === level
-                  ? "bg-green-500 text-white hover:bg-green-600 hover:text-white"
+                  ? "bg-green-500 text-white hover:bg-green-700 hover:text-white"
                   : "bg-card text-green-700 hover:bg-green-100 hover:text-green-800 dark:bg-card dark:text-green-400 dark:hover:bg-muted dark:hover:text-green-300"
               } border border-green-500 dark:border-green-400`}
           >
@@ -332,7 +332,7 @@ const SnakeGame: React.FC = () => {
         </ul>
       </motion.div>
       <div
-        className="border-2 border-green-600 dark:border-green-500 rounded-lg overflow-hidden bg-background relative"
+        className="border-2 border-green-700 dark:border-green-500 rounded-lg overflow-hidden bg-background relative"
         style={{
           width: `${GRID_SIZE * CELL_SIZE}px`,
           height: `${GRID_SIZE * CELL_SIZE}px`,
@@ -394,7 +394,7 @@ const SnakeGame: React.FC = () => {
             <p className="text-red-500 font-bold mb-2">Game Over!</p>
             <Button
               onClick={resetGame}
-              className="bg-green-500 text-white hover:bg-green-600 transition-colors duration-200"
+              className="bg-green-500 text-white hover:bg-green-700 transition-colors duration-200"
             >
               Munch Again
             </Button>
@@ -407,7 +407,7 @@ const SnakeGame: React.FC = () => {
         <Button
           size="sm"
           onClick={() => handleDirectionChange("UP")}
-          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
+          className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
           <ChevronUp size={24} />
         </Button>
@@ -415,7 +415,7 @@ const SnakeGame: React.FC = () => {
         <Button
           size="sm"
           onClick={() => handleDirectionChange("LEFT")}
-          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
+          className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
           <ChevronLeft size={24} />
         </Button>
@@ -423,7 +423,7 @@ const SnakeGame: React.FC = () => {
         <Button
           size="sm"
           onClick={() => handleDirectionChange("RIGHT")}
-          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
+          className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
           <ChevronRight size={24} />
         </Button>
@@ -431,7 +431,7 @@ const SnakeGame: React.FC = () => {
         <Button
           size="sm"
           onClick={() => handleDirectionChange("DOWN")}
-          className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
+          className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
           <ChevronDown size={24} />
         </Button>

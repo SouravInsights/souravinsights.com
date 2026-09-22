@@ -58,14 +58,14 @@ export default function ProjectsPage() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h2 className="type-title group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                        <h2 className="type-title group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors">
                           {project.name}
                         </h2>
                         <p className="type-body mt-0.5 text-muted-foreground">
                           {project.tagline}
                         </p>
                       </div>
-                      <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-600 dark:group-hover:text-green-500" />
+                      <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-700 dark:group-hover:text-green-500" />
                     </a>
                     {project.repo && (
                       <a
@@ -101,7 +101,7 @@ export default function ProjectsPage() {
             href="https://github.com/SouravInsights"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
+            className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
           >
             More on GitHub <ChevronRight className="w-4 h-4" />
           </a>

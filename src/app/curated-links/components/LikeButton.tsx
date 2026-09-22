@@ -134,8 +134,8 @@ export function LikeButton({ linkId }: { linkId: string }) {
       title={isMaxed ? "You've reached the 10-like limit" : undefined}
       className={`relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium leading-none transition-colors after:absolute after:-inset-2 after:content-[''] ${
         liked
-          ? "bg-rose-500/10 text-rose-500"
-          : "bg-foreground/5 text-muted-foreground/60 hover:bg-rose-500/10 hover:text-rose-500"
+          ? "bg-rose-600/10 text-rose-600"
+          : "bg-foreground/5 text-faint-foreground hover:bg-rose-600/10 hover:text-rose-600"
       }`}
     >
       <motion.span

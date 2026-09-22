@@ -265,7 +265,7 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
         >
           <motion.div animate={squash} transition={squashTransition} className="relative transform-gpu">
             {/* soft contact shadow that lifts on hover */}
-            <div className="pointer-events-none absolute inset-x-1 -bottom-0.5 h-2 rounded-full bg-rose-500/25 opacity-60 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="pointer-events-none absolute inset-x-1 -bottom-0.5 h-2 rounded-full bg-rose-600/25 opacity-60 blur-md transition-opacity duration-300 group-hover:opacity-100" />
 
             <svg
               viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
@@ -367,7 +367,7 @@ const ThreeDLikeButton = ({ slug }: ThreeDLikeButtonProps) => {
           {plusKey > 0 && (
             <motion.span
               key={plusKey}
-              className="pointer-events-none absolute -top-1 left-full ml-1 text-sm font-semibold text-rose-500 dark:text-rose-300"
+              className="pointer-events-none absolute -top-1 left-full ml-1 text-sm font-semibold text-rose-600 dark:text-rose-300"
               initial={{ opacity: 0, y: 2 }}
               animate={{ opacity: [0, 1, 1, 0], y: -11 }}
               exit={{ opacity: 0 }}

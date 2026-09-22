@@ -5,25 +5,34 @@
 @layer base {
   :root {
     color-scheme: light;
-    --background: 210 20% 98%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /*
+     * Warm, low-glare "paper" surface instead of a cool near-white. Pure white
+     * and blue-tinted whites are the harshest thing to read on; a touch of
+     * warmth at 97% lightness keeps the page calm without going yellow.
+     */
+    --background: 40 20% 97%;
+    --foreground: 30 8% 12%;
+    --card: 40 25% 99%;
+    --card-foreground: 30 8% 12%;
+    --popover: 40 25% 99%;
+    --popover-foreground: 30 8% 12%;
+    --primary: 30 8% 12%;
+    --primary-foreground: 40 20% 98%;
+    --secondary: 40 15% 93%;
+    --secondary-foreground: 30 8% 12%;
+    --muted: 40 15% 93%;
+    /* Secondary text clears AA on the paper surface (6.7:1). */
+    --muted-foreground: 30 6% 34%;
+    /* The faded tier (meta, sources, counts) — a solid colour rather than an
+       opacity, so it stays legible on light the way it does on dark (4.7:1). */
+    --faint-foreground: 30 6% 43%;
+    --accent: 40 15% 93%;
+    --accent-foreground: 30 8% 12%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 40 20% 98%;
+    --border: 40 12% 84%;
+    --input: 40 12% 84%;
+    --ring: 30 8% 12%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -59,6 +68,9 @@
     /* Muted: For less prominent content, still WCAG AA compliant */
     --muted: 216 16% 14%;
     --muted-foreground: 210 15% 70%;
+
+    /* The faded tier, tuned to ~5:1 on the dark page. */
+    --faint-foreground: 210 14% 52%;
     
     /* Accent: Slightly elevated, for hover states and highlights */
     --accent: 216 16% 16%;
@@ -152,7 +164,7 @@
     width: 100%;
     background-image: repeating-linear-gradient(
       to right,
-      hsl(var(--border) / 0.6) 0 3px,
+      hsl(var(--border)) 0 3px,
       transparent 3px 9px
     );
   }

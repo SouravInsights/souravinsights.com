@@ -40,6 +40,10 @@ const config = {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
+        faint: {
+          DEFAULT: "hsl(var(--faint-foreground))",
+          foreground: "hsl(var(--faint-foreground))",
+        },
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",

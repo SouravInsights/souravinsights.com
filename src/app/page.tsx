@@ -209,7 +209,7 @@ const HeroSection = () => (
                 Hey there! This is my{" "}
                 <a
                   href="https://matthiasott.com/articles/into-the-personal-website-verse"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   little corner of the internet
                 </a>
@@ -217,14 +217,14 @@ const HeroSection = () => (
                 interfaces,{" "}
                 <a
                   href="https://x.com/souravinsights/status/1898797157463015437"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   learning new stuff
                 </a>
                 , and occasionally{" "}
                 <a
                   href="https://www.souravinsights.com/blog"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   writing
                 </a>{" "}
@@ -235,7 +235,7 @@ const HeroSection = () => (
                 figuring out{" "}
                 <a
                   href="https://www.souravinsights.com/blog/polymath-mode"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   how to balance curiosity
                 </a>{" "}
@@ -243,21 +243,21 @@ const HeroSection = () => (
                 me{" "}
                 <a
                   href="https://chordcanvas.vercel.app/"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   practicing chords
                 </a>{" "}
                 of my fav songs, on a{" "}
                 <a
                   href="https://www.souravinsights.com/blog/why-riding-is-like-a-therapy"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   bike ride
                 </a>
                 , or probably{" "}
                 <a
                   href="https://www.souravinsights.com/books"
-                  className="text-green-600 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
                 >
                   reading some books.
                 </a>
@@ -394,7 +394,7 @@ export default function Home() {
                         className="object-cover"
                       />
                     </div>
-                    <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                    <h3 className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors">
                       {project.name}
                     </h3>
                   </div>
@@ -406,7 +406,7 @@ export default function Home() {
           <div className="mt-6">
             <a
               href="/projects"
-              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
+              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
             >
               Read the notes <ChevronRight className="w-4 h-4" />
             </a>
@@ -432,7 +432,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
                 >
-                  <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
+                  <h3 className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors min-w-0">
                     {blog.title}
                   </h3>
                   <time
@@ -448,7 +448,7 @@ export default function Home() {
           <div className="mt-6">
             <a
               href="/blog"
-              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
+              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
             >
               Read all posts <ChevronRight className="w-4 h-4" />
             </a>
@@ -477,7 +477,7 @@ export default function Home() {
           <div className="flex flex-col gap-1">
             {unpopularOpinions.map((opinion, index) => (
               <div key={index} className="flex items-start gap-4">
-                <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-6 shrink-0 font-medium">
+                <span className="text-[13px] font-mono tabular-nums text-green-700 dark:text-green-500 mt-1 w-6 shrink-0 font-medium">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <p className="type-body text-muted-foreground italic">
@@ -524,7 +524,7 @@ export default function Home() {
                           : {})}
                         className={`inline-flex items-center gap-1.5 type-caption ${
                           item.url
-                            ? "text-foreground/80 hover:text-green-600 dark:hover:text-green-500 transition-colors"
+                            ? "text-foreground/80 hover:text-green-700 dark:hover:text-green-500 transition-colors"
                             : "text-muted-foreground"
                         }`}
                       >

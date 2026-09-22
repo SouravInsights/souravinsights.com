@@ -157,7 +157,7 @@ export default function DeploymentStatus() {
     <div className="type-caption mt-4 italic">
       <div className="rule mb-4" aria-hidden="true" />
       <div className="flex items-start">
-        <Calendar className="w-4 h-4 mt-0.5 text-green-600 dark:text-green-500 flex-shrink-0 mr-2" />
+        <Calendar className="w-4 h-4 mt-0.5 text-green-700 dark:text-green-500 flex-shrink-0 mr-2" />
         <div className="flex flex-wrap">
           <span>
             {deploymentInfo && (
@@ -172,7 +172,7 @@ export default function DeploymentStatus() {
                   href={songInfo.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-600 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
+                  className="text-green-700 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
                 >
                   <Spotify fontSize={16} className="mx-1" />
                   {songInfo.name}

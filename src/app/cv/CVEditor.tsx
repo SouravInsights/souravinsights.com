@@ -194,7 +194,7 @@ function MetaItem({
     <span className={cn("inline-flex items-center gap-1.5", META)}>
       <span
         aria-hidden="true"
-        className="flex h-3.5 w-3.5 items-center justify-center text-muted-foreground/60"
+        className="flex h-3.5 w-3.5 items-center justify-center text-faint-foreground"
       >
         {icon}
       </span>
@@ -205,7 +205,7 @@ function MetaItem({
         href={!isEditing && isLink ? href : undefined}
         className={cn(
           isLink &&
-            "underline decoration-transparent underline-offset-[3px] transition-[color,text-decoration-color] hover:text-foreground hover:decoration-muted-foreground/60"
+            "underline decoration-transparent underline-offset-[3px] transition-[color,text-decoration-color] hover:text-foreground hover:decoration-faint-foreground"
         )}
       />
     </span>
@@ -273,7 +273,7 @@ function LinkedName({
         <ArrowUpRight
           aria-hidden="true"
           strokeWidth={2}
-          className="h-3 w-3 shrink-0 text-muted-foreground/60 transition-[transform,color] duration-200 group-hover/ext:translate-x-px group-hover/ext:-translate-y-px group-hover/ext:text-foreground"
+          className="h-3 w-3 shrink-0 text-faint-foreground transition-[transform,color] duration-200 group-hover/ext:translate-x-px group-hover/ext:-translate-y-px group-hover/ext:text-foreground"
         />
       )}
     </span>
@@ -317,7 +317,7 @@ function Logo({
       className="h-6 w-6 select-none object-contain dark:rounded-[5px] dark:bg-white dark:p-[2px]"
     />
   ) : isEditing ? (
-    <ImageIcon className="h-4 w-4 text-muted-foreground/40" />
+    <ImageIcon className="h-4 w-4 text-faint-foreground" />
   ) : null;
 
   if (!isEditing && href) {
@@ -536,7 +536,7 @@ function SectionHead({ index, title, span }: { index: string; title: string; spa
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <h2 className="flex items-baseline gap-2.5 text-[15px] font-semibold tracking-tight text-foreground">
-        <span aria-hidden="true" className="font-mono text-[11px] tabular-nums tracking-normal text-muted-foreground/50">
+        <span aria-hidden="true" className="font-mono text-[11px] tabular-nums tracking-normal text-faint-foreground">
           {index}
         </span>
         {title}
@@ -661,7 +661,7 @@ function SkillMark({ name }: { name: string }) {
   return (
     <span
       aria-hidden="true"
-      className="flex h-[15px] w-[15px] select-none items-center justify-center rounded-[3px] bg-muted text-[8px] font-semibold uppercase leading-none text-muted-foreground/70 ring-1 ring-inset ring-border/40"
+      className="flex h-[15px] w-[15px] select-none items-center justify-center rounded-[3px] bg-muted text-[8px] font-semibold uppercase leading-none text-faint-foreground ring-1 ring-inset ring-border/40"
     >
       {name.trim().charAt(0)}
     </span>
@@ -738,7 +738,7 @@ function SkillItems({
           {parenMatch ? (
             <>
               {parenMatch[1]}
-              <span className="text-muted-foreground/80">{parenMatch[2]}</span>
+              <span className="text-faint-foreground">{parenMatch[2]}</span>
             </>
           ) : (
             skill

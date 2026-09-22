@@ -123,7 +123,7 @@ export default function BlogPostContent({
       >
         <Link
           href="/blog"
-          className="inline-flex items-center text-green-600 dark:text-green-500 hover:underline"
+          className="inline-flex items-center text-green-700 dark:text-green-500 hover:underline"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           <span>Back to all posts</span>
@@ -143,7 +143,7 @@ export default function BlogPostContent({
         ) : (
           <Link
             href="/blog"
-            className="inline-flex items-center text-green-600 dark:text-green-500 hover:underline"
+            className="inline-flex items-center text-green-700 dark:text-green-500 hover:underline"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             <span>Back to all posts</span>
@@ -187,9 +187,9 @@ export default function BlogPostContent({
                     >
                       <a
                         href={`#${heading.id}`}
-                        className={`text-sm hover:text-green-600 dark:hover:text-green-500 transition-colors block py-1 ${
+                        className={`text-sm hover:text-green-700 dark:hover:text-green-500 transition-colors block py-1 ${
                           activeHeading === heading.id
-                            ? "text-green-600 dark:text-green-500 font-medium"
+                            ? "text-green-700 dark:text-green-500 font-medium"
                             : "text-muted-foreground"
                         }`}
                         onClick={(e) => {
@@ -271,7 +271,7 @@ export default function BlogPostContent({
             id="mdx-content-container"
             className="prose prose-green max-w-none dark:prose-invert 
             prose-headings:font-semibold
-            prose-a:text-green-600 dark:prose-a:text-green-500
+            prose-a:text-green-700 dark:prose-a:text-green-500
             prose-p:text-gray-700 dark:prose-p:text-muted-foreground
             prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500 
             prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"

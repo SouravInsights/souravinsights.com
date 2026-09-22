@@ -76,11 +76,11 @@ export function FavoriteLinks() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
           >
-            <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
+            <h3 className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors min-w-0">
               {favorite.title}
             </h3>
             <span className="flex shrink-0 items-center gap-2 type-caption">
-              <span className="text-muted-foreground/60">
+              <span className="text-faint-foreground">
                 {shortDomain(favorite.url)}
               </span>
               {favorite.category && (

@@ -149,7 +149,7 @@ const Macintosh: React.FC = () => {
           rx="0.832861"
           stroke="#BCB4A4"
           strokeWidth="0.832861"
-          shape-rendering="crispEdges"
+          shapeRendering="crispEdges"
         />
       </g>
       <g filter="url(#filter5_ddi_59_101)">
@@ -369,7 +369,7 @@ const Macintosh: React.FC = () => {
           rx="0.832861"
           stroke="#BCB4A4"
           strokeWidth="0.832861"
-          shape-rendering="crispEdges"
+          shapeRendering="crispEdges"
         />
       </g>
       <g filter="url(#filter29_ddi_59_101)">
@@ -1531,7 +1531,7 @@ const Macintosh: React.FC = () => {
           width="294"
           height="90.3654"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -1563,7 +1563,7 @@ const Macintosh: React.FC = () => {
           width="103.802"
           height="29.4966"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -1584,7 +1584,7 @@ const Macintosh: React.FC = () => {
           width="103.802"
           height="29.4966"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -1605,7 +1605,7 @@ const Macintosh: React.FC = () => {
           width="66.6289"
           height="27.9009"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -1654,7 +1654,7 @@ const Macintosh: React.FC = () => {
           width="18.7393"
           height="12.4929"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -1723,7 +1723,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -1792,7 +1792,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -1861,7 +1861,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -1930,7 +1930,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -1999,7 +1999,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2068,7 +2068,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2137,7 +2137,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2206,7 +2206,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2275,7 +2275,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2344,7 +2344,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2413,7 +2413,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2482,7 +2482,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2551,7 +2551,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2620,7 +2620,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2689,7 +2689,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2758,7 +2758,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2827,7 +2827,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2896,7 +2896,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -2965,7 +2965,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3034,7 +3034,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3103,7 +3103,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3172,7 +3172,7 @@ const Macintosh: React.FC = () => {
           width="11.2436"
           height="2.49861"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3241,7 +3241,7 @@ const Macintosh: React.FC = () => {
           width="9.35676"
           height="18.5939"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3310,7 +3310,7 @@ const Macintosh: React.FC = () => {
           width="10.4107"
           height="12.4929"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3379,7 +3379,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3448,7 +3448,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3517,7 +3517,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3586,7 +3586,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3655,7 +3655,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3724,7 +3724,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3793,7 +3793,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3862,7 +3862,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -3931,7 +3931,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -4000,7 +4000,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -4069,7 +4069,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -4138,7 +4138,7 @@ const Macintosh: React.FC = () => {
           width="2.91499"
           height="2.91499"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -4207,7 +4207,7 @@ const Macintosh: React.FC = () => {
           width="21.6544"
           height="21.6544"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4228,7 +4228,7 @@ const Macintosh: React.FC = () => {
           width="57.3908"
           height="15.6308"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4249,7 +4249,7 @@ const Macintosh: React.FC = () => {
           width="53.4862"
           height="14.5674"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4270,7 +4270,7 @@ const Macintosh: React.FC = () => {
           width="16.6572"
           height="17.0737"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4319,7 +4319,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4360,7 +4360,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4401,7 +4401,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4442,7 +4442,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4483,7 +4483,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4524,7 +4524,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4565,7 +4565,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4606,7 +4606,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4647,7 +4647,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4688,7 +4688,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4729,7 +4729,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4770,7 +4770,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4811,7 +4811,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4852,7 +4852,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4893,7 +4893,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4934,7 +4934,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -4975,7 +4975,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5016,7 +5016,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5057,7 +5057,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5098,7 +5098,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5139,7 +5139,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5180,7 +5180,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5221,7 +5221,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5262,7 +5262,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5303,7 +5303,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5344,7 +5344,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5385,7 +5385,7 @@ const Macintosh: React.FC = () => {
           width="3.33142"
           height="14.9915"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5426,7 +5426,7 @@ const Macintosh: React.FC = () => {
           width="29.983"
           height="29.983"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5471,7 +5471,7 @@ const Macintosh: React.FC = () => {
           width="20.8215"
           height="20.8215"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -5539,7 +5539,7 @@ const Macintosh: React.FC = () => {
           width="17.4899"
           height="17.4904"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -5608,7 +5608,7 @@ const Macintosh: React.FC = () => {
           width="316.487"
           height="90.3655"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -5690,7 +5690,7 @@ const Macintosh: React.FC = () => {
           width="388.997"
           height="229.969"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5711,7 +5711,7 @@ const Macintosh: React.FC = () => {
           width="406.909"
           height="222.473"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5743,7 +5743,7 @@ const Macintosh: React.FC = () => {
           width="299.348"
           height="118.995"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5764,7 +5764,7 @@ const Macintosh: React.FC = () => {
           width="299.348"
           height="118.995"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5785,7 +5785,7 @@ const Macintosh: React.FC = () => {
           width="230.703"
           height="172.402"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5820,7 +5820,7 @@ const Macintosh: React.FC = () => {
           width="237.366"
           height="177.399"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5852,7 +5852,7 @@ const Macintosh: React.FC = () => {
           width="22.4872"
           height="22.4872"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5873,7 +5873,7 @@ const Macintosh: React.FC = () => {
           width="20.8215"
           height="21.238"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -5914,7 +5914,7 @@ const Macintosh: React.FC = () => {
           width="15.2288"
           height="18.6851"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -5973,7 +5973,7 @@ const Macintosh: React.FC = () => {
           width="13.5631"
           height="17.9065"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6032,7 +6032,7 @@ const Macintosh: React.FC = () => {
           width="132.009"
           height="29.983"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6067,7 +6067,7 @@ const Macintosh: React.FC = () => {
           width="81.7747"
           height="27.3017"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6088,7 +6088,7 @@ const Macintosh: React.FC = () => {
           width="109.402"
           height="17.7234"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6109,7 +6109,7 @@ const Macintosh: React.FC = () => {
           width="111.068"
           height="19.3892"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6130,7 +6130,7 @@ const Macintosh: React.FC = () => {
           width="84.6896"
           height="27.3017"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6151,7 +6151,7 @@ const Macintosh: React.FC = () => {
           width="3.33149"
           height="3.33149"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -6192,7 +6192,7 @@ const Macintosh: React.FC = () => {
           width="111.187"
           height="19.9886"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6227,7 +6227,7 @@ const Macintosh: React.FC = () => {
           width="111.187"
           height="20.8215"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
@@ -6262,7 +6262,7 @@ const Macintosh: React.FC = () => {
           width="34.5637"
           height="7.49575"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend

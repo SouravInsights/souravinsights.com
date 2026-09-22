@@ -41,14 +41,14 @@ export default function BlogList({ posts }: BlogListProps) {
               {index > 0 && <div className="rule" aria-hidden="true" />}
               <FadeIn delay={Math.min(index, 12) * 0.03}>
                 <Link href={`/blog/${post.slug}`} className="list-row group">
-                  <span className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors min-w-0">
+                  <span className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors min-w-0">
                     {post.title}
                   </span>
 
                   <span className="flex shrink-0 items-center gap-2 type-caption">
                     <time dateTime={post.date}>{formatPostDate(post.date)}</time>
                     {post.status === "draft" && (
-                      <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                      <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400">
                         <FileWarning size={12} />
                         Draft
                       </span>
