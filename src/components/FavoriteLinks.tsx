@@ -45,17 +45,11 @@ export function FavoriteLinks() {
 
   if (loading) {
     return (
-      <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+      <section>
         <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="type-title mb-2">Curated Links</h2>
-            <p className="type-body text-muted-foreground">
-              Curated resources and tools I find valuable
-            </p>
-          </div>
           {/* Mobile Skeleton */}
           <div className="md:hidden">
-            <div className="border border-border rounded-lg p-4 animate-pulse h-[140px] flex flex-col justify-between">
+            <div className="card p-4 animate-pulse h-[140px] flex flex-col justify-between">
               <div>
                 <div className="h-4 bg-muted rounded mb-2 w-4/5"></div>
                 <div className="h-3 bg-muted rounded mb-1 w-full"></div>
@@ -70,7 +64,7 @@ export function FavoriteLinks() {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="bg-card border border-border rounded-lg p-4 animate-pulse"
+                className="card p-4 animate-pulse"
               >
                 <div className="h-4 bg-muted rounded mb-2"></div>
                 <div className="h-3 bg-muted rounded mb-1"></div>
@@ -88,15 +82,8 @@ export function FavoriteLinks() {
   }
 
   return (
-    <section className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
+    <section>
       <div className="space-y-8">
-        <div className="text-center">
-          <h2 className="type-title mb-2">Curated Links</h2>
-          <p className="type-body text-muted-foreground">
-            Curated resources, articles and tools I find valuable
-          </p>
-        </div>
-
         {/* Mobile: Single card with navigation */}
         <div className="md:hidden">
           <div className="relative overflow-hidden">
@@ -110,7 +97,7 @@ export function FavoriteLinks() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="border border-border rounded-lg p-4 hover:bg-accent transition-all duration-200 group h-[140px] flex flex-col justify-between w-full block"
+                className="group card card-interactive flex flex-col justify-between w-full min-h-[140px] p-4"
               >
                 <div>
                   <div className="flex items-start justify-between mb-2">
@@ -139,25 +126,27 @@ export function FavoriteLinks() {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-6 h-10">
+          <div className="flex items-center justify-between mt-4">
             <button
               onClick={prevLink}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
+              aria-label="Previous link"
+              className="flex items-center gap-2 px-3 py-2 type-caption text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-md hover:bg-accent"
             >
               <ChevronLeft className="w-4 h-4" />
               Prev
             </button>
 
             {/* Progress dots */}
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               {favorites.map((_, index) => (
                 <button
                   key={index}
+                  aria-label={`Show link ${index + 1}`}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
                     index === currentIndex
                       ? "bg-green-600 dark:bg-green-500"
-                      : "bg-muted hover:bg-muted-foreground/20"
+                      : "bg-muted hover:bg-muted-foreground/30"
                   }`}
                 />
               ))}
@@ -165,7 +154,8 @@ export function FavoriteLinks() {
 
             <button
               onClick={nextLink}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
+              aria-label="Next link"
+              className="flex items-center gap-2 px-3 py-2 type-caption text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-md hover:bg-accent"
             >
               Next
               <ChevronRight className="w-4 h-4" />
@@ -178,23 +168,23 @@ export function FavoriteLinks() {
         </div>
 
         {/* Desktop: Grid layout */}
-        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-4">
           {favorites.map((favorite, index) => (
             <motion.a
               key={favorite.id}
               href={favorite.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-border rounded-lg p-4 hover:bg-accent transition-all duration-200 group"
+              className="group card card-interactive flex flex-col p-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <div className="flex items-start justify-between mb-2">
+              <div className="flex items-start justify-between gap-2 mb-2">
                 <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors line-clamp-1">
                   {favorite.title}
                 </h3>
-                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors flex-shrink-0 ml-2" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors flex-shrink-0" />
               </div>
 
               {favorite.description && (
@@ -203,9 +193,9 @@ export function FavoriteLinks() {
                 </p>
               )}
 
-              <div className="flex items-center justify-between type-caption">
+              <div className="mt-auto flex items-center justify-between type-caption">
                 {favorite.category && (
-                  <span className="bg-secondary px-2 py-1 rounded text-xs">
+                  <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-secondary-foreground">
                     {favorite.category}
                   </span>
                 )}
@@ -214,10 +204,10 @@ export function FavoriteLinks() {
           ))}
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8">
           <a
             href="/curated-links"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
           >
             View all curated links <ChevronRight className="w-4 h-4" />
           </a>

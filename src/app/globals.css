@@ -133,4 +133,14 @@
   .type-label {
     @apply font-mono text-[11px] font-medium uppercase leading-normal tracking-[0.14em] text-muted-foreground;
   }
+
+  /* Outline surfaces. No fill at rest — the border carries the shape and the
+     fill only appears as interaction feedback, so cards stay quiet. */
+  .card {
+    @apply rounded-lg border border-border transition-colors duration-200;
+  }
+
+  .card-interactive {
+    @apply hover:bg-accent;
+  }
 }

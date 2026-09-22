@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
 import { AnimatePresence, motion } from "framer-motion";
+import { format } from "date-fns";
 import {
   ChevronRight,
   Twitter,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
+import { SectionHeader } from "@/components/SectionHeader";
 import { featuredProjects } from "@/app/projects/projects-data";
 import { useState } from "react";
 import {
@@ -164,6 +166,9 @@ const myToolkit = {
   },
 };
 
+const formatDate = (date: string) =>
+  format(new Date(`${date}T00:00:00`), "MMM d, yyyy");
+
 const HeroSection = () => (
   <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
     {/* Background grid effect */}
@@ -199,12 +204,12 @@ const HeroSection = () => (
       }}
     />
 
-    <div className="relative z-10 p-4 md:p-8">
+    <div className="relative z-10 p-5 sm:p-6 md:p-8">
       <div className="flex flex-col md:grid md:grid-cols-2 gap-8 items-center">
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
-            <div className="mt-6 md:mt-8 space-y-4 type-body text-foreground dark:text-muted-foreground">
+            <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
               <p>
                 Hey there! This is my{" "}
                 <a
@@ -272,7 +277,7 @@ const HeroSection = () => (
             </div>
 
             <motion.div
-              className="flex flex-wrap gap-3 text-sm"
+              className="flex flex-wrap gap-3"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2 }}
@@ -281,7 +286,7 @@ const HeroSection = () => (
                 href="https://github.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+                className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
                 <Github className="w-4 h-4" />
                 <span>GitHub</span>
@@ -290,7 +295,7 @@ const HeroSection = () => (
                 href="https://twitter.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+                className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
                 <Twitter className="w-4 h-4" />
                 <span>Twitter</span>
@@ -305,7 +310,7 @@ const HeroSection = () => (
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-secondary p-4 rounded-lg transition-colors duration-200"
+            className="bg-secondary p-4 rounded-md transition-colors duration-200"
           >
             <Macintosh />
           </motion.div>
@@ -314,6 +319,9 @@ const HeroSection = () => (
     </div>
   </div>
 );
+
+const cardBase =
+  "group card card-interactive";
 
 export default function Home() {
   const [currentOpinionIndex, setCurrentOpinionIndex] = useState(0);
@@ -331,11 +339,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-2 sm:p-4 md:p-12 transition-colors duration-200">
+    <div className="min-h-screen bg-background transition-colors duration-200">
       {/* 0cred verification */}
       <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07"></div>
 
-      <div className="max-w-6xl mx-auto space-y-12 pt-16">
+      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-28 space-y-12 sm:space-y-16">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -343,171 +351,148 @@ export default function Home() {
         >
           <HeroSection />
         </motion.div>
+
         {/* Experience Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="space-y-6"
         >
-          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
-            <div className="text-center mb-8">
-              <h2 className="type-title mb-3">
-                Companies
-              </h2>
-              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
-                I've had the chance to work with some great teams building
-                things people use
-              </p>
-            </div>
-            <div className="grid grid-cols-2 md:flex flex-wrap justify-center gap-4">
-              {companies.map((company, index) => (
-                <motion.a
-                  key={company.name}
-                  href={company.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group border border-border rounded-lg p-4 hover:bg-accent hover:-translate-y-1 transition-all duration-300 min-w-[140px]"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                >
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 relative">
-                      <Image
-                        src={company.logo}
-                        alt={`${company.name} logo`}
-                        fill
-                        className="rounded-full object-cover"
-                      />
-                    </div>
-                    <span className="type-caption font-medium text-foreground text-center transition-colors">
-                      {company.name}
-                    </span>
-                  </div>
-                </motion.a>
-              ))}
-            </div>
+          <SectionHeader
+            title="Companies"
+            description="I've had the chance to work with some great teams building things people use"
+          />
+          <div className="flex flex-wrap gap-3">
+            {companies.map((company, index) => (
+              <motion.a
+                key={company.name}
+                href={company.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${cardBase} flex items-center gap-3 px-3.5 py-2`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + index * 0.1 }}
+              >
+                <div className="relative w-7 h-7 shrink-0">
+                  <Image
+                    src={company.logo}
+                    alt={`${company.name} logo`}
+                    fill
+                    className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
+                  />
+                </div>
+                <span className="type-caption font-medium text-foreground">
+                  {company.name}
+                </span>
+              </motion.a>
+            ))}
           </div>
         </motion.section>
+
         {/* Projects Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-6"
         >
-          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
-            <div className="text-center mb-8">
-              <h2 className="type-title mb-3">
-                Side Projects
-              </h2>
-              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
-                Things I build when I'm curious about something or need to
-                scratch a personal itch.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {featuredProjects.map((project, index) => {
-                const logoIsSvg = project.logo.endsWith(".svg");
+          <SectionHeader
+            title="Side Projects"
+            description="Things I build when I'm curious about something or need to scratch a personal itch."
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {featuredProjects.map((project, index) => {
+              const logoIsSvg = project.logo.endsWith(".svg");
 
-                return (
-                  <motion.a
-                    key={project.slug}
-                    href={`/projects#${project.slug}`}
-                    className="group border border-border rounded-lg p-5 hover:bg-accent hover:-translate-y-1 transition-all duration-300 flex flex-col"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border bg-secondary shrink-0">
-                        <Image
-                          src={project.logo}
-                          alt={`${project.name} logo`}
-                          fill
-                          unoptimized={logoIsSvg}
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
-                          {project.name}
-                        </h3>
-                      </div>
+              return (
+                <motion.a
+                  key={project.slug}
+                  href={`/projects#${project.slug}`}
+                  className={`${cardBase} flex flex-col p-4`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-10 h-10 shrink-0 overflow-hidden rounded-md bg-secondary">
+                      <Image
+                        src={project.logo}
+                        alt={`${project.name} logo`}
+                        fill
+                        unoptimized={logoIsSvg}
+                        className="object-cover"
+                      />
                     </div>
-                    <p className="type-caption mt-4">
-                      {project.note}
-                    </p>
-                  </motion.a>
-                );
-              })}
-            </div>
-            <div className="mt-8 text-center">
-              <a
-                href="/projects"
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
-              >
-                Read the notes <ChevronRight className="w-4 h-4" />
-              </a>
-            </div>
+                    <h3 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                      {project.name}
+                    </h3>
+                  </div>
+                  <p className="type-caption mt-3">{project.note}</p>
+                </motion.a>
+              );
+            })}
+          </div>
+          <div className="mt-6">
+            <a
+              href="/projects"
+              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
+            >
+              Read the notes <ChevronRight className="w-4 h-4" />
+            </a>
           </div>
         </motion.section>
+
         {/* Blog Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="space-y-6"
         >
-          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
-            <div className="text-center mb-8">
-              <h2 className="type-title mb-3">
-                Recent Essays
-              </h2>
-              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
-                Some thoughts on life, learning, and whatever random things I
-                get curious about at 2 AM
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {blogHighlights.map((blog) => (
-                <div key={blog.title} className="group">
-                  <div className="border border-border rounded-lg p-3 sm:p-6 hover:bg-accent transition-all duration-300 h-full">
-                    <div className="flex items-center gap-3 mb-3 type-caption">
-                      <span>{blog.date}</span>
-                      <span>•</span>
-                      <span>{blog.readingTime}</span>
-                    </div>
-                    <h3 className="group-hover:text-green-600 dark:group-hover:text-green-500 type-heading mb-3 transition-colors">
-                      <a href={blog.url} className="block">
-                        {blog.title}
-                      </a>
-                    </h3>
-                    <p className="type-caption line-clamp-3">
-                      {blog.excerpt}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 text-center">
+          <SectionHeader
+            title="Recent Essays"
+            description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {blogHighlights.map((blog) => (
               <a
-                href="/blog"
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
+                key={blog.title}
+                href={blog.url}
+                className={`${cardBase} flex flex-col p-4`}
               >
-                Read all posts <ChevronRight className="w-4 h-4" />
+                <div className="flex items-center gap-2 type-caption mb-2">
+                  <time dateTime={blog.date}>{formatDate(blog.date)}</time>
+                  <span aria-hidden="true">•</span>
+                  <span>{blog.readingTime}</span>
+                </div>
+                <h3 className="group-hover:text-green-600 dark:group-hover:text-green-500 type-heading transition-colors">
+                  {blog.title}
+                </h3>
+                <p className="type-caption mt-2 line-clamp-3">
+                  {blog.excerpt}
+                </p>
               </a>
-            </div>
+            ))}
+          </div>
+          <div className="mt-6">
+            <a
+              href="/blog"
+              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
+            >
+              Read all posts <ChevronRight className="w-4 h-4" />
+            </a>
           </div>
         </motion.section>
+
         {/* Favorite Links Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.55 }}
-          className="space-y-6"
         >
+          <SectionHeader
+            title="Curated Links"
+            description="Curated resources, articles and tools I find valuable"
+          />
           <FavoriteLinks />
         </motion.section>
 
@@ -516,96 +501,85 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="space-y-6"
         >
-          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
-            <div className="text-center mb-8">
-              <h2 className="type-title mb-3">
-                Unpopular Opinions
-              </h2>
-              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
-                Things I've felt, noticed and often keep circling back to.
-              </p>
-            </div>
+          <SectionHeader
+            title="Unpopular Opinions"
+            description="Things I've felt, noticed and often keep circling back to."
+          />
 
-            {/* Mobile: Single card with navigation */}
-            <div className="md:hidden">
-              <div className="relative overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentOpinionIndex}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="group hover:bg-accent border border-border rounded-xl p-6 transition-all duration-300 hover:shadow-sm hover:shadow-card/50 hover:border-input bg-card h-[140px] flex items-center w-full"
-                  >
-                    <div className="flex items-start gap-4 w-full">
-                      <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-8 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
-                        {String(currentOpinionIndex + 1).padStart(2, "0")}
-                      </span>
-                      <p className="type-body text-muted-foreground italic group-hover:text-foreground transition-colors">
-                        {unpopularOpinions[currentOpinionIndex]}
-                      </p>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Navigation */}
-              <div className="flex items-center justify-between mt-6 h-10">
-                <button
-                  onClick={prevOpinion}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
+          {/* Mobile: Single opinion with navigation */}
+          <div className="md:hidden">
+            <div className="relative overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentOpinionIndex}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="flex min-h-[120px] items-center card p-4 sm:p-5"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                  Prev
-                </button>
-
-                {/* Progress dots */}
-                <div className="flex gap-1">
-                  {unpopularOpinions.slice(0, 10).map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentOpinionIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentOpinionIndex
-                          ? "bg-green-600 dark:bg-green-500"
-                          : "bg-muted hover:bg-muted-foreground/20"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  onClick={nextOpinion}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-lg hover:bg-accent h-full"
-                >
-                  Next
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              <p className="type-caption text-center mt-3 opacity-70">
-                {currentOpinionIndex + 1} of {unpopularOpinions.length}
-              </p>
-            </div>
-
-            {/* Desktop: Grid layout */}
-            <div className="hidden md:grid grid-cols-2 gap-4">
-              {unpopularOpinions.slice(0, 10).map((opinion, index) => (
-                <div
-                  key={index}
-                  className="group hover:bg-accent border border-border rounded-xl p-3 sm:p-4 md:p-6 transition-all duration-300 hover:shadow-sm hover:shadow-card/50 hover:-translate-y-0.5 hover:border-input bg-card"
-                >
-                  <div className="flex items-start gap-4">
-                    <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-6 flex-shrink-0 font-medium group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
-                      {String(index + 1).padStart(2, "0")}
+                  <div className="flex items-start gap-4 w-full">
+                    <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-8 flex-shrink-0 font-medium">
+                      {String(currentOpinionIndex + 1).padStart(2, "0")}
                     </span>
-                    <p className="type-body text-muted-foreground italic group-hover:text-foreground transition-colors">
-                      {opinion}
+                    <p className="type-body text-muted-foreground italic">
+                      {unpopularOpinions[currentOpinionIndex]}
                     </p>
                   </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-4">
+              <button
+                onClick={prevOpinion}
+                aria-label="Previous opinion"
+                className="flex items-center gap-2 px-3 py-2 type-caption text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-md hover:bg-accent"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Prev
+              </button>
+
+              {/* Progress dots */}
+              <div className="flex gap-1.5">
+                {unpopularOpinions.map((_, index) => (
+                  <button
+                    key={index}
+                    aria-label={`Show opinion ${index + 1}`}
+                    onClick={() => setCurrentOpinionIndex(index)}
+                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                      index === currentOpinionIndex
+                        ? "bg-green-600 dark:bg-green-500"
+                        : "bg-muted hover:bg-muted-foreground/30"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={nextOpinion}
+                aria-label="Next opinion"
+                className="flex items-center gap-2 px-3 py-2 type-caption text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors border border-border rounded-md hover:bg-accent"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Desktop: compact list on a single surface */}
+          <div className="hidden card p-4 sm:p-5 md:block">
+            <div className="grid gap-x-8 gap-y-4 md:grid-cols-2">
+              {unpopularOpinions.map((opinion, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <span className="text-[13px] font-mono tabular-nums text-green-600 dark:text-green-500 mt-1 w-5 flex-shrink-0 font-medium">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <p className="type-body text-muted-foreground italic">
+                    {opinion}
+                  </p>
                 </div>
               ))}
             </div>
@@ -617,23 +591,16 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="space-y-6"
         >
-          <div className="border border-border rounded-lg px-3 py-6 sm:p-6 md:p-8">
-            <div className="text-center mb-8">
-              <h2 className="type-title mb-3">
-                Things I Use
-              </h2>
-              <p className="type-body text-muted-foreground max-w-2xl mx-auto">
-                The software, tools, and habits that help me get things done
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SectionHeader
+            title="Things I Use"
+            description="The software, tools, and habits that help me get things done"
+          />
+          <div className="card p-4 sm:p-5">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
               {Object.entries(myToolkit).map(([key, category]) => (
                 <div key={key} className="space-y-3">
-                  <h3 className="type-heading">
-                    {category.title}
-                  </h3>
+                  <h3 className="type-label">{category.title}</h3>
                   <div className="flex flex-wrap gap-2">
                     {category.items.map((item, index) => {
                       const ItemWrapper = item.url ? "a" : "span";
@@ -651,11 +618,11 @@ export default function Home() {
                                 rel: "noopener noreferrer",
                               }
                             : {})}
-                          className={`
-                            px-3 py-2 text-[13px] bg-secondary text-secondary-foreground rounded-md
-                            flex items-center gap-2
-                            ${item.url ? "hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer" : ""}
-                          `}
+                          className={`inline-flex items-center gap-2 rounded-md border border-border/70 px-2.5 py-1.5 type-caption text-foreground/80 ${
+                            item.url
+                              ? "hover:border-foreground/20 hover:bg-accent transition-colors cursor-pointer"
+                              : ""
+                          }`}
                         >
                           {logo &&
                             (isStringLogo ? (

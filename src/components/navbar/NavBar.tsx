@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 bg-card shadow-lg p-4 z-40 md:hidden rounded-t-xl border-t border-border"
+            className="fixed inset-x-0 bottom-0 bg-card shadow-lg p-4 z-40 md:hidden rounded-t-lg border-t border-border"
           >
             <div className="flex flex-col space-y-2">
               <div className="flex items-center px-3 py-2 text-green-600 dark:text-green-500 font-mono text-sm border-b border-border">

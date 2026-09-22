@@ -6,11 +6,19 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { format } from "date-fns";
 import { PostMetadata } from "../utils/blogUtils";
+import { PageHeader } from "@/components/PageHeader";
 import { FileWarning } from "lucide-react";
 
 interface BlogListProps {
   posts: PostMetadata[];
 }
+
+/**
+ * Parse the date at local midnight so the rendered day is identical on the
+ * server and the client, regardless of timezone.
+ */
+const formatPostDate = (date: string) =>
+  format(new Date(`${date}T00:00:00`), "MMM d, yyyy");
 
 export default function BlogList({ posts }: BlogListProps) {
   return (
@@ -20,66 +28,49 @@ export default function BlogList({ posts }: BlogListProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <header className="mb-10 sm:mb-12 text-center">
-          <h1 className="type-display mb-3 sm:mb-4">
-            Notes &amp; Essays
-          </h1>
-          <p className="type-body text-muted-foreground">
-            Interactive tutorials, stories, deep dives on startups, movies,
-            human behavior, and whatever random thing I get curious about at
-            2 AM 🦉
-          </p>
-        </header>
+        <PageHeader
+          title="Notes &amp; Essays"
+          description="Interactive tutorials, stories, deep dives on startups, movies, human behavior, and whatever random thing I get curious about at 2 AM 🦉"
+        />
       </motion.div>
 
-      <div className="space-y-4">
-        {posts.length > 0 ? (
-          posts.map((post, index) => (
-            <motion.article
+      {posts.length > 0 ? (
+        <div className="flex flex-col">
+          {posts.map((post, index) => (
+            <motion.div
               key={post.slug}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.06 }}
+              transition={{ duration: 0.3, delay: index * 0.02 }}
             >
               <Link
                 href={`/blog/${post.slug}`}
-                className="group block rounded-lg border border-border p-4 transition-colors hover:bg-accent sm:p-5"
+                className="group -mx-3 flex flex-col gap-0.5 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-accent sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
               >
-                <div className="mb-2 flex flex-wrap items-center gap-2 type-caption">
-                  <time dateTime={post.date}>
-                    {format(new Date(post.date), "MMMM d, yyyy")}
-                  </time>
-                  <span aria-hidden="true">•</span>
-                  <span>{post.readingTime}</span>
+                <span className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                  {post.title}
+                </span>
 
+                <span className="flex shrink-0 items-center gap-2 type-caption">
+                  <time dateTime={post.date}>{formatPostDate(post.date)}</time>
                   {post.status === "draft" && (
                     <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
                       <FileWarning size={12} />
                       Draft
                     </span>
                   )}
-                </div>
-
-                <h2 className="type-heading group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
-                  {post.title}
-                </h2>
-
-                {post.excerpt && (
-                  <p className="type-caption mt-1.5 line-clamp-2">
-                    {post.excerpt}
-                  </p>
-                )}
+                </span>
               </Link>
-            </motion.article>
-          ))
-        ) : (
-          <div className="py-16 text-center">
-            <h3 className="type-title text-muted-foreground">
-              No blog posts yet. Check back soon!
-            </h3>
-          </div>
-        )}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <div className="py-16 text-center">
+          <h3 className="type-title text-muted-foreground">
+            No blog posts yet. Check back soon!
+          </h3>
+        </div>
+      )}
     </div>
   );
 }

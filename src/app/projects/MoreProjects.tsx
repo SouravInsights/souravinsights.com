@@ -15,13 +15,13 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
 
   return (
     <div>
-      <div className="flex justify-center">
+      <div className="flex">
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-controls="more-projects"
-          className="inline-flex items-center gap-2 border border-border rounded-md px-4 py-2 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+          className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground hover:bg-accent transition-colors"
         >
           {open ? "Hide" : `Show ${projects.length} more`}
           <ChevronDown
@@ -54,9 +54,9 @@ export function MoreProjects({ projects }: { projects: SmallProject[] }) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 + index * 0.05, duration: 0.25 }}
-                  className="group border border-border rounded-lg p-4 flex flex-col items-center gap-3 hover:bg-accent hover:-translate-y-1 transition-all duration-300"
+                  className="group card card-interactive flex flex-col items-center gap-3 p-3"
                 >
-                  <div className="relative w-14 h-14">
+                  <div className="relative w-12 h-12">
                     <Image
                       src={project.logo}
                       alt={`${project.name} logo`}

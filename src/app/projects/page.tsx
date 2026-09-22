@@ -4,6 +4,8 @@ import Image from "next/image";
 import { ArrowUpRight, ChevronRight, Github } from "lucide-react";
 import { featuredProjects, otherProjects } from "./projects-data";
 import { MoreProjects } from "./MoreProjects";
+import { PageHeader } from "@/components/PageHeader";
+import { SectionHeader } from "@/components/SectionHeader";
 
 export const metadata: Metadata = {
   title: "Projects | SouravInsights",
@@ -18,20 +20,15 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <div className="min-h-screen bg-background p-2 sm:p-4 md:p-12 transition-colors duration-200">
-      <div className="max-w-4xl mx-auto space-y-12 pt-16">
-        {/* Header */}
-        <header className="text-center">
-          <h1 className="type-display">
-            Projects
-          </h1>
-          <p className="type-body text-muted-foreground mt-4 max-w-2xl mx-auto">
-            A few things I'm spending my time on lately.
-          </p>
-        </header>
+    <div className="min-h-screen bg-background transition-colors duration-200">
+      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-28 space-y-12 sm:space-y-16">
+        <PageHeader
+          title="Projects"
+          description="A few things I'm spending my time on lately."
+        />
 
         {/* Featured projects */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {featuredProjects.map((project) => {
             const logoIsSvg = project.logo.endsWith(".svg");
 
@@ -39,20 +36,18 @@ export default function ProjectsPage() {
               <article
                 key={project.slug}
                 id={project.slug}
-                className="border border-border rounded-lg p-5 sm:p-7 md:p-8 scroll-mt-24"
+                className="card p-4 sm:p-5 scroll-mt-24"
               >
-                <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+                <div className="flex flex-col gap-5 sm:flex-row sm:gap-6">
                   {/* Visual */}
-                  <div className="md:w-44 shrink-0">
-                    <div className="relative w-20 h-20 md:w-32 md:h-32 rounded-2xl overflow-hidden border border-border bg-secondary">
-                      <Image
-                        src={project.logo}
-                        alt={`${project.name} logo`}
-                        fill
-                        unoptimized={logoIsSvg}
-                        className="object-cover"
-                      />
-                    </div>
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-secondary sm:h-16 sm:w-16">
+                    <Image
+                      src={project.logo}
+                      alt={`${project.name} logo`}
+                      fill
+                      unoptimized={logoIsSvg}
+                      className="object-cover"
+                    />
                   </div>
 
                   {/* Content */}
@@ -66,7 +61,7 @@ export default function ProjectsPage() {
                           className="group/title inline-flex items-center gap-2 transition-colors hover:text-green-600 dark:hover:text-green-500"
                         >
                           {project.name}
-                          <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground transition-all duration-200 group-hover/title:-translate-y-0.5 group-hover/title:translate-x-0.5 group-hover/title:text-green-600 dark:group-hover/title:text-green-500" />
+                          <ArrowUpRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-hover/title:-translate-y-0.5 group-hover/title:translate-x-0.5 group-hover/title:text-green-600 dark:group-hover/title:text-green-500" />
                         </a>
                       </h2>
                       {project.repo && (
@@ -87,23 +82,14 @@ export default function ProjectsPage() {
 
                     <div className="mt-5 grid gap-5 sm:grid-cols-2">
                       <div>
-                        <h3 className="type-label">
-                          What it is
-                        </h3>
-                        <p className="type-caption mt-2">
-                          {project.what}
-                        </p>
+                        <h3 className="type-label">What it is</h3>
+                        <p className="type-caption mt-2">{project.what}</p>
                       </div>
                       <div>
-                        <h3 className="type-label">
-                          Why I'm working on it
-                        </h3>
-                        <p className="type-caption mt-2">
-                          {project.why}
-                        </p>
+                        <h3 className="type-label">Why I'm working on it</h3>
+                        <p className="type-caption mt-2">{project.why}</p>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </article>
@@ -112,25 +98,20 @@ export default function ProjectsPage() {
         </div>
 
         {/* Progressively disclosed smaller projects */}
-        <section className="border border-border rounded-lg p-5 sm:p-6 md:p-8">
-          <div className="text-center mb-6">
-            <h2 className="type-title">
-              Smaller things
-            </h2>
-            <p className="type-body text-muted-foreground mt-2">
-              Older experiments and side projects that didn't need more than a
-              weekend.
-            </p>
-          </div>
+        <section>
+          <SectionHeader
+            title="Smaller things"
+            description="Older experiments and side projects that didn't need more than a weekend."
+          />
           <MoreProjects projects={otherProjects} />
         </section>
 
-        <div className="text-center pb-4">
+        <div>
           <a
             href="https://github.com/SouravInsights"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-green-600 dark:hover:text-green-500 font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-600 dark:hover:text-green-500 transition-colors"
           >
             More on GitHub <ChevronRight className="w-4 h-4" />
           </a>
