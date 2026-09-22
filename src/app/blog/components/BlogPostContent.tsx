@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, Calendar, Menu, X } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, Menu } from "lucide-react";
 import Link from "next/link";
 import { PostData } from "../utils/blogUtils";
 import ThreeDLikeButton from "./ThreeDLikeButton";
@@ -12,6 +12,11 @@ import CollapsibleTOC from "./CollapsibleTOC";
 import DraftPostIndicator from "./DraftPostIndicator";
 import HackerNewsButton from "./HackerNewsButton";
 import HackerNewsComments from "./HackerNewsComments";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -30,7 +35,8 @@ export default function BlogPostContent({
 }: BlogPostContentProps) {
   const [tableOfContents, setTableOfContents] = useState<TOCItem[]>([]);
   const [activeHeading, setActiveHeading] = useState<string>("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  // Compact TOC popover for the mobile toolbar.
+  const [tocOpen, setTocOpen] = useState<boolean>(false);
   const [isTOCCollapsed, setIsTOCCollapsed] = useState<boolean>(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -107,6 +113,12 @@ export default function BlogPostContent({
 
   const isDraft = post.status === "draft";
 
+  // Indent headings relative to the shallowest one in the post, so a post that
+  // only uses h3s doesn't push every row in for no reason.
+  const tocMinLevel = tableOfContents.length
+    ? Math.min(...tableOfContents.map((h) => h.level))
+    : 1;
+
   // Detect headings from the raw MDX up front (not just the post-render DOM)
   // so posts without any headings skip the sidebar layout without a flicker.
   const hasTOC = /^#{1,6}\s|<h[1-6][\s>]/m.test(
@@ -131,15 +143,73 @@ export default function BlogPostContent({
       </div>
 
       {/* Mobile TOC & Like Button Trigger */}
-      <div className="lg:hidden sticky top-0 z-30 overflow-hidden border-b border-border bg-background px-4 py-3 flex items-center justify-between md:static">
+      <div className="lg:hidden sticky top-0 z-30 overflow-hidden border-b border-border/60 bg-background/85 px-4 py-3 backdrop-blur-md flex items-center justify-between md:static">
         {hasTOC ? (
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm border border-border rounded-md text-muted-foreground"
-          >
-            <Menu size={16} />
-            <span>Contents</span>
-          </button>
+          <Popover open={tocOpen} onOpenChange={setTocOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label="On this page"
+                className="flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 data-[state=open]:bg-foreground/5"
+              >
+                <Menu size={16} />
+                <span>Contents</span>
+              </button>
+            </PopoverTrigger>
+
+            <PopoverContent
+              align="start"
+              sideOffset={10}
+              collisionPadding={16}
+              className="w-auto min-w-[9rem] max-w-[min(17rem,calc(100vw-2rem))] rounded-lg border-border bg-card p-1.5 shadow-lg"
+            >
+              <p className="px-2 pb-1 pt-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                On this page
+              </p>
+
+              {tableOfContents.length > 0 ? (
+                <nav className="no-scrollbar max-h-[min(60vh,18rem)] overflow-y-auto">
+                  <ul className="flex flex-col">
+                    {tableOfContents.map((heading) => {
+                      const isActive = activeHeading === heading.id;
+                      return (
+                        <li
+                          key={heading.id}
+                          style={{
+                            paddingLeft: `${
+                              (heading.level - tocMinLevel) * 0.6
+                            }rem`,
+                          }}
+                        >
+                          <a
+                            href={`#${heading.id}`}
+                            className={`block rounded-md px-2 py-1 font-mono text-[13px] leading-snug transition-colors ${
+                              isActive
+                                ? "bg-foreground/5 font-medium text-green-700 dark:text-green-500"
+                                : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+                            }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              document
+                                .getElementById(heading.id)
+                                ?.scrollIntoView({ behavior: "smooth" });
+                              setTocOpen(false);
+                            }}
+                          >
+                            {heading.text}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+              ) : (
+                <p className="px-2 pb-1.5 type-caption">
+                  No headings in this post.
+                </p>
+              )}
+            </PopoverContent>
+          </Popover>
         ) : (
           <Link
             href="/blog"
@@ -158,58 +228,6 @@ export default function BlogPostContent({
           <ThreeDLikeButton slug={post.slug} compact />
         </motion.div>
       </div>
-
-      {/* Mobile TOC Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm">
-          <div className="absolute right-0 top-0 h-full w-4/5 max-w-xs bg-card shadow-xl p-5 overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="type-heading">
-                Table of Contents
-              </h3>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 rounded-full bg-muted text-muted-foreground"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {tableOfContents.length > 0 && (
-              <nav>
-                <ul className="space-y-2">
-                  {tableOfContents.map((heading) => (
-                    <li
-                      key={heading.id}
-                      style={{
-                        marginLeft: `${(heading.level - 1) * 0.75}rem`,
-                      }}
-                    >
-                      <a
-                        href={`#${heading.id}`}
-                        className={`text-sm hover:text-green-700 dark:hover:text-green-500 transition-colors block py-1 ${
-                          activeHeading === heading.id
-                            ? "text-green-700 dark:text-green-500 font-medium"
-                            : "text-muted-foreground"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById(heading.id)?.scrollIntoView({
-                            behavior: "smooth",
-                          });
-                          setMobileMenuOpen(false);
-                        }}
-                      >
-                        {heading.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            )}
-          </div>
-        </div>
-      )}
 
       <div className="flex flex-col lg:flex-row pt-7 lg:pt-0">
         {/* Main Content - Dynamic width based on TOC state */}
