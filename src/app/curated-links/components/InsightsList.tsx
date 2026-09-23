@@ -68,7 +68,7 @@ export default function InsightsList({
   const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
-  const [sort, setSort] = useState<"newest" | "liked" | "shuffle">("newest");
+  const [sort, setSort] = useState<"newest" | "liked" | "shuffle">("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"list" | "grid">("list");
@@ -192,7 +192,9 @@ export default function InsightsList({
   useEffect(() => {
     const storedView = window.localStorage.getItem("insights:view");
     if (storedView === "grid" || storedView === "list") setView(storedView);
-    const storedSort = window.localStorage.getItem("insights:sort");
+    // Versioned key: the old key held "newest" written by the previous
+    // default, which would otherwise keep overriding the new one.
+    const storedSort = window.localStorage.getItem("insights:sort-v2");
     if (
       storedSort === "liked" ||
       storedSort === "newest" ||
@@ -207,7 +209,7 @@ export default function InsightsList({
   }, [view]);
 
   useEffect(() => {
-    window.localStorage.setItem("insights:sort", sort);
+    window.localStorage.setItem("insights:sort-v2", sort);
   }, [sort]);
 
   // A card shows the shader while it's on screen and its screenshot isn't ready
