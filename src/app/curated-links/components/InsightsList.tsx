@@ -12,10 +12,15 @@ import {
 import { NoteEditorModal } from "./NoteEditorModal";
 import { LikeButton } from "./LikeButton";
 import { FadeIn } from "@/components/FadeIn";
+import {
+  PreviewCardProvider,
+  PreviewCardTrigger,
+} from "@/components/ui/PreviewCard";
 
 interface InsightsListProps {
   channels: DiscordChannel[];
   linkData: { [key: string]: LinkData[] };
+  previews: Record<string, string>;
 }
 
 /** Human labels for the Discord channel names. */
@@ -55,7 +60,11 @@ const faviconFor = (url: string) =>
 
 type EnrichedLink = LinkData & { category?: string };
 
-export default function InsightsList({ channels, linkData }: InsightsListProps) {
+export default function InsightsList({
+  channels,
+  linkData,
+  previews,
+}: InsightsListProps) {
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -149,6 +158,42 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
     };
   }, [filterMenuOpen]);
 
+  // Warm previews for the first links a visitor is likely to hover so the
+  // first hover isn't a cold, multi-second capture. Best-effort, low
+  // concurrency, and skipped for anything already captured.
+  useEffect(() => {
+    const missing = links
+      .map((link) => link.url)
+      .filter((url) => url && !previews[url])
+      .slice(0, 8);
+
+    if (missing.length === 0) return;
+
+    let cancelled = false;
+    let cursor = 0;
+
+    const worker = async () => {
+      while (!cancelled && cursor < missing.length) {
+        const url = missing[cursor++];
+        try {
+          await fetch(`/api/link-preview?url=${encodeURIComponent(url)}`, {
+            redirect: "manual",
+          });
+        } catch {
+          // best-effort
+        }
+      }
+    };
+
+    void Promise.all([worker(), worker()]);
+
+    return () => {
+      cancelled = true;
+    };
+    // Run once on mount against the initial (all) list.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Admin mode is opt-in via ?adminKey=...
   useEffect(() => {
     const adminKey = new URLSearchParams(window.location.search).get(
@@ -236,7 +281,8 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
   const visibleLinks = filteredLinks.slice(0, visibleItems);
 
   return (
-    <div>
+    <PreviewCardProvider>
+      <div>
       {/* App bar — category filter on the left, search on the right. Sticks
           under the navbar, and takes the top edge once the navbar scrolls
           away. */}
@@ -365,7 +411,16 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
               <div key={link.id}>
                 {index > 0 && <div className="rule" aria-hidden="true" />}
                 <FadeIn delay={Math.min(index, 12) * 0.03}>
-                  <div className="group flex items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/5">
+                  <PreviewCardTrigger
+                    payload={{
+                      url: link.url,
+                      name: link.title,
+                      previewImage:
+                        previews[link.url] ??
+                        `/api/link-preview?url=${encodeURIComponent(link.url)}`,
+                    }}
+                    className="group flex items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/5"
+                  >
                   <a
                     href={href}
                     target="_blank"
@@ -408,7 +463,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
                     )}
                     <LikeButton linkId={link.id} />
                   </div>
-                </div>
+                  </PreviewCardTrigger>
                 </FadeIn>
               </div>
             );
@@ -443,6 +498,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
         onAddToCollection={addToCollection}
         currentCategory={activeChannel}
       />
-    </div>
+      </div>
+    </PreviewCardProvider>
   );
 }

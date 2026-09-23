@@ -12,6 +12,7 @@ import {
 } from "./utils/discordApi";
 import InsightsList from "@/app/curated-links/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
+import { getPreviewMap } from "@/lib/link-preview";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { Metadata } from "next";
@@ -63,6 +64,15 @@ const getDiscordData = unstable_cache(
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getDiscordData();
 
+  // Screenshots are captured out of band and cached in Blob; resolving them
+  // here means a hover just points at a stored, immutable image.
+  const previews = await getPreviewMap(
+    Object.values(linkData)
+      .flat()
+      .map((link) => link.url)
+      .filter(Boolean)
+  );
+
   // Grand total across every channel, de-duplicated, so the header can show
   // how much is in the collection without any per-view noise.
   const totalLinks = dedupeByUrl(
@@ -113,7 +123,11 @@ export default async function CuratedLinksPage() {
           />
         </FadeIn>
 
-        <InsightsList channels={channels} linkData={linkData} />
+        <InsightsList
+          channels={channels}
+          linkData={linkData}
+          previews={previews}
+        />
       </div>
     </div>
   );

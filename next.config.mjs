@@ -47,6 +47,12 @@ const nextConfig = {
   },
 
   experimental: {
+    // Chromium + puppeteer must stay outside the server bundle and their
+    // binary must be traced into the /api/link-preview function on Vercel.
+    serverComponentsExternalPackages: [
+      "@sparticuz/chromium",
+      "puppeteer-core",
+    ],
     // pdfkit (used by @react-pdf/renderer) loads its standard fonts through a
     // dynamic path, so the serverless file tracer never sees them. Without this
     // the /cv/pdf route crashes on Vercel with "Cannot find module
@@ -56,6 +62,7 @@ const nextConfig = {
         "./node_modules/pdfkit/js/standard-fonts/**/*",
         "./node_modules/pdfkit/js/data/**/*",
       ],
+      "/api/link-preview": ["./node_modules/@sparticuz/chromium/bin/**/*"],
     },
   },
 };

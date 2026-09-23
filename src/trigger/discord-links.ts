@@ -3,6 +3,7 @@ import { Redis } from "@upstash/redis";
 import {
   getChannels,
   getMessagesFromChannel,
+  extractUrl,
   type DiscordMessage,
 } from "@/app/curated-links/utils/discordApi";
 
@@ -73,6 +74,27 @@ export const checkDiscordLinks = schedules.task({
               content: m.content.substring(0, 100), // first 100 chars
             })),
           });
+
+          // Pre-generate preview screenshots for the new links so the first
+          // hover on the site is instant rather than a cold capture.
+          const urls = newMessages
+            .map((message) => extractUrl(message.content, message.embeds))
+            .filter((url): url is string => Boolean(url));
+
+          if (urls.length > 0) {
+            await logger.trace("warm-link-previews", async () => {
+              for (const url of urls) {
+                try {
+                  await fetch(
+                    `${process.env.NEXT_PUBLIC_APP_URL}/api/link-preview?url=${encodeURIComponent(url)}`,
+                    { redirect: "manual" }
+                  );
+                } catch (error) {
+                  logger.warn("Preview warm failed", { url, error });
+                }
+              }
+            });
+          }
         }
       }
 
