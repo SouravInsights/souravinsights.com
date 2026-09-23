@@ -3,10 +3,10 @@ import puppeteer from "puppeteer-core";
 
 // Retina viewport so previews stay crisp when shown at 2x.
 const VIEWPORT = { width: 1280, height: 800, deviceScaleFactor: 2 };
-const TIMEOUT = 30_000;
-// Intro/loading animations often run a beat after first paint; wait so the
-// capture is of the settled page rather than a splash or fade-in.
-const SETTLE_DELAY = 2_500;
+const TIMEOUT = 20_000;
+// Wait for images/styles (`load`) rather than full network idle, then let late
+// paint settle. networkidle2 is what made captures take 30s+ on busy sites.
+const SETTLE_DELAY = 1_500;
 
 const IS_SERVERLESS =
   !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
@@ -58,7 +58,7 @@ export async function captureScreenshot(url: string): Promise<Buffer> {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     );
 
-    await page.goto(url, { waitUntil: "networkidle2", timeout: TIMEOUT });
+    await page.goto(url, { waitUntil: "load", timeout: TIMEOUT });
     await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY));
 
     const screenshot = await page.screenshot({ type: "png", fullPage: false });

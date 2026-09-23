@@ -220,6 +220,7 @@ export default function InsightsList({
   const [visibleUrls, setVisibleUrls] = useState<Set<string>>(new Set());
   const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
   const visibleRef = useRef<Set<string>>(new Set());
+  const refreshedRef = useRef<Set<string>>(new Set());
 
   const loadPreview = async (
     url: string,
@@ -241,7 +242,7 @@ export default function InsightsList({
     } catch {
       // One quick retry — a capture can fail on a cold start.
       if (attempt === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return loadPreview(url, refresh, 1);
       }
       setFailedUrls((prev) => new Set(prev).add(url));
@@ -249,7 +250,7 @@ export default function InsightsList({
   };
 
   const runQueue = () => {
-    while (runningRef.current < 2 && queueRef.current.length > 0) {
+    while (runningRef.current < 3 && queueRef.current.length > 0) {
       const job = queueRef.current.shift();
       if (!job) break;
       runningRef.current += 1;
@@ -273,8 +274,9 @@ export default function InsightsList({
     enqueue(url);
   };
 
-  // A stored preview that fails to load is stale: drop it, show the shader
-  // again, and capture a fresh one.
+  // A stored preview that fails to load is stale: drop it so the shader shows
+  // again, and capture a fresh one. Only once per link — a broken URL must not
+  // turn into an endless re-capture loop.
   const refreshPreview = (url: string) => {
     setPreviewMap((prev) => {
       if (!prev[url]) return prev;
@@ -282,6 +284,13 @@ export default function InsightsList({
       delete next[url];
       return next;
     });
+
+    if (refreshedRef.current.has(url)) {
+      setFailedUrls((prev) => new Set(prev).add(url));
+      return;
+    }
+    refreshedRef.current.add(url);
+
     setFailedUrls((prev) => {
       if (!prev.has(url)) return prev;
       const next = new Set(prev);
