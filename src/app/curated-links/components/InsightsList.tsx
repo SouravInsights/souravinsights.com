@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useWebHaptics } from "web-haptics/react";
 import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, Shuffle, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
@@ -219,6 +221,7 @@ export default function InsightsList({
   const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
   const visibleRef = useRef<Set<string>>(new Set());
   const refreshedRef = useRef<Set<string>>(new Set());
+  const haptic = useWebHaptics();
 
   const loadPreview = async (
     url: string,
@@ -452,160 +455,183 @@ export default function InsightsList({
   return (
     <PreviewCardProvider>
       <div>
-      {/* App bar — category filter on the left, search on the right. Sticks
-          under the navbar, and takes the top edge once the navbar scrolls
-          away. */}
+      {/* App bar — view toggle on the left; filters and search on the right.
+          Sticks under the navbar and takes the top edge once it scrolls away. */}
       <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
-        {!searchOpen && (
-          <div className="flex items-center gap-2">
-          <div ref={filterMenuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setFilterMenuOpen((open) => !open)}
-              aria-haspopup="listbox"
-              aria-expanded={filterMenuOpen}
-              className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
-            >
-              {activeFilterLabel}
-              <ChevronDown
-                className={`h-3.5 w-3.5 text-faint-foreground transition-transform ${
-                  filterMenuOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {filterMenuOpen && (
-              <div
-                role="listbox"
-                className="absolute left-0 top-full z-30 mt-1 max-h-80 w-52 overflow-y-auto rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
-              >
-                {filters.map((filter) => (
-                  <button
-                    key={filter.name}
-                    type="button"
-                    role="option"
-                    aria-selected={activeChannel === filter.name}
-                    onClick={() => {
-                      setActiveChannel(filter.name);
-                      setFilterMenuOpen(false);
-                    }}
-                    className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
-                      activeChannel === filter.name
-                        ? "bg-foreground/[0.06] text-foreground"
-                        : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
-                    }`}
-                  >
-                    {filter.label}
-                    {activeChannel === filter.name && (
-                      <Check className="h-3.5 w-3.5 shrink-0" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
+        {/* View toggle — a display choice, so it stays put on the left. */}
+        <div className={`${searchOpen ? "hidden sm:block" : "block"} shrink-0`}>
+          <div className="flex h-10 items-center gap-0.5 rounded-lg border border-border p-0.5 sm:h-9">
+            {[
+              { mode: "list" as const, label: "List view", Icon: ListIcon },
+              { mode: "grid" as const, label: "Grid view", Icon: LayoutGrid },
+            ].map(({ mode, label, Icon }) => {
+              const active = view === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => {
+                    haptic.trigger("selection");
+                    setView(mode);
+                  }}
+                  aria-label={label}
+                  aria-pressed={active}
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-md transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] sm:h-8 sm:w-8 ${
+                    active
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="insights-view-pill"
+                      className="absolute inset-0 rounded-md bg-foreground/10"
+                      transition={{
+                        type: "spring",
+                        stiffness: 520,
+                        damping: 42,
+                      }}
+                    />
+                  )}
+                  <Icon className="relative z-10 h-4 w-4" />
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Sort — recency or quality */}
-          <div ref={sortMenuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setSortMenuOpen((open) => !open)}
-              aria-haspopup="listbox"
-              aria-expanded={sortMenuOpen}
-              aria-label={`Sort: ${SORT_LABELS[sort]}`}
-              className="inline-flex items-center gap-2 rounded-lg border border-border px-2.5 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:px-3"
-            >
-              <ArrowUpDown className="h-3.5 w-3.5 text-faint-foreground" />
-              <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
-              <ChevronDown
-                className={`hidden h-3.5 w-3.5 text-faint-foreground transition-transform sm:block ${
-                  sortMenuOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {sortMenuOpen && (
-              <div
-                role="listbox"
-                className="absolute left-0 top-full z-30 mt-1 w-44 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
-              >
-                {[
-                  { value: "newest" as const, label: "Newest", icon: Clock },
-                  { value: "liked" as const, label: "Most liked", icon: Heart },
-                  { value: "shuffle" as const, label: "Shuffle", icon: Shuffle },
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    role="option"
-                    aria-selected={sort === option.value}
-                    onClick={() => {
-                      setSort(option.value);
-                      setSortMenuOpen(false);
-                    }}
-                    className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
-                      sort === option.value
-                        ? "bg-foreground/[0.06] text-foreground"
-                        : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <option.icon className="h-3.5 w-3.5" />
-                      {option.label}
-                    </span>
-                    {sort === option.value && (
-                      <Check className="h-3.5 w-3.5 shrink-0" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          </div>
-        )}
-
+        {/* Filters + search */}
         <div
           className={`flex items-center gap-2 ${searchOpen ? "flex-1" : ""}`}
         >
-          {/* View toggle */}
-          <div
-            className={`${
-              searchOpen ? "hidden sm:flex" : "flex"
-            } items-center gap-0.5 rounded-lg border border-border p-0.5`}
-          >
-            <button
-              type="button"
-              onClick={() => setView("list")}
-              aria-label="List view"
-              aria-pressed={view === "list"}
-              className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
-                view === "list"
-                  ? "bg-foreground/10 text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <ListIcon className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setView("grid")}
-              aria-label="Grid view"
-              aria-pressed={view === "grid"}
-              className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
-                view === "grid"
-                  ? "bg-foreground/10 text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-          </div>
+          {!searchOpen && (
+            <>
+              <div ref={filterMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setFilterMenuOpen((open) => !open)}
+                  aria-haspopup="listbox"
+                  aria-expanded={filterMenuOpen}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
+                >
+                  <span className="max-w-[7rem] truncate">
+                    {activeFilterLabel}
+                  </span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
+                      filterMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {filterMenuOpen && (
+                  <div
+                    role="listbox"
+                    className="absolute right-0 top-full z-30 mt-1 max-h-80 w-52 overflow-y-auto rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
+                  >
+                    {filters.map((filter) => (
+                      <button
+                        key={filter.name}
+                        type="button"
+                        role="option"
+                        aria-selected={activeChannel === filter.name}
+                        onClick={() => {
+                          haptic.trigger("selection");
+                          setActiveChannel(filter.name);
+                          setFilterMenuOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
+                          activeChannel === filter.name
+                            ? "bg-foreground/[0.06] text-foreground"
+                            : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                        }`}
+                      >
+                        {filter.label}
+                        {activeChannel === filter.name && (
+                          <Check className="h-3.5 w-3.5 shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Sort — recency, quality, or a shuffle */}
+              <div ref={sortMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setSortMenuOpen((open) => !open)}
+                  aria-haspopup="listbox"
+                  aria-expanded={sortMenuOpen}
+                  aria-label={`Sort: ${SORT_LABELS[sort]}`}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-2.5 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9 sm:px-3"
+                >
+                  <ArrowUpDown className="h-3.5 w-3.5 shrink-0 text-faint-foreground" />
+                  <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
+                  <ChevronDown
+                    className={`hidden h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform sm:block ${
+                      sortMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {sortMenuOpen && (
+                  <div
+                    role="listbox"
+                    className="absolute right-0 top-full z-30 mt-1 w-44 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
+                  >
+                    {[
+                      { value: "newest" as const, label: "Newest", icon: Clock },
+                      {
+                        value: "liked" as const,
+                        label: "Most liked",
+                        icon: Heart,
+                      },
+                      {
+                        value: "shuffle" as const,
+                        label: "Shuffle",
+                        icon: Shuffle,
+                      },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={sort === option.value}
+                        onClick={() => {
+                          haptic.trigger("selection");
+                          setSort(option.value);
+                          setSortMenuOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
+                          sort === option.value
+                            ? "bg-foreground/[0.06] text-foreground"
+                            : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <option.icon className="h-3.5 w-3.5" />
+                          {option.label}
+                        </span>
+                        {sort === option.value && (
+                          <Check className="h-3.5 w-3.5 shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Mobile: search lives behind an icon until opened. */}
           <button
             type="button"
-            onClick={() => setSearchOpen((open) => !open)}
+            onClick={() => {
+              haptic.trigger("light");
+              setSearchOpen((open) => !open);
+            }}
             aria-label={searchOpen ? "Close search" : "Search links"}
             aria-expanded={searchOpen}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
           >
             {searchOpen ? (
               <X className="h-4 w-4" />
@@ -629,7 +655,7 @@ export default function InsightsList({
               spellCheck={false}
               aria-label="Search links"
               autoFocus={searchOpen}
-              className="w-full rounded-lg border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
+              className="h-10 w-full rounded-lg border border-border bg-transparent pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:h-9 sm:text-sm"
             />
           </div>
         </div>
@@ -738,7 +764,7 @@ export default function InsightsList({
             <button
               type="button"
               onClick={() => setVisibleItems((prev) => prev + ITEMS_PER_PAGE)}
-              className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
+              className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-4 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
             >
               Show {Math.min(ITEMS_PER_PAGE, sortedLinks.length - visibleItems)}{" "}
               more
