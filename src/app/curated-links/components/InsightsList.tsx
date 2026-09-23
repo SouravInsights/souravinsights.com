@@ -476,7 +476,7 @@ export default function InsightsList({
                   }}
                   aria-label={label}
                   aria-pressed={active}
-                  className={`relative flex h-9 w-9 items-center justify-center rounded-md transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] sm:h-8 sm:w-8 ${
+                  className={`relative flex h-full aspect-square items-center justify-center rounded-[5px] transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] ${
                     active
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -485,7 +485,7 @@ export default function InsightsList({
                   {active && (
                     <motion.span
                       layoutId="insights-view-pill"
-                      className="absolute inset-0 rounded-md bg-foreground/10"
+                      className="absolute inset-0 rounded-[5px] bg-foreground/10"
                       transition={{
                         type: "spring",
                         stiffness: 520,
@@ -539,7 +539,7 @@ export default function InsightsList({
                           setActiveChannel(filter.name);
                           setFilterMenuOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
+                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-left type-caption transition-colors ${
                           activeChannel === filter.name
                             ? "bg-foreground/[0.06] text-foreground"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
@@ -601,7 +601,7 @@ export default function InsightsList({
                           setSort(option.value);
                           setSortMenuOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
+                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-left type-caption transition-colors ${
                           sort === option.value
                             ? "bg-foreground/[0.06] text-foreground"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
