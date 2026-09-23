@@ -1,17 +1,9 @@
 export const revalidate = 300;
 
 import React from "react";
-import { unstable_cache } from "next/cache";
-import {
-  getChannels,
-  getMessagesFromChannel,
-  LinkData,
-  extractUrl,
-  extractTitle,
-  extractDescription,
-} from "./utils/discordApi";
 import InsightsList from "@/app/curated-links/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
+import { getDiscordData } from "./utils/discord-data";
 import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
@@ -22,6 +14,11 @@ export const metadata: Metadata = {
   title: "Insights | SouravInsights",
   description:
     "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles curated from my Discord community.",
+  alternates: {
+    types: {
+      "application/rss+xml": "/curated-links/rss.xml",
+    },
+  },
   openGraph: {
     title: "Insights | My Digital Garden",
     description:
@@ -30,37 +27,6 @@ export const metadata: Metadata = {
     url: "https://www.souravinsights.com/curated-links",
   },
 };
-
-/**
- * Discord is the slow part of this page, so the data is cached for five
- * minutes and every channel is fetched in parallel rather than one after the
- * other. Sequential fetches were the reason the page felt slow to open.
- */
-const getDiscordData = unstable_cache(
-  async () => {
-    const channels = await getChannels();
-
-    const entries = await Promise.all(
-      channels.map(async (channel): Promise<[string, LinkData[]]> => {
-        const messages = await getMessagesFromChannel(channel.id);
-        return [
-          channel.name,
-          messages.map((msg) => ({
-            id: msg.id,
-            url: extractUrl(msg.content, msg.embeds),
-            title: extractTitle(msg.embeds),
-            description: extractDescription(msg.embeds),
-            visible: true,
-          })),
-        ];
-      })
-    );
-
-    return { channels, linkData: Object.fromEntries(entries) };
-  },
-  ["insights-discord-data-v2"],
-  { revalidate: 300 }
-);
 
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getDiscordData();
@@ -89,6 +55,10 @@ export default async function CuratedLinksPage() {
   const totalLinks = dedupeByUrl(
     sortByNewestId(channels.flatMap((channel) => linkData[channel.name] || []))
   ).length;
+
+  // A new shuffle every five minutes, handed down so the server and client
+  // agree on the order.
+  const shuffleSeed = Math.floor(Date.now() / (5 * 60 * 1000));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -139,6 +109,7 @@ export default async function CuratedLinksPage() {
           linkData={linkData}
           previews={previews}
           likeCounts={likeCounts}
+          shuffleSeed={shuffleSeed}
         />
       </div>
     </div>

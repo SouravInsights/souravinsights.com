@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, Shuffle, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
   dedupeByUrl,
   normalizeUrl,
+  seededShuffle,
   sortByNewestId,
 } from "../utils/urlUtils";
+import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
 import { NoteEditorModal } from "./NoteEditorModal";
 import { LikeButton } from "./LikeButton";
 import { FadeIn } from "@/components/FadeIn";
@@ -23,30 +25,16 @@ interface InsightsListProps {
   linkData: { [key: string]: LinkData[] };
   previews: Record<string, string>;
   likeCounts: Record<string, number>;
+  shuffleSeed: number;
 }
 
-/** Human labels for the Discord channel names. */
-const CHANNEL_LABELS: Record<string, string> = {
-  "reading-list": "Articles",
-  resources: "Resources",
-  "product-hunt": "Products",
-  newsletters: "Newsletters",
-  "fav-portfolios": "Portfolios",
-  tools: "Tools",
-  "design-inspo": "Design",
-};
-
-const CHANNEL_ORDER = [
-  "reading-list",
-  "resources",
-  "product-hunt",
-  "newsletters",
-  "fav-portfolios",
-  "tools",
-  "design-inspo",
-];
-
 const ITEMS_PER_PAGE = 60;
+
+const SORT_LABELS = {
+  newest: "Newest",
+  liked: "Most liked",
+  shuffle: "Shuffle",
+} as const;
 
 /** Hostname only, without protocol or `www.`, to hint at the source. */
 const shortDomain = (url: string) => {
@@ -67,6 +55,7 @@ export default function InsightsList({
   linkData,
   previews,
   likeCounts,
+  shuffleSeed,
 }: InsightsListProps) {
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,7 +68,7 @@ export default function InsightsList({
   const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
-  const [sort, setSort] = useState<"newest" | "liked">("newest");
+  const [sort, setSort] = useState<"newest" | "liked" | "shuffle">("newest");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"list" | "grid">("list");
@@ -151,10 +140,11 @@ export default function InsightsList({
   // Quality sort keeps newest-first order for ties (Array.sort is stable).
   const sortedLinks = useMemo(() => {
     if (sort === "newest") return filteredLinks;
+    if (sort === "shuffle") return seededShuffle(filteredLinks, shuffleSeed);
     return [...filteredLinks].sort(
       (a, b) => (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0)
     );
-  }, [filteredLinks, sort, likeCounts]);
+  }, [filteredLinks, sort, likeCounts, shuffleSeed]);
 
   useEffect(() => {
     setVisibleItems(ITEMS_PER_PAGE);
@@ -203,7 +193,13 @@ export default function InsightsList({
     const storedView = window.localStorage.getItem("insights:view");
     if (storedView === "grid" || storedView === "list") setView(storedView);
     const storedSort = window.localStorage.getItem("insights:sort");
-    if (storedSort === "liked" || storedSort === "newest") setSort(storedSort);
+    if (
+      storedSort === "liked" ||
+      storedSort === "newest" ||
+      storedSort === "shuffle"
+    ) {
+      setSort(storedSort);
+    }
   }, []);
 
   useEffect(() => {
@@ -513,13 +509,11 @@ export default function InsightsList({
               onClick={() => setSortMenuOpen((open) => !open)}
               aria-haspopup="listbox"
               aria-expanded={sortMenuOpen}
-              aria-label={`Sort: ${sort === "newest" ? "Newest" : "Most liked"}`}
+              aria-label={`Sort: ${SORT_LABELS[sort]}`}
               className="inline-flex items-center gap-2 rounded-lg border border-border px-2.5 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:px-3"
             >
               <ArrowUpDown className="h-3.5 w-3.5 text-faint-foreground" />
-              <span className="hidden sm:inline">
-                {sort === "newest" ? "Newest" : "Most liked"}
-              </span>
+              <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
               <ChevronDown
                 className={`hidden h-3.5 w-3.5 text-faint-foreground transition-transform sm:block ${
                   sortMenuOpen ? "rotate-180" : ""
@@ -534,6 +528,7 @@ export default function InsightsList({
                 {[
                   { value: "newest" as const, label: "Newest", icon: Clock },
                   { value: "liked" as const, label: "Most liked", icon: Heart },
+                  { value: "shuffle" as const, label: "Shuffle", icon: Shuffle },
                 ].map((option) => (
                   <button
                     key={option.value}
