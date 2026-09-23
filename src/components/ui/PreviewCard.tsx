@@ -1,8 +1,6 @@
 "use client";
 
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { Dithering } from "@paper-design/shaders-react";
-import { useReducedMotion } from "framer-motion";
 import {
   createContext,
   type ReactNode,
@@ -12,7 +10,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { useTheme } from "@/context/ThemeContext";
+import { PreviewLoader } from "@/components/ui/PreviewLoader";
 import { cn } from "@/lib/utils";
 
 export type PreviewCardPayload = {
@@ -39,34 +37,6 @@ function usePreviewCardContext() {
 
 /** Images we've already decoded, so reopening a card doesn't re-preload. */
 const loadedImages = new Set<string>();
-
-/**
- * WebGL dither shader as the loading state, tuned to our palette: a slow,
- * low-contrast pattern that reads as texture rather than a spinner. Respects
- * reduced motion and falls back to a flat surface if WebGL is unavailable.
- */
-function PreviewLoader() {
-  const { isDarkMode } = useTheme();
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <div className="absolute inset-0 overflow-hidden bg-secondary">
-      <Dithering
-        speed={reduceMotion ? 0 : 0.08}
-        shape="dots"
-        type="8x8"
-        size={2.4}
-        scale={1.2}
-        fit="cover"
-        colorBack="#00000000"
-        colorFront={isDarkMode ? "#33383d" : "#d3d3cc"}
-        width="100%"
-        height="100%"
-        className="absolute inset-0"
-      />
-    </div>
-  );
-}
 
 function PreviewFallback() {
   return (

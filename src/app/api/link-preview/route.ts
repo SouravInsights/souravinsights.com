@@ -16,6 +16,13 @@ export async function GET(request: NextRequest) {
   try {
     // Cached links resolve instantly; misses capture once and are stored.
     const preview = await generatePreview(target);
+
+    // The grid warms previews and needs the stored URL back, so it asks for
+    // JSON; the image itself can use the redirect directly.
+    if (request.nextUrl.searchParams.get("json") === "1") {
+      return NextResponse.json({ preview });
+    }
+
     return NextResponse.redirect(preview, 307);
   } catch (error) {
     console.error("link-preview failed", target, error);

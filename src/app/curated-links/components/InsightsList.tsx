@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Pencil, Search, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
@@ -16,11 +16,13 @@ import {
   PreviewCardProvider,
   PreviewCardTrigger,
 } from "@/components/ui/PreviewCard";
+import { PreviewLoader } from "@/components/ui/PreviewLoader";
 
 interface InsightsListProps {
   channels: DiscordChannel[];
   linkData: { [key: string]: LinkData[] };
   previews: Record<string, string>;
+  likeCounts: Record<string, number>;
 }
 
 /** Human labels for the Discord channel names. */
@@ -64,6 +66,7 @@ export default function InsightsList({
   channels,
   linkData,
   previews,
+  likeCounts,
 }: InsightsListProps) {
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,6 +79,16 @@ export default function InsightsList({
   const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const [sort, setSort] = useState<"newest" | "liked">("newest");
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState<"list" | "grid">("list");
+  // Captured previews start server-rendered, then fill in as we warm misses.
+  const [previewMap, setPreviewMap] = useState(previews);
+  const warmedRef = useRef<Set<string>>(new Set());
+  const queueRef = useRef<string[]>([]);
+  const runningRef = useRef(0);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const sortedChannels = useMemo(
     () =>
@@ -135,9 +148,17 @@ export default function InsightsList({
     );
   }, [links, searchTerm]);
 
+  // Quality sort keeps newest-first order for ties (Array.sort is stable).
+  const sortedLinks = useMemo(() => {
+    if (sort === "newest") return filteredLinks;
+    return [...filteredLinks].sort(
+      (a, b) => (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0)
+    );
+  }, [filteredLinks, sort, likeCounts]);
+
   useEffect(() => {
     setVisibleItems(ITEMS_PER_PAGE);
-  }, [activeChannel, searchTerm]);
+  }, [activeChannel, searchTerm, sort, view]);
 
   // Close the category menu on outside click or Escape.
   useEffect(() => {
@@ -158,41 +179,139 @@ export default function InsightsList({
     };
   }, [filterMenuOpen]);
 
-  // Warm previews for the first links a visitor is likely to hover so the
-  // first hover isn't a cold, multi-second capture. Best-effort, low
-  // concurrency, and skipped for anything already captured.
+  // Close the sort menu the same way.
   useEffect(() => {
-    const missing = links
-      .map((link) => link.url)
-      .filter((url) => url && !previews[url])
-      .slice(0, 8);
-
-    if (missing.length === 0) return;
-
-    let cancelled = false;
-    let cursor = 0;
-
-    const worker = async () => {
-      while (!cancelled && cursor < missing.length) {
-        const url = missing[cursor++];
-        try {
-          await fetch(`/api/link-preview?url=${encodeURIComponent(url)}`, {
-            redirect: "manual",
-          });
-        } catch {
-          // best-effort
-        }
+    if (!sortMenuOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!sortMenuRef.current?.contains(event.target as Node)) {
+        setSortMenuOpen(false);
       }
     };
-
-    void Promise.all([worker(), worker()]);
-
-    return () => {
-      cancelled = true;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSortMenuOpen(false);
     };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [sortMenuOpen]);
+
+  // Remember the chosen view and sort across visits.
+  useEffect(() => {
+    const storedView = window.localStorage.getItem("insights:view");
+    if (storedView === "grid" || storedView === "list") setView(storedView);
+    const storedSort = window.localStorage.getItem("insights:sort");
+    if (storedSort === "liked" || storedSort === "newest") setSort(storedSort);
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("insights:view", view);
+  }, [view]);
+
+  useEffect(() => {
+    window.localStorage.setItem("insights:sort", sort);
+  }, [sort]);
+
+  // A card shows the shader while it's on screen and its screenshot isn't ready
+  // yet. Off-screen cards render nothing, so only the handful in view ever run a
+  // shader (keeps well under the browser's WebGL context limit).
+  const [visibleUrls, setVisibleUrls] = useState<Set<string>>(new Set());
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
+
+  const loadPreview = async (url: string, attempt = 0): Promise<void> => {
+    try {
+      const response = await fetch(
+        `/api/link-preview?url=${encodeURIComponent(url)}&json=1`
+      );
+      const data = response.ok
+        ? ((await response.json()) as { preview?: string })
+        : null;
+      if (!data?.preview) throw new Error("no preview");
+      const preview = data.preview;
+      setPreviewMap((prev) => ({ ...prev, [url]: preview }));
+    } catch {
+      // One quick retry — a capture can fail on a cold start.
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        return loadPreview(url, 1);
+      }
+      setFailedUrls((prev) => new Set(prev).add(url));
+    }
+  };
+
+  const runQueue = () => {
+    while (runningRef.current < 2 && queueRef.current.length > 0) {
+      const url = queueRef.current.shift();
+      if (!url) break;
+      runningRef.current += 1;
+      loadPreview(url).finally(() => {
+        runningRef.current -= 1;
+        runQueue();
+      });
+    }
+  };
+
+  const warmPreview = (url: string) => {
+    if (!url || previewMap[url] || warmedRef.current.has(url)) return;
+    warmedRef.current.add(url);
+    queueRef.current.push(url);
+    runQueue();
+  };
+
+  const warmRef = useRef(warmPreview);
+  warmRef.current = warmPreview;
+
+  // Seed the first few on mount.
+  useEffect(() => {
+    links
+      .map((link) => link.url)
+      .filter(Boolean)
+      .slice(0, 8)
+      .forEach((url) => warmRef.current(url));
     // Run once on mount against the initial (all) list.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // In grid view, load a card's screenshot when it scrolls into view and keep
+  // the shader up while it's on screen and not ready yet.
+  useEffect(() => {
+    if (view !== "grid") return;
+    const container = gridRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entering: string[] = [];
+        const leaving: string[] = [];
+
+        for (const entry of entries) {
+          const url = (entry.target as HTMLElement).dataset.warmUrl;
+          if (!url) continue;
+          (entry.isIntersecting ? entering : leaving).push(url);
+        }
+
+        if (entering.length || leaving.length) {
+          setVisibleUrls((prev) => {
+            const next = new Set(prev);
+            entering.forEach((url) => next.add(url));
+            leaving.forEach((url) => next.delete(url));
+            return next;
+          });
+        }
+
+        entering.forEach((url) => warmRef.current(url));
+      },
+      { rootMargin: "0px" }
+    );
+
+    container
+      .querySelectorAll<HTMLElement>("[data-warm-url]")
+      .forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [view, sortedLinks, previewMap]);
 
   // Admin mode is opt-in via ?adminKey=...
   useEffect(() => {
@@ -278,7 +397,7 @@ export default function InsightsList({
     await fetchCuratedLinks();
   };
 
-  const visibleLinks = filteredLinks.slice(0, visibleItems);
+  const visibleLinks = sortedLinks.slice(0, visibleItems);
 
   return (
     <PreviewCardProvider>
@@ -288,6 +407,7 @@ export default function InsightsList({
           away. */}
       <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
         {!searchOpen && (
+          <div className="flex items-center gap-2">
           <div ref={filterMenuRef} className="relative">
             <button
               type="button"
@@ -333,11 +453,103 @@ export default function InsightsList({
               </div>
             )}
           </div>
+
+          {/* Sort — recency or quality */}
+          <div ref={sortMenuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setSortMenuOpen((open) => !open)}
+              aria-haspopup="listbox"
+              aria-expanded={sortMenuOpen}
+              aria-label={`Sort: ${sort === "newest" ? "Newest" : "Most liked"}`}
+              className="inline-flex items-center gap-2 rounded-lg border border-border px-2.5 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:px-3"
+            >
+              <ArrowUpDown className="h-3.5 w-3.5 text-faint-foreground" />
+              <span className="hidden sm:inline">
+                {sort === "newest" ? "Newest" : "Most liked"}
+              </span>
+              <ChevronDown
+                className={`hidden h-3.5 w-3.5 text-faint-foreground transition-transform sm:block ${
+                  sortMenuOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            {sortMenuOpen && (
+              <div
+                role="listbox"
+                className="absolute left-0 top-full z-30 mt-1 w-44 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
+              >
+                {[
+                  { value: "newest" as const, label: "Newest", icon: Clock },
+                  { value: "liked" as const, label: "Most liked", icon: Heart },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="option"
+                    aria-selected={sort === option.value}
+                    onClick={() => {
+                      setSort(option.value);
+                      setSortMenuOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
+                      sort === option.value
+                        ? "bg-foreground/[0.06] text-foreground"
+                        : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <option.icon className="h-3.5 w-3.5" />
+                      {option.label}
+                    </span>
+                    {sort === option.value && (
+                      <Check className="h-3.5 w-3.5 shrink-0" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          </div>
         )}
 
         <div
           className={`flex items-center gap-2 ${searchOpen ? "flex-1" : ""}`}
         >
+          {/* View toggle */}
+          <div
+            className={`${
+              searchOpen ? "hidden sm:flex" : "flex"
+            } items-center gap-0.5 rounded-lg border border-border p-0.5`}
+          >
+            <button
+              type="button"
+              onClick={() => setView("list")}
+              aria-label="List view"
+              aria-pressed={view === "list"}
+              className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+                view === "list"
+                  ? "bg-foreground/10 text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <ListIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("grid")}
+              aria-label="Grid view"
+              aria-pressed={view === "grid"}
+              className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+                view === "grid"
+                  ? "bg-foreground/10 text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+          </div>
+
           {/* Mobile: search lives behind an icon until opened. */}
           <button
             type="button"
@@ -387,103 +599,98 @@ export default function InsightsList({
         </div>
       )}
 
-      {/* List */}
+      {/* Links */}
       <div className="mt-6">
-        <div className="flex items-center gap-3 px-3 pb-3 type-body text-muted-foreground">
-          <span className="w-5 shrink-0" aria-hidden="true" />
-          <span className="flex-1">Name</span>
-          <span className="hidden w-44 shrink-0 sm:block">Site</span>
-          <span className="w-24 shrink-0 text-right">Likes</span>
-        </div>
-        <div className="rule" aria-hidden="true" />
+        {visibleLinks.length === 0 ? (
+          <p className="px-3 py-10 text-center type-caption">
+            No links match “{searchTerm}”.
+          </p>
+        ) : view === "list" ? (
+          <>
+            <div className="flex items-center gap-3 px-3 pb-3 type-body text-muted-foreground">
+              <span className="w-5 shrink-0" aria-hidden="true" />
+              <span className="flex-1">Name</span>
+              <span className="hidden w-44 shrink-0 sm:block">Site</span>
+              <span className="w-24 shrink-0 text-right">Likes</span>
+            </div>
+            <div className="rule" aria-hidden="true" />
 
-        <div className="flex flex-col">
-          {visibleLinks.map((link, index) => {
-            const isCurated = curatedLinks.some(
-              (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-            );
-            const href = appendUTMParams(link.url, {
-              utm_source: "souravinsights.com",
-              utm_medium: "curated_links",
-            });
+            <div className="flex flex-col">
+              {visibleLinks.map((link, index) => {
+                const isCurated = curatedLinks.some(
+                  (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
+                );
+                const href = appendUTMParams(link.url, {
+                  utm_source: "souravinsights.com",
+                  utm_medium: "curated_links",
+                });
 
-            return (
-              <div key={link.id}>
-                {index > 0 && <div className="rule" aria-hidden="true" />}
-                <FadeIn delay={Math.min(index, 12) * 0.03}>
-                  <PreviewCardTrigger
-                    payload={{
-                      url: link.url,
-                      name: link.title,
-                      previewImage:
-                        previews[link.url] ??
-                        `/api/link-preview?url=${encodeURIComponent(link.url)}`,
-                    }}
-                    className="group flex items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/5"
-                  >
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex min-w-0 flex-1 items-center gap-3"
-                  >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={faviconFor(link.url)}
-                        alt=""
-                        width={16}
-                        height={16}
-                        loading="lazy"
-                        className="h-4 w-4 object-contain"
-                      />
-                    </span>
-
-                    <span className="min-w-0 flex-1 truncate type-body font-semibold text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
-                      {link.title}
-                    </span>
-
-                    <span className="hidden w-44 shrink-0 truncate type-body text-muted-foreground sm:block">
-                      {shortDomain(link.url)}
-                    </span>
-                  </a>
-
-                  <div className="flex w-24 shrink-0 items-center justify-end gap-2">
-                    {isAdminMode && (
-                      <button
-                        type="button"
-                        onClick={() => openEditor(link)}
-                        aria-label={
-                          isCurated ? "Edit notes" : "Add to collection"
+                return (
+                  <div key={link.id}>
+                    {index > 0 && <div className="rule" aria-hidden="true" />}
+                    <FadeIn delay={Math.min(index, 12) * 0.03}>
+                      <LinkRow
+                        link={link}
+                        href={href}
+                        previewSrc={
+                          previewMap[link.url] ??
+                          `/api/link-preview?url=${encodeURIComponent(link.url)}`
                         }
-                        className="text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    <LikeButton linkId={link.id} />
+                        isAdminMode={isAdminMode}
+                        isCurated={isCurated}
+                        onEdit={() => openEditor(link)}
+                      />
+                    </FadeIn>
                   </div>
-                  </PreviewCardTrigger>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div
+            ref={gridRef}
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {visibleLinks.map((link, index) => {
+              const isCurated = curatedLinks.some(
+                (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
+              );
+              const href = appendUTMParams(link.url, {
+                utm_source: "souravinsights.com",
+                utm_medium: "curated_links",
+              });
+
+              return (
+                <FadeIn
+                  key={link.id}
+                  className="h-full"
+                  delay={Math.min(index, 12) * 0.03}
+                >
+                  <LinkGridCard
+                    link={link}
+                    href={href}
+                    previewSrc={previewMap[link.url]}
+                    isVisible={visibleUrls.has(link.url)}
+                    isFailed={failedUrls.has(link.url)}
+                    isAdminMode={isAdminMode}
+                    isCurated={isCurated}
+                    onEdit={() => openEditor(link)}
+                    warmUrl={previewMap[link.url] ? undefined : link.url}
+                  />
                 </FadeIn>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        )}
 
-          {visibleLinks.length === 0 && (
-            <p className="px-3 py-10 text-center type-caption">
-              No links match “{searchTerm}”.
-            </p>
-          )}
-        </div>
-
-        {filteredLinks.length > visibleItems && (
+        {sortedLinks.length > visibleItems && (
           <div className="mt-4">
             <button
               type="button"
               onClick={() => setVisibleItems((prev) => prev + ITEMS_PER_PAGE)}
               className="inline-flex items-center gap-1.5 rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
             >
-              Show {Math.min(ITEMS_PER_PAGE, filteredLinks.length - visibleItems)}{" "}
+              Show {Math.min(ITEMS_PER_PAGE, sortedLinks.length - visibleItems)}{" "}
               more
             </button>
           </div>
@@ -500,5 +707,142 @@ export default function InsightsList({
       />
       </div>
     </PreviewCardProvider>
+  );
+}
+
+function LinkRow({
+  link,
+  href,
+  previewSrc,
+  isAdminMode,
+  isCurated,
+  onEdit,
+}: {
+  link: EnrichedLink;
+  href: string;
+  previewSrc: string;
+  isAdminMode: boolean;
+  isCurated: boolean;
+  onEdit: () => void;
+}) {
+  return (
+    <PreviewCardTrigger
+      payload={{ url: link.url, name: link.title, previewImage: previewSrc }}
+      className="group flex items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/5"
+    >
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex min-w-0 flex-1 items-center gap-3"
+      >
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={faviconFor(link.url)}
+            alt=""
+            width={16}
+            height={16}
+            loading="lazy"
+            className="h-4 w-4 object-contain"
+          />
+        </span>
+
+        <span className="min-w-0 flex-1 truncate type-body font-semibold text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+          {link.title}
+        </span>
+
+        <span className="hidden w-44 shrink-0 truncate type-body text-muted-foreground sm:block">
+          {shortDomain(link.url)}
+        </span>
+      </a>
+
+      <div className="flex w-24 shrink-0 items-center justify-end gap-2">
+        {isAdminMode && (
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label={isCurated ? "Edit notes" : "Add to collection"}
+            className="text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+        )}
+        <LikeButton linkId={link.id} />
+      </div>
+    </PreviewCardTrigger>
+  );
+}
+
+function LinkGridCard({
+  link,
+  href,
+  previewSrc,
+  isVisible,
+  isFailed,
+  isAdminMode,
+  isCurated,
+  onEdit,
+  warmUrl,
+}: {
+  link: EnrichedLink;
+  href: string;
+  previewSrc?: string;
+  isVisible?: boolean;
+  isFailed?: boolean;
+  isAdminMode: boolean;
+  isCurated: boolean;
+  onEdit: () => void;
+  warmUrl?: string;
+}) {
+  return (
+    <div
+      data-warm-url={warmUrl}
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-foreground/20"
+    >
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-1 flex-col"
+      >
+        <div className="relative aspect-[40/21] w-full overflow-hidden bg-secondary">
+          {previewSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={previewSrc}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          ) : isVisible && !isFailed ? (
+            <PreviewLoader />
+          ) : null}
+        </div>
+        <div className="p-3">
+          <div className="line-clamp-2 type-body font-medium leading-snug text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+            {link.title}
+          </div>
+        </div>
+      </a>
+      <div className="mt-auto flex items-center justify-between gap-2 border-t border-border px-3 py-2.5">
+        <span className="truncate type-caption text-faint-foreground">
+          {shortDomain(link.url)}
+        </span>
+        <div className="flex shrink-0 items-center gap-2">
+          {isAdminMode && (
+            <button
+              type="button"
+              onClick={onEdit}
+              aria-label={isCurated ? "Edit notes" : "Add to collection"}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+          <LikeButton linkId={link.id} />
+        </div>
+      </div>
+    </div>
   );
 }

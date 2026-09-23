@@ -13,6 +13,7 @@ import {
 import InsightsList from "@/app/curated-links/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
 import { getPreviewMap } from "@/lib/link-preview";
+import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { Metadata } from "next";
@@ -73,6 +74,16 @@ export default async function CuratedLinksPage() {
       .filter(Boolean)
   );
 
+  // Like totals for the whole collection, so the list can sort by quality
+  // without a request per link.
+  const rawLikes = await redis.hgetall<Record<string, number>>(
+    "insights:likes"
+  );
+  const likeCounts: Record<string, number> = {};
+  for (const [id, count] of Object.entries(rawLikes ?? {})) {
+    likeCounts[id] = Number(count) || 0;
+  }
+
   // Grand total across every channel, de-duplicated, so the header can show
   // how much is in the collection without any per-view noise.
   const totalLinks = dedupeByUrl(
@@ -127,6 +138,7 @@ export default async function CuratedLinksPage() {
           channels={channels}
           linkData={linkData}
           previews={previews}
+          likeCounts={likeCounts}
         />
       </div>
     </div>
