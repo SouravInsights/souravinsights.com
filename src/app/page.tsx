@@ -3,12 +3,15 @@
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
-import { ChevronRight, Twitter, Github, Bike, Footprints, Coffee, Music } from "lucide-react";
+import { Twitter, Github, Bike, Footprints, Coffee, Music } from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
 import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
+import { ReadingShelf } from "@/components/ReadingShelf";
+import { MoviesShelf } from "@/components/MoviesShelf";
+import { OpinionsSection } from "@/components/OpinionsSection";
+import { EssayHighlights } from "@/components/EssayHighlights";
 import { featuredProjects } from "@/app/projects/projects-data";
 import {
   Docker,
@@ -45,39 +48,6 @@ const companies = [
     logo: "https://pbs.twimg.com/profile_images/2090749736764497920/jUEcfiH8_400x400.jpg",
     website: "https://rabbithole.gg",
   },
-];
-
-const blogHighlights = [
-  {
-    title: "We are unconsciously becoming someone else",
-    url: "/blog/on-becoming-someone-else",
-    date: "2026-09-19",
-  },
-  {
-    title: "An AI Workflow to Slow Down & Reflect in the Age of Inference-Speed",
-    url: "/blog/learning-with-ai-agents",
-    date: "2026-02-04",
-  },
-  {
-    title: "Why Riding Feels So Liberating",
-    url: "/blog/why-riding-is-like-a-therapy",
-    date: "2025-09-30",
-  },
-  {
-    title: "Building a Brain That Can Do Everything (But Not All at Once)",
-    url: "/blog/polymath-mode",
-    date: "2025-04-19",
-  },
-];
-
-const unpopularOpinions = [
-  "Curiousity & persistence can outmatch talent.",
-  "Suffering is not always bad, comfort is not always good.",
-  "The most dangerous thing about the internet isn’t distraction, it’s identity addiction!",
-  "We romanticize 'busy' because we're scared of what we'd find in the silence",
-  "You are replaceable. And that’s okay",
-  "Sometimes you don’t miss the person. You miss the version of yourself who hoped things would turn out better.",
-  "Most people are lonely not because they're alone, but because they're afraid to be vulnerable",
 ];
 
 const myToolkit = {
@@ -160,9 +130,6 @@ const myToolkit = {
     ],
   },
 };
-
-const formatDate = (date: string) =>
-  format(new Date(`${date}T00:00:00`), "MMM d, yyyy");
 
 const HeroSection = () => (
   <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
@@ -364,10 +331,11 @@ export default function Home() {
         </section>
 
         {/* Projects Section */}
-        <section>
+        <section className="group/section">
           <FadeIn>
             <SectionHeader
               title="Side Projects"
+              href="/projects"
               description="Things I build when I'm curious about something or need to scratch a personal itch."
             />
           </FadeIn>
@@ -403,90 +371,40 @@ export default function Home() {
               );
             })}
           </div>
-          <div className="mt-6">
-            <a
-              href="/projects"
-              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
-            >
-              Read the notes <ChevronRight className="w-4 h-4" />
-            </a>
-          </div>
         </section>
 
+        {/* Paired sections — long link/article lists up top, then the two
+            shelves, then tools beside the opinions, matched by height. */}
+        <div className="grid grid-cols-1 gap-x-16 gap-y-16 sm:gap-y-24 md:grid-cols-2 md:items-start">
         {/* Blog Section */}
-        <section>
+        <section className="group/section">
           <FadeIn>
             <SectionHeader
               title="Recent Essays"
+              href="/blog"
               description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
             />
           </FadeIn>
-          <div className="flex flex-col">
-            {blogHighlights.map((blog, index) => (
-              <div key={blog.title}>
-                {index > 0 && <div className="rule" aria-hidden="true" />}
-                <motion.a
-                  href={blog.url}
-                  className="list-row group"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
-                >
-                  <h3 className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors min-w-0">
-                    {blog.title}
-                  </h3>
-                  <time
-                    dateTime={blog.date}
-                    className="type-caption shrink-0"
-                  >
-                    {formatDate(blog.date)}
-                  </time>
-                </motion.a>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6">
-            <a
-              href="/blog"
-              className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
-            >
-              Read all posts <ChevronRight className="w-4 h-4" />
-            </a>
-          </div>
+          <EssayHighlights />
         </section>
 
         {/* Favorite Links Section */}
-        <section>
+        <section className="group/section">
           <FadeIn>
             <SectionHeader
               title="Curated Links"
-              description="Curated resources, articles and tools I find valuable"
+              href="/curated-links"
+              description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
             />
           </FadeIn>
           <FavoriteLinks />
         </section>
 
-        {/* Unpopular Opinions Section */}
-        <section>
-          <FadeIn>
-            <SectionHeader
-              title="Unpopular Opinions"
-              description="Things I've felt, noticed and often keep circling back to."
-            />
-          </FadeIn>
-          <div className="flex flex-col gap-1">
-            {unpopularOpinions.map((opinion, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <span className="text-[13px] font-mono tabular-nums text-green-700 dark:text-green-500 mt-1 w-6 shrink-0 font-medium">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <p className="type-body text-muted-foreground italic">
-                  {opinion}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Reading Section */}
+        <ReadingShelf />
+
+        {/* Movies Section */}
+        <MoviesShelf />
 
         {/* My Toolkit Section */}
         <section>
@@ -496,16 +414,14 @@ export default function Home() {
               description="The software, tools, and habits that help me get things done"
             />
           </FadeIn>
-          <div className="flex flex-col gap-5">
-            {Object.entries(myToolkit).map(([key, category]) => (
-              <div
-                key={key}
-                className="flex flex-col gap-2 sm:flex-row sm:gap-8"
-              >
-                <h3 className="type-caption font-medium shrink-0 sm:w-36 sm:pt-0.5">
-                  {category.title}
-                </h3>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex flex-col">
+            {Object.entries(myToolkit).map(([key, category], groupIndex) => (
+              <div key={key}>
+                {groupIndex > 0 && (
+                  <div className="rule my-4" aria-hidden="true" />
+                )}
+                <h3 className="type-label mb-3">{category.title}</h3>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
                   {category.items.map((item, index) => {
                     const ItemWrapper = item.url ? "a" : "span";
                     const logo = item.logo;
@@ -553,6 +469,10 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* Unpopular Opinions Section */}
+        <OpinionsSection />
+        </div>
       </div>
     </div>
   );
