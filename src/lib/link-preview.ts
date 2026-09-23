@@ -10,6 +10,28 @@ export const previewKey = (url: string) =>
 const hashFor = (url: string) =>
   createHash("sha1").update(url).digest("hex");
 
+/** Reject if `promise` hasn't settled within `ms`, so a stuck stage can't run
+ *  past the route's serverless ceiling and get hard-killed. */
+function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  message: string
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+}
+
 /**
  * Resolve already-captured preview URLs for a batch of links. This is what the
  * page server-renders, so a hover never has to hit a capture service — it just
@@ -56,8 +78,14 @@ export async function generatePreview(
   }
 
   // Loaded lazily so pages that only read the cache never pull in the browser.
-  const { captureScreenshot } = await import("@/lib/screenshot");
-  const png = await captureScreenshot(url);
+  const png = await withTimeout(
+    (async () => {
+      const { captureScreenshot } = await import("@/lib/screenshot");
+      return captureScreenshot(url);
+    })(),
+    45_000,
+    "capture timed out"
+  );
 
   const webp = await sharp(png)
     .resize(1200, 630, { fit: "cover", position: "top" })

@@ -227,12 +227,14 @@ export default function InsightsList({
     refresh: boolean,
     attempt = 0
   ): Promise<void> => {
+    let responded = false;
     try {
       const response = await fetch(
         `/api/link-preview?url=${encodeURIComponent(url)}${
           refresh ? "&refresh=1" : ""
         }&json=1`
       );
+      responded = true;
       const data = response.ok
         ? ((await response.json()) as { preview?: string })
         : null;
@@ -240,8 +242,9 @@ export default function InsightsList({
       const preview = data.preview;
       setPreviewMap((prev) => ({ ...prev, [url]: preview }));
     } catch {
-      // One quick retry — a capture can fail on a cold start.
-      if (attempt === 0) {
+      // Retry a genuine network failure once. A server error or timeout won't
+      // get better, so fail fast instead of leaving the shader spinning.
+      if (!responded && attempt === 0) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return loadPreview(url, refresh, 1);
       }
@@ -870,7 +873,21 @@ function LinkGridCard({
             />
           ) : isVisible && !isFailed ? (
             <PreviewLoader />
-          ) : null}
+          ) : (
+            // Couldn't capture this one (site blocks bots / is unreachable).
+            // A quiet mark beats an empty panel.
+            <div className="flex h-full w-full items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={faviconFor(link.url)}
+                alt=""
+                width={28}
+                height={28}
+                loading="lazy"
+                className="h-7 w-7 rounded object-contain opacity-40"
+              />
+            </div>
+          )}
         </div>
         <div className="p-3">
           <div className="line-clamp-2 type-body font-medium leading-snug text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
