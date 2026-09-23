@@ -86,7 +86,7 @@ export default function InsightsList({
   // Captured previews start server-rendered, then fill in as we warm misses.
   const [previewMap, setPreviewMap] = useState(previews);
   const warmedRef = useRef<Set<string>>(new Set());
-  const queueRef = useRef<string[]>([]);
+  const queueRef = useRef<{ url: string; refresh: boolean }[]>([]);
   const runningRef = useRef(0);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -215,15 +215,22 @@ export default function InsightsList({
   }, [sort]);
 
   // A card shows the shader while it's on screen and its screenshot isn't ready
-  // yet. Off-screen cards render nothing, so only the handful in view ever run a
+  // yet. Off-screen cards render nothing, so only the cards in view ever run a
   // shader (keeps well under the browser's WebGL context limit).
   const [visibleUrls, setVisibleUrls] = useState<Set<string>>(new Set());
   const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
+  const visibleRef = useRef<Set<string>>(new Set());
 
-  const loadPreview = async (url: string, attempt = 0): Promise<void> => {
+  const loadPreview = async (
+    url: string,
+    refresh: boolean,
+    attempt = 0
+  ): Promise<void> => {
     try {
       const response = await fetch(
-        `/api/link-preview?url=${encodeURIComponent(url)}&json=1`
+        `/api/link-preview?url=${encodeURIComponent(url)}${
+          refresh ? "&refresh=1" : ""
+        }&json=1`
       );
       const data = response.ok
         ? ((await response.json()) as { preview?: string })
@@ -235,7 +242,7 @@ export default function InsightsList({
       // One quick retry — a capture can fail on a cold start.
       if (attempt === 0) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        return loadPreview(url, 1);
+        return loadPreview(url, refresh, 1);
       }
       setFailedUrls((prev) => new Set(prev).add(url));
     }
@@ -243,21 +250,47 @@ export default function InsightsList({
 
   const runQueue = () => {
     while (runningRef.current < 2 && queueRef.current.length > 0) {
-      const url = queueRef.current.shift();
-      if (!url) break;
+      const job = queueRef.current.shift();
+      if (!job) break;
       runningRef.current += 1;
-      loadPreview(url).finally(() => {
+      loadPreview(job.url, job.refresh).finally(() => {
         runningRef.current -= 1;
         runQueue();
       });
     }
   };
 
+  const enqueue = (url: string, refresh = false) => {
+    if (!url) return;
+    if (queueRef.current.some((job) => job.url === url)) return;
+    queueRef.current.push({ url, refresh });
+    runQueue();
+  };
+
   const warmPreview = (url: string) => {
     if (!url || previewMap[url] || warmedRef.current.has(url)) return;
     warmedRef.current.add(url);
-    queueRef.current.push(url);
-    runQueue();
+    enqueue(url);
+  };
+
+  // A stored preview that fails to load is stale: drop it, show the shader
+  // again, and capture a fresh one.
+  const refreshPreview = (url: string) => {
+    setPreviewMap((prev) => {
+      if (!prev[url]) return prev;
+      const next = { ...prev };
+      delete next[url];
+      return next;
+    });
+    setFailedUrls((prev) => {
+      if (!prev.has(url)) return prev;
+      const next = new Set(prev);
+      next.delete(url);
+      return next;
+    });
+    setVisibleUrls((prev) => new Set(prev).add(url));
+    warmedRef.current.delete(url);
+    enqueue(url, true);
   };
 
   const warmRef = useRef(warmPreview);
@@ -274,44 +307,51 @@ export default function InsightsList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // In grid view, load a card's screenshot when it scrolls into view and keep
-  // the shader up while it's on screen and not ready yet.
+  // Work out which cards are on screen (only those mount a shader). A plain
+  // rect check on scroll is deterministic — no reliance on observer quirks.
   useEffect(() => {
     if (view !== "grid") return;
     const container = gridRef.current;
     if (!container) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entering: string[] = [];
-        const leaving: string[] = [];
+    let frame: number | null = null;
 
-        for (const entry of entries) {
-          const url = (entry.target as HTMLElement).dataset.warmUrl;
-          if (!url) continue;
-          (entry.isIntersecting ? entering : leaving).push(url);
-        }
+    const update = () => {
+      frame = null;
+      const next = new Set<string>();
+      const entering: string[] = [];
 
-        if (entering.length || leaving.length) {
-          setVisibleUrls((prev) => {
-            const next = new Set(prev);
-            entering.forEach((url) => next.add(url));
-            leaving.forEach((url) => next.delete(url));
-            return next;
-          });
-        }
+      for (const element of Array.from(
+        container.querySelectorAll<HTMLElement>("[data-warm-url]")
+      )) {
+        const url = element.dataset.warmUrl;
+        if (!url) continue;
+        const rect = element.getBoundingClientRect();
+        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+        if (!inView) continue;
+        next.add(url);
+        if (!visibleRef.current.has(url)) entering.push(url);
+      }
 
-        entering.forEach((url) => warmRef.current(url));
-      },
-      { rootMargin: "0px" }
-    );
+      visibleRef.current = next;
+      setVisibleUrls(next);
+      entering.forEach((url) => warmRef.current(url));
+    };
 
-    container
-      .querySelectorAll<HTMLElement>("[data-warm-url]")
-      .forEach((element) => observer.observe(element));
+    const schedule = () => {
+      if (frame !== null) return;
+      frame = requestAnimationFrame(update);
+    };
 
-    return () => observer.disconnect();
-  }, [view, sortedLinks, previewMap]);
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [view, sortedLinks, visibleItems]);
 
   // Admin mode is opt-in via ?adminKey=...
   useEffect(() => {
@@ -672,6 +712,7 @@ export default function InsightsList({
                     previewSrc={previewMap[link.url]}
                     isVisible={visibleUrls.has(link.url)}
                     isFailed={failedUrls.has(link.url)}
+                    onPreviewError={() => refreshPreview(link.url)}
                     isAdminMode={isAdminMode}
                     isCurated={isCurated}
                     onEdit={() => openEditor(link)}
@@ -780,6 +821,7 @@ function LinkGridCard({
   previewSrc,
   isVisible,
   isFailed,
+  onPreviewError,
   isAdminMode,
   isCurated,
   onEdit,
@@ -790,6 +832,7 @@ function LinkGridCard({
   previewSrc?: string;
   isVisible?: boolean;
   isFailed?: boolean;
+  onPreviewError: () => void;
   isAdminMode: boolean;
   isCurated: boolean;
   onEdit: () => void;
@@ -813,6 +856,7 @@ function LinkGridCard({
               src={previewSrc}
               alt=""
               loading="lazy"
+              onError={onPreviewError}
               className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
             />
           ) : isVisible && !isFailed ? (

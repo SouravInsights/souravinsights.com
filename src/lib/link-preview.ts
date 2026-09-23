@@ -45,9 +45,15 @@ export async function getPreviewMap(
  * remember the URL. Repeat calls are a single cache read. Shapes the image like
  * briOS: 1200×630 cover cropped from the top so the hero stays visible.
  */
-export async function generatePreview(url: string): Promise<string> {
-  const cached = await redis.get<string>(previewKey(url));
-  if (cached) return cached;
+export async function generatePreview(
+  url: string,
+  options: { refresh?: boolean } = {}
+): Promise<string> {
+  // `refresh` skips the cache so a stale/broken stored image can be replaced.
+  if (!options.refresh) {
+    const cached = await redis.get<string>(previewKey(url));
+    if (cached) return cached;
+  }
 
   // Loaded lazily so pages that only read the cache never pull in the browser.
   const { captureScreenshot } = await import("@/lib/screenshot");
