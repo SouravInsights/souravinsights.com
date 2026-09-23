@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { Pencil, Search, X } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Check, ChevronDown, Pencil, Search, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
@@ -65,6 +65,8 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
   const [selectedLinkForEditing, setSelectedLinkForEditing] =
     useState<LinkData | null>(null);
   const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
 
   const sortedChannels = useMemo(
     () =>
@@ -90,6 +92,9 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
     ],
     [sortedChannels]
   );
+
+  const activeFilterLabel =
+    filters.find((filter) => filter.name === activeChannel)?.label ?? "All";
 
   // Every link in the active view, newest first.
   const links = useMemo<EnrichedLink[]>(() => {
@@ -124,6 +129,25 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
   useEffect(() => {
     setVisibleItems(ITEMS_PER_PAGE);
   }, [activeChannel, searchTerm]);
+
+  // Close the category menu on outside click or Escape.
+  useEffect(() => {
+    if (!filterMenuOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!filterMenuRef.current?.contains(event.target as Node)) {
+        setFilterMenuOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFilterMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [filterMenuOpen]);
 
   // Admin mode is opt-in via ?adminKey=...
   useEffect(() => {
@@ -213,61 +237,94 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
 
   return (
     <div>
-      {/* Toolbar — the tabs lead, especially on mobile where search is a tap
-          away rather than a permanent full-width row. It sticks under the
-          navbar, and takes the top edge once the navbar scrolls away. */}
-      <div className="sticky-tabs -mx-5 flex items-center gap-2 bg-background px-5 py-3 sm:-mx-6 sm:justify-between sm:px-6">
+      {/* App bar — category filter on the left, search on the right. Sticks
+          under the navbar, and takes the top edge once the navbar scrolls
+          away. */}
+      <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
         {!searchOpen && (
-          <div className="no-scrollbar -mx-1 flex flex-1 gap-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
-            {filters.map((filter) => (
-              <button
-                key={filter.name}
-                type="button"
-                onClick={() => setActiveChannel(filter.name)}
-                className={`shrink-0 rounded-md px-3 py-1.5 type-caption font-medium transition-colors ${
-                  activeChannel === filter.name
-                    ? "bg-foreground/10 text-foreground"
-                    : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+          <div ref={filterMenuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setFilterMenuOpen((open) => !open)}
+              aria-haspopup="listbox"
+              aria-expanded={filterMenuOpen}
+              className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
+            >
+              {activeFilterLabel}
+              <ChevronDown
+                className={`h-3.5 w-3.5 text-faint-foreground transition-transform ${
+                  filterMenuOpen ? "rotate-180" : ""
                 }`}
+              />
+            </button>
+            {filterMenuOpen && (
+              <div
+                role="listbox"
+                className="absolute left-0 top-full z-30 mt-1 max-h-80 w-52 overflow-y-auto rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
               >
-                {filter.label}
-              </button>
-            ))}
+                {filters.map((filter) => (
+                  <button
+                    key={filter.name}
+                    type="button"
+                    role="option"
+                    aria-selected={activeChannel === filter.name}
+                    onClick={() => {
+                      setActiveChannel(filter.name);
+                      setFilterMenuOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left type-caption transition-colors ${
+                      activeChannel === filter.name
+                        ? "bg-foreground/[0.06] text-foreground"
+                        : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                    }`}
+                  >
+                    {filter.label}
+                    {activeChannel === filter.name && (
+                      <Check className="h-3.5 w-3.5 shrink-0" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Mobile: search lives behind an icon until opened. */}
-        <button
-          type="button"
-          onClick={() => setSearchOpen((open) => !open)}
-          aria-label={searchOpen ? "Close search" : "Search links"}
-          aria-expanded={searchOpen}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
-        >
-          {searchOpen ? (
-            <X className="h-4 w-4" />
-          ) : (
-            <Search className="h-4 w-4" />
-          )}
-        </button>
-
         <div
-          className={`relative ${searchOpen ? "flex-1" : "hidden"} sm:block sm:w-56`}
+          className={`flex items-center gap-2 ${searchOpen ? "flex-1" : ""}`}
         >
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
-            aria-hidden="true"
-          />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search…"
-            spellCheck={false}
-            aria-label="Search links"
-            autoFocus={searchOpen}
-            className="w-full rounded-md border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
-          />
+          {/* Mobile: search lives behind an icon until opened. */}
+          <button
+            type="button"
+            onClick={() => setSearchOpen((open) => !open)}
+            aria-label={searchOpen ? "Close search" : "Search links"}
+            aria-expanded={searchOpen}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
+          >
+            {searchOpen ? (
+              <X className="h-4 w-4" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+          </button>
+
+          <div
+            className={`relative ${searchOpen ? "flex-1" : "hidden"} sm:block sm:w-56`}
+          >
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search…"
+              spellCheck={false}
+              aria-label="Search links"
+              autoFocus={searchOpen}
+              className="w-full rounded-lg border border-border bg-transparent py-2 pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:text-sm"
+            />
+          </div>
         </div>
 
         <div
@@ -286,10 +343,10 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
 
       {/* List */}
       <div className="mt-6">
-        <div className="flex items-center gap-3 px-3 pb-3 type-label">
+        <div className="flex items-center gap-3 px-3 pb-3 type-body text-muted-foreground">
           <span className="w-5 shrink-0" aria-hidden="true" />
           <span className="flex-1">Name</span>
-          <span className="hidden w-44 shrink-0 sm:block">Source</span>
+          <span className="hidden w-44 shrink-0 sm:block">Site</span>
           <span className="w-24 shrink-0 text-right">Likes</span>
         </div>
         <div className="rule" aria-hidden="true" />
@@ -308,7 +365,7 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
               <div key={link.id}>
                 {index > 0 && <div className="rule" aria-hidden="true" />}
                 <FadeIn delay={Math.min(index, 12) * 0.03}>
-                  <div className="group flex items-center gap-3 px-3 py-3 transition-colors hover:bg-foreground/5">
+                  <div className="group flex items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/5">
                   <a
                     href={href}
                     target="_blank"
@@ -327,11 +384,11 @@ export default function InsightsList({ channels, linkData }: InsightsListProps) 
                       />
                     </span>
 
-                    <span className="min-w-0 flex-1 truncate type-body font-medium text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+                    <span className="min-w-0 flex-1 truncate type-body font-semibold text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
                       {link.title}
                     </span>
 
-                    <span className="hidden w-44 shrink-0 truncate type-caption text-faint-foreground sm:block">
+                    <span className="hidden w-44 shrink-0 truncate type-body text-muted-foreground sm:block">
                       {shortDomain(link.url)}
                     </span>
                   </a>
