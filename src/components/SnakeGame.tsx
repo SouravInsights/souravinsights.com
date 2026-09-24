@@ -9,7 +9,8 @@ import {
   ChevronDown,
   Gamepad2,
 } from "lucide-react";
-import useSound from "use-sound";
+import { useUISound } from "@/hooks/useUISound";
+import { useFeedback } from "@/hooks/useFeedback";
 import {
   SiTypescript,
   SiPython,
@@ -69,10 +70,10 @@ const SnakeGame: React.FC = () => {
     mobile: 0,
   });
 
-  // Sound effects
-  const [playMove] = useSound("/sounds/move.mp3", { volume: 0.25 });
-  const [playEat] = useSound("/sounds/food.mp3", { volume: 0.25 });
-  const [playGameOver] = useSound("/sounds/gameover.mp3", { volume: 0.25 });
+  // Sound effects. Movement is deliberately silent — it fires on every step,
+  // which is the definition of a high-frequency interaction.
+  const { playPop, playGameOver } = useUISound();
+  const feedback = useFeedback();
 
   // Track game session and send analytics
   useEffect(() => {
@@ -181,7 +182,6 @@ const SnakeGame: React.FC = () => {
      * - Snake grows (tail is not removed)
      * If food is not eaten:
      * - Remove tail to maintain snake length
-     * - Play movement sound
      */
     if (head.x === food.x && head.y === food.y) {
       // Score! (literally)
@@ -194,17 +194,16 @@ const SnakeGame: React.FC = () => {
       setCurrentIcon(
         programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
       );
-      playEat();
+      playPop(1, 1.2);
       // Notice we don't remove the tail here - that's how our snake grows!
     } else {
       // No food? Remove the tail to keep our snake the same length
       newSnake.pop();
-      playMove();
     }
 
     // Update our snake's position. React, do your thing!
     setSnake(newSnake);
-  }, [snake, direction, food, playMove, playEat, playGameOver]);
+  }, [snake, direction, food, playPop, playGameOver]);
   // Dependencies array: The VIP list of state that decides whether this function will be recreated or not!
 
   useEffect(() => {
@@ -272,10 +271,12 @@ const SnakeGame: React.FC = () => {
 
   // Handle direction change (for mobile controls)
   const handleDirectionChange = (newDirection: Direction) => {
+    feedback.press();
     setDirection(newDirection);
   };
 
   const handleDifficultyChange = (newDifficulty: Difficulty) => {
+    feedback.select();
     setDifficulty(newDifficulty);
     posthog.capture("difficulty_mode_selected", { newDifficulty });
     resetGame();
@@ -393,7 +394,10 @@ const SnakeGame: React.FC = () => {
           >
             <p className="text-red-500 font-bold mb-2">Game Over!</p>
             <Button
-              onClick={resetGame}
+              onClick={() => {
+                feedback.select();
+                resetGame();
+              }}
               className="bg-green-500 text-white hover:bg-green-700 transition-colors duration-200"
             >
               Munch Again

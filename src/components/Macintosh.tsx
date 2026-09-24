@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import useSound from "use-sound";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 
 const Macintosh: React.FC = () => {
   const screenContent = [
@@ -18,13 +17,11 @@ const Macintosh: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(DEFAULT_SCREEN);
   const [currentURI, setCurrentURI] = useState(screenContent[DEFAULT_SCREEN]);
   const [showCustomCursor, setShowCustomCursor] = useState(false);
-  const haptics = useHaptics();
-  const [playClick] = useSound("/sounds/click.mp3", { volume: 0.25 });
+  const feedback = useFeedback();
 
   // Function to update the current image
   const updateImage = () => {
-    haptics.select();
-    playClick(); // Play the click sound
+    feedback.select();
     const nextIndex = (currentIndex + 1) % screenContent.length;
     setCurrentIndex(nextIndex);
     setCurrentURI(screenContent[nextIndex]);

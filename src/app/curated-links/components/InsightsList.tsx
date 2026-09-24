@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, Shuffle, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
@@ -221,7 +221,7 @@ export default function InsightsList({
   const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
   const visibleRef = useRef<Set<string>>(new Set());
   const refreshedRef = useRef<Set<string>>(new Set());
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   const loadPreview = async (
     url: string,
@@ -471,7 +471,7 @@ export default function InsightsList({
                   key={mode}
                   type="button"
                   onClick={() => {
-                    haptics.select();
+                    feedback.select();
                     setView(mode);
                   }}
                   aria-label={label}
@@ -535,7 +535,7 @@ export default function InsightsList({
                         role="option"
                         aria-selected={activeChannel === filter.name}
                         onClick={() => {
-                          haptics.select();
+                          feedback.select();
                           setActiveChannel(filter.name);
                           setFilterMenuOpen(false);
                         }}
@@ -597,7 +597,7 @@ export default function InsightsList({
                         role="option"
                         aria-selected={sort === option.value}
                         onClick={() => {
-                          haptics.select();
+                          feedback.select();
                           setSort(option.value);
                           setSortMenuOpen(false);
                         }}
@@ -626,7 +626,7 @@ export default function InsightsList({
           <button
             type="button"
             onClick={() => {
-              haptics.press();
+              feedback.select();
               setSearchOpen((open) => !open);
             }}
             aria-label={searchOpen ? "Close search" : "Search links"}
@@ -764,7 +764,7 @@ export default function InsightsList({
             <button
               type="button"
               onClick={() => {
-                haptics.press();
+                feedback.press();
                 setVisibleItems((prev) => prev + ITEMS_PER_PAGE);
               }}
               className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-4 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"

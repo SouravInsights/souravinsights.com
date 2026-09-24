@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, Github, Linkedin, Twitter } from "lucide-react";
 import { motion } from "framer-motion";
 import Oneko from "@/components/oneko";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 import {
   Tooltip,
   TooltipContent,
@@ -40,7 +40,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
   withGame = true,
   withCat = true,
 }) => {
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   return (
     <footer className="relative bg-card">
@@ -103,7 +103,7 @@ const FooterWithSnakeGame: React.FC<FooterWithSnakeGameProps> = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={social.label}
-                        onClick={() => haptics.press()}
+                        onClick={() => feedback.press()}
                         className="p-2 rounded-lg text-muted-foreground hover:text-green-700 dark:hover:text-green-500 hover:bg-accent transition-colors duration-200"
                         whileHover={{ y: -2 }}
                         whileTap={{ scale: 0.95 }}

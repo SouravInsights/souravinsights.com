@@ -2,18 +2,15 @@
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { Moon, Sun } from "lucide-react";
-import useSound from "use-sound";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 
 export function DarkModeToggle() {
   const { isDarkMode, toggleDarkMode } = useTheme();
-  const [playClick] = useSound("/sounds/click.mp3", { volume: 0.25 });
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   const handleOnClick = () => {
-    haptics.press();
+    feedback.select();
     toggleDarkMode();
-    playClick();
   };
 
   return (

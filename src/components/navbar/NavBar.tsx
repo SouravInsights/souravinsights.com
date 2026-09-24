@@ -14,8 +14,9 @@ import {
   Boxes,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { SoundToggle } from "@/components/SoundToggle";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
@@ -32,7 +33,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   // The navbar gets out of the way on the way down so a page's own sticky bar
   // (the Insights tabs) can own the top edge, then returns on the way up.
@@ -108,7 +109,7 @@ const Navbar: React.FC = () => {
             <Link
               href={item.path}
               key={item.name}
-              onClick={() => haptics.press()}
+              onClick={() => feedback.press()}
             >
               <motion.div
                 className={`px-3 py-1.5 rounded-md flex items-center space-x-2 font-mono text-sm ${
@@ -124,7 +125,8 @@ const Navbar: React.FC = () => {
               </motion.div>
             </Link>
           ))}
-          <div className="border-l border-border pl-2">
+          <div className="flex items-center border-l border-border pl-2">
+            <SoundToggle />
             <DarkModeToggle />
           </div>
         </motion.div>
@@ -152,13 +154,13 @@ const Navbar: React.FC = () => {
           initial={false}
           animate={{ y: navHidden ? -160 : 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="overflow-hidden rounded-lg border border-border bg-card shadow-lg"
+          className="relative overflow-hidden rounded-lg border border-border bg-card shadow-lg"
         >
           <div className="flex items-center gap-1 p-1.5">
             <button
               type="button"
               onClick={() => {
-                haptics.press();
+                feedback.press();
                 setIsOpen((open) => !open);
               }}
               aria-label={isOpen ? "Close navigation" : "Open navigation"}
@@ -187,6 +189,7 @@ const Navbar: React.FC = () => {
               <span className="truncate">{currentItem.name}</span>
             </div>
 
+            <SoundToggle />
             <DarkModeToggle />
           </div>
 
@@ -205,7 +208,7 @@ const Navbar: React.FC = () => {
                       key={item.name}
                       href={item.path}
                       onClick={() => {
-                        haptics.press();
+                        feedback.press();
                         setIsOpen(false);
                       }}
                     >

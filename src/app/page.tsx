@@ -10,7 +10,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { ReadingShelf } from "@/components/ReadingShelf";
 import { MoviesShelf } from "@/components/MoviesShelf";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 import { OpinionsSection } from "@/components/OpinionsSection";
 import { EssayHighlights } from "@/components/EssayHighlights";
 import { featuredProjects } from "@/app/projects/projects-data";
@@ -133,7 +133,7 @@ const myToolkit = {
 };
 
 const HeroSection = () => {
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   return (
   <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
@@ -252,7 +252,7 @@ const HeroSection = () => {
                 href="https://github.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => haptics.press()}
+                onClick={() => feedback.press()}
                 className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
                 <Github className="w-4 h-4" />
@@ -262,7 +262,7 @@ const HeroSection = () => {
                 href="https://twitter.com/souravinsights"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => haptics.press()}
+                onClick={() => feedback.press()}
                 className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
                 <Twitter className="w-4 h-4" />

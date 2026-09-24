@@ -10,13 +10,16 @@ import {
 import { Heart } from "lucide-react";
 import { useLikes } from "@/hooks/useLikes";
 import { useTheme } from "@/context/ThemeContext";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 import {
   LikeBurst,
   LOVE_RAMP_DARK,
   LOVE_RAMP_LIGHT,
   useLikeBurst,
 } from "@/components/like-burst";
+
+/** How many times a visitor may like a single link. */
+const MAX_USER_LIKES = 10;
 
 /** Press timing, matching the blog's 3D button: quick squash, easy release. */
 const PRESS = 0.14;
@@ -74,12 +77,12 @@ export function LikeButton({ linkId }: { linkId: string }) {
     id: linkId,
     endpoint: "/api/insights/likes",
     param: "linkId",
-    max: 10,
+    max: MAX_USER_LIKES,
   });
 
   const { isDarkMode } = useTheme();
   const reduceMotion = useReducedMotion();
-  const haptics = useHaptics();
+  const feedback = useFeedback();
   const controls = useAnimationControls();
   const [pressed, setPressed] = useState(false);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -98,7 +101,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
 
   const handleClick = () => {
     if (isMaxed) {
-      haptics.warning();
+      feedback.warning();
       // Bump the pill to signal the cap has been reached.
       if (!reduceMotion) {
         controls.start({
@@ -109,7 +112,13 @@ export function LikeButton({ linkId }: { linkId: string }) {
       return;
     }
 
-    haptics.press();
+    const isFinalLike = userLikes === MAX_USER_LIKES - 1;
+    if (isFinalLike) {
+      feedback.success();
+    } else {
+      feedback.like(0.75 + userLikes * 0.08);
+    }
+
     setPressed(true);
     schedule(() => setPressed(false), PRESS * 1000);
 

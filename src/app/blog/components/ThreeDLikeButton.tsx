@@ -2,11 +2,10 @@
 
 import React, { useCallback, useId, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from "framer-motion";
-import useSound from "use-sound";
 import posthog from "posthog-js";
 import { usePostLikes } from "@/hooks/usePostLikes";
 import { useTheme } from "@/context/ThemeContext";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 import {
   LikeBurst,
   LOVE_RAMP_DARK,
@@ -173,9 +172,7 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
 
   // Sound rises in pitch with each like but eases off in volume so it never
   // turns harsh as the pitch climbs.
-  const [playbackRate, setPlaybackRate] = useState(0.75);
-  const [play] = useSound("/sounds/pop.mp3", { playbackRate, volume: 0.5 });
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   const schedule = useCallback((fn: () => void, ms: number) => {
     const t = setTimeout(fn, ms);
@@ -190,12 +187,17 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
 
   const handleLike = useCallback(() => {
     if (isMaxed) {
-      haptics.warning();
+      feedback.warning();
       return;
     }
 
     setPressed(true);
-    haptics.press();
+    // Each like pops a little higher; the last one resolves into a chime.
+    if (userLikes === MAX_USER_LIKES - 1) {
+      feedback.success();
+    } else {
+      feedback.like(0.75 + userLikes * 0.08);
+    }
     schedule(() => setPressed(false), TIMING.press * 1000);
 
     posthog.capture("blog_post_liked", {
@@ -218,8 +220,6 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
     setPlusKey((k) => k + 1);
     schedule(() => setPlusKey(0), TIMING.count * 1000 + 400);
 
-    setPlaybackRate((prev) => Math.min(prev + 0.08, 1.45));
-    play();
   }, [
     isMaxed,
     slug,
@@ -229,9 +229,8 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
     burst,
     prefersReducedMotion,
     countControls,
-    play,
     schedule,
-    haptics,
+    feedback,
   ]);
 
   React.useEffect(() => {

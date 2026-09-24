@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 
 /**
  * A real switch for the cover style: a track with a spring-loaded thumb and a
@@ -15,13 +15,13 @@ export function CoverToggle({
   checked: boolean;
   onChange: (value: boolean) => void;
 }) {
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   return (
     <button
       type="button"
       onClick={() => {
-        haptics.select();
+        feedback.select();
         onChange(!checked);
       }}
       aria-pressed={checked}

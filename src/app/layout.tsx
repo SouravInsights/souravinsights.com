@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { SoundProvider } from "@/context/SoundContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Navbar from "@/components/navbar/NavBar";
@@ -70,11 +71,13 @@ export default function RootLayout({
         <PHProvider>
           <PostHogPageView />
           <ThemeProvider>
-            <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
-              <Navbar />
-              <main className="flex-grow">{children}</main>
-              <ClientFooterWrapper />
-            </div>
+            <SoundProvider>
+              <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+                <ClientFooterWrapper />
+              </div>
+            </SoundProvider>
             <SpeedInsights />
             <Analytics />
           </ThemeProvider>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useHaptics } from "@/hooks/useHaptics";
+import { useFeedback } from "@/hooks/useFeedback";
 
 /**
  * Segment-level error boundary. Without this, a client error bubbles all the
@@ -14,7 +14,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const haptics = useHaptics();
+  const feedback = useFeedback();
 
   useEffect(() => {
     console.error(error);
@@ -29,7 +29,7 @@ export default function Error({
       <button
         type="button"
         onClick={() => {
-          haptics.press();
+          feedback.press();
           reset();
         }}
         className="rounded-md border border-border px-4 py-2 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
