@@ -3,6 +3,7 @@
 import React, { useCallback, useId, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from "framer-motion";
 import posthog from "posthog-js";
+import Scritto from "@scritto/react";
 import { usePostLikes } from "@/hooks/usePostLikes";
 import { useTheme } from "@/context/ThemeContext";
 import { useFeedback } from "@/hooks/useFeedback";
@@ -369,7 +370,7 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
           aria-live="polite"
           aria-atomic="true"
         >
-          {totalLikes.toLocaleString()}
+          <Scritto value={totalLikes.toLocaleString()} />
           <span className="sr-only"> likes</span>
         </motion.div>
 

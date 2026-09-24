@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { Eye } from "lucide-react";
 import { usePostViews } from "@/hooks/usePostViews";
 import { motion } from "framer-motion";
+import Scritto from "@scritto/react";
 import posthog from "posthog-js";
 
 interface ViewCounterProps {
@@ -50,12 +51,15 @@ const ViewCounter = ({ slug }: ViewCounterProps) => {
       className="flex items-center gap-1.5 text-muted-foreground"
     >
       <Eye size={16} className="text-muted-foreground" />
-      <span className="text-[13px] font-mono tabular-nums">
-        {isLoading ? (
-          <span className="animate-pulse">...</span>
-        ) : (
-          `${views.toLocaleString()} view${views !== 1 ? "s" : ""}`
-        )}
+      <span className="relative inline-flex items-baseline text-[13px] font-mono tabular-nums">
+        {/* Mounted with the count still at 0, then the loaded count lands as
+            an update — which is the only thing Scritto animates, so the count
+            rolls up to the live value once. */}
+        <span className={isLoading ? "invisible" : ""}>
+          <Scritto value={views.toLocaleString()} />
+          <span> view{views !== 1 ? "s" : ""}</span>
+        </span>
+        {isLoading && <span className="animate-pulse absolute left-0">...</span>}
       </span>
     </motion.div>
   );

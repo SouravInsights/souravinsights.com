@@ -2806,6 +2806,18 @@
   resolved "https://registry.npmjs.org/@sapphire/snowflake/-/snowflake-3.5.3.tgz"
   integrity sha512-jjmJywLAFoWeBi1W7994zZyiNWPIiqRRNAmSERxyg93xRGzNYvGjlZ0gR6x0F4gPRi2+0O6S71kOZYyr3cxaIQ==
 
+"@scritto/core@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@scritto/core/-/core-0.1.0.tgz#dd67e15eecaada2761cd6ff65843682c5e9388d9"
+  integrity sha512-8itfD3jc+DvoDcMYAcWJHyLXZvBNaorlL091Fp/4Toe4trGErbQOtyptO9Qexyb/qvGO0S1WRWDrGO/2KURnxg==
+
+"@scritto/react@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@scritto/react/-/react-0.1.0.tgz#c35c2ef7af0e60b9ef0d599dab6d4a0dd7461f20"
+  integrity sha512-fNeX/ZjXUBtNMo/aQ03t1AG9+5vbitfEDfrLbO5qVCAcus7xq8kWhuv1LNuGGcBLA6pngo5otymCCkZDNRY84Q==
+  dependencies:
+    "@scritto/core" "0.1.0"
+
 "@shikijs/core@3.2.1":
   version "3.2.1"
   resolved "https://registry.npmjs.org/@shikijs/core/-/core-3.2.1.tgz"

@@ -5,6 +5,7 @@ import type {
   PointerEvent as ReactPointerEvent,
 } from "react";
 import { useCallback, useRef, useState } from "react";
+import Scritto from "@scritto/react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -312,7 +313,7 @@ export function CircularSlider({
       </svg>
 
       <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-medium tabular-nums">
-        {percent}%
+        <Scritto value={`${percent}%`} />
       </span>
     </div>
   );

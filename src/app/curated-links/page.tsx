@@ -8,6 +8,7 @@ import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
+import { LinksCountBadge } from "./components/LinksCountBadge";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -95,9 +96,7 @@ export default async function CuratedLinksPage() {
             description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
             action={
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums">
-                <span className="font-medium text-foreground">
-                  {totalLinks.toLocaleString()}
-                </span>
+                <LinksCountBadge total={totalLinks} />
                 <span className="text-faint-foreground">links</span>
               </span>
             }

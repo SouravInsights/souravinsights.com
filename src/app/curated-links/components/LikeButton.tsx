@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AnimatePresence,
   motion,
   useAnimationControls,
   useReducedMotion,
 } from "framer-motion";
 import { Heart } from "lucide-react";
+import Scritto from "@scritto/react";
 import { useLikes } from "@/hooks/useLikes";
 import { useTheme } from "@/context/ThemeContext";
 import { useFeedback } from "@/hooks/useFeedback";
@@ -25,53 +25,6 @@ const MAX_USER_LIKES = 10;
 const PRESS = 0.14;
 const RELEASE = 0.34;
 
-/**
- * Digits roll up like an odometer. Each digit gets its own fixed-width cell
- * (`tabular-nums` + `1ch`) so a value change never reflows the pill — only the
- * glyph moves, the geometry stays put.
- */
-function RollingNumber({ value }: { value: number }) {
-  const reduceMotion = useReducedMotion();
-  const digits = value.toString().split("");
-
-  return (
-    <span className="inline-flex items-center tabular-nums">
-      {digits.map((digit, index) => (
-        <span
-          // Keyed from the right so the ones column keeps its identity as the
-          // number grows (9 → 10 only adds a cell on the left).
-          key={digits.length - index}
-          className="relative inline-block h-[1em] w-[1ch] overflow-hidden"
-        >
-          {reduceMotion ? (
-            <span className="absolute inset-0 flex items-center justify-center">
-              {digit}
-            </span>
-          ) : (
-            <AnimatePresence initial={false}>
-              <motion.span
-                key={digit}
-                initial={{ y: "100%" }}
-                animate={{ y: "0%" }}
-                exit={{ y: "-100%" }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                {digit}
-              </motion.span>
-            </AnimatePresence>
-          )}
-        </span>
-      ))}
-    </span>
-  );
-}
-
-/**
- * A compact take on the blog's 3D like button: the heart squashes under the
- * press and springs back, the shared burst arcs out, and the count rolls.
- * Reduced-motion aware.
- */
 export function LikeButton({ linkId }: { linkId: string }) {
   const { totalLikes, userLikes, isMaxed, addLike } = useLikes({
     id: linkId,
@@ -168,7 +121,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
         </motion.span>
       </motion.span>
 
-      <RollingNumber value={totalLikes} />
+      <Scritto value={totalLikes} />
     </button>
   );
 }
