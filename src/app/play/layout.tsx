@@ -44,7 +44,7 @@ export default function PlayLayout({
     <div className="min-h-screen transition-colors duration-200">
       <PHProvider>
         <PostHogPageView />
-        <div className="pt-12 md:pt-28 pb-12">{children}</div>
+        <div className="pt-20 md:pt-28 pb-12">{children}</div>
       </PHProvider>
     </div>
   );

@@ -288,7 +288,7 @@ export default function Home() {
       {/* 0cred verification */}
       <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07"></div>
 
-      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-32 space-y-16 sm:space-y-24">
+      <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32 space-y-16 sm:space-y-24">
         {/* Hero Section */}
         <FadeIn y={20} duration={0.5}>
           <HeroSection />

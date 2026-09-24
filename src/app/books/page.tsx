@@ -84,7 +84,7 @@ export default function BookshelfPage() {
 
   return (
     <ApolloProvider client={client}>
-      <div className="mx-auto max-w-5xl px-5 pb-24 pt-10 sm:px-6 sm:pt-12 md:pt-32">
+      <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32">
         <FadeIn y={20} duration={0.5}>
           <PageHeader
             title="Library"

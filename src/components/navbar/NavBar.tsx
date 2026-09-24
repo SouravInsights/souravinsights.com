@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Menu,
   X,
@@ -24,9 +24,13 @@ const navItems = [
   { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
 ];
 
+const isActivePath = (pathname: string | null, path: string) =>
+  pathname === path || (path !== "/" && !!pathname?.startsWith(path));
+
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const reduceMotion = useReducedMotion();
 
   // The navbar gets out of the way on the way down so a page's own sticky bar
   // (the Insights tabs) can own the top edge, then returns on the way up.
@@ -56,6 +60,38 @@ const Navbar: React.FC = () => {
     document.documentElement.dataset.nav = navHidden ? "hidden" : "visible";
   }, [navHidden]);
 
+  // A menu that survives navigation is a menu that lies about where you are.
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // While the menu is open: Escape closes it, and the page behind can't scroll.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  const currentItem =
+    navItems.find((item) => isActivePath(pathname, item.path)) ?? navItems[0];
+  const CurrentIcon = currentItem.icon;
+
+  const quick = reduceMotion ? { duration: 0 } : { duration: 0.15 };
+  const spring = reduceMotion
+    ? { duration: 0 }
+    : { type: "spring" as const, stiffness: 380, damping: 34 };
+
   return (
     <>
       {/* Desktop Navbar */}
@@ -70,8 +106,7 @@ const Navbar: React.FC = () => {
             <Link href={item.path} key={item.name}>
               <motion.div
                 className={`px-3 py-1.5 rounded-md flex items-center space-x-2 font-mono text-sm ${
-                  pathname === item.path ||
-                  (item.path !== "/" && pathname?.startsWith(item.path))
+                  isActivePath(pathname, item.path)
                     ? "bg-secondary text-green-700 dark:text-green-500"
                     : "text-foreground hover:bg-accent"
                 }`}
@@ -89,51 +124,97 @@ const Navbar: React.FC = () => {
         </motion.div>
       </nav>
 
-      {/* Mobile Navbar */}
-      <nav className="fixed bottom-4 right-4 z-50 md:hidden flex flex-col space-y-2">
-        <DarkModeToggle />
-        <motion.button
-          className="p-2 bg-card text-green-700 dark:text-green-500 rounded-lg shadow-lg border border-border"
-          onClick={() => setIsOpen(!isOpen)}
-          whileTap={{ scale: 0.95 }}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </motion.button>
-      </nav>
-
-      {/* Mobile Menu */}
+      {/* Scrim — tapping anywhere outside the pill closes it */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 bg-card shadow-lg p-4 z-40 md:hidden rounded-t-lg border-t border-border"
-          >
-            <div className="flex flex-col space-y-2">
-              {navItems.map((item) => (
-                <Link href={item.path} key={item.name}>
-                  <motion.div
-                    className={`px-4 py-3 rounded-md flex items-center space-x-2 font-mono ${
-                      pathname === item.path ||
-                      (item.path !== "/" && pathname?.startsWith(item.path))
-                        ? "bg-secondary text-green-700 dark:text-green-500"
-                        : "text-foreground"
-                    }`}
-                    whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <item.icon size={20} />
-                    <span>{item.name}</span>
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-          </motion.div>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={quick}
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+            className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm md:hidden"
+          />
         )}
       </AnimatePresence>
+
+      {/* Mobile Navbar — the same floating pill, condensed. Collapsed it shows
+          where you are; opened, the menu drops out of the pill itself. */}
+      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
+        <motion.div
+          initial={false}
+          animate={{ y: navHidden ? -160 : 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="overflow-hidden rounded-lg border border-border bg-card shadow-lg"
+        >
+          <div className="flex items-center gap-1 p-1.5">
+            <button
+              type="button"
+              onClick={() => setIsOpen((open) => !open)}
+              aria-label={isOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={isOpen}
+              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-accent"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={isOpen ? "close" : "menu"}
+                  initial={{ rotate: reduceMotion ? 0 : -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: reduceMotion ? 0 : 90, opacity: 0 }}
+                  transition={quick}
+                  className="flex items-center justify-center"
+                >
+                  {isOpen ? <X size={20} /> : <Menu size={20} />}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+
+            <div className="flex items-center gap-2 px-2 font-mono text-sm">
+              <CurrentIcon
+                size={16}
+                className="shrink-0 text-green-700 dark:text-green-500"
+              />
+              <span className="truncate">{currentItem.name}</span>
+            </div>
+
+            <DarkModeToggle />
+          </div>
+
+          <AnimatePresence initial={false}>
+            {isOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={spring}
+                className="overflow-hidden border-t border-border"
+              >
+                <div className="flex flex-col p-1.5">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.path}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div
+                        className={`flex items-center gap-2.5 rounded-md px-3 py-2.5 font-mono text-sm transition-colors ${
+                          isActivePath(pathname, item.path)
+                            ? "bg-secondary text-green-700 dark:text-green-500"
+                            : "text-foreground hover:bg-accent"
+                        }`}
+                      >
+                        <item.icon size={16} />
+                        <span>{item.name}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </nav>
     </>
   );
 };

@@ -911,7 +911,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
   const iconStroke = 1.75; // matches the optical weight of 13px meta text
 
   return (
-    <div className="relative min-h-screen bg-background px-5 pb-12 pt-10 text-foreground antialiased selection:bg-primary/20 sm:pb-24 sm:pt-36">
+    <div className="relative min-h-screen bg-background px-5 pb-12 pt-20 text-foreground antialiased selection:bg-primary/20 sm:pb-24 sm:pt-36">
       {/* Floating preview toggle for the authenticated user */}
       {isUserAuthenticated && (
         <button

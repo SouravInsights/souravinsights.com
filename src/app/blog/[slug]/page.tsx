@@ -91,7 +91,7 @@ export default function PostPage({ params }: PostPageProps) {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-0 pb-12 pt-6 sm:px-6 sm:pt-12 md:pt-32 lg:px-8">
+    <div className="mx-auto max-w-7xl px-0 pb-12 pt-20 sm:px-6 sm:pt-24 md:pt-32 lg:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
