@@ -297,7 +297,7 @@ export default function Home() {
 
       <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32 space-y-16 sm:space-y-24">
         {/* Hero Section */}
-        <FadeIn y={20} duration={0.5}>
+        <FadeIn y={20} duration={0.3}>
           <HeroSection />
         </FadeIn>
 

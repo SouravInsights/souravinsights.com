@@ -29,7 +29,13 @@ export function FadeIn({
       className={className}
       initial={{ opacity: 0, y }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration, delay }}
+      transition={{
+        duration,
+        delay,
+        // A punchy ease-out: the entrance starts fast and settles, so pages
+        // read instantly instead of feeling like they load slowly.
+        ease: [0.23, 1, 0.32, 1],
+      }}
     >
       {children}
     </motion.div>

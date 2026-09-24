@@ -90,16 +90,11 @@ export default async function CuratedLinksPage() {
       />
 
       <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32">
-        <FadeIn y={20} duration={0.5}>
+        <FadeIn y={20} duration={0.3}>
           <PageHeader
             title="Insights"
             description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
-            action={
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums">
-                <LinksCountBadge total={totalLinks} />
-                <span className="text-faint-foreground">links</span>
-              </span>
-            }
+            action={<LinksCountBadge total={totalLinks} />}
           />
         </FadeIn>
 

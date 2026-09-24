@@ -34,6 +34,9 @@
     --input: 40 12% 84%;
     --ring: 30 8% 12%;
     --radius: 0.5rem;
+    /* Strong ease-out for entrances: starts fast, punches, and never feels
+       sluggish the way a weak default curve does. */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;

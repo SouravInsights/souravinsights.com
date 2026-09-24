@@ -27,7 +27,7 @@ const formatPostDate = (date: string) => {
 export default function BlogList({ posts }: BlogListProps) {
   return (
     <div>
-      <FadeIn y={20} duration={0.5}>
+      <FadeIn y={20} duration={0.3}>
         <PageHeader
           title="Notes &amp; Essays"
           description="Interactive tutorials, stories, deep dives on startups, movies, human behavior, and whatever random thing I get curious about at 2 AM 🦉"

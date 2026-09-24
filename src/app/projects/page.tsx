@@ -23,7 +23,7 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-background transition-colors duration-200">
       <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32">
-        <FadeIn y={20} duration={0.5}>
+        <FadeIn y={20} duration={0.3}>
           <PageHeader
             title="Projects"
             description="A few things I'm spending my time on lately."

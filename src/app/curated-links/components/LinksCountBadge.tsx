@@ -2,22 +2,37 @@
 
 import { useEffect, useState } from "react";
 import Scritto from "@scritto/react";
+import { cn } from "@/lib/utils";
 
 /**
- * Starts at zero, so the real total lands as an update and Scritto rolls the
- * count up to it — the number is the only thing animated.
+ * The count rolls up once the page header has settled, so its motion reads as
+ * its own beat instead of happening inside the header's entrance. The pill
+ * hides until then so the zero never flashes on screen.
  */
 export function LinksCountBadge({ total }: { total: number }) {
   const [value, setValue] = useState(0);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setValue(total);
+    const timeout = setTimeout(() => {
+      setReady(true);
+      setValue(total);
+    }, 350);
+    return () => clearTimeout(timeout);
   }, [total]);
 
   return (
-    <Scritto
-      value={value.toLocaleString()}
-      className="font-medium text-foreground"
-    />
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums transition-opacity duration-150",
+        ready ? "opacity-100" : "opacity-0"
+      )}
+    >
+      <Scritto
+        value={value.toLocaleString()}
+        className="font-medium text-foreground"
+      />
+      <span className="text-faint-foreground">links</span>
+    </span>
   );
 }
