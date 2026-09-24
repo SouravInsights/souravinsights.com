@@ -10,6 +10,7 @@ import {
 import { Heart } from "lucide-react";
 import { useLikes } from "@/hooks/useLikes";
 import { useTheme } from "@/context/ThemeContext";
+import { useHaptics } from "@/hooks/useHaptics";
 import {
   LikeBurst,
   LOVE_RAMP_DARK,
@@ -78,6 +79,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
 
   const { isDarkMode } = useTheme();
   const reduceMotion = useReducedMotion();
+  const haptics = useHaptics();
   const controls = useAnimationControls();
   const [pressed, setPressed] = useState(false);
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -96,6 +98,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
 
   const handleClick = () => {
     if (isMaxed) {
+      haptics.warning();
       // Bump the pill to signal the cap has been reached.
       if (!reduceMotion) {
         controls.start({
@@ -106,6 +109,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
       return;
     }
 
+    haptics.press();
     setPressed(true);
     schedule(() => setPressed(false), PRESS * 1000);
 

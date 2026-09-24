@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, ChevronLeft, BookOpen, Menu } from "lucide-react";
+import { useHaptics } from "@/hooks/useHaptics";
 
 interface TOCItem {
   id: string;
@@ -22,6 +23,7 @@ export default function CollapsibleTOC({
   onCollapseChange,
 }: CollapsibleTOCProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const haptics = useHaptics();
 
   // Notify parent component when collapse state changes
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function CollapsibleTOC({
   }
 
   const toggleCollapse = () => {
+    haptics.press();
     setIsCollapsed(!isCollapsed);
   };
 
@@ -94,6 +97,7 @@ export default function CollapsibleTOC({
                           : "text-muted-foreground"
                       }`}
                       onClick={(e) => {
+                        haptics.press();
                         e.preventDefault();
                         document.getElementById(heading.id)?.scrollIntoView({
                           behavior: "smooth",

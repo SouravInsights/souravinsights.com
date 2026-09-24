@@ -2,17 +2,21 @@
 
 import React from "react";
 import { ExternalLink } from "lucide-react";
+import { useHaptics } from "@/hooks/useHaptics";
 
 interface HackerNewsButtonProps {
   url: string;
 }
 
 export default function HackerNewsButton({ url }: HackerNewsButtonProps) {
+  const haptics = useHaptics();
+
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => haptics.press()}
       className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#ff6600] hover:bg-[#ff7700] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md group"
     >
       {/* HN Logo */}

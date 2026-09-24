@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
+import { useHaptics } from "@/hooks/useHaptics";
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
@@ -31,6 +32,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
+  const haptics = useHaptics();
 
   // The navbar gets out of the way on the way down so a page's own sticky bar
   // (the Insights tabs) can own the top edge, then returns on the way up.
@@ -103,7 +105,11 @@ const Navbar: React.FC = () => {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           {navItems.map((item) => (
-            <Link href={item.path} key={item.name}>
+            <Link
+              href={item.path}
+              key={item.name}
+              onClick={() => haptics.press()}
+            >
               <motion.div
                 className={`px-3 py-1.5 rounded-md flex items-center space-x-2 font-mono text-sm ${
                   isActivePath(pathname, item.path)
@@ -151,7 +157,10 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-1 p-1.5">
             <button
               type="button"
-              onClick={() => setIsOpen((open) => !open)}
+              onClick={() => {
+                haptics.press();
+                setIsOpen((open) => !open);
+              }}
               aria-label={isOpen ? "Close navigation" : "Open navigation"}
               aria-expanded={isOpen}
               className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-accent"
@@ -195,7 +204,10 @@ const Navbar: React.FC = () => {
                     <Link
                       key={item.name}
                       href={item.path}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => {
+                        haptics.press();
+                        setIsOpen(false);
+                      }}
                     >
                       <div
                         className={`flex items-center gap-2.5 rounded-md px-3 py-2.5 font-mono text-sm transition-colors ${

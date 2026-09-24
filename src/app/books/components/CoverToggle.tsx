@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useHaptics } from "@/hooks/useHaptics";
 
 /**
  * A real switch for the cover style: a track with a spring-loaded thumb and a
@@ -14,10 +15,15 @@ export function CoverToggle({
   checked: boolean;
   onChange: (value: boolean) => void;
 }) {
+  const haptics = useHaptics();
+
   return (
     <button
       type="button"
-      onClick={() => onChange(!checked)}
+      onClick={() => {
+        haptics.select();
+        onChange(!checked);
+      }}
       aria-pressed={checked}
       className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-border px-3 py-1.5 transition-colors hover:bg-foreground/5"
     >

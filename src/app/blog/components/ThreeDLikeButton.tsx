@@ -6,6 +6,7 @@ import useSound from "use-sound";
 import posthog from "posthog-js";
 import { usePostLikes } from "@/hooks/usePostLikes";
 import { useTheme } from "@/context/ThemeContext";
+import { useHaptics } from "@/hooks/useHaptics";
 import {
   LikeBurst,
   LOVE_RAMP_DARK,
@@ -174,6 +175,7 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
   // turns harsh as the pitch climbs.
   const [playbackRate, setPlaybackRate] = useState(0.75);
   const [play] = useSound("/sounds/pop.mp3", { playbackRate, volume: 0.5 });
+  const haptics = useHaptics();
 
   const schedule = useCallback((fn: () => void, ms: number) => {
     const t = setTimeout(fn, ms);
@@ -187,9 +189,13 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
   );
 
   const handleLike = useCallback(() => {
-    if (isMaxed) return;
+    if (isMaxed) {
+      haptics.warning();
+      return;
+    }
 
     setPressed(true);
+    haptics.press();
     schedule(() => setPressed(false), TIMING.press * 1000);
 
     posthog.capture("blog_post_liked", {
@@ -214,10 +220,6 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
 
     setPlaybackRate((prev) => Math.min(prev + 0.08, 1.45));
     play();
-
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate?.(8);
-    }
   }, [
     isMaxed,
     slug,
@@ -229,6 +231,7 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
     countControls,
     play,
     schedule,
+    haptics,
   ]);
 
   React.useEffect(() => {

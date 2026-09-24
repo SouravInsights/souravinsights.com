@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import useSound from "use-sound";
+import { useHaptics } from "@/hooks/useHaptics";
 
 const Macintosh: React.FC = () => {
   const screenContent = [
@@ -14,10 +15,12 @@ const Macintosh: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentURI, setCurrentURI] = useState(screenContent[0]);
   const [showCustomCursor, setShowCustomCursor] = useState(false);
+  const haptics = useHaptics();
   const [playClick] = useSound("/sounds/click.mp3", { voluume: 0.25 });
 
   // Function to update the current image
   const updateImage = () => {
+    haptics.select();
     playClick(); // Play the click sound
     const nextIndex = (currentIndex + 1) % screenContent.length;
     setCurrentIndex(nextIndex);
