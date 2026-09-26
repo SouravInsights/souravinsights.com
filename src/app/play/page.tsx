@@ -1,125 +1,57 @@
 import React from "react";
-import SnakeGame from "@/components/SnakeGame";
-import { Metadata } from "next";
+import TetrisGame from "@/components/tetris/TetrisGame";
+import { FadeIn } from "@/components/FadeIn";
+import { PageHeader } from "@/components/PageHeader";
+import { Metadata, Viewport } from "next";
+
+/* App-like screen: edge-to-edge under the notch, and no double-tap zoom
+   while dribbling pieces — scoped to this route only. */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
-  title: "Language Muncher - Snake Game",
+  title: "Shipstack",
   description:
-    "Play the Language Muncher Snake Game! Gobble up programming languages and grow your tech stack in this fun, educational twist on the classic Snake game.",
+    "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
   openGraph: {
-    title: "Language Muncher - Snake Game",
+    title: "Shipstack",
     description:
-      "Grow your tech stack in this fun, educational twist on the classic Snake game.",
+      "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
     url: "https://souravinsights.com/play",
     type: "website",
-    images: [
-      {
-        url: "/snake-game-og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Language Muncher Snake Game",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Language Muncher - Snake Game",
+    title: "Shipstack",
     description:
-      "Grow your tech stack in this fun, educational twist on the classic Snake game.",
-    images: ["/snake-game-og-image.jpg"],
+      "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
   },
 };
 
-const SnakeGamePage: React.FC = () => {
+const PlayPage: React.FC = () => {
   return (
-    <div className="py-8 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 flex justify-center items-center">
-          {/* <Link href="/">
-            <Button variant="outline" size="sm" className="flex items-center">
-              <ArrowLeft className="mr-2" size={16} />
-              Back to Home
-            </Button>
-          </Link> */}
-          <h1 className="type-display">
-            Language Muncher
-          </h1>
+    <div>
+      {/* Not the shared `container`; its 2rem gutters are dead space on a
+          phone, and the game deserves every pixel of the screen. */}
+      <div className="mx-auto w-full max-w-4xl px-3 md:flex md:h-[calc(100vh-5rem)] md:flex-col md:px-0">
+        <div className="hidden shrink-0 md:block">
+          <FadeIn y={20} duration={0.3}>
+            <PageHeader title="Shipstack" />
+          </FadeIn>
         </div>
 
-        <div className="rounded-lg p-6 mb-8 border border-border">
-          <SnakeGame />
-        </div>
+        <TetrisGame />
 
-        {/* <div className="mt-8 flex justify-center space-x-4">
-          <Button
-            onClick={() => setShowInstructions(!showInstructions)}
-            className="flex items-center bg-green-500 text-white hover:bg-green-700"
-          >
-            <Gamepad2 className="mr-2" size={18} />
-            {showInstructions ? "Hide" : "Show"} Instructions
-          </Button>
-          <Button
-            onClick={() => setShowLeaderboard(!showLeaderboard)}
-            className="flex items-center bg-yellow-500 text-white hover:bg-yellow-600"
-          >
-            <Trophy className="mr-2" size={18} />
-            {showLeaderboard ? "Hide" : "Show"} Leaderboard
-          </Button>
-        </div> */}
-
-        {/* {showInstructions && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mt-8 bg-green-50 dark:bg-gray-700 p-6 rounded-lg shadow-md"
-          >
-            <h2 className="text-xl font-semibold mb-4 text-green-700 dark:text-green-300">
-              How to Play
-            </h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
-              <li>Use arrow keys or on-screen buttons to move the snake</li>
-              <li>Eat up programming languages to grow your tech stack</li>
-              <li>Avoid hitting the walls or your own tail</li>
-              <li>Try different difficulty levels for more challenge</li>
-            </ul>
-          </motion.div>
-        )} */}
-
-        {/* {showLeaderboard && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mt-8 bg-yellow-50 dark:bg-gray-700 p-6 rounded-lg shadow-md"
-          >
-            <h2 className="text-xl font-semibold mb-4 text-yellow-700 dark:text-yellow-300">
-              Leaderboard
-            </h2>
-            <Table>
-              <TableCaption>Top Language Munchers</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Difficulty</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {leaderboard.map((entry, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{entry.name}</TableCell>
-                    <TableCell>{entry.score}</TableCell>
-                    <TableCell>{entry.difficulty}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </motion.div>
-        )} */}
+        {/* The classic lives on in src/components/SnakeGame.tsx, retired
+            from the page, not from the repo. */}
       </div>
     </div>
   );
 };
 
-export default SnakeGamePage;
+export default PlayPage;

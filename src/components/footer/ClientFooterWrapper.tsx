@@ -5,13 +5,14 @@ import FooterWithSnakeGame from "./FooterWithGame";
 
 const ClientFooterWrapper: React.FC = () => {
   const pathname = usePathname();
-  const isSnakeGamePage = pathname === "/play";
+  // The game owns the whole screen — site chrome would only crowd the board.
+  const isPlayPage = pathname === "/play";
   // The CV reads as a document, so it ends where its content ends.
   const isCvPage = pathname === "/cv";
 
-  if (isCvPage) return null;
+  if (isCvPage || isPlayPage) return null;
 
-  return <FooterWithSnakeGame withGame={!isSnakeGamePage} withCat={!isSnakeGamePage} />;
+  return <FooterWithSnakeGame withGame={true} withCat={true} />;
 };
 
 export default ClientFooterWrapper;

@@ -12,7 +12,9 @@ import {
   createGameOverSound,
   createPopSound,
   createSuccessSound,
+  createSweepSound,
   createSwitchSound,
+  createThudSound,
 } from "@/lib/audio/sound-profiles";
 
 type Synth = (
@@ -84,6 +86,14 @@ export function useUISound() {
     (volMult = 1) => playSound(createGameOverSound, volMult),
     [playSound]
   );
+  const playThud = useCallback(
+    (volMult = 1) => playSound(createThudSound, volMult),
+    [playSound]
+  );
+  const playSweep = useCallback(
+    (volMult = 1) => playSound(createSweepSound, volMult),
+    [playSound]
+  );
 
   // Stable identity so callers can safely depend on it.
   return useMemo(
@@ -98,9 +108,13 @@ export function useUISound() {
       playDeny,
       /** An ending. */
       playGameOver,
+      /** A landing impact — quiet enough to fire on every piece lock. */
+      playThud,
+      /** A clearance shimmer, for rows leaving the board. */
+      playSweep,
       /** Exposed so a global first-interaction listener can unlock audio early. */
       initAudio: initAudioEngine,
     }),
-    [playSwitch, playPop, playSuccess, playDeny, playGameOver]
+    [playSwitch, playPop, playSuccess, playDeny, playGameOver, playThud, playSweep]
   );
 }

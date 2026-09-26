@@ -4,7 +4,7 @@ import { PHProvider } from "@/context/PostHogProvider";
 import dynamic from "next/dynamic";
 
 const DESCRIPTION =
-  "Play interactive games like the Language Muncher Snake Game. Gobble up programming languages and grow your tech stack in this fun, educational twist on the classic Snake game.";
+  "Play Shipstack. Just Tetris. Fill rows, clear them, chase tetrises.";
 
 export const metadata: Metadata = {
   title: "Play - Interactive Games & Experiences",
@@ -14,20 +14,11 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     url: "https://souravinsights.com/play",
     type: "website",
-    images: [
-      {
-        url: "/snake-game-og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Play Page Preview Image",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Play - Interactive Games & Experiences",
     description: DESCRIPTION,
-    images: ["/snake-game-og-image.jpg"],
   },
 };
 
@@ -44,7 +35,7 @@ export default function PlayLayout({
     <div className="min-h-screen transition-colors duration-200">
       <PHProvider>
         <PostHogPageView />
-        <div className="pt-20 md:pt-28 pb-12">{children}</div>
+        <div className="pt-16 md:pt-20">{children}</div>
       </PHProvider>
     </div>
   );

@@ -12,6 +12,8 @@
  *   success   a milestone                           (the final like)
  *   deny      a refusal                             (the like cap)
  *   gameOver  an ending                             (snake)
+ *   thud      a landing                             (a tetris piece locking)
+ *   sweep     a clearance                           (a tetris line merging)
  *
  * Navigation is deliberately absent: it is not a confirmation, and a sound on
  * every link would fire on nearly every tap.
@@ -166,6 +168,82 @@ export function createDenySound(ctx: AudioContext, t: number, volMult = 1) {
     osc.start(start);
     osc.stop(start + decay);
   });
+}
+
+/**
+ * A piece landing. A short, low, filtered noise burst with a tiny downward
+ * sine underneath — felt more than heard, so it can fire on every lock
+ * without becoming noise.
+ */
+export function createThudSound(ctx: AudioContext, t: number, volMult = 1) {
+  const length = Math.ceil(ctx.sampleRate * 0.05); // 50ms
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  const decayInSamples = ctx.sampleRate * 0.011;
+  for (let i = 0; i < length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / decayInSamples);
+  }
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.type = "lowpass";
+  lowpass.frequency.value = 240;
+
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.value = 0.35 * volMult;
+
+  noise.connect(lowpass).connect(noiseGain).connect(ctx.destination);
+  autoDisconnect(noise);
+  noise.start(t);
+
+  // The knock underneath the noise.
+  const body = ctx.createOscillator();
+  const bodyGain = ctx.createGain();
+  body.type = "sine";
+  body.frequency.setValueAtTime(150, t);
+  body.frequency.exponentialRampToValueAtTime(70, t + 0.07);
+
+  bodyGain.gain.setValueAtTime(0, t);
+  bodyGain.gain.linearRampToValueAtTime(0.2 * volMult, t + 0.006);
+  bodyGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+
+  body.connect(bodyGain).connect(ctx.destination);
+  autoDisconnect(body);
+  body.start(t);
+  body.stop(t + 0.09);
+}
+
+/**
+ * A line cleared. A quick rising shimmer — band-passed noise swept upward
+ * with a soft edge, standing in for the classic clear whoosh.
+ */
+export function createSweepSound(ctx: AudioContext, t: number, volMult = 1) {
+  const length = Math.ceil(ctx.sampleRate * 0.16);
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < length; i++) {
+    data[i] = Math.random() * 2 - 1;
+  }
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+
+  const bandpass = ctx.createBiquadFilter();
+  bandpass.type = "bandpass";
+  bandpass.Q.value = 1.2;
+  bandpass.frequency.setValueAtTime(900, t);
+  bandpass.frequency.exponentialRampToValueAtTime(3200, t + 0.14);
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.12 * volMult, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+
+  noise.connect(bandpass).connect(gain).connect(ctx.destination);
+  autoDisconnect(noise);
+  noise.start(t);
 }
 
 /** Three soft, descending notes: disappointed rather than dramatic. */
