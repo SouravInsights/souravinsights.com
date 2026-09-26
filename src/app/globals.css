@@ -190,3 +190,64 @@
   }
 
 }
+/*
+  Shipstack screen geometry
+  -------------------------
+  Unlayered on purpose: @layer utilities would lose to these, and the
+  page has no utility equivalent. Heights use vh first, svh second, so
+  browsers without svh (pre-2022 Chrome/Firefox/Safari, old WebViews)
+  fall back instead of dropping the declaration.
+*/
+.play-root {
+  /* 4rem clears the floating navbar; 0 below — the control deck pads the
+     home-indicator / gesture-bar inset itself. */
+  height: calc(100vh - 4rem);
+  height: calc(100svh - 4rem);
+}
+@media (min-width: 768px) {
+  .play-root {
+    height: auto; /* the desktop shell sizes the column itself (flex-1) */
+  }
+}
+
+/*
+  While a run is live, the phone belongs to the game
+  --------------------------------------------------
+  TetrisGame stamps html[data-game]; the floating navbar pill fades out
+  mid-run and its reserved band is handed to the board, then everything
+  returns on pause / game over — which is also the way out. The resize
+  only ever happens behind a veil (start / pause / over), never
+  mid-play, so the well's geometry is stable under your thumbs. The
+  menu scrim can never be up at this point: it intercepts the Start tap
+  itself, so the menu is always closed when a run begins. Phones only —
+  the desktop navbar never hides and never collides with the rails.
+*/
+@media (max-width: 767px) {
+  .site-nav-mobile {
+    transition:
+      opacity 0.18s ease-out,
+      visibility 0s linear 0s;
+  }
+  .play-shell,
+  .play-root {
+    transition:
+      padding-top 0.28s cubic-bezier(0.23, 1, 0.32, 1),
+      height 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  html[data-game="playing"] .site-nav-mobile {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.18s ease-out,
+      visibility 0s linear 0.18s;
+  }
+  html[data-game="playing"] .play-shell {
+    padding-top: 0;
+  }
+  html[data-game="playing"] .play-root {
+    height: 100vh;
+    height: 100svh;
+    padding-top: max(env(safe-area-inset-top, 0px), 8px);
+  }
+}

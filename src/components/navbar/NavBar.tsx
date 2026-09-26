@@ -12,6 +12,8 @@ import {
   BookmarkCheck,
   BookText,
   Boxes,
+  Gamepad2,
+  Clapperboard,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -24,6 +26,14 @@ const navItems = [
   { name: "Blog", path: "/blog", icon: BookText },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
+];
+
+/* Pages that live outside the menu (the footer's appendix links). They
+   never become menu entries, but the collapsed pill still owes them their
+   true name — without this they fell through to a lying "Home". */
+const detachedRoutes = [
+  { name: "Game", path: "/play", icon: Gamepad2 },
+  { name: "Movies", path: "/movies", icon: Clapperboard },
 ];
 
 const isActivePath = (pathname: string | null, path: string) =>
@@ -87,7 +97,9 @@ const Navbar: React.FC = () => {
   }, [isOpen]);
 
   const currentItem =
-    navItems.find((item) => isActivePath(pathname, item.path)) ?? navItems[0];
+    [...navItems, ...detachedRoutes].find((item) =>
+      isActivePath(pathname, item.path)
+    ) ?? navItems[0];
   const CurrentIcon = currentItem.icon;
 
   const quick = reduceMotion ? { duration: 0 } : { duration: 0.15 };
@@ -149,7 +161,9 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Navbar — the same floating pill, condensed. Collapsed it shows
           where you are; opened, the menu drops out of the pill itself. */}
-      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
+      {/* `site-nav-mobile` is the hook let fades while a Shipstack run is
+          live (globals.css, keyed on html[data-game]) — nothing else uses it. */}
+      <nav className="site-nav-mobile fixed top-4 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
         <motion.div
           initial={false}
           animate={{ y: navHidden ? -160 : 0 }}

@@ -9,8 +9,16 @@
  * shared with the rest of the site. On a phone the board gets almost
  * everything; on desktop it stands alone at full height between two
  * reading rails — score, hold and next on the left, keys and scoring on
- * the right. Overlays aren't modals: the well itself is the screen, so
- * ready, pause and game-over are bare type on a quiet veil inside it.
+ * the right.
+ *
+ * On a phone the site's navbar keeps its place; below it the game reads
+ * like a native app bar instead of a web page: score on the left, next
+ * queue and pause on the right — but the bar borrows the well's exact
+ * width, so header, board and thumb controls all sit on the same two
+ * verticals. The bar itself is built on a single grid (label line over
+ * a fixed-height value line, mirrored on the right). Overlays aren't modals: the well
+ * itself is the screen, so ready, pause and game-over are bare type on
+ * a quiet veil inside it.
  */
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -51,12 +59,13 @@ export default function TetrisGame() {
   // The board's box is measured, not declared: its slot sits in a grid
   // `auto` track, and a CSS-only `aspect-ratio` + percentage height inside
   // one is a sizing cycle the browser resolves to zero. So we read the
-  // free area ourselves and hand the box exact pixels. The HUD and thumb
-  // controls borrow the same width, keeping every column edge aligned.
+  // free area ourselves and hand the box exact pixels.
   const boardAreaRef = useRef<HTMLDivElement | null>(null);
   const [boardSize, setBoardSize] = useState<{ w: number; h: number } | null>(
     null
   );
+  // The ruler: header and controls borrow the board's exact width, so the
+  // whole column — score line, well, thumbs — shares two vertical edges.
   const colStyle = boardSize ? { width: boardSize.w } : undefined;
   useLayoutEffect(() => {
     const el = boardAreaRef.current;
@@ -130,8 +139,25 @@ export default function TetrisGame() {
   const playing = hud.status === "play";
   const overlay = hud.status === "play" ? null : hud.status;
 
+  // Broadcast run status: while a run is live the floating site navbar
+  // steps aside (the rule lives in globals.css). The moment you pause or
+  // the run ends, it comes back — that is the way out.
+  useEffect(() => {
+    const el = document.documentElement;
+    el.dataset.game = playing ? "playing" : "idle";
+    return () => {
+      delete el.dataset.game;
+    };
+  }, [playing]);
+
   return (
-    <div className="flex h-[calc(100svh-4.5rem)] min-h-0 flex-col overscroll-none pt-2 md:h-auto md:flex-1 md:pt-0">
+    // 4rem above (the layout's pt-16) + 0 below. Heights live in
+    // globals.css (.play-root) so vh can fall back for svh — old WebViews
+    // don't know svh and must not drop the declaration. While a run is
+    // LIVE the same file hands the navbar's whole band to the well; the
+    // grow/shrink only ever happens behind a veil — start, pause, game
+    // over — never mid-play.
+    <div className="play-root flex min-h-0 flex-col overscroll-none pt-2 md:flex-1 md:pt-0">
       {/* Rails pinned to the page header's outer edges (justify-between,
           not center): the page reads on two verticals, and the well lands
           dead-center between them. Extra width becomes gap, not margin. */}
@@ -172,29 +198,43 @@ export default function TetrisGame() {
 
         {/* Center column: score header on phones, just the board on desktop */}
         <motion.div {...enter(0.12)} className="flex min-h-0 flex-1 flex-col items-center md:items-stretch">
+          {/* App bar on the board's ruler (colStyle). Both sides share
+              one anatomy: a label line over a fixed-height value line, so
+              the two columns always sit on the same baselines no matter
+              what they hold. The queue keeps two slots even before a run
+              starts (dashed placeholders), so the row never shifts; the
+              second slot dims to read as "the one after". */}
           <div className="w-full max-w-full md:hidden" style={colStyle}>
-          <div className="flex items-end justify-between gap-3">
-            <div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col gap-1">
               <span className="type-label">Score</span>
-              <div className="mt-1 text-[26px] font-semibold leading-none tracking-[-0.02em] tabular-nums">
+              <div className="flex h-7 items-center text-[26px] font-semibold leading-none tracking-[-0.02em] tabular-nums">
                 <Scritto value={hud.score.toLocaleString()} />
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="text-right">
+              <div className="flex flex-col gap-1 text-right">
                 <span className="type-label">Next</span>
-                <div className="mt-1 flex h-5 items-center justify-end gap-2">
-                  {hud.queue.slice(0, 2).map((piece, i) => (
-                    <PiecePreview key={`${piece.type}-${piece.color}-${i}`} piece={piece} dark={dark} cell={7} />
+                <div className="flex h-7 items-center justify-end gap-2">
+                  {[0, 1].map((i) => (
+                    <PiecePreview
+                      key={`${hud.queue[i]?.type ?? "empty"}-${i}`}
+                      piece={hud.queue[i] ?? null}
+                      dark={dark}
+                      cell={8}
+                      dim={i === 1}
+                    />
                   ))}
                 </div>
               </div>
-              <PauseToggle status={hud.status} onToggle={togglePause} />
+              {/* Bare ghost icon, same family as the site's navbar toggles
+                  — a bordered box would shout over the type here. */}
+              <PauseToggle status={hud.status} onToggle={togglePause} size="lg" />
             </div>
           </div>
 
           {/* Meta line. Always rendered, so its height never shifts. */}
-          <MetaLine hud={hud} dark={dark} className="mt-2" />
+          <MetaLine hud={hud} dark={dark} className="mt-1.5" />
           </div>
 
           {/* The board declares its own geometry: height comes from the
@@ -202,7 +242,7 @@ export default function TetrisGame() {
               is the frame there is, no canvas gutters, no floating outline. */}
           <div
             ref={boardAreaRef}
-            className="relative mt-3 w-full min-h-0 flex-1 md:mt-0 md:flex md:items-center md:justify-center"
+            className="relative mt-2 w-full min-h-0 flex-1 md:mt-0 md:flex md:items-center md:justify-center"
           >
             <div
               className="relative mx-auto"
@@ -251,8 +291,10 @@ export default function TetrisGame() {
             </div>
           </div>
 
-        {/* Thumb controls, phones only */}
-        <div className="mt-2 grid w-full max-w-full grid-cols-3 gap-1.5 pb-[max(env(safe-area-inset-bottom),4px)] md:hidden" style={colStyle}>
+        {/* Thumb controls, phones only — pinned to the same ruler as the
+            header above, and kept lean: every pixel the deck doesn't take
+            goes to the well. Still ≥44px, still clear of the home bar. */}
+        <div className="mt-2 grid w-full max-w-full grid-cols-3 gap-1.5 pb-[max(env(safe-area-inset-bottom),8px)] md:hidden" style={colStyle}>
           <ControlButton
             label="Hold"
             disabled={!playing || !hud.canHold}
@@ -389,20 +431,32 @@ function LevelValue({ level, dark }: { level: number; dark: boolean }) {
 function PauseToggle({
   status,
   onToggle,
+  size = "sm",
 }: {
   status: GameStatus;
   onToggle: () => void;
+  /** lg: the phone app bar's 44px thumb target; sm: the desktop rail. */
+  size?: "sm" | "lg";
 }) {
   if (status !== "play" && status !== "paused") return null;
+  const icon = size === "lg" ? "h-5 w-5" : "h-4 w-4";
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={onToggle}
       aria-label={status === "paused" ? "Resume game" : "Pause game"}
-      className={cn("h-9 w-9 text-muted-foreground hover:text-foreground", pressScale)}
+      className={cn(
+        size === "lg" ? "h-11 w-11" : "h-9 w-9",
+        "text-muted-foreground hover:text-foreground",
+        pressScale
+      )}
     >
-      {status === "paused" ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+      {status === "paused" ? (
+        <Play className={icon} />
+      ) : (
+        <Pause className={icon} />
+      )}
     </Button>
   );
 }
@@ -444,7 +498,7 @@ function ControlButton({
       disabled={disabled}
       aria-label={label}
       className={cn(
-        "flex h-14 flex-col items-center justify-center gap-1.5 rounded-lg border border-border/80 bg-secondary/60 text-secondary-foreground",
+        "flex h-12 flex-col items-center justify-center gap-1 rounded-lg border border-border/80 bg-secondary/60 text-secondary-foreground",
         "hover:bg-secondary active:bg-accent",
         "disabled:pointer-events-none disabled:opacity-40",
         pressScale
