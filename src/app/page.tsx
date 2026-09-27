@@ -15,8 +15,6 @@ import { OpinionsSection } from "@/components/OpinionsSection";
 import { EssayHighlights } from "@/components/EssayHighlights";
 import { featuredProjects } from "@/app/projects/projects-data";
 import {
-  Docker,
-  GitHubDark,
   Figma,
   Obsidian,
   Spotify,
@@ -25,7 +23,7 @@ import {
   Warp,
   Arc,
   Paper,
-  GoogleAntigravity,
+  Raindropio,
 } from "@ridemountainpig/svgl-react";
 
 const companies = [
@@ -56,13 +54,11 @@ const myToolkit = {
     title: "Dev Tools",
     items: [
       { name: "OpenCode", logo: "/logos/opencode.png", url: null },
-      {
-        name: "Antigravity",
-        logo: GoogleAntigravity,
-        url: "https://antigravity.google/",
-      },
+      { name: "Cline", logo: "/logos/cline.png", url: "https://cline.bot" },
+      { name: "Pi", logo: "/logos/pi.svg", url: "https://pi.dev" },
       { name: "Ghostty", logo: Ghostty, url: "https://ghostty.org/" },
       { name: "Warp", logo: Warp, url: "https://www.warp.dev/" },
+      { name: "Termius", logo: "/logos/termius.png", url: "https://termius.com/" },
       {
         name: "Conductor",
         logo: "/logos/conductor.png",
@@ -73,8 +69,6 @@ const myToolkit = {
         logo: "/logos/gitbutler.png",
         url: "https://gitbutler.com/",
       },
-      { name: "GitHub Desktop", logo: GitHubDark, url: "https://github.com" },
-      { name: "Docker", logo: Docker, url: "https://www.docker.com/" },
       {
         name: "Obscura",
         logo: "/logos/obscura.svg",
@@ -92,7 +86,21 @@ const myToolkit = {
         url: "https://www.stayinsession.com/",
       },
       { name: "Ebb", logo: "/logos/ebb.ico", url: "https://ebb.cool/" },
-      { name: "Craft", logo: "/logos/craft.png", url: "https://www.craft.do/" },
+      {
+        name: "Simplenote",
+        logo: "/logos/simplenote.png",
+        url: "https://simplenote.com/",
+      },
+      {
+        name: "Raindrop.io",
+        logo: Raindropio,
+        url: "https://raindrop.io/",
+      },
+      {
+        name: "Proton Pass",
+        logo: "/logos/proton.ico",
+        url: "https://proton.me/pass",
+      },
       { name: "Arc", logo: Arc, url: "https://arc.net/" },
       { name: "Raycast", logo: Raycast, url: "https://www.raycast.com/" },
     ],
@@ -104,15 +112,16 @@ const myToolkit = {
       { name: "Paper", logo: Paper, url: "https://paper.design/" },
       { name: "Cap", logo: "/logos/cap.png", url: "https://cap.so/" },
       {
-        name: "Jitter",
-        logo: "/logos/jitter.png",
-        url: "https://jitter.video/",
-      },
-      {
         name: "Sublime",
         logo: "/logos/sublime.png",
         url: "https://sublime.app/",
       },
+      {
+        name: "CleanShot X",
+        logo: "/logos/cleanshot.png",
+        url: "https://cleanshot.com/",
+      },
+      { name: "Shottr", logo: "/logos/shottr.png", url: "https://shottr.cc/" },
     ],
   },
   daily: {
@@ -123,6 +132,12 @@ const myToolkit = {
         name: "Kindle",
         logo: "/logos/kindle.png",
         url: "https://read.amazon.com/landing",
+      },
+      { name: "Halloy", logo: "/logos/halloy.png", url: "https://halloy.chat/" },
+      {
+        name: "Goguma",
+        logo: "/logos/goguma.png",
+        url: "https://play.google.com/store/apps/details?id=fr.emersion.goguma",
       },
       { name: "Bike rides", logo: Bike, url: null },
       { name: "Solo walks", logo: Footprints, url: null },
