@@ -1,17 +1,21 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileWarning, Eye } from "lucide-react";
 
 interface DraftPostIndicatorProps {
   children: React.ReactNode;
   previewParagraphs?: number;
+  slug: string;
 }
+
+const storageKey = (slug: string) => `draft-unlocked:${slug}`;
 
 export default function DraftPostIndicator({
   children,
   previewParagraphs,
+  slug,
 }: DraftPostIndicatorProps) {
   const [showFullContent, setShowFullContent] = useState(false);
   const [eyeClickCount, setEyeClickCount] = useState(0);
@@ -19,6 +23,23 @@ export default function DraftPostIndicator({
   const [password, setPassword] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
   const childrenArray = React.Children.toArray(children);
+
+  // Restore a previous unlock after mount (lazy useState would mismatch SSR).
+  // The stored value is the password itself, not a flag, so changing the
+  // password quietly re-locks every remembered session.
+  useEffect(() => {
+    try {
+      const correctPassword = process.env.NEXT_PUBLIC_AUTHOR_DRAFT_PASSWORD;
+      if (
+        correctPassword &&
+        localStorage.getItem(storageKey(slug)) === correctPassword
+      ) {
+        setShowFullContent(true);
+      }
+    } catch {
+      // Storage unavailable (private mode, blocked cookies) — stay locked.
+    }
+  }, [slug]);
 
   // Only get the visible content (limited to previewParagraphs)
   const visibleContent = childrenArray.slice(0, previewParagraphs);
@@ -40,6 +61,11 @@ export default function DraftPostIndicator({
     if (password === correctPassword) {
       setShowFullContent(true);
       setShowPasswordInput(false);
+      try {
+        localStorage.setItem(storageKey(slug), password);
+      } catch {
+        // Non-fatal: unlock works for this session either way.
+      }
     } else {
       alert("Incorrect password");
     }
@@ -51,7 +77,7 @@ export default function DraftPostIndicator({
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="sticky top-20 z-20 mb-6 lg:mb-8 flex justify-center"
+        className="mb-6 lg:mb-8 flex justify-center"
       >
         <div className="bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/50 rounded-full px-4 py-2 inline-flex items-center gap-2 shadow-sm">
           <FileWarning
@@ -116,9 +142,9 @@ export default function DraftPostIndicator({
         ) : (
           // Otherwise show only the limited preview
           <>
-            {visibleContent}
+            <div className="draft-preview-fade">{visibleContent}</div>
 
-            <div className="mt-8 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
+            <div className="mt-2 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
               <h4 className="type-heading mb-2">
                 This post is still being drafted
               </h4>

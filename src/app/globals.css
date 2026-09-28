@@ -189,6 +189,24 @@
     z-index: 20;
   }
 
+  /* Draft previews dissolve into the notice below instead of ending on a
+     hard cut. A mask fades the content itself, so it stays correct in both
+     themes and over tinted surfaces — a background-matched overlay would
+     need one gradient per theme. The stops are anchored in rem so the fade
+     spans roughly the final two paragraphs regardless of preview length. */
+  .draft-preview-fade {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black calc(100% - 12rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black calc(100% - 12rem),
+      transparent 100%
+    );
+  }
+
 }
 /*
   Shipstack screen geometry

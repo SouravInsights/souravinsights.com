@@ -297,7 +297,7 @@ export default function BlogPostContent({
             prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
           >
             {isDraft ? (
-              <DraftPostIndicator previewParagraphs={10}>
+              <DraftPostIndicator previewParagraphs={10} slug={post.slug}>
                 {content}
               </DraftPostIndicator>
             ) : (
