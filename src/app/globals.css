@@ -269,3 +269,37 @@
     padding-top: max(env(safe-area-inset-top, 0px), 8px);
   }
 }
+
+/*
+  react-tweet, re-toned to the site palette
+  -----------------------------------------
+  theme.css declares its variables through :where() (zero specificity), so
+  this one rule wins in both themes; the hsl(var()) references do the
+  light/dark flip on their own. Spacing moves to the TweetEmbed wrapper,
+  and the hover mirrors BlogImage: no background shift, just a slightly
+  firmer border to acknowledge the cursor.
+*/
+.tweet-embed .react-tweet-theme {
+  --tweet-container-margin: 0;
+  --tweet-font-family: inherit;
+  --tweet-bg-color: hsl(var(--card));
+  --tweet-bg-color-hover: hsl(var(--card));
+  --tweet-border: 1px solid hsl(var(--border));
+  --tweet-font-color: hsl(var(--foreground));
+  --tweet-font-color-secondary: hsl(var(--muted-foreground));
+  --tweet-skeleton-gradient: linear-gradient(
+    270deg,
+    hsl(var(--card)),
+    hsl(var(--muted)),
+    hsl(var(--muted)),
+    hsl(var(--card))
+  );
+  /* react-tweet hardcodes 12px; keep the card on the site's radius scale
+     (same var the nav's rounded-lg resolves to). */
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+
+.tweet-embed:hover .react-tweet-theme {
+  --tweet-border: 1px solid hsl(var(--foreground) / 0.25);
+}

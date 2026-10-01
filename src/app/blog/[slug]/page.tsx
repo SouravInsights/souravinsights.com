@@ -12,6 +12,7 @@ import HtmlNestingVisualizer from "../components/HtmlNestingVisualizer";
 import DomTreeAnimator from "../components/DomTreeAnimator";
 import VideoPlayer from "../components/VideoPlayer";
 import BlogImage from "../components/BlogImage";
+import TweetEmbed from "../components/TweetEmbed";
 
 const Playground = dynamic(() => import("../components/Playground"), {
   ssr: false,
@@ -62,7 +63,7 @@ export default function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, img: BlogImage }}
+      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, TweetEmbed, img: BlogImage }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
