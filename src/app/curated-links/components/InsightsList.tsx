@@ -3,17 +3,15 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, Shuffle, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Search, Shuffle, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
   dedupeByUrl,
-  normalizeUrl,
   seededShuffle,
   sortByNewestId,
 } from "../utils/urlUtils";
 import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
-import { NoteEditorModal } from "./NoteEditorModal";
 import { LikeButton } from "./LikeButton";
 import { FadeIn } from "@/components/FadeIn";
 import {
@@ -63,11 +61,6 @@ export default function InsightsList({
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
-  const [isAdminMode, setIsAdminMode] = useState(false);
-  const [curatedLinks, setCuratedLinks] = useState<LinkData[]>([]);
-  const [selectedLinkForEditing, setSelectedLinkForEditing] =
-    useState<LinkData | null>(null);
-  const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
   const [sort, setSort] = useState<"newest" | "liked" | "shuffle">("shuffle");
@@ -366,90 +359,6 @@ export default function InsightsList({
     };
   }, [view, sortedLinks, visibleItems]);
 
-  // Admin mode is opt-in via ?adminKey=...
-  useEffect(() => {
-    const adminKey = new URLSearchParams(window.location.search).get(
-      "adminKey"
-    );
-    if (adminKey && adminKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
-      setIsAdminMode(true);
-    }
-  }, []);
-
-  const fetchCuratedLinks = async () => {
-    try {
-      const response = await fetch("/api/curated-links", {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
-        },
-      });
-      if (!response.ok) return;
-      const data = await response.json();
-      setCuratedLinks(data.links);
-    } catch (error) {
-      console.error("Error fetching curated links:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (isAdminMode) fetchCuratedLinks();
-  }, [isAdminMode]);
-
-  const openEditor = (link: EnrichedLink) => {
-    const curated = curatedLinks.find(
-      (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-    );
-    setSelectedLinkForEditing({ ...link, ...(curated ?? {}) });
-    setIsEditorModalOpen(true);
-  };
-
-  const handleSaveNotes = async (
-    linkId: string,
-    notes: string,
-    creatorTwitter?: string
-  ) => {
-    try {
-      await fetch("/api/curated-links/save-notes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
-        },
-        body: JSON.stringify({ linkId, notes, creatorTwitter }),
-      });
-      await fetchCuratedLinks();
-    } catch (error) {
-      console.error("Error saving notes:", error);
-    }
-  };
-
-  const addToCollection = async (data: {
-    linkId: string;
-    notes: string;
-    creatorTwitter: string;
-    category: string;
-  }) => {
-    const link = links.find((item) => item.id === data.linkId);
-    if (!link) throw new Error("Link not found");
-
-    await fetch("/api/curated-links", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
-      },
-      body: JSON.stringify({
-        title: link.title,
-        url: link.url,
-        description: link.description,
-        category: data.category,
-        notes: data.notes,
-        creatorTwitter: data.creatorTwitter,
-      }),
-    });
-    await fetchCuratedLinks();
-  };
-
   const visibleLinks = sortedLinks.slice(0, visibleItems);
 
   return (
@@ -666,14 +575,6 @@ export default function InsightsList({
         />
       </div>
 
-      {isAdminMode && (
-        <div className="mt-4 flex items-center rounded-md border border-border px-3 py-2">
-          <span className="type-caption">
-            Admin · {curatedLinks.length} curated
-          </span>
-        </div>
-      )}
-
       {/* Links */}
       <div className="mt-6">
         {visibleLinks.length === 0 ? (
@@ -692,9 +593,6 @@ export default function InsightsList({
 
             <div className="flex flex-col">
               {visibleLinks.map((link, index) => {
-                const isCurated = curatedLinks.some(
-                  (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-                );
                 const href = appendUTMParams(link.url, {
                   utm_source: "souravinsights.com",
                   utm_medium: "curated_links",
@@ -711,9 +609,6 @@ export default function InsightsList({
                           previewMap[link.url] ??
                           `/api/link-preview?url=${encodeURIComponent(link.url)}`
                         }
-                        isAdminMode={isAdminMode}
-                        isCurated={isCurated}
-                        onEdit={() => openEditor(link)}
                       />
                     </FadeIn>
                   </div>
@@ -727,9 +622,6 @@ export default function InsightsList({
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {visibleLinks.map((link, index) => {
-              const isCurated = curatedLinks.some(
-                (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-              );
               const href = appendUTMParams(link.url, {
                 utm_source: "souravinsights.com",
                 utm_medium: "curated_links",
@@ -748,9 +640,6 @@ export default function InsightsList({
                     isVisible={visibleUrls.has(link.url)}
                     isFailed={failedUrls.has(link.url)}
                     onPreviewError={() => refreshPreview(link.url)}
-                    isAdminMode={isAdminMode}
-                    isCurated={isCurated}
-                    onEdit={() => openEditor(link)}
                     warmUrl={previewMap[link.url] ? undefined : link.url}
                   />
                 </FadeIn>
@@ -776,14 +665,6 @@ export default function InsightsList({
         )}
       </div>
 
-      <NoteEditorModal
-        isOpen={isEditorModalOpen}
-        onClose={() => setIsEditorModalOpen(false)}
-        selectedLink={selectedLinkForEditing}
-        onSaveNotes={handleSaveNotes}
-        onAddToCollection={addToCollection}
-        currentCategory={activeChannel}
-      />
       </div>
     </PreviewCardProvider>
   );
@@ -793,16 +674,10 @@ function LinkRow({
   link,
   href,
   previewSrc,
-  isAdminMode,
-  isCurated,
-  onEdit,
 }: {
   link: EnrichedLink;
   href: string;
   previewSrc: string;
-  isAdminMode: boolean;
-  isCurated: boolean;
-  onEdit: () => void;
 }) {
   return (
     <PreviewCardTrigger
@@ -837,16 +712,6 @@ function LinkRow({
       </a>
 
       <div className="flex w-24 shrink-0 items-center justify-end gap-2">
-        {isAdminMode && (
-          <button
-            type="button"
-            onClick={onEdit}
-            aria-label={isCurated ? "Edit notes" : "Add to collection"}
-            className="text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-        )}
         <LikeButton linkId={link.id} />
       </div>
     </PreviewCardTrigger>
@@ -860,9 +725,6 @@ function LinkGridCard({
   isVisible,
   isFailed,
   onPreviewError,
-  isAdminMode,
-  isCurated,
-  onEdit,
   warmUrl,
 }: {
   link: EnrichedLink;
@@ -871,9 +733,6 @@ function LinkGridCard({
   isVisible?: boolean;
   isFailed?: boolean;
   onPreviewError: () => void;
-  isAdminMode: boolean;
-  isCurated: boolean;
-  onEdit: () => void;
   warmUrl?: string;
 }) {
   return (
@@ -926,16 +785,6 @@ function LinkGridCard({
           {shortDomain(link.url)}
         </span>
         <div className="flex shrink-0 items-center gap-2">
-          {isAdminMode && (
-            <button
-              type="button"
-              onClick={onEdit}
-              aria-label={isCurated ? "Edit notes" : "Add to collection"}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </button>
-          )}
           <LikeButton linkId={link.id} />
         </div>
       </div>

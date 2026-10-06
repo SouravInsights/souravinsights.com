@@ -20,7 +20,6 @@
     "@dnd-kit/react": "^0.5.0",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
-    "@mdxeditor/editor": "^3.30.0",
     "@neondatabase/serverless": "^1.0.0",
     "@next/mdx": "^15.2.3",
     "@paper-design/shaders-react": "^0.0.81",
