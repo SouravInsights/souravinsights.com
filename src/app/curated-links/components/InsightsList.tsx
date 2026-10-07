@@ -3,11 +3,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Search, Shuffle, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
   dedupeByUrl,
+  normalizeUrl,
   seededShuffle,
   sortByNewestId,
 } from "../utils/urlUtils";
@@ -67,6 +68,8 @@ export default function InsightsList({
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"list" | "grid">("list");
+  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [hiddenKeys, setHiddenKeys] = useState<Set<string>>(new Set());
   // Captured previews start server-rendered, then fill in as we warm misses.
   const [previewMap, setPreviewMap] = useState(previews);
   const warmedRef = useRef<Set<string>>(new Set());
@@ -206,6 +209,42 @@ export default function InsightsList({
   useEffect(() => {
     window.localStorage.setItem("insights:sort-v2", sort);
   }, [sort]);
+
+  // Admin mode: ?admin in the URL; the key is prompted once and stored in
+  // this browser only. Hiding is reversible server-side (hidden_at).
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("admin")) return;
+    const stored = window.localStorage.getItem("insights_admin_key");
+    const key =
+      stored ?? window.prompt("Admin key (stored in this browser only)");
+    if (key) {
+      window.localStorage.setItem("insights_admin_key", key);
+      setAdminKey(key);
+    }
+  }, []);
+
+  const hideLink = async (link: EnrichedLink) => {
+    if (!adminKey) return;
+    if (!window.confirm(`Hide “${link.title}” from every surface?`)) return;
+    const response = await fetch("/api/v1/links/hide", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${adminKey}`,
+      },
+      body: JSON.stringify({ url: link.url }),
+    });
+    if (response.status === 401) {
+      window.localStorage.removeItem("insights_admin_key");
+      setAdminKey(null);
+      window.alert("Wrong admin key.");
+      return;
+    }
+    if (response.ok) {
+      setHiddenKeys((prev) => new Set(prev).add(normalizeUrl(link.url)));
+      feedback.press();
+    }
+  };
 
   // A card shows the shader while it's on screen and its screenshot isn't ready
   // yet. Off-screen cards render nothing, so only the cards in view ever run a
@@ -359,7 +398,9 @@ export default function InsightsList({
     };
   }, [view, sortedLinks, visibleItems]);
 
-  const visibleLinks = sortedLinks.slice(0, visibleItems);
+  const visibleLinks = sortedLinks
+    .filter((link) => !hiddenKeys.has(normalizeUrl(link.url)))
+    .slice(0, visibleItems);
 
   return (
     <PreviewCardProvider>
@@ -609,6 +650,8 @@ export default function InsightsList({
                           previewMap[link.url] ??
                           `/api/link-preview?url=${encodeURIComponent(link.url)}`
                         }
+                        isAdmin={adminKey !== null}
+                        onHide={() => hideLink(link)}
                       />
                     </FadeIn>
                   </div>
@@ -641,6 +684,8 @@ export default function InsightsList({
                     isFailed={failedUrls.has(link.url)}
                     onPreviewError={() => refreshPreview(link.url)}
                     warmUrl={previewMap[link.url] ? undefined : link.url}
+                    isAdmin={adminKey !== null}
+                    onHide={() => hideLink(link)}
                   />
                 </FadeIn>
               );
@@ -674,10 +719,14 @@ function LinkRow({
   link,
   href,
   previewSrc,
+  isAdmin,
+  onHide,
 }: {
   link: EnrichedLink;
   href: string;
   previewSrc: string;
+  isAdmin: boolean;
+  onHide: () => void;
 }) {
   return (
     <PreviewCardTrigger
@@ -712,6 +761,16 @@ function LinkRow({
       </a>
 
       <div className="flex w-24 shrink-0 items-center justify-end gap-2">
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={onHide}
+            aria-label="Hide link"
+            className="text-muted-foreground opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100 focus-visible:opacity-100"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
         <LikeButton linkId={link.id} />
       </div>
     </PreviewCardTrigger>
@@ -726,6 +785,8 @@ function LinkGridCard({
   isFailed,
   onPreviewError,
   warmUrl,
+  isAdmin,
+  onHide,
 }: {
   link: EnrichedLink;
   href: string;
@@ -734,6 +795,8 @@ function LinkGridCard({
   isFailed?: boolean;
   onPreviewError: () => void;
   warmUrl?: string;
+  isAdmin: boolean;
+  onHide: () => void;
 }) {
   return (
     <div
@@ -785,6 +848,16 @@ function LinkGridCard({
           {shortDomain(link.url)}
         </span>
         <div className="flex shrink-0 items-center gap-2">
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={onHide}
+              aria-label="Hide link"
+              className="text-muted-foreground transition-colors hover:text-red-600"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
           <LikeButton linkId={link.id} />
         </div>
       </div>

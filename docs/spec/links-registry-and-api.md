@@ -129,8 +129,10 @@ GET /api/v1/links?channel=tools&limit=100&cursor=...
     → { data: [{ id, like_key, url, title, description, channel, added_at }],
         meta: { next_cursor } }
 
-GET /api/v1/links/:id    → one item; :id is the url_key (human-readable)
-GET /api/v1/channels     → [{ channel, count }]
+GET /api/v1/links?url=https://brandur.org/minimalism
+    → exact lookup: one item or 404. Query param, not a path segment —
+      url_keys contain slashes.
+GET /api/v1/channels     → { data: [{ channel, count }] }
 ```
 
 - `id` is the `url_key` — stable across sources and inspectable in a browser bar. `like_key` is the `discord_id` as a string (nullable) — the Redis like key the live site already uses.
@@ -146,9 +148,9 @@ GET /api/v1/channels     → [{ channel, count }]
 ## Admin: hide links from the page itself
 
 - One server-side env, `ADMIN_SECRET` (already in `.env`), sent as a Bearer token to admin endpoints. Nothing `NEXT_PUBLIC_` — the key never ships in a bundle; the page stores it in `localStorage` after I type it once. Single-user site: sufficient. Leak → rotate the var, done.
-- `DELETE /api/v1/links/:id` sets `hidden_at` (204). `POST /api/v1/links/:id/restore` clears it. Both documented in the same OpenAPI spec, tagged `admin`.
+- `POST /api/v1/links/hide` `{ url }` sets `hidden_at`; `POST /api/v1/links/unhide` `{ url }` clears it. Body-based, same reason: url_keys can't ride path segments. Both documented in the same OpenAPI spec, tagged `admin`.
 - UI: `?admin` in the page URL → key prompt once → rows grow a trash button with confirm → success removes the row. Visitors see nothing. No dashboard, no framework.
-- No restore UI in v0: a one-off curl covers mistakes.
+- No restore UI in v0: a one-off `POST /api/v1/links/unhide` covers mistakes.
 
 ---
 
