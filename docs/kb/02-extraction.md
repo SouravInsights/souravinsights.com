@@ -19,7 +19,7 @@ flowchart TD
     SPEC -->|no| NEEDS{"blocked / empty /<br/>built with JavaScript?"}
     README --> NEEDS
     NEEDS -->|no| STATIC["use the fetched text"]
-    NEEDS -->|yes| RENDER["2 · headless browser → html → Readability"]
+    NEEDS -->|yes| RENDER["2 · one shared headless browser → html → Readability<br/>25s cap · body-text fallback"]
     STATIC --> CLEAN["clean: collapse whitespace · drop boilerplate"]
     RENDER --> CLEAN
     CLEAN --> CLS{"classify"}
@@ -44,10 +44,25 @@ with `node-html-parser`, which is a faster, lower-level parser with a different 
 is why the spec's original listed stack didn't work as written.
 
 **3. Headless browser — only when needed.** Some pages build their content with JavaScript, so
-the plain fetch returns 200 with an empty body. For those, we run a headless Chromium, wait for
-the page to settle, then run Readability on the rendered HTML. Reuse the timing logic in
-`src/lib/screenshot.ts`. Always close the browser and cap the wait; if it hangs, fall back to
-whatever the plain fetch returned.
+the plain fetch returns 200 with an empty body. For those we run a headless Chromium, wait for
+the page to settle (`document.fonts.ready`, then one second), and run Readability on the
+rendered HTML. Three things about this rung were learned by breaking it in the bulk run, and all
+three live in `src/lib/kb/render.ts`:
+
+- **One browser per *run*, not per page.** Launching a fresh Chromium per page is what produced
+  a pile of false `failed` rows: under concurrency most JS pages came back empty, though they
+  render fine one at a time. The browser is now created lazily once and reused; pages are opened
+  and closed against it.
+- **A hard 25s cap per page.** Navigation had its own timeout, but `document.fonts.ready` and
+  `page.content()` can hang forever on a broken page — and one such URL stalled an entire run.
+  The cap bounds the damage to a single link; on timeout the page is closed, which aborts the
+  work still running.
+- **Fall back to the page's visible body text.** Readability aggressively discards text on
+  app-style pages. If it returns under 50 words while the rendered body has more, we keep
+  `document.body.innerText` instead — a noisy passage beats a `failed` row.
+
+If the render still yields nothing, we keep whatever rung 1 returned, so a link never regresses
+to `failed` just because the browser had a bad day.
 
 **GitHub is a special case.** Most `tools` links are GitHub repos; the page is chrome and the
 content is the README. For `github.com/owner/repo`, fetch
@@ -80,25 +95,54 @@ recover), `thin` usually is not (a paywall won't lift).
 
 ## Re-running safely
 
-- We store a `content_hash` — a fingerprint of the extracted text. If a page hasn't changed,
-  the re-run skips it: no refetch, no re-embed.
-- Re-chunking overwrites chunks by position (`unique(link_id, chunk_index)`), so nothing
-  duplicates. But if a page got *shorter*, its old tail chunks would linger — so after
-  re-chunking, delete chunks whose `chunk_index` is past the new count.
+- **The queue is the status column.** `kb-extract` only touches rows whose `extract_status` is in
+  its filter — `pending` by default. So a crash mid-run just means "run it again": the links
+  already read are no longer pending.
+- **`--status failed` (or `failed,thin`) re-reads the rows that came back weak.** This flag is
+  what made a better extractor *worth* having. Without it, every row the old code got wrong would
+  stay wrong forever, because it was never pending again.
+- **A link's passages are replaced wholesale** — delete by `link_id`, then insert the new ones.
+  Re-reading a page can therefore never leave the tail of a longer previous version behind. (The
+  earlier plan was to delete chunks past the new count; deleting all of them is simpler and has
+  the same effect.)
+- `raw_text` and `content_hash` are stored per link for the future re-read job
+  (`src/trigger/kb-refresh.ts`, **not built**). Nothing compares the hash yet — extraction is
+  driven by status alone.
 
-## What "good" looks like
+## What "good" looks like — the actual numbers
 
-- The `Untitled` links get real titles (we now have the page's `<title>`).
-- Most links end `ok`, the browser fallback is rarely needed, and most `thin` results are
-  paywalls.
-- `04-evals.md` proves this with saved test pages, rather than by eyeballing 500 links.
+The first full build, 500 links (`docs/kb/build-report.md`, regenerable):
+
+| Status | Count | Meaning |
+| :--- | ---: | :--- |
+| `ok` | 255 | readable text, chunked and embedded |
+| `thin` | 89 | under 200 words — a landing page, a paywall, a JS shell |
+| `skipped` | 138 | never fetched; title + description indexed as one passage |
+| `failed` | 9 | no method produced any text |
+| `pending` | 9 | not read yet |
+
+**2,794 passages** in total. `Untitled` links got real titles from the page's `<title>`.
+
+The number that matters is *how much of the collection search can reach at all* — and it is not
+`ok + thin`. It is `ok + skipped` (255 + 138), plus the partial text from `thin`. The report's
+per-channel `missing` column is the honest bottom line: 14 links stored no passage whatsoever, so
+for those the agent can only answer from the title and description.
+
+The bulk run's real lesson: the `failed` count was mostly *our* bug, not the internet's. JS pages
+that rendered fine one at a time were coming back empty under concurrency, and Readability was
+throwing away text on app-style pages. Both fixes are above.
+
+`04-evals.md` is where this stops being eyeballing — but note its extraction check is still
+unbuilt, so today **the report is the measurement**.
 
 ## Operational rules
 
-- **Concurrency:** about 6 at a time, and only one request at a time to any single host.
-- **Timeouts** on the fetch, the render, and the whole per-page step.
-- **Log a per-run summary** (`ok/thin/failed/skipped` counts, and how often the fallback was
-  needed), the way the health sweep already does.
-- **jsdom is heavy.** Extraction normally runs in a script or a Trigger.dev task, so its weight
-  doesn't matter. But if a Next route ever imports the extractor, list `jsdom` in `next.config`'s
-  `serverComponentsExternalPackages` so it stays out of the server bundle.
+- **Concurrency:** 4 at a time (`CONCURRENCY` in `scripts/kb-extract.ts`), all sharing the one
+  browser.
+- **A timeout at every rung:** 10s on the plain fetch, 25s on the render. Each link's work is
+  caught on failure, so one bad page can't stop the run.
+- **A per-run tally** (`ok / thin / failed / skipped`, plus the passage count) prints every 10
+  links — the same shape as the health sweep's summary.
+- **jsdom is heavy, and only the scripts pay for it.** Nothing in a Next route imports the
+  extractor, so its weight never reaches a request. `next.config.mjs` externalizes
+  `@sparticuz/chromium` and `puppeteer-core` for the routes that *do* render (`/api/link-preview`).

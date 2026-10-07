@@ -115,7 +115,7 @@ The tables (`links`, `link_chunks`) and every column's reasoning live in `links-
 
 Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, excludes hidden and dead rows (same filter as `getLinks()`), and ranks by meaning alone. Two details worth pinning down: group the nearest chunks by link before ranking (the closest chunks can all be from one page), and don't rank by likes — the collection gets too few likes for that signal to mean anything.
 
-**Chunking params (don't overthink):** ~500 tokens, ~15% overlap, split on paragraph boundaries. Citation unit = chunk → URL.
+**Chunking params (don't overthink):** ~500 tokens, ~15% overlap, split on paragraph boundaries. Citation unit = chunk → URL. The text that gets *embedded* is prefixed with `{title} — {channel}:` — a bare passage like "it also handles soft deletes well" is unfindable, the header makes it searchable. The stored `content` stays clean.
 
 ---
 
@@ -151,47 +151,77 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 
 ## How retrieval quality is proven (not vibes)
 
-1. **Golden eval set** — commit ~30 test queries → expected URLs to the repo, written against the *live* collection ("fuzzy recall" cases especially: describe content, not title).
-2. Script runs retrieval only (no LLM) → report **recall@5** (measured per **link**, since citations are links). Run the same queries through today's keyword search as a baseline — the new search must beat it. Ship the agent only when ≥ 80%.
-3. Re-run after any ingest change (chunk size, extractor tweaks, tags). Watch the number move — that's the feedback loop that teaches RAG intuition.
-4. **Extraction QA loop**: before bulk ingest, run 50 diverse links, *read the extracts by eye*, fix the extractor, repeat. Weak extractor = weak KB, so this loop is the real product work.
-5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog event on every query + existing UTM params measure whether answers get clicked.
+1. **Golden set** — `eval/kb-golden.json`, committed, written against the *live* collection: describe content, not titles ("fuzzy recall" cases especially).
+2. **Retrieval check** — `scripts/kb-eval.ts` runs retrieval only (no LLM) and prints **recall@5** and **MRR@10**, measured per **link** since citations are links, next to a keyword baseline over title/description/url, plus unanswerable queries that must fall below a similarity cutoff. Gate: recall@5 ≥ 0.80 *and* beats the baseline.
+3. Re-run after any ingest change (chunk size, extractor tweaks, extraction fixes). Watch the number move — that's the feedback loop that teaches RAG intuition.
+4. **Extraction QA loop**: read the extracts by eye, fix the extractor, repeat. Weak extractor = weak KB, so this is the real product work.
+5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog measures whether cited answers get clicked.
+
+**Not built yet:** the ~30 saved-HTML fixtures that would make the extraction check deterministic, and an automated grounding check for the answers. Both are spelled out in `docs/kb/04-evals.md`.
+
+---
+
+## Deviations as built
+
+Where the build disagreed with this spec, or the spec was silent and I chose. Brief on purpose — the reasoning is the point.
+
+- **Extractor — three refinements.** The ladder worked, but the bulk run had pages marked `failed` that render fine one at a time. One Chromium per *run* instead of per page; a hard 25s cap per page, because a single URL hung a whole run; and a fall back to `document.body.innerText` when Readability finds under 50 words — it throws away the text on app-style pages. In `docs/kb/02-extraction.md`.
+- **Description-only channels are indexed.** The spec's "description-level only" governed *fetching*, was silent on *indexing*, and the build read it as "don't index". That left 138 links (portfolios, design, newsletters) invisible to the agent. Now title + description is stored as one passage. No fetch added.
+- **Chunks embed with a title/channel header.** The spec said "embedding text = chunk content". A bare passage like "it also handles soft deletes well" is unfindable without the title beside it.
+- **`--status` flag on kb-extract.** The spec had no way to re-read rows that came back weak. It was needed the moment the extractor improved.
+- **Eval scale.** The spec said ~40 answerable queries; there are 12. Written by hand against the real collection, so it is honest but small — a smoke test, not a benchmark.
+- **Suggestion chips exist at all.** Not in the spec. They started hand-written, drifted into title-echoes ("Scale your Next.js app"), and are now derived from the collection 6-per-channel and verified against the index by `scripts/kb-suggestions.ts`.
+- **`fetch_link` not built.** Compare is still step 6, so the SSRF guard has no code yet.
 
 ---
 
 ## Files
 
+**Built**
+
 ```
 src/lib/kb/
-  extract.ts     // fetch + readability + chromium fallback, category-aware depth
-  chunk.ts       // ~500 tok, overlap, paragraph-aware
-  embed.ts       // OpenRouter /embeddings wrapper
-  search.ts      // vector search, grouped by link
-  model.ts       // the one file that knows which models we use
-  prompt.ts      // system prompt + citation rules
+  model.ts        // the one file that names the models
+  extract.ts      // the fallback ladder (see docs/kb/02-extraction.md)
+  render.ts       // shared Chromium + a hard 25s cap per page
+  chunk.ts        // ~500 tok, 15% overlap, paragraph-aware
+  embed.ts        // OpenRouter /embeddings, batched 100, retries with backoff
+  search.ts       // vector search → group by link → rank by similarity
+  prompt.ts       // system prompt + citation rules
+  agent.ts        // streamText + one tool, capped at 4 steps
+  suggestions.ts  // reads the derived chips
 
-scripts/snapshot-links.ts   // DONE — Discord → links registry
-scripts/kb-extract.ts       // pending rows: extract → chunk → embed (idempotent)
-scripts/kb-eval.ts          // golden set → hit-rate@5
-eval/kb-golden.json         // the test queries
-
-src/app/api/insights/chat/route.ts    // agent loop, streamed (site-internal)
-src/app/api/v1/search/route.ts        // public JSON retrieval — joins the v1 API
+src/app/api/insights/chat/route.ts     // the Ask endpoint (8/min, 60/day per IP)
 src/app/curated-links/components/AskPanel.tsx
-src/trigger/discord-links.ts          // already persists new links; extraction hook goes here
+src/content/insights-suggestions.json  // generated chips, 6 per channel
+
+scripts/snapshot-links.ts   // Discord → links registry (DONE)
+scripts/kb-extract.ts       // extract → chunk → embed; --status re-reads weak rows
+scripts/kb-report.ts        // writes docs/kb/build-report.md
+scripts/kb-eval.ts          // the retrieval scoreboard
+scripts/kb-suggestions.ts   // derive the chips, then verify them against the index
+eval/kb-golden.json         // the test queries
 ```
 
-Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No new migration needed until the schema changes.
+**To build**
+
+```
+eval/fixtures/*.html            // frozen pages, for the extraction check
+src/app/api/v1/search/route.ts  // public JSON retrieval — zod + OpenAPI, like /links
+src/trigger/kb-refresh.ts       // weekly content_hash re-read of recent links
+```
+
+Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration has been needed since.
 
 ---
 
 ## Build order
 
 0. ~~Snapshot.~~ **Done** (registry spec): 510 unique → 500 recorded, 9 dead skipped; site + API read the DB.
-1. **Extraction loop.** 50 links → eyeball → fix → repeat, then bulk (~360 deep, rest thin). Cost: cents.
-2. **Chunk + embed + search.** `search` API works from curl. Nothing LLM yet.
-3. **Golden eval.** ≥80% hit-rate@5 or iterate on chunks/extract until it is.
-4. **Ask agent.** Chat route + AskPanel, citations, rate limits, PostHog events.
+1. ~~**Extraction loop.**~~ **Done** — eyeballing tuned into measuring: `kb-extract --status`, `kb-report`, and the retrievability number in the report.
+2. ~~**Chunk + embed + search.**~~ **Done** — `scripts/kb-eval.ts` is the "works without the UI" step.
+3. ~~**Golden eval.**~~ **Done** — 12 answerable + 4 unanswerable queries. See the eval section for what is still missing.
+4. ~~**Ask agent.**~~ **Done** — chat route, AskPanel, citations, rate limits. PostHog events not wired.
 5. **Writing Desk mode** on top of Ask. Use it for one real article; fix what annoys me.
 6. **Compare/fetch tool.** Then MCP. Then Watch/Tend as their own small specs.
 

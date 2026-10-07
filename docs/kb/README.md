@@ -6,6 +6,34 @@ No prior background assumed.
 **In one line:** we convert each saved link into numbers that represent its meaning, then
 answer questions by finding the closest numbers — instead of matching keywords.
 
+## Where the build actually is
+
+| Piece | State |
+| :--- | :--- |
+| Link registry + health | built (its own earlier spec) |
+| Extraction | built — 500 links: 255 `ok`, 89 `thin`, 138 `skipped`, 9 `failed`; 2,794 passages |
+| Chunk + embed + search | built |
+| Retrieval eval | built — `recall@5` / `MRR@10` against a keyword baseline |
+| **Ask** agent + panel | built, live on the page |
+| Writing Desk, Compare | not started |
+| Weekly re-read (`kb-refresh`) | not started |
+| Public search API (`/api/v1/search`) | not started |
+| PostHog signals | not wired |
+
+These docs describe what exists, and label what doesn't. Where a page teaches something unbuilt, it
+says so — a doc that reads as if everything already ran is worse than no doc at all.
+
+## The commands
+
+```
+npx tsx scripts/snapshot-links.ts                     # Discord → link registry
+npx tsx scripts/kb-extract.ts                         # pending links → text → chunks → vectors
+npx tsx scripts/kb-extract.ts --status failed,thin    # re-read the rows that came back weak
+npx tsx scripts/kb-report.ts --write                  # regenerate build-report.md
+npx tsx scripts/kb-eval.ts                            # the retrieval scoreboard
+npx tsx scripts/kb-suggestions.ts                     # regenerate the suggestion chips
+```
+
 ## Read in order
 
 | Page | What it covers |
