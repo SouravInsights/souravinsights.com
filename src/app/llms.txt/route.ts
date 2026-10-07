@@ -26,6 +26,11 @@ export function GET() {
 
 - [Insights RSS](${BASE_URL}/curated-links/rss.xml): New links as they're added
 
+## API
+
+- [Links API](${BASE_URL}/api/v1/links): Read-only JSON for the collection — GET /api/v1/links (channel, cursor, url params), GET /api/v1/channels
+- [API docs](${BASE_URL}/api/docs): Interactive OpenAPI reference (spec at /api/v1/openapi.json)
+
 ## Full content
 
 - [llms-full.txt](${BASE_URL}/llms-full.txt): The curated links collection in markdown
