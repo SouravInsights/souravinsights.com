@@ -33,6 +33,10 @@ export const metadata: Metadata = {
   },
 };
 
+/** The site's link treatment, with a focus ring for keyboard users. */
+const linkClass =
+  "font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40";
+
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getInsightsData();
 
@@ -110,9 +114,21 @@ export default async function CuratedLinksPage() {
           <AskPanel suggestions={suggestions} />
         </div>
 
+        {/* The collection is a public dataset as well as a page, and this is
+            where curiosity peaks: you have just watched the agent answer from
+            it. The line used to sit at the very bottom of the page in the
+            faintest text tier, below ~490 links, where nobody found it. */}
+        <p className="type-caption mt-4">
+          All of this is queryable from outside the site. Search it over HTTP, or
+          wire it into your editor with MCP.{" "}
+          <Link href="/docs" className={linkClass}>
+            Using the Collection
+          </Link>
+        </p>
+
         {/* Browse is a separate mode from Ask, so it gets its own heading and a
-            wider gap than the header→panel step — otherwise the two blocks read
-            as one and the panel's edge touches the list's toolbar. */}
+            wider gap than the step above it. Otherwise the two blocks read as
+            one, and the panel's edge touches the list's toolbar. */}
         <div className="mt-16">
           <SectionHeader title="Browse the collection" />
           <InsightsList
@@ -123,21 +139,6 @@ export default async function CuratedLinksPage() {
             shuffleSeed={shuffleSeed}
           />
         </div>
-
-        {/* One line, and only one. The collection is a public dataset as well as
-            a page, but this page is for browsing — everything else lives at
-            /docs, which is where a developer would look for it. */}
-        <p className="type-caption mt-12 text-faint-foreground">
-          This collection is queryable — two public endpoints, and an MCP server for your
-          editor.{" "}
-          <Link
-            href="/docs"
-            className="font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40"
-          >
-            Using the Collection
-          </Link>
-          .
-        </p>
       </div>
     </div>
   );
