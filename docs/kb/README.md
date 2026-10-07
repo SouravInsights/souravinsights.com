@@ -15,7 +15,8 @@ answer questions by finding the closest numbers — instead of matching keywords
 | Chunk + embed + search | built |
 | Retrieval eval | built — `recall@5` / `MRR@10` against a keyword baseline |
 | **Ask** agent + panel | built, live on the page |
-| Writing Desk, Compare | not started |
+| **Writing Desk** | retrieval core + admin-only endpoint built; the *editor* is a separate spec |
+| Compare | not started |
 | Weekly re-read (`kb-refresh`) | built — rotating, 100 links per run |
 | Public search API (`/api/v1/search`) | not started |
 | PostHog signals | not wired |
@@ -33,6 +34,11 @@ npx tsx scripts/kb-report.ts --write                  # regenerate build-report.
 npx tsx scripts/kb-eval.ts                            # the retrieval scoreboard
 npx tsx scripts/kb-suggestions.ts                     # regenerate the suggestion chips
 npx trigger.dev@latest dev                            # run the weekly tasks locally
+
+# Writing Desk — the saved links that back what you're writing (admin only)
+curl -s localhost:3000/api/insights/desk \
+  -H "Authorization: Bearer $ADMIN_SECRET" -H 'content-type: application/json' \
+  -d '{"draft":"Nested rounded corners look wrong because the outer radius must equal the inner plus the padding."}'
 ```
 
 ## Read in order

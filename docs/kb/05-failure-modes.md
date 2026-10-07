@@ -55,6 +55,7 @@ Two ways the *words* fail — this is where a demo usually loses trust:
 | What goes wrong | How it shows up | Fix |
 | :--- | :--- | :--- |
 | A chip the collection can't answer | a visitor clicks it and gets "not covered" | `kb-suggestions.ts` runs every chip through `search()` and drops any scoring below `MIN_SCORE` (0.3) |
+| A citation that doesn't really support the claim | a published article cites the wrong source | the Writing Desk passes only matches above `0.45` to the model; below that it's topic-adjacency, and a helpful model will write a confident reason for it anyway |
 | Chips drift into echoes of link titles | they read like a table of contents, not questions | derive them per channel, phrased as questions, 6 each |
 | Copy promises a feature that isn't built | the page lies quietly | status lives in one place and the docs match it |
 
@@ -71,7 +72,7 @@ Two ways the *words* fail — this is where a demo usually loses trust:
 
 ## What actually broke
 
-Five of these were not hypothetical. They happened, and each one taught something.
+Six of these were not hypothetical. They happened, and each one taught something.
 
 **The `failed` pile that wasn't.** The first bulk run recorded a large batch of JS-heavy pages as
 `failed`. Rendering those same pages one at a time worked fine. The cause was launching a fresh
@@ -98,6 +99,14 @@ description as one passage. Lesson: a deliberate skip has to say what *is* still
 your Next.js app") — promises the collection doesn't keep. Fix: derive them per channel *and verify
 each one against the index* before shipping it. Lesson: the copy is part of the system; it needs a
 check too.
+
+**The Writing Desk cited sources that backed nothing.** Its first real run took a draft about RAG
+internals and returned three confident citations — none of which supported a single claim. The
+collection is design and engineering links; there was nothing in it to cite. The scores explained
+it: everything genuinely on point scored 0.53 and above, and everything the model had been handed
+scored 0.35–0.44. The model wasn't hallucinating. It had been given marginal matches and asked to
+be helpful. Fix: a similarity floor of 0.45, applied *before* the prompt, so weak candidates never
+reach it. Lesson: don't ask a model to judge relevance when you can filter for it first.
 
 ## The pattern behind every fix
 

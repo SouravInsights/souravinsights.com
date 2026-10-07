@@ -136,6 +136,8 @@ Same agent, different contract. Input: a thesis or draft paragraph. Output: the 
 
 I use it from my editor via curl/MCP later; anyone writing about design/engineering uses it on the site. The collection becomes a reusable context layer for thinking, not a museum of links.
 
+**Status:** the retrieval core and an admin-only endpoint are built and working (`src/lib/kb/writing-desk.ts`, `POST /api/insights/desk`). What is deliberately *not* decided is where the writer types. That surface is a blog-publishing product — an editor needs commits, drafts, preview, publishing — and none of it makes retrieval better. It gets its own spec rather than holding this one hostage; until then the Desk is reachable by curl.
+
 ### 3. Compare & decide (problem 2, deeper)
 
 "Compare sandbox services in the collection." Agent retrieves candidates, then can **fetch a page fresh** (`fetch_link` tool, 24h Redis cache, max 3 per question) when stored chunks aren't enough — e.g. a pricing detail. Returns a small table + a recommendation with tradeoffs. Choosing tools is a weekly pain; this is where the agent earns trust.
@@ -173,6 +175,8 @@ Where the build disagreed with this spec, or the spec was silent and I chose. Br
 - **Suggestion chips exist at all.** Not in the spec. They started hand-written, drifted into title-echoes ("Scale your Next.js app"), and are now derived from the collection 6-per-channel and verified against the index by `scripts/kb-suggestions.ts`.
 - **`fetch_link` not built.** Compare is still step 6, so the SSRF guard has no code yet.
 - **`kb-refresh` rotates; it does not filter by date.** The spec said "a weekly re-read of the most recently added links". Measured against the real table, a 90-day window covered 79 of 500 links — 84% of the collection would never have been re-read, and `content_hash` would have been consulted only for the newest slice. The job now reads least-recently-read first and caps at 100 per run (353 links are eligible), so everything is re-read roughly monthly and nothing is frozen. The cap bounds the cost; the date filter only added blind spots.
+- **The Desk's similarity floor is 0.45, not the eval's 0.35.** Different questions: the eval asks "is this in the collection at all", the Desk asks "does this passage back this claim". Measured on two drafts — one the collection cannot support, one it can — noise sat at 0.35–0.44 and genuine support at 0.53 and 0.63. At 0.35 the model dutifully wrote three confident reasons to cite unrelated pages; at 0.45 that draft returns an empty list, which is the honest answer. The cost is real and accepted: a genuine secondary support around 0.4x is now missed. Precision wins because a wrong attribution gets published.
+- **Writing Desk is a retrieval core, not an editor.** The spec bundled "where I write" together with "what backs this claim". They are different products, and only the second one needs a knowledge base. The core shipped; the editor became its own spec.
 
 ---
 
@@ -192,8 +196,10 @@ src/lib/kb/
   prompt.ts       // system prompt + citation rules
   agent.ts        // streamText + one tool, capped at 4 steps
   suggestions.ts  // reads the derived chips
+  writing-desk.ts // draft → claims → the fragments that back them
 
 src/app/api/insights/chat/route.ts     // the Ask endpoint (8/min, 60/day per IP)
+src/app/api/insights/desk/route.ts     // Writing Desk, admin-only for now
 src/app/curated-links/components/AskPanel.tsx
 src/content/insights-suggestions.json  // generated chips, 6 per channel
 
@@ -226,7 +232,7 @@ Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration
 2. ~~**Chunk + embed + search.**~~ **Done** — `scripts/kb-eval.ts` is the "works without the UI" step.
 3. ~~**Golden eval.**~~ **Done** — 12 answerable + 4 unanswerable queries. See the eval section for what is still missing.
 4. ~~**Ask agent.**~~ **Done** — chat route, AskPanel, citations, rate limits. PostHog events not wired.
-5. **Writing Desk mode** on top of Ask. Use it for one real article; fix what annoys me.
+5. ~~**Writing Desk retrieval.**~~ **Done** — split the draft into claims, search once per claim, drop matches under a similarity floor, then let the model label only links it was handed. The *editor* is its own spec: decide it after using the Desk by curl on one real article.
 6. ~~**Weekly refresh.**~~ **Done** — `src/trigger/kb-refresh.ts`, rotating and capped.
 7. **Compare/fetch tool.** Then MCP. Then Watch/Tend as their own small specs.
 

@@ -90,13 +90,50 @@ prompt.
 
 | Experience | Input → output | Status |
 | :--- | :--- | :--- |
-| **Ask** | question → grounded answer with citation cards | **built** |
-| **Writing Desk** | a thesis or a draft paragraph → 6–10 relevant passages, each with a one-line "why relevant" | not started |
+| **Ask** | question → grounded answer with citation cards | **built** (public) |
+| **Writing Desk** | a draft paragraph → the saved passages that back it, each with a one-line "why" | **built** (admin-only) |
 | **Compare** | candidates → a small table with a recommendation; may fetch a page fresh | not started |
 
-Only Ask exists. Writing Desk and Compare sit on the *same* retrieval call — a different prompt
-and a different output shape, not different infrastructure. That is the payoff of building the
-knowledge base before the features.
+Both built experiences sit on the *same* `search()` call — a different prompt and a different
+output shape, not different infrastructure. That is the payoff of building the knowledge base
+first.
+
+## The Writing Desk: citations for what you're writing
+
+The job is narrow: *given this paragraph, what have I already saved that backs it?* Not an answer,
+not prose — the material, with the passage attached so you can quote it.
+
+```mermaid
+flowchart TD
+    D(["your draft"]) --> C["split into claims<br/>sentence boundaries"]
+    C --> S["search once per claim"]
+    S --> M["merge by link<br/>keep each link's best match"]
+    M --> F{"score ≥ 0.45?"}
+    F -->|no| X["dropped:<br/>topic-adjacent, not support"]
+    F -->|yes| L["the model writes one line per link"]
+    L --> R(["fragments + citations + why"])
+```
+
+Four decisions carry it:
+
+**Split the draft before searching.** A paragraph holds several claims, and embedding the whole
+thing averages them into a blur — the same argument that made us chunk pages at 500 tokens.
+Claim-level queries keep every vector sharp.
+
+**Merge by link.** Your best source may match three claims; you want it once, with its best
+passage, not three times.
+
+**Only matches above 0.45 reach the model.** This is the number that decides whether the tool can
+be trusted. Handed a marginal passage, a helpful model writes a confident reason to cite it, so
+the weak ones must never get into the prompt. `05-failure-modes.md` records how the number was
+picked and what it costs.
+
+**The model may only label links it was given.** The candidate `urlKey`s become a zod `enum`, so a
+made-up source has nowhere to appear — the same structural guarantee the Ask agent uses for
+citations.
+
+The honest consequence: ask the Desk to back a claim your collection has nothing on, and it
+returns an empty list. That is the feature working.
 
 `fetch_link` (Compare's extra tool, and the only place the agent would reach the open web) is
 **not written**. When it is, it must: allow http(s) only and reject private/loopback addresses
