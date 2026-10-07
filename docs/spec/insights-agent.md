@@ -92,7 +92,7 @@ flowchart TD
 Reliability rules, applied everywhere:
 
 1. **Idempotent ingest.** `url_key` uniqueness already prevents duplicate links (live). Extraction adds `content_hash` so re-runs process only new/changed pages. Crash anywhere → rerun the script, nothing doubles.
-2. **Extraction fallback ladder, never fatal.** Static fetch → Readability (needs a real DOM — jsdom or linkedom, not `node-html-parser`) → headless render (verify Chromium is reachable where extraction runs, not just in the link-preview route) → give up cleanly, mark `failed`, keep description-level data. One bad page can't block 500.
+2. **Extraction fallback ladder, never fatal.** Static fetch → Readability over jsdom (it needs a real DOM; `node-html-parser` won't do) → headless render (verify Chromium is reachable where extraction runs, not just in the link-preview route) → give up cleanly, mark `failed`, keep description-level data. One bad page can't block 500.
 3. **The model can only cite what it received.** The UI renders only links returned by tool calls, so invented URLs are structurally impossible, not just prompt-discouraged.
 4. **Honest degradation.** No good chunks → "the collection doesn't cover this" + nearest category. Vector DB down → plain message, page itself unaffected (agent is additive, never in the page's rendering path).
 5. **The open web is untrusted.** The Compare tool's `fetch_link` fetches a URL the user supplies, so allow only http(s) and block private/internal addresses (SSRF guard). Fetched page text is treated as data, not instructions (prompt injection).
@@ -105,7 +105,7 @@ Reliability rules, applied everywhere:
 | :--- | :--- | :--- | :--- |
 | LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary. 1536 dims matches the existing `vector(1536)` column — no schema change. **Open item:** name the chat model (one tool-calling-capable id) in `model.ts`. |
 | Vector + text store | **Neon Postgres + pgvector** (existing DB) | $0 — free tier (0.5GB); 5K chunks ≈ 35MB | One service, plain SQL, Drizzle already in the repo. Changed from my earlier Upstash Vector pick: chunks are relational (chunk → link → channel), and one dependency beats two free ones. pgvector is also the standard thing worth learning. |
-| Extraction | `fetch` + `@mozilla/readability` over **jsdom or linkedom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. |
+| Extraction | `fetch` + `@mozilla/readability` over **jsdom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. |
 | Scheduling | Trigger.dev | $0 free tier | The sync task already detects + persists new links; extraction hooks in right after insert. |
 | Auth-ish for public APIs | Upstash Redis ratelimits + visitor cookie pattern (already used by likes) | $0 | Public agent without accounts. |
 

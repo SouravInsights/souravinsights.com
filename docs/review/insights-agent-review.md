@@ -1,135 +1,209 @@
 # Insights Agent — Spec Review
 
-> **Reviewer:** Cline — **model: DeepSeek v4.1 flash high**
-> **Reviewed:** `docs/spec/insights-agent.md` (+ `links-registry-and-api.md`)
-> **Method:** read both specs and the shipped code (`src/db`, `src/lib/links`, `src/trigger`,
-> `src/app/api/v1`); checked external claims against their own docs (OpenRouter embeddings,
-> Mozilla Readability, Mastra).
+> **Reviewer:** Cline (model: DeepSeek v4.1 flash high). **Adjudicated and expanded by Pi** —
+> every issue restated in plain language with an example, a verdict, and what we actually do.
+> Read this alongside the plain-language walkthrough in [`../kb/`](../kb/README.md).
 
-## Verdict
+## How to read this
 
-The plan is right and the order is right: registry → extract → chunk → embed → retrieve →
-agent. The registry is already built underneath it. Three things stand between the spec and a
-clean build:
+A spec review checks whether the plan can be built as written. Each issue below has:
 
-1. One **wrong library** in the extractor (Readability needs a real DOM).
-2. One **unnamed decision** (the chat model).
-3. One **self-contradiction** (it says no second-hop fetches, then fetches `/pricing`).
+- **Plain** — what the problem is, assuming no background.
+- **Example** — the failure happening concretely.
+- **Do** — the fix that lands in the build.
 
-Fix those three and the rest is normal build work.
-
-Note: the spec is a spec — third-party libraries not being installed yet is expected, not a
-finding. This review does not flag that.
-
-## What holds up
-
-- OpenRouter serves embeddings at `POST /api/v1/embeddings` (OpenAI-compatible);
-  `openai/text-embedding-3-small` is 1536-dim, matching the existing `vector(1536)` column, so
-  no schema change. (checked against OpenRouter docs)
-- `pgvector` + HNSW instead of a separate vector store.
-- One read path (`getLinks()`), idempotency via `content_hash`, and "cite only what the tool
-  returned" — all sound.
+The overall plan was confirmed right: registry → extract → chunk → embed → retrieve → agent,
+in that order. These are the defects found inside it.
 
 ---
 
-## Issue 1 — The extractor names a library that can't do the job (blocking)
+## The eight issues from the review
 
-The spec says `@mozilla/readability` + `node-html-parser`. Readability's own README states it
-needs a **DOM document** (`document.cloneNode(true)`, `querySelectorAll`, …); in Node that
-means **jsdom or linkedom**. `node-html-parser` is a static parser with a different interface
-and will not work here.
+### 1. The extractor named a library that can't do the job
 
-**Fix:** pick `linkedom` (lighter) or `jsdom` (safer). This is a library *choice*, not an
-install step.
+**Plain.** The extractor uses `@mozilla/readability` to turn a web page into clean article
+text. Readability needs a full browser-style document object (a "DOM") to walk through. The
+spec paired it with `node-html-parser`, which builds a lighter, incompatible structure — the
+two don't connect.
 
-## Issue 2 — The chat model is never named (blocking)
+**Example.** `new Readability(document.cloneNode(true))` calls `querySelectorAll`,
+`getElementsByTagName`, and friends on the parsed document. `node-html-parser`'s root object
+implements none of that interface — the call throws.
 
-`model.ts` "knows which models we use," but no chat model id appears anywhere, and the
-$0.001/query figure assumes one. The model **must support tool calling**, or the agent loop
-cannot run.
+**Do.** Parse the HTML with `jsdom`, then run Readability on it. Chosen for DOM
+completeness — the tradeoff is bundle weight and parse speed, and extraction is offline batch
+work where neither matters. No money cost either way.
 
-**Fix:** name one tool-capable model id, pin it in `model.ts`, and note that its
-`supported_parameters` must include `tools`.
+### 2. The chat model was never named
 
-## Issue 3 — "No second-hop links" contradicts the strategy table (blocking)
+**Plain.** The spec said "one file knows which models we use" but never wrote down which chat
+model. And the agent can only work if the model supports **tool calling** — the ability to
+say mid-answer "run `search_knowledge` with this query" instead of just producing text. Not
+all models can.
 
-Out-of-scope says crawling is forbidden, but the Articles/Tools/Products rows say "read the
-README" and "homepage + /pricing" — those are second URLs.
+**Example.** On OpenRouter, each model's metadata lists `supported_parameters`. The model
+we pick must include `tools` there, or `search_knowledge` can never be invoked.
 
-**Fix:** state the rule precisely. The only extra fetch allowed is **same-domain, one page,
-from an allowlist** (`/pricing`; `raw.githubusercontent.com` for GitHub READMEs). Never a
-spider. Then the two sections agree.
+**Do.** Pin `openai/gpt-4o-mini` in `model.ts` (cheap, tool-capable). Switching later is a
+one-line change, but the spec must name what we start with.
 
-## Issue 4 — Re-chunking a shorter page leaves stale passages
+### 3. Two rules contradicted each other about extra page fetches
 
-Chunks upsert on `(link_id, chunk_index)`. If a page later gets *shorter*, the old tail chunks
-stay and remain searchable.
+**Plain.** The out-of-scope section said "never fetch pages beyond the saved link itself."
+The extraction table said Tools get "homepage + README" and Products get "homepage +
+/pricing." Those are second pages. Both rules can't be true.
 
-**Fix:** after re-chunking a link, delete chunks whose `chunk_index` is past the new count.
+**Example.** For `github.com/some/tool`, extraction was told to read the README at
+`raw.githubusercontent.com/some/tool/HEAD/README.md` — a second fetch, which the out-of-scope
+section forbade outright.
 
-## Issue 5 — Retrieval returns many chunks of one page
+**Do.** State the rule precisely: one extra fetch allowed, **same domain only, from an
+allowlist** — `/pricing` for products, the raw README (`raw.githubusercontent.com`) for GitHub
+repos. Following a link *from* that page is never allowed. That's the difference between
+"one more page" and "a crawler."
 
-The spec says "top-k chunks," but the five nearest chunks can all be the same article, so one
-page fills the result.
+### 4. Re-reading a shorter page leaves stale passages behind
 
-**Fix:** group chunks by link, keep the best 2–3 per link, then rank the **links** (citations
-are links, so rank at the link level).
+**Plain.** Articles are stored as numbered passages (chunks 0, 1, 2…). If we re-read a page
+and it got shorter, the leftover tail passages from the old, longer version stay in the
+database — and can still match searches, quoting content that no longer exists.
 
-## Issue 6 — Drop the like-boost (the data is too sparse to use)
+**Example.** A page had 10 passages; after an edit it has 7. Passages 8–10 are ghosts unless
+deleted.
 
-The spec says retrieval "boosts by like counts." The collection gets too few likes for that to
-carry any signal, so ranking on it is just noise.
+**Do.** After re-chunking a link, delete chunks whose index is past the new count. One line
+in `chunk.ts`.
 
-**Fix:** rank by similarity alone, after grouping chunks by link (the closest chunks can all be
-one page). Don't rank on likes.
+### 5. Search results must be grouped by link, not taken raw
 
-## Issue 7 — The public fetch tool can reach internal addresses (security)
+**Plain.** Vector search returns the *passages* most similar to the question. But the agent
+cites *links*. Without grouping, the top 5 passages can all come from the same article — the
+agent would cite one link five times and call it an answer.
 
-`fetch_link` fetches a URL a user supplies, from our server — an SSRF risk
-(`http://169.254.169.254`, `localhost`, private ranges).
+**Example.** Ask "what should I read about shipping code?" and get five paragraphs of one
+seangoedecke essay instead of five different sources.
 
-**Fix:** allow http(s) only; resolve the host and reject private/loopback/link-local IPs; cap
-body size and redirects. Also treat page text as data, not instructions (prompt injection).
+**Do.** Group the nearest passages by link, keep the best 2–3 per link, then rank the
+**links**. Retrieval ranks links; passages are just evidence.
 
-## Issue 8 — The eval is too vague to act on
+### 6. Likes are too sparse to rank on — dropped
 
-"~30 queries → hit-rate@5 ≥ 80%" leaves out: link-level vs chunk-level (must be **link**), no
-answer queries, and a **baseline** (today's keyword search) that proves semantic search
-actually helps.
+**Plain.** The plan was to boost results by like counts. Measured against the live data: 50
+of 500 links have any likes at all (250 total, max 11 on one link). A signal that's zero for
+90% of items can't rank anything — it just adds noise.
 
-**Fix:** `recall@5` and `MRR@10` at the link level; ~10 no-answer queries that must fall below
-a similarity cutoff; run the same set through the current substring search and require the new
-one to win. A few saved HTML pages also make a deterministic extractor test.
+**Example.** Query "color contrast tool": every candidate has 0 likes, so the boost term is
+identical for all of them — pure noise added to a clean similarity score.
 
-## Minor
+**Do.** Rank by similarity alone. The page's "Most liked" sort stays — it's a browsing choice,
+not a retrieval signal. (Verified against Redis, not argued from principle.)
 
-- `ok` / `thin` / `failed` need thresholds (proposal: `thin` under ~200 words).
-- A model swap is undetectable without recording which embedding model made each vector — one
-  small marker column, or a `kb_meta` row.
-- `/api/v1/search` should be wired into the same zod → OpenAPI flow as `/links`.
-- Confirm Chromium is reachable where extraction runs (the Trigger.dev task and the local
-  script), not only in the Vercel route.
+### 7. The public fetch tool can be aimed at internal addresses (SSRF)
+
+**Plain.** The Compare experience lets the agent fetch a URL *named in the user's question*,
+from *our* server. That means a stranger can make our server request addresses they can't
+reach themselves — internal network IPs, `localhost`, cloud metadata endpoints — and read the
+response. Our server becomes their proxy. This attack is called SSRF (server-side request
+forgery).
+
+**Example.** A visitor asks: "compare with the tool at `http://169.254.169.254/…`" — and our
+server dutifully fetches an internal address and shows them the result.
+
+**Do.** When `fetch_link` is built (step 6, not now): allow `http(s)` only, resolve the
+hostname and reject private/loopback/link-local IPs, cap body size and redirects. ~15 lines,
+written as part of the feature. Also: treat fetched page text as data, never as instructions
+(a page could contain text like "ignore your rules" — prompt injection).
+
+**Why this is not over-engineering.** The test: *is the attack just someone using the feature
+as designed?* Here, yes — typing a URL is the feature. No improbable behavior chain needed.
+By contrast, nothing guards the health checker or extractor: they only fetch URLs the owner
+personally curated, so there's no untrusted input to defend. The guard exists exactly at the
+one public boundary and nowhere else. Low traffic doesn't change this — SSRF probes are
+automated bots, not fans; they don't check popularity first.
+
+### 8. The eval was too vague to act on
+
+**Plain.** "Hit-rate ≥ 80%" left three things undefined. Fixed now:
+
+1. **Measure links, not passages** — citations are links, so a query "passes" when the
+   expected *link* appears in the top 5 (`recall@5`). `MRR@10` also records how high the
+   first correct link ranks.
+2. **Include questions the collection can't answer** (~10 of them). The system must score
+   them *below* a similarity cutoff and say "not covered" — instead of confidently returning
+   the least-irrelevant link.
+3. **Race the old search.** Run the same questions through today's title/URL substring
+   search. If semantic search can't beat the dumb one, it hasn't earned its complexity.
+
+Plus: ~30 saved HTML pages as fixtures so the extractor is tested deterministically — our
+code is measured, not the internet's mood.
+
+**Do.** Ship gate: `recall@5 ≥ 0.80` at link level, beats the keyword baseline, zero
+fabricated URLs, unanswerable queries fall below the cutoff.
 
 ---
 
-## Should we use a framework? (Mastra, or an evals tool)
+## What both agents missed (found while adjudicating)
 
-Short answer: **no new framework — the Vercel AI SDK already is the one that matters.**
+### A. An admin-auth module already existed and the new routes didn't use it
 
-| Option | Verdict | Why |
-| :--- | :--- | :--- |
-| **Vercel AI SDK** (`ai` + `@openrouter/ai-sdk-provider`) | **Use it** | It gives the agent loop, tool calling, and streaming. That is the boilerplate a framework exists to avoid — and it's already the choice. |
-| **Mastra** (`@mastra/rag`, `@mastra/pg`) | **Skip** | Its RAG pieces are solid, but `PgVector` creates and owns its *own* table — it would not use our `link_chunks`, and wouldn't know our `links` join, hidden/dead filter, or ranking rules. We'd duplicate data or fight it. At ~500 links our chunk/embed/search code is ~100 lines. Mastra pays off with many agents, workflows, and memory; we have one agent and one tool. |
-| **Eval framework** (Mastra evals, promptfoo, Braintrust) | **Skip for now** | Mastra's evals score *model output* (relevancy, toxicity), not retrieval `recall@5`. Ours is deterministic retrieval math — a ~60-line script. A framework adds config for little gain at this size. |
+**Plain.** The repo already had `src/lib/admin-auth.ts` (a shared admin login module using
+`ADMIN_SECRET` + a cookie session). The new hide/unhide endpoints check the key inline
+instead of building on it. Two auth patterns for one admin = they drift apart over time.
 
-**What actually reduces bugs here:** TypeScript end-to-end + zod (already in the repo), the AI
-SDK for the loop, and the eval script as a regression gate on every ingest change. Nothing more
-is justified by the current requirements.
+**Do.** Share `getAdminSecret()` at minimum; keep the Bearer-token flow (it's the right shape
+for fetch calls from the public page) but source the secret from one place.
 
-## Decisions to make first
+### B. Passages should carry a tiny context header
 
-1. DOM library: `linkedom` vs `jsdom`.
-2. Chat model id (tool-capable), pinned in `model.ts`.
-3. Confirm the scoped second-hop rule (allowlist: `/pricing`, GitHub raw README).
-4. Eval gates: `recall@5 ≥ 0.80` and beats baseline; 0 fabricated URLs.
+**Plain.** We embed raw passages. A passage like *"it also handles soft deletes well"* means
+nothing alone — but embedded as *"The challenges of soft delete — Articles: it also handles
+soft deletes well"* it becomes findable.
 
+**Do.** Prepend `{title} — {channel}:` to each passage's embedded text in `chunk.ts`. The
+cheap version of "contextual retrieval"; one line, no cost.
+
+### C. The eval set decays as the collection is curated
+
+**Plain.** The eval expects specific URLs. As links get hidden or die over time, those
+expectations silently fail and the quality gate rots.
+
+**Do.** The eval script warns and skips expectations pointing at hidden/dead links.
+
+### D. Embedding requests need batch bounds
+
+**Plain.** The backfill sends passages to OpenRouter in batches; providers cap inputs per
+request. Unbounded batches fail mid-run.
+
+**Do.** Cap batches (e.g. 100 passages per request) in `embed.ts`.
+
+---
+
+## Scale context (read before adding anything)
+
+Traffic will be low at first — the audience is small and growing. Consequences:
+
+- **No extra abuse machinery** beyond the rate limits already shipped. No CAPTCHAs, no
+  gates, no queues.
+- The **SSRF guard stays** despite low traffic (bots probe regardless) — and it's 15 lines
+  inside a feature we're building anyway, not a separate system.
+- **The eval rigor stays** too, because this project's purpose is learning — the eval is
+  where the learning lives. It's offline; it costs nothing at runtime.
+- Everything else: build when a current requirement or an observed failure asks for it
+  (per AGENTS.md).
+
+## What holds up (unchanged by the review)
+
+- OpenRouter serves embeddings at `POST /api/v1/embeddings`; `openai/text-embedding-3-small`
+  is 1536-dim and matches the existing `vector(1536)` column. No schema change.
+- pgvector + HNSW in the existing Postgres, one `getLinks()` read path, `content_hash`
+  idempotency, "cite only what the tool returned" — all sound, all as shipped.
+- No new framework (Mastra et al.): its RAG component owns its own tables and wouldn't use
+  ours. One agent + one tool doesn't justify a framework; the AI SDK is the framework here.
+
+## Decisions locked for the build
+
+1. DOM library: `jsdom`.
+2. Chat model: `openai/gpt-4o-mini`, pinned in `model.ts` (verify `tools` support).
+3. Second-hop rule: one extra page, same domain, allowlist only (`/pricing`, GitHub README).
+4. Ship gates: `recall@5 ≥ 0.80` (link level) and beats keyword baseline; 0 fabricated URLs;
+   unanswerable queries below the similarity cutoff.

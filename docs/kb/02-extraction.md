@@ -38,10 +38,10 @@ returns everything. We send a real browser User-Agent, because services like Clo
 requests that look automated. (The repo already hit this in `src/lib/links/health.ts`.)
 
 **2. Readability.** `@mozilla/readability` strips navigation, ads, and footers and returns the
-article body. It works on a real DOM (a full document object), so it needs a DOM library —
-`linkedom` (lighter) or `jsdom` (safer). It does **not** work with `node-html-parser`, which is
-a faster, lower-level parser with a different interface. That is why the spec's listed stack
-doesn't work as written.
+article body. It works on a real DOM (a full document object), so we pair it with **jsdom**, the complete
+DOM implementation — its extra weight is irrelevant in an offline pipeline. It does **not** work
+with `node-html-parser`, which is a faster, lower-level parser with a different interface. That
+is why the spec's original listed stack didn't work as written.
 
 **3. Headless browser — only when needed.** Some pages build their content with JavaScript, so
 the plain fetch returns 200 with an empty body. For those, we run a headless Chromium, wait for
