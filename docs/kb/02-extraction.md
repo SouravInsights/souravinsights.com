@@ -12,7 +12,7 @@ definitively fails; never let one bad page stop the run.
 ```mermaid
 flowchart TD
     A(["a link to read"]) --> B{"is this channel skipped?<br/>portfolios / design / newsletters"}
-    B -->|yes| SKIP["skipped — keep only its description"]
+    B -->|yes| SKIP["skipped — no fetch<br/>index title + description"]
     B -->|no| FETCH["1 · plain HTTP fetch<br/>browser User-Agent · 10s · ≤5 redirects"]
     FETCH --> SPEC{"github.com?"}
     SPEC -->|yes| README["read the raw README instead"]
@@ -61,7 +61,7 @@ content is the README. For `github.com/owner/repo`, fetch
 | resources | the landing page + its table of contents | no (don't crawl the lessons) |
 | tools | the homepage (or the README for GitHub) | GitHub README only |
 | product-hunt (Products) | the homepage | one same-domain `/pricing` page, if linked |
-| newsletters / fav-portfolios / design-inspo | nothing | marked `skipped` (description only) |
+| newsletters / fav-portfolios / design-inspo | nothing | marked `skipped`: no page fetch, but the title + description is indexed as one passage |
 
 This resolves the spec's contradiction between "no second-hop links" and "also fetch /pricing":
 the only second fetch allowed is same-domain, a single page, from an allowlist.

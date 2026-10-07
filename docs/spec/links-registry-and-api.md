@@ -65,7 +65,7 @@ One row per URL, recorded when it entered the collection. Discord is intake, not
 
 | Column | Type | Stores / why |
 | :--- | :--- | :--- |
-| `extract_status` | `text`, default `'pending'`, CHECK | The KB's work queue: `pending / ok / thin / failed / skipped`. Extraction is `WHERE extract_status = 'pending' AND hidden_at IS NULL` — hidden links never get embedded. `skipped` (portfolios etc. — intentionally description-only) is distinct from `failed` so retry policies can differ. |
+| `extract_status` | `text`, default `'pending'`, CHECK | The KB's work queue: `pending / ok / thin / failed / skipped`. Extraction is `WHERE extract_status = 'pending' AND hidden_at IS NULL` — hidden links never get embedded. `skipped` (portfolios etc. — never fetched, but still indexed by title + description) is distinct from `failed` so retry policies can differ. |
 | `raw_text` | `text`, nullable | The cleaned page text. List queries never select it; fetched per link only. |
 | `content_hash` | `text` | sha256 of the extracted text. Skip re-extracting pages that haven't changed. |
 | `extracted_at` | `timestamptz` | When; drives staleness sweeps. |

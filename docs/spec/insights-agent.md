@@ -49,9 +49,9 @@ Read the live collection (measured at snapshot: 510 unique → **500 recorded**,
 | Resources | Courses, books, learning paths, docs (learn-inference, Butterick's) | Landing page + syllabus/TOC. Know *what it teaches*, don't crawl the whole course. |
 | Tools | Libraries, CLIs, small apps (many GitHub repos) | Homepage + README + features/pricing section → structured facts. |
 | Products | SaaS pages (boat, Subframe, Conductor) | Homepage + /pricing → what it does, what it costs, who it's for. |
-| Portfolios, Design, Newsletters | Mostly visual or one-pagers | Description-level only. Deep fetch = money for nothing. |
+| Portfolios, Design, Newsletters | Mostly visual or one-pagers | **Never fetched** — their title + description is indexed as one passage so they stay findable. Deep fetch = money for nothing. |
 
-~360 of the 500 deserve real extraction (articles 100, resources 91, products 85, tools 84); the other 140 (portfolios, design, newsletters) stay description-level. Hidden links are never extracted. This split is also how the budget stays near zero.
+~360 of the 500 deserve real extraction (articles 100, resources 91, products 85, tools 84); the other 140 (portfolios, design, newsletters) are never fetched, only indexed by their description. Hidden links are neither extracted nor indexed. This split is also how the budget stays near zero.
 
 Also found in the live data: several links are `Untitled` — weak metadata at intake, which extraction fixes for free (real `<title>` from the page).
 
