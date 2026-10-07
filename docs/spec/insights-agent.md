@@ -144,12 +144,22 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 
 **Status: built.** `fetch_link` is a second tool on the same agent (`src/lib/kb/fetch-link.ts`), with the 24h cache and the 3-per-question cap, and the panel renders its pages as citations next to the searched passages — otherwise a comparison would cite nothing. It is also the **only SSRF surface in the project**: the URL comes from a model that has just read untrusted page text. Guarded on every hop; see `docs/kb/05-failure-modes.md` for the one gap that is known and accepted.
 
-### Later (unlocked by the KB, not blocking it)
+### Next, and last in this spec: MCP
 
-- **MCP server** exposing `search_knowledge` → my collection inside Claude/Cursor mid-work. Also the portfolio artifact.
-- **Watch**: intent subscriptions ("ping me when X lands") + a weekly agent-written Pulse on the page. Cheap once chunks exist.
-- **Tend**: intent tags (`free`, `open-source`, `motion`) extracted during ingest; dead-link repair; "saved this 4 months ago" at intake.
-- **HN as second source**: one `LinkSource` interface; HN slots behind the same search tool. `hnUtils.ts` already talks to the Algolia API.
+- **MCP server** exposing `search_knowledge` → the collection inside Claude/Cursor mid-work. Reuses `search()` exactly as it stands: no schema change, no new data. It's also the honest test of the claim this whole spec rests on — that retrieval is *the layer* and everything else is a surface.
+
+### Parked, and why
+
+These were on this spec's roadmap. They are parked, not planned, because a feature has to be justified by a requirement that exists today. Each names the evidence that would bring it back.
+
+- **Watch — intent subscriptions ("ping me when X lands") + a weekly written Pulse.** *Parked: it is circular today.* The intake is me posting links in Discord, so a standing intent would mostly ping me about links I just posted myself. It becomes meaningful only once rows arrive from somewhere that isn't me. The Pulse half has no such dependency, but there's no evidence anyone wants a weekly digest of three links either. **Revive when:** a foreign intake is writing rows, or someone asks for the digest.
+- **Tend — three unrelated things, graded separately.**
+  - *Dead-link repair* is the only part with a failure behind it: the weekly sweep marks links dead and they vanish from the page. But find-a-replacement → verify → update costs more code than the problem until we know the rate. **Revive when:** dead rows grow by more than a handful a quarter.
+  - *Intent tags at ingest* (`free`, `open-source`, `motion`) needs a model call per link, a column, a backfill of 255 rows, and UI — and nothing consumes the tags yet. Tagging data nothing filters on is dead weight. **Revive when:** a filter is genuinely wanted ("just the free ones") and someone would use it.
+  - *"Saved 4 months ago"* on the card is a one-liner and nearly pointless. Fold it in the next time a card is touched; it does not deserve a spec line.
+- **HN as a second source.** The schema already accepts it (`source`, nullable `discord_id`, a globally unique `url_key`). The registry spec puts HN *ingestion* out of scope, and Watch is blocked on it. **Revive when:** Watch is, or the collection needs breadth it cannot get from curation.
+
+Two of the three things originally written here as "Later" were imagined futures wearing a roadmap's clothes. Writing that down is cheaper than building them.
 
 ---
 
@@ -219,9 +229,9 @@ eval/kb-golden.json         // the test queries
 eval/kb-fixtures.json       // saved pages + what the reader must find in each
 ```
 
-**Not built, and deliberately elsewhere.** Nothing from this spec is outstanding. What remains
-belongs to other specs: the browser editor (a publishing product), the MCP server, Watch and Tend,
-and the HN source. They all sit on this layer without changing it.
+**Still to do here: MCP (step 8).** Everything else is either parked with a stated reason — see
+"Parked, and why" — or belongs to another spec: the browser editor is a publishing product, and HN
+ingestion is out of scope in `links-registry-and-api.md`.
 
 Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration has been needed since.
 
@@ -236,7 +246,8 @@ Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration
 4. ~~**Ask agent.**~~ **Done** — chat route, AskPanel, citations, rate limits, PostHog events on questions and citation clicks.
 5. ~~**Writing Desk retrieval.**~~ **Done** — split the draft into claims, search once per claim, drop matches under a similarity floor, then let the model label only links it was handed. The *editor* is its own spec: decide it after using the Desk by curl on one real article.
 6. ~~**Weekly refresh.**~~ **Done** — `src/trigger/kb-refresh.ts`, rotating and capped.
-7. ~~**Compare/fetch tool.**~~ **Done** — `fetch_link`, SSRF-guarded, 24h cache, 3 per question. Next: MCP, then Watch/Tend as their own small specs.
+7. ~~**Compare/fetch tool.**~~ **Done** — `fetch_link`, SSRF-guarded, 24h cache, 3 per question.
+8. **MCP server.** The last step here. Exposes `search_knowledge`; needs no new data.
 
 Each step is independently shippable and verifiable. No step requires heroic faith.
 
