@@ -76,6 +76,37 @@ const SUGGESTIONS = [
   "how to get more replies by writing less",
 ];
 
+type Part = {
+  type: string;
+  state?: string;
+  text?: string;
+  input?: { query?: string };
+  output?: unknown;
+};
+
+/**
+ * What the agent is doing *right now*.
+ *
+ * Without this the panel is a blank box for ~10 seconds, because the answer only
+ * starts streaming after the model has decided to search, the search has run,
+ * and the model has produced its first token. The tool part's `state` maps
+ * exactly onto those waits:
+ *   input-streaming → the model is still emitting the call  ("Thinking…")
+ *   input-available  → we're running the search             ("Searching for …")
+ *   output-available → the model is composing the answer    ("Writing…")
+ * Returns null once answer text starts arriving.
+ */
+function phaseOf(parts: Part[]): string | null {
+  if (parts.some((part) => part.type === "text" && part.text)) return null;
+  const tool = parts.find((part) => part.type === "tool-search_knowledge");
+  if (!tool || tool.state === "input-streaming") return "Thinking…";
+  if (tool.state === "input-available") {
+    const query = tool.input?.query;
+    return query ? `Searching for “${query}”…` : "Searching the collection…";
+  }
+  return "Writing…";
+}
+
 /** Every link the search tool returned in this message. */
 function citationsOf(parts: { type: string; state?: string; output?: unknown }[]) {
   const seen = new Set<string>();
@@ -101,6 +132,12 @@ export function AskPanel() {
   });
 
   const busy = status === "submitted" || status === "streaming";
+
+  // The live phase shown while we wait: derived from the newest assistant
+  // message, so it works during `submitted` (no message yet) and `streaming`.
+  const lastParts = (messages.filter((m) => m.role === "assistant").at(-1)?.parts ??
+    []) as Part[];
+  const phase = busy ? phaseOf(lastParts) : null;
 
   const submit = (text: string) => {
     const value = text.trim();
@@ -165,10 +202,10 @@ export function AskPanel() {
             );
           })}
 
-          {status === "submitted" && (
+          {phase && (
             <div className="flex items-center gap-2 text-faint-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span className="type-caption">searching the collection…</span>
+              <span className="type-caption">{phase}</span>
             </div>
           )}
 
