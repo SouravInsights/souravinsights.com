@@ -92,13 +92,13 @@ Reliability rules, applied everywhere:
 
 | Piece | Choice | Cost | Why |
 | :--- | :--- | :--- | :--- |
-| LLM + embeddings | OpenAI via Vercel AI SDK (`ai`, `@ai-sdk/openai`) — `gpt-4o-mini` + `text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | One SDK for embed + agent loop + streaming; model config isolated in one file to swap providers later. |
+| LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary. 1536 dims matches the existing `vector(1536)` column — no schema change. |
 | Vector + text store | **Neon Postgres + pgvector** (existing DB) | $0 — free tier (0.5GB); 5K chunks ≈ 35MB | One service, plain SQL, Drizzle already in the repo. Changed from my earlier Upstash Vector pick: chunks are relational (chunk → link → channel), and one dependency beats two free ones. pgvector is also the standard thing worth learning. |
 | Extraction | `fetch` + `@mozilla/readability` + `node-html-parser`; fallback to existing puppeteer/chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. |
 | Scheduling | Trigger.dev (existing task detects new Discord links) | $0 free tier | New-link detection already exists; add "then ingest it." |
 | Auth-ish for public APIs | Upstash Redis ratelimits + visitor cookie pattern (already used by likes) | $0 | Public agent without accounts. |
 
-**Budget reality:** $5 OpenAI credit to start. Rebuild the entire KB any time for ~5 cents. Chat at 1,000 queries/month ≈ $1. Everything else is on free tiers already in use.
+**Budget reality:** runs on the existing OpenRouter balance. Rebuild the entire KB any time for ~5 cents. Chat at 1,000 queries/month ≈ $1. Everything else is on free tiers already in use.
 
 ---
 
