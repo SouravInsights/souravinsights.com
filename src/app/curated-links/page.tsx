@@ -7,6 +7,7 @@ import { getInsightsData } from "./utils/links-data";
 import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
+import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { AskPanel } from "./components/AskPanel";
 import { LinksCountBadge } from "./components/LinksCountBadge";
@@ -103,13 +104,19 @@ export default async function CuratedLinksPage() {
           <AskPanel />
         </div>
 
-        <InsightsList
-          channels={channels}
-          linkData={linkData}
-          previews={previews}
-          likeCounts={likeCounts}
-          shuffleSeed={shuffleSeed}
-        />
+        {/* Browse is a separate mode from Ask, so it gets its own heading and a
+            wider gap than the header→panel step — otherwise the two blocks read
+            as one and the panel's edge touches the list's toolbar. */}
+        <div className="mt-16">
+          <SectionHeader title="Browse the collection" />
+          <InsightsList
+            channels={channels}
+            linkData={linkData}
+            previews={previews}
+            likeCounts={likeCounts}
+            shuffleSeed={shuffleSeed}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
 "use client";
 
+import { Marquee } from "@joycostudio/marquee/react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, Loader2, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   Conversation,
   ConversationContent,
@@ -20,7 +22,7 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
-import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
+import { Suggestion } from "@/components/ai-elements/suggestion";
 
 /**
  * The Ask panel — the public agent on top of the knowledge base.
@@ -76,6 +78,16 @@ const SUGGESTIONS = [
   "how to get more replies by writing less",
 ];
 
+/** Fisher-Yates. Unseeded on purpose — we want a different order per visit. */
+function shuffled<T>(items: readonly T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 type Part = {
   type: string;
   state?: string;
@@ -127,6 +139,15 @@ function citationsOf(parts: { type: string; state?: string; output?: unknown }[]
 
 export function AskPanel() {
   const [input, setInput] = useState("");
+  const [chips, setChips] = useState<string[]>(SUGGESTIONS);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
+  // Shuffle once per visit so the same chips aren't always first. Done on mount
+  // rather than during render, so server and client agree on the first paint.
+  useEffect(() => setChips(shuffled(SUGGESTIONS)), []);
+
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
   });
@@ -146,6 +167,23 @@ export function AskPanel() {
     setInput("");
   };
 
+  // Pause while the pointer or keyboard focus is on the row — a moving target
+  // you can't click is worse than a static one.
+  const playing = !hovered && !focused && !reduceMotion;
+
+  /**
+   * The marquee duplicates its child with `cloneNode`, and a raw DOM clone has
+   * no React handlers. A capture listener plus a `data-suggestion` attribute
+   * works for both copies: attributes survive cloning, and capture fires on an
+   * ancestor even when the exact target isn't React-managed.
+   */
+  const onChipClick = (event: MouseEvent<HTMLDivElement>) => {
+    const value = (event.target as HTMLElement)
+      .closest("[data-suggestion]")
+      ?.getAttribute("data-suggestion");
+    if (value) submit(value);
+  };
+
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-background">
       <header className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-4 py-3">
@@ -156,7 +194,9 @@ export function AskPanel() {
         </span>
       </header>
 
-      <Conversation className="h-96">
+      {/* Only reserve scroll height once there's a conversation — an empty
+          384px box would outrank the actual content on first paint. */}
+      <Conversation className={messages.length > 0 ? "h-96" : undefined}>
         <ConversationContent className="gap-5 p-4">
           {messages.length === 0 && (
             <p className="type-caption text-faint-foreground">
@@ -218,18 +258,45 @@ export function AskPanel() {
         <ConversationScrollButton />
       </Conversation>
 
-      <div className="border-t border-border px-4 pt-3">
-        <Suggestions className="pb-1">
-          {SUGGESTIONS.map((suggestion) => (
-            <Suggestion
-              key={suggestion}
-              suggestion={suggestion}
-              onClick={submit}
-              disabled={busy}
-              className="type-caption"
-            />
-          ))}
-        </Suggestions>
+      <div
+        className="border-t border-border px-4 pt-3"
+        onClickCapture={onChipClick}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(event) => {
+          // Only resume once focus has actually left the row.
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            setFocused(false);
+          }
+        }}
+      >
+        {/* Edges fade so it's clear the row keeps going. */}
+        <div className="suggestions-fade">
+          <Marquee
+            // Re-mount after the on-mount shuffle, otherwise the cloned copy
+            // keeps the pre-shuffle order.
+            key={chips.join("|")}
+            speed={45}
+            direction={1}
+            play={playing}
+            marqueeClassName="items-center pb-1"
+          >
+            <div className="flex flex-nowrap items-center gap-2 pr-3">
+              {chips.map((suggestion) => (
+                // The span carries the data attribute, not the Button: the
+                // marquee's clone drops React handlers but keeps DOM attributes.
+                <span key={suggestion} data-suggestion={suggestion}>
+                  <Suggestion
+                    suggestion={suggestion}
+                    disabled={busy}
+                    className="type-caption"
+                  />
+                </span>
+              ))}
+            </div>
+          </Marquee>
+        </div>
       </div>
 
       <form
@@ -243,13 +310,15 @@ export function AskPanel() {
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Ask about anything I've saved…"
-          className="type-body flex-1 rounded-md border border-border bg-transparent px-3 py-2 text-foreground outline-none placeholder:text-faint-foreground focus-visible:border-foreground/30"
+          spellCheck={false}
+          aria-label="Ask about the collection"
+          className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-transparent px-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:h-9 sm:text-sm"
         />
         <button
           type="submit"
           disabled={busy || !input.trim()}
           aria-label="Ask"
-          className="rounded-md border border-border p-2 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40 sm:h-9 sm:w-9"
         >
           <ArrowUp className="h-4 w-4" />
         </button>
