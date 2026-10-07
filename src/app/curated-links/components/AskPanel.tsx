@@ -4,13 +4,32 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from "@/components/ai-elements/sources";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 
 /**
  * The Ask panel — the public agent on top of the knowledge base.
  *
- * Citations are rendered from the search tool's OUTPUT, never by scanning the
- * model's prose for URLs. That way a link the model made up has nowhere to
- * appear: if it isn't in `tool-search_knowledge`'s output, it isn't shown.
+ * Two things this deliberately does:
+ * - Answers render as markdown (MessageResponse → Streamdown), so lists,
+ *   links and code in a reply actually look like what they are.
+ * - Citations come from the search tool's OUTPUT, never from the model's
+ *   prose, so a made-up URL has nowhere to appear.
  */
 
 interface Match {
@@ -20,10 +39,41 @@ interface Match {
   passage: string;
 }
 
+/**
+ * Chips written the way a visitor would actually type — intent, not titles —
+ * and each one is answerable from a link that is really in the collection.
+ */
 const SUGGESTIONS = [
   "cheapest sandboxes for running agents",
-  "what have I saved about designing AI agents?",
   "a tool to check colour contrast",
+  "what have I saved about designing AI agents?",
+  "how to find problems worth solving as a staff engineer",
+  "why shipping beats polishing",
+  "how to make interfaces feel predictable",
+  "practical typography rules for the web",
+  "learn AI engineering from scratch",
+  "learn cloud computing from zero",
+  "self-hosted durable objects",
+  "a data warehouse built on duckdb",
+  "postgres tooling for AI agents",
+  "an open database of AI models",
+  "voice to text on macOS",
+  "screenshots of live websites",
+  "an orchestration engine for background jobs",
+  "local https domains for development",
+  "image compression tools",
+  "how to organise design files",
+  "AI design generators",
+  "how to deploy models in production",
+  "design engineering resources",
+  "hand-picked design links",
+  "react best practices",
+  "task runners for common coding tasks",
+  "how to prevent cognitive debt from AI code",
+  "design skills for AI harnesses",
+  "small sharp unix tools",
+  "how to turn an app into a context graph",
+  "how to get more replies by writing less",
 ];
 
 /** Every link the search tool returned in this message. */
@@ -44,14 +94,6 @@ function citationsOf(parts: { type: string; state?: string; output?: unknown }[]
   return out;
 }
 
-const shortDomain = (url: string) => {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-};
-
 export function AskPanel() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, status, error } = useChat({
@@ -68,115 +110,114 @@ export function AskPanel() {
   };
 
   return (
-    <div className="rounded-xl border border-border bg-background">
-      <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+    <section className="overflow-hidden rounded-lg border border-border bg-background">
+      <header className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-4 py-3">
         <Sparkles className="h-4 w-4 text-green-700 dark:text-green-500" />
-        <span className="type-body font-medium text-foreground">Ask the collection</span>
+        <h2 className="type-body font-medium text-foreground">Ask the collection</h2>
         <span className="type-caption text-faint-foreground">
-          answers cite saved links only
+          answers come only from saved links
         </span>
-      </div>
+      </header>
 
-      <div className="flex flex-col gap-4 px-4 py-4">
-        {messages.length === 0 && (
-          <div className="flex flex-wrap gap-2">
-            {SUGGESTIONS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => submit(s)}
-                className="rounded-full border border-border px-3 py-1 type-caption text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        )}
+      <Conversation className="h-96">
+        <ConversationContent className="gap-5 p-4">
+          {messages.length === 0 && (
+            <p className="type-caption text-faint-foreground">
+              Ask a question, or tap a suggestion below.
+            </p>
+          )}
 
-        {messages.map((message) => {
-          const text = message.parts
-            .filter((p) => p.type === "text")
-            .map((p) => (p as { text: string }).text)
-            .join("");
-          const citations = citationsOf(
-            message.parts as { type: string; state?: string; output?: unknown }[]
-          );
-
-          if (message.role === "user") {
-            return (
-              <div key={message.id} className="self-end rounded-xl bg-secondary px-3 py-2">
-                <p className="type-body text-foreground">{text}</p>
-              </div>
+          {messages.map((message) => {
+            const text = message.parts
+              .filter((part) => part.type === "text")
+              .map((part) => (part as { text: string }).text)
+              .join("");
+            const citations = citationsOf(
+              message.parts as { type: string; state?: string; output?: unknown }[]
             );
-          }
 
-          return (
-            <div key={message.id} className="flex flex-col gap-3">
-              {text && (
-                <p className="type-body whitespace-pre-wrap text-foreground">{text}</p>
-              )}
-              {citations.length > 0 && (
-                <ul className="flex flex-col gap-2">
-                  {citations.map((match) => (
-                    <li key={match.url}>
-                      <a
-                        href={match.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex flex-col rounded-lg border border-border px-3 py-2 transition-colors hover:border-foreground/20"
-                      >
-                        <span className="type-body font-medium leading-snug text-foreground group-hover:text-green-700 dark:group-hover:text-green-500">
-                          {match.title}
-                        </span>
-                        <span className="type-caption text-faint-foreground">
-                          {shortDomain(match.url)} · {match.channel}
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            return (
+              <Message key={message.id} from={message.role}>
+                <MessageContent>
+                  {message.role === "assistant" ? (
+                    <>
+                      {text && <MessageResponse>{text}</MessageResponse>}
+                      {citations.length > 0 && (
+                        <Sources defaultOpen>
+                          <SourcesTrigger count={citations.length} />
+                          <SourcesContent>
+                            {citations.map((citation) => (
+                              <Source
+                                key={citation.url}
+                                href={citation.url}
+                                title={citation.title}
+                              />
+                            ))}
+                          </SourcesContent>
+                        </Sources>
+                      )}
+                    </>
+                  ) : (
+                    text
+                  )}
+                </MessageContent>
+              </Message>
+            );
+          })}
+
+          {status === "submitted" && (
+            <div className="flex items-center gap-2 text-faint-foreground">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span className="type-caption">searching the collection…</span>
             </div>
-          );
-        })}
+          )}
 
-        {status === "submitted" && (
-          <div className="flex items-center gap-2 text-faint-foreground">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            <span className="type-caption">searching the collection…</span>
-          </div>
-        )}
+          {error && (
+            <p className="type-caption text-red-600">
+              Something went wrong — try again in a moment.
+            </p>
+          )}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
 
-        {error && (
-          <p className="type-caption text-red-600">
-            Something went wrong — try again in a moment.
-          </p>
-        )}
-
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            submit(input);
-          }}
-          className="flex items-center gap-2 rounded-lg border border-border px-3 py-2"
-        >
-          <input
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="Ask about anything I've saved…"
-            className="type-body flex-1 bg-transparent text-foreground outline-none placeholder:text-faint-foreground"
-          />
-          <button
-            type="submit"
-            disabled={busy || !input.trim()}
-            aria-label="Ask"
-            className="text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </button>
-        </form>
+      <div className="border-t border-border px-4 pt-3">
+        <Suggestions className="pb-1">
+          {SUGGESTIONS.map((suggestion) => (
+            <Suggestion
+              key={suggestion}
+              suggestion={suggestion}
+              onClick={submit}
+              disabled={busy}
+              className="type-caption"
+            />
+          ))}
+        </Suggestions>
       </div>
-    </div>
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          submit(input);
+        }}
+        className="flex items-center gap-2 px-4 pb-4 pt-2"
+      >
+        <input
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder="Ask about anything I've saved…"
+          className="type-body flex-1 rounded-md border border-border bg-transparent px-3 py-2 text-foreground outline-none placeholder:text-faint-foreground focus-visible:border-foreground/30"
+        />
+        <button
+          type="submit"
+          disabled={busy || !input.trim()}
+          aria-label="Ask"
+          className="rounded-md border border-border p-2 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
+        >
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      </form>
+    </section>
   );
 }
 
