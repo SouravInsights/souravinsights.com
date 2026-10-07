@@ -50,7 +50,3 @@ Where I would start:
 ## Built with
 
 Next.js App Router and TypeScript, with Tailwind and shadcn/ui for the interface and Framer Motion for the small animations. The collection runs on Postgres with pgvector, Drizzle for the schema, Upstash Redis for likes and rate limits, and Trigger.dev for the weekly jobs.
-
-## License
-
-There is no license file here, so everything is all rights reserved. The writing and the collection are mine, and the code is not packaged for reuse. Ask if you want to use something.
