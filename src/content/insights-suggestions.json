@@ -1,0 +1,58 @@
+{
+  "reading-list": [
+    "how to create a context graph",
+    "what is production minimalism",
+    "benefits of small programs",
+    "how to serve large coding models",
+    "ways to improve email response rates",
+    "strategies for finding engineering problems"
+  ],
+  "resources": [
+    "how do query engines work",
+    "where to learn cloud computing",
+    "what are best practices for LLM inference",
+    "where to find unique illustrations",
+    "resources for product design guidance",
+    "best books for creative professionals"
+  ],
+  "product-hunt": [
+    "how to design and build tools",
+    "where to find coding sandboxes",
+    "what is a cloud data warehouse",
+    "how to replace ChatGPT",
+    "how to simplify email interactions",
+    "best way to compress images"
+  ],
+  "newsletters": [
+    "how to improve reading retention",
+    "where to find system design resources",
+    "best newsletters for software engineers",
+    "how to learn about AI design",
+    "where to explore creative workspaces",
+    "updates on React Native development"
+  ],
+  "fav-portfolios": [
+    "where to find design portfolios",
+    "how to create a personal website",
+    "what makes a good designer portfolio",
+    "where to showcase creative work",
+    "how to present a design project",
+    "what to include in a design portfolio"
+  ],
+  "tools": [
+    "how to create dithered charts",
+    "where to find an infinite canvas",
+    "what tool helps manage OSS security",
+    "how to automate marketing insights",
+    "best way to visualize CSS layers",
+    "where to generate SVG shapes"
+  ],
+  "design-inspo": [
+    "where to find design inspiration",
+    "how to create app store screenshots",
+    "what are best web design examples",
+    "where to get animation resources",
+    "what is trending in UX design",
+    "how to design effective navigation"
+  ]
+}

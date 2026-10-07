@@ -42,47 +42,13 @@ interface Match {
 }
 
 /**
- * Chips are written the way a visitor would actually type: a need or a
- * question, never a claim. "why shipping beats polishing" asserted an answer
- * and scored 0.43 — the weakest of the set. Every chip here was run through
- * search() against the live index and pulls back the link it points at.
- *
- * Four were rephrased after that check: the title-echoes kept retrieving the
- * wrong link ("design skills for AI harnesses" landed on a listicle, not the
- * tool), and the claim above was the vaguest match in the whole row.
+ * Chips are supplied by the server (see `src/lib/kb/suggestions.ts`), derived
+ * from the collection so every category is covered and the wording stays a
+ * need rather than a title-echo.
  */
-const SUGGESTIONS = [
-  "cheapest sandboxes for running agents",
-  "a tool to check colour contrast",
-  "what have I saved about designing AI agents?",
-  "how to find problems worth solving as a staff engineer",
-  "when to stop perfecting and ship",
-  "how to make interfaces feel predictable",
-  "practical typography rules for the web",
-  "learn AI engineering from scratch",
-  "learn cloud computing from zero",
-  "self-hosted durable objects",
-  "a data warehouse built on duckdb",
-  "postgres intelligence for AI agents",
-  "an open database of AI models",
-  "voice to text on macOS",
-  "screenshots of live websites",
-  "an orchestration engine for background jobs",
-  "local https domains for development",
-  "image compression tools",
-  "how to organise design files",
-  "AI design generators",
-  "how to deploy models in production",
-  "design engineering resources",
-  "where to find good design links",
-  "react best practices",
-  "task runners for common coding tasks",
-  "how to prevent cognitive debt from AI code",
-  "design defaults in AI-generated code",
-  "minimal command line tools",
-  "how to turn an app into a context graph",
-  "how to get more replies by writing less",
-];
+interface AskPanelProps {
+  suggestions: string[];
+}
 
 /** Fisher-Yates. Unseeded on purpose — we want a different order per visit. */
 function shuffled<T>(items: readonly T[]): T[] {
@@ -143,16 +109,16 @@ function citationsOf(parts: { type: string; state?: string; output?: unknown }[]
   return out;
 }
 
-export function AskPanel() {
+export function AskPanel({ suggestions }: AskPanelProps) {
   const [input, setInput] = useState("");
-  const [chips, setChips] = useState<string[]>(SUGGESTIONS);
+  const [chips, setChips] = useState<string[]>(suggestions);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   // Shuffle once per visit so the same chips aren't always first. Done on mount
   // rather than during render, so server and client agree on the first paint.
-  useEffect(() => setChips(shuffled(SUGGESTIONS)), []);
+  useEffect(() => setChips(shuffled(suggestions)), [suggestions]);
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/insights/chat" }),

@@ -11,6 +11,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { AskPanel } from "./components/AskPanel";
 import { LinksCountBadge } from "./components/LinksCountBadge";
+import { getSuggestions } from "@/lib/kb/suggestions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,10 @@ export const metadata: Metadata = {
 
 export default async function CuratedLinksPage() {
   const { channels, linkData } = await getInsightsData();
+
+  // Chips come from the collection itself (scripts/kb-suggestions.ts), not
+  // from a hand-written list that drifts into title-echoes.
+  const suggestions = getSuggestions();
 
   // Screenshots are captured out of band and cached in Blob; resolving them
   // here means a hover just points at a stored, immutable image.
@@ -101,7 +106,7 @@ export default async function CuratedLinksPage() {
         </FadeIn>
 
         <div className="mt-8">
-          <AskPanel />
+          <AskPanel suggestions={suggestions} />
         </div>
 
         {/* Browse is a separate mode from Ask, so it gets its own heading and a
