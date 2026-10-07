@@ -47,28 +47,31 @@ const nextConfig = {
   },
 
   /**
-   * The public API is a dataset, not a session — anyone should be able to query
-   * it from a script, a notebook, or a page on another origin. The spec promised
-   * "CORS open"; without these headers a browser blocks the response before the
-   * caller ever sees it.
+   * The public surface is a dataset, not a session — anyone should be able to
+   * query it from a script, a notebook, a page on another origin, or an MCP
+   * client. The spec promised "CORS open"; without these headers a browser
+   * blocks the response before the caller ever sees it.
    *
-   * `/api/v1` only. The site's own routes are same-origin and don't need this,
-   * and the admin endpoints still require a bearer token — CORS is about who may
-   * *read* a response, not about who is allowed to act.
+   * Only the public API. The site's own routes are same-origin and don't need
+   * this, and the admin endpoints still require a bearer token — CORS is about
+   * who may *read* a response, not about who is allowed to act.
    */
   async headers() {
-    return [
+    const corsHeaders = [
+      { key: "Access-Control-Allow-Origin", value: "*" },
+      { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
       {
-        source: "/api/v1/:path*",
-        headers: [
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
-          {
-            key: "Access-Control-Allow-Headers",
-            value: "Authorization, Content-Type",
-          },
-        ],
+        key: "Access-Control-Allow-Headers",
+        // The MCP two are what a browser-based MCP client sends.
+        value:
+          "Authorization, Content-Type, MCP-Protocol-Version, Mcp-Session-Id",
       },
+      { key: "Access-Control-Expose-Headers", value: "Mcp-Session-Id" },
+    ];
+
+    return [
+      { source: "/api/v1/:path*", headers: corsHeaders },
+      { source: "/api/mcp", headers: corsHeaders },
     ];
   },
 
