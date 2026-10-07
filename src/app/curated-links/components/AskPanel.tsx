@@ -1,10 +1,9 @@
 "use client";
 
-import { Marquee } from "@joycostudio/marquee/react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, Loader2, Sparkles } from "lucide-react";
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   Conversation,
@@ -58,6 +57,45 @@ function shuffled<T>(items: readonly T[]): T[] {
     [out[i], out[j]] = [out[j], out[i]];
   }
   return out;
+}
+
+/** Pixels per second the chip row drifts. Slow enough to read and to click. */
+const DRIFT_PX_PER_SEC = 30;
+
+/**
+ * Drift the chip row sideways while leaving it scrollable by hand.
+ *
+ * A translate-based marquee cannot do both: it clones its children and clips
+ * the overflow, so there is nothing for a wheel or a drag to move. Nudging a
+ * native scroll container each frame gives the same drift, keeps the browser's
+ * own scrolling, and loops by reversing at each end instead of jumping.
+ */
+function useAutoScroll(ref: RefObject<HTMLDivElement | null>, playing: boolean) {
+  useEffect(() => {
+    const row = ref.current;
+    if (!row || !playing) return;
+
+    let frame = 0;
+    let last = performance.now();
+    let direction = 1;
+
+    const step = (now: number) => {
+      const elapsed = now - last;
+      last = now;
+
+      const max = row.scrollWidth - row.clientWidth;
+      if (max > 0) {
+        row.scrollLeft += (DRIFT_PX_PER_SEC * elapsed * direction) / 1000;
+        if (row.scrollLeft >= max) direction = -1;
+        else if (row.scrollLeft <= 0) direction = 1;
+      }
+
+      frame = requestAnimationFrame(step);
+    };
+
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [ref, playing]);
 }
 
 type Part = {
@@ -143,18 +181,8 @@ export function AskPanel({ suggestions }: AskPanelProps) {
   // you can't click is worse than a static one.
   const playing = !hovered && !focused && !reduceMotion;
 
-  /**
-   * The marquee duplicates its child with `cloneNode`, and a raw DOM clone has
-   * no React handlers. A capture listener plus a `data-suggestion` attribute
-   * works for both copies: attributes survive cloning, and capture fires on an
-   * ancestor even when the exact target isn't React-managed.
-   */
-  const onChipClick = (event: MouseEvent<HTMLDivElement>) => {
-    const value = (event.target as HTMLElement)
-      .closest("[data-suggestion]")
-      ?.getAttribute("data-suggestion");
-    if (value) submit(value);
-  };
+  const rowRef = useRef<HTMLDivElement>(null);
+  useAutoScroll(rowRef, playing);
 
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-background">
@@ -232,7 +260,6 @@ export function AskPanel({ suggestions }: AskPanelProps) {
 
       <div
         className="border-t border-border px-4 pt-3"
-        onClickCapture={onChipClick}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
@@ -245,29 +272,22 @@ export function AskPanel({ suggestions }: AskPanelProps) {
       >
         {/* Edges fade so it's clear the row keeps going. */}
         <div className="suggestions-fade">
-          <Marquee
-            // Re-mount after the on-mount shuffle, otherwise the cloned copy
-            // keeps the pre-shuffle order.
-            key={chips.join("|")}
-            speed={45}
-            direction={1}
-            play={playing}
-            marqueeClassName="items-center pb-1"
+          {/* A native horizontal scroller: the drift nudges this, and a wheel,
+              a drag or an arrow key moves it by hand. Scrollbar hidden. */}
+          <div
+            ref={rowRef}
+            className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            <div className="flex flex-nowrap items-center gap-2 pr-3">
-              {chips.map((suggestion) => (
-                // The span carries the data attribute, not the Button: the
-                // marquee's clone drops React handlers but keeps DOM attributes.
-                <span key={suggestion} data-suggestion={suggestion}>
-                  <Suggestion
-                    suggestion={suggestion}
-                    disabled={busy}
-                    className="type-caption"
-                  />
-                </span>
-              ))}
-            </div>
-          </Marquee>
+            {chips.map((suggestion) => (
+              <Suggestion
+                key={suggestion}
+                suggestion={suggestion}
+                onClick={submit}
+                disabled={busy}
+                className="type-caption shrink-0"
+              />
+            ))}
+          </div>
         </div>
       </div>
 

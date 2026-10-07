@@ -944,11 +944,6 @@
     wrap-ansi "^8.1.0"
     wrap-ansi-cjs "npm:wrap-ansi@^7.0.0"
 
-"@joycostudio/marquee@^0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@joycostudio/marquee/-/marquee-0.0.13.tgz#a668c1c656a1f03ca9b19bef80682272401aa322"
-  integrity sha512-yREtbj18FVuj4khM2J5fdon87HAj3aZ2cbk1wZoyfi51B7aVAOPZxD98wQK+Y3Dj71/hZzmU78eTZCK1w3oZmg==
-
 "@jridgewell/gen-mapping@^0.3.2":
   version "0.3.5"
   resolved "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.5.tgz"
