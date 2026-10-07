@@ -175,7 +175,7 @@ Where the build disagreed with this spec, or the spec was silent and I chose. Br
 - **`--status` flag on kb-extract.** The spec had no way to re-read rows that came back weak. It was needed the moment the extractor improved.
 - **Eval scale.** The spec said ~40 answerable queries; there are 12. Written by hand against the real collection, so it is honest but small — a smoke test, not a benchmark.
 - **Suggestion chips exist at all.** Not in the spec. They started hand-written, drifted into title-echoes ("Scale your Next.js app"), and are now derived from the collection 6-per-channel and verified against the index by `scripts/kb-suggestions.ts`.
-- **`fetch_link` not built.** Compare is still step 6, so the SSRF guard has no code yet.
+- **`fetch_link` reads plain HTML only.** The spec asked for a tool that reads a page fresh; it did not say what to do when the page needs JavaScript. Putting the headless renderer in a request path would mean carrying Chromium in a serverless function for a rare case, so the tool answers "that page needs JavaScript" instead. The stored passages already cover those pages.
 - **`kb-refresh` rotates; it does not filter by date.** The spec said "a weekly re-read of the most recently added links". Measured against the real table, a 90-day window covered 79 of 500 links — 84% of the collection would never have been re-read, and `content_hash` would have been consulted only for the newest slice. The job now reads least-recently-read first and caps at 100 per run (353 links are eligible), so everything is re-read roughly monthly and nothing is frozen. The cap bounds the cost; the date filter only added blind spots.
 - **The Desk's similarity floor is 0.45, not the eval's 0.35.** Different questions: the eval asks "is this in the collection at all", the Desk asks "does this passage back this claim". Measured on two drafts — one the collection cannot support, one it can — noise sat at 0.35–0.44 and genuine support at 0.53 and 0.63. At 0.35 the model dutifully wrote three confident reasons to cite unrelated pages; at 0.45 that draft returns an empty list, which is the honest answer. The cost is real and accepted: a genuine secondary support around 0.4x is now missed. Precision wins because a wrong attribution gets published.
 - **Writing Desk is a retrieval core, not an editor.** The spec bundled "where I write" together with "what backs this claim". They are different products, and only the second one needs a knowledge base. The core shipped; the editor became its own spec.
@@ -233,10 +233,10 @@ Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration
 1. ~~**Extraction loop.**~~ **Done** — eyeballing tuned into measuring: `kb-extract --status`, `kb-report`, and the retrievability number in the report.
 2. ~~**Chunk + embed + search.**~~ **Done** — `scripts/kb-eval.ts` is the "works without the UI" step.
 3. ~~**Golden eval.**~~ **Done** — 12 answerable + 4 unanswerable queries. See the eval section for what is still missing.
-4. ~~**Ask agent.**~~ **Done** — chat route, AskPanel, citations, rate limits. PostHog events not wired.
+4. ~~**Ask agent.**~~ **Done** — chat route, AskPanel, citations, rate limits, PostHog events on questions and citation clicks.
 5. ~~**Writing Desk retrieval.**~~ **Done** — split the draft into claims, search once per claim, drop matches under a similarity floor, then let the model label only links it was handed. The *editor* is its own spec: decide it after using the Desk by curl on one real article.
 6. ~~**Weekly refresh.**~~ **Done** — `src/trigger/kb-refresh.ts`, rotating and capped.
-7. **Compare/fetch tool.** Then MCP. Then Watch/Tend as their own small specs.
+7. ~~**Compare/fetch tool.**~~ **Done** — `fetch_link`, SSRF-guarded, 24h cache, 3 per question. Next: MCP, then Watch/Tend as their own small specs.
 
 Each step is independently shippable and verifiable. No step requires heroic faith.
 

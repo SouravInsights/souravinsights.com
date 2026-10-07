@@ -46,6 +46,32 @@ const nextConfig = {
     domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
   },
 
+  /**
+   * The public API is a dataset, not a session — anyone should be able to query
+   * it from a script, a notebook, or a page on another origin. The spec promised
+   * "CORS open"; without these headers a browser blocks the response before the
+   * caller ever sees it.
+   *
+   * `/api/v1` only. The site's own routes are same-origin and don't need this,
+   * and the admin endpoints still require a bearer token — CORS is about who may
+   * *read* a response, not about who is allowed to act.
+   */
+  async headers() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Authorization, Content-Type",
+          },
+        ],
+      },
+    ];
+  },
+
   experimental: {
     // Chromium + puppeteer must stay outside the server bundle and their
     // binary must be traced into the /api/link-preview function on Vercel.
