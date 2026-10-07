@@ -104,32 +104,7 @@ Reliability rules, applied everywhere:
 
 ## Data model
 
-Two new tables. `links` keys everything by normalized URL (same `normalizeUrl` as the UI, so dedupe matches what the page shows).
-
-```sql
-create extension if not exists vector;
-
-create table links (
-  id            serial primary key,
-  url_key       text unique not null,   -- normalizeUrl(url)
-  url           text not null,
-  title         text,                    -- real <title> from extraction, fixes "Untitled"
-  channel       text not null,           -- reading-list | tools | ...
-  discord_id    text,                    -- snowflake → added-date
-  status        text not null default 'pending',  -- pending | ok | thin | failed
-  content_hash  text,                    -- skip unchanged pages on re-runs
-  raw_text      text,                    -- cleaned full text (small: ~KBs)
-  created_at    timestamp default now()
-);
-
-create table link_chunks (
-  id          serial primary key,
-  link_id     integer references links(id),
-  chunk_index integer not null,
-  content     text not null,
-  embedding   vector(1536)              -- hnsw index, cosine distance
-);
-```
+The tables (`links`, `link_chunks`) and every column's reasoning live in `links-registry-and-api.md` — single source of truth, not repeated here. This spec only adds what retrieval does with them.
 
 Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, and boosts by like counts read live from Redis (never embedded — they change daily).
 
