@@ -99,3 +99,6 @@ recover), `thin` usually is not (a paywall won't lift).
 - **Timeouts** on the fetch, the render, and the whole per-page step.
 - **Log a per-run summary** (`ok/thin/failed/skipped` counts, and how often the fallback was
   needed), the way the health sweep already does.
+- **jsdom is heavy.** Extraction normally runs in a script or a Trigger.dev task, so its weight
+  doesn't matter. But if a Next route ever imports the extractor, list `jsdom` in `next.config`'s
+  `serverComponentsExternalPackages` so it stays out of the server bundle.
