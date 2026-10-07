@@ -227,6 +227,15 @@
     );
   }
 
+  /* No rubber-band bounce at the edges. Gated to fine pointers so touch
+     devices keep pull-to-refresh. */
+  @media (pointer: fine) {
+    html,
+    body {
+      overscroll-behavior: none;
+    }
+  }
+
 }
 /*
   Shipstack screen geometry
