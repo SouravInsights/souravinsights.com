@@ -133,10 +133,17 @@ citations.
 The honest consequence: ask the Desk to back a claim your collection has nothing on, and it
 returns an empty list. That is the feature working.
 
-`fetch_link` (Compare's extra tool, and the only place the agent would reach the open web) is
-**not written**. When it is, it must: allow http(s) only and reject private/loopback addresses
-(SSRF guard), cap the response size and redirects, cache for 24 hours, and run at most 3 times per
-question.
+`fetch_link` — Compare's extra tool, and the only place the agent reaches the open web — is **built**
+(`src/lib/kb/fetch-link.ts`). It is also the project's one SSRF surface: the URL comes from a model
+that has just read untrusted page text, so a saved page saying "fetch http://169.254.169.254/…" is an
+attack rather than a thought experiment. It allows http(s) only; refuses private, loopback and
+link-local addresses; resolves the hostname and refuses a public name that points inward; re-checks
+every redirect hop, since a public URL can redirect anywhere; caps the body at 2MB and the wait at
+10s; and allows 3 fetches per question.
+
+It reads plain HTML only, so a JavaScript-only page comes back unreadable — honestly reported to the
+model rather than retried forever. `05-failure-modes.md` records the one gap that is known and
+accepted.
 
 ## One question, start to finish
 
