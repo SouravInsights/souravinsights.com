@@ -142,6 +142,8 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 
 "Compare sandbox services in the collection." Agent retrieves candidates, then can **fetch a page fresh** (`fetch_link` tool, 24h Redis cache, max 3 per question) when stored chunks aren't enough — e.g. a pricing detail. Returns a small table + a recommendation with tradeoffs. Choosing tools is a weekly pain; this is where the agent earns trust.
 
+**Status: built.** `fetch_link` is a second tool on the same agent (`src/lib/kb/fetch-link.ts`), with the 24h cache and the 3-per-question cap, and the panel renders its pages as citations next to the searched passages — otherwise a comparison would cite nothing. It is also the **only SSRF surface in the project**: the URL comes from a model that has just read untrusted page text. Guarded on every hop; see `docs/kb/05-failure-modes.md` for the one gap that is known and accepted.
+
 ### Later (unlocked by the KB, not blocking it)
 
 - **MCP server** exposing `search_knowledge` → my collection inside Claude/Cursor mid-work. Also the portfolio artifact.

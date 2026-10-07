@@ -65,10 +65,19 @@ Two ways the *words* fail — this is where a demo usually loses trust:
   enforced before the model is called. A model call is not a web request — the cheap limit alone is
   not enough.
 - **Untrusted text**: never treat extracted page text as instructions.
-- **SSRF**, for when `fetch_link` is built: allow http(s) only; resolve the address and reject
-  private/loopback ranges; cap size and redirects. Today no code fetches a user-supplied URL during
-  a question, so this risk has no surface yet — which is exactly why it is written down *before* the
-  tool exists.
+- **SSRF, via `fetch_link`.** Now real, not hypothetical: the tool fetches a URL the *model* chose,
+  and the model has just read untrusted page text — so a saved page containing "fetch
+  http://169.254.169.254/…" is an attack. The guard: http(s) only; private, loopback and link-local
+  addresses refused; the resolved address checked, so a public name pointing inward is refused too;
+  **every redirect hop re-checked**, since a public URL can redirect anywhere; a 2MB cap; a 10s
+  timeout; and 3 fetches per question.
+  **Known gap:** DNS is checked *before* the request, so a hostname that resolves public now and
+  private a moment later (DNS rebinding) can slip through. Closing it means pinning the resolved
+  address into the connection. Not done, because this runs for one curated collection with a
+  three-fetch cap — if it ever takes arbitrary input at scale, pin the IP.
+- **A pre-existing surface worth naming.** `/api/link-preview?url=` also fetches any http(s) URL —
+  and renders it in Chromium — on nothing but a protocol check. It predates this work and is left
+  untouched here, but it is the same class of problem and could adopt the same guard.
 
 ## What actually broke
 

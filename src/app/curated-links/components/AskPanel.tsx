@@ -102,48 +102,85 @@ type Part = {
   type: string;
   state?: string;
   text?: string;
-  input?: { query?: string };
+  input?: { query?: string; url?: string };
   output?: unknown;
 };
+
+/** The domain of a URL, for showing which page is being read. */
+function hostOf(url: string): string | null {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
 
 /**
  * What the agent is doing *right now*.
  *
  * Without this the panel is a blank box for ~10 seconds, because the answer only
- * starts streaming after the model has decided to search, the search has run,
- * and the model has produced its first token. The tool part's `state` maps
- * exactly onto those waits:
+ * starts streaming after the model has decided to search, the tool has run, and
+ * the model has produced its first token. The tool part's `state` maps exactly
+ * onto those waits:
  *   input-streaming → the model is still emitting the call  ("Thinking…")
- *   input-available  → we're running the search             ("Searching for …")
- *   output-available → the model is composing the answer    ("Writing…")
- * Returns null once answer text starts arriving.
+ *   input-available  → we're running the tool                ("Searching…", "Reading…")
+ *   output-available → the model is composing the answer     ("Writing…")
+ * We read the *last* tool part, so a search followed by a `fetch_link` reports
+ * the fetch. Returns null once answer text starts arriving.
  */
 function phaseOf(parts: Part[]): string | null {
   if (parts.some((part) => part.type === "text" && part.text)) return null;
-  const tool = parts.find((part) => part.type === "tool-search_knowledge");
+
+  const tool = [...parts].reverse().find((part) => part.type.startsWith("tool-"));
   if (!tool || tool.state === "input-streaming") return "Thinking…";
-  if (tool.state === "input-available") {
-    const query = tool.input?.query;
-    return query ? `Searching for “${query}”…` : "Searching the collection…";
+  if (tool.state === "output-available") return "Writing…";
+
+  if (tool.type === "tool-fetch_link") {
+    const host = tool.input?.url ? hostOf(tool.input.url) : null;
+    return host ? `Reading ${host}…` : "Reading that page…";
   }
-  return "Writing…";
+
+  const query = tool.input?.query;
+  return query ? `Searching for “${query}”…` : "Searching the collection…";
 }
 
-/** Every link the search tool returned in this message. */
+/**
+ * Every link the tools returned in this message. `fetch_link` counts too: a page
+ * read fresh is what a comparison is actually based on, so hiding it would leave
+ * the recommendation citing nothing.
+ */
 function citationsOf(parts: { type: string; state?: string; output?: unknown }[]) {
   const seen = new Set<string>();
   const out: Match[] = [];
+
   for (const part of parts) {
-    if (part.type !== "tool-search_knowledge" || part.state !== "output-available") {
+    if (part.state !== "output-available") continue;
+
+    if (part.type === "tool-search_knowledge") {
+      const matches = (part.output as { matches?: Match[] } | undefined)?.matches ?? [];
+      for (const match of matches) {
+        if (seen.has(match.url)) continue;
+        seen.add(match.url);
+        out.push(match);
+      }
       continue;
     }
-    const matches = (part.output as { matches?: Match[] } | undefined)?.matches ?? [];
-    for (const match of matches) {
-      if (seen.has(match.url)) continue;
-      seen.add(match.url);
-      out.push(match);
+
+    if (part.type === "tool-fetch_link") {
+      const page = part.output as
+        | { url?: string; title?: string; text?: string; error?: string }
+        | undefined;
+      if (!page?.url || page.error || seen.has(page.url)) continue;
+      seen.add(page.url);
+      out.push({
+        url: page.url,
+        title: page.title || page.url,
+        channel: "web",
+        passage: (page.text ?? "").slice(0, 240),
+      });
     }
   }
+
   return out;
 }
 

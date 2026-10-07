@@ -159,6 +159,24 @@ function readabilityText(
 
 const GITHUB_RE = /^https?:\/\/github\.com\/([^/]+)\/([^/?#]+)/i;
 
+/**
+ * Read one page's HTML into text. Exported so anything that fetches a page fresh
+ * (the agent's `fetch_link` tool) reads it through *this* reader — a second
+ * implementation would slowly disagree with the stored passages about what a
+ * page says, which is exactly the kind of drift nobody notices.
+ *
+ * Returns null when Readability can't find an article.
+ */
+export function readArticle(
+  html: string,
+  url: string
+): { title: string; text: string } | null {
+  const article = readabilityText(html, url);
+  if (!article) return null;
+  const text = clean(article.text);
+  return text ? { title: article.title.trim(), text } : null;
+}
+
 /** For a GitHub repo, read the raw README — that's where the content is. */
 async function githubReadme(url: string): Promise<string | null> {
   const match = GITHUB_RE.exec(url);

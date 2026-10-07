@@ -92,11 +92,9 @@ prompt.
 | :--- | :--- | :--- |
 | **Ask** | question → grounded answer with citation cards | **built** (public) |
 | **Writing Desk** | a draft paragraph → the saved passages that back it, each with a one-line "why" | **built** (admin-only) |
-| **Compare** | candidates → a small table with a recommendation; may fetch a page fresh | not started |
+| **Compare** | candidates → a small table with a recommendation; may fetch a page fresh | **built** — `fetch_link`, guarded |
 
-Both built experiences sit on the *same* `search()` call — a different prompt and a different
-output shape, not different infrastructure. That is the payoff of building the knowledge base
-first.
+All three exist. Ask is public, the Desk is admin-only, and Compare is not a separate screen at all: it is the same panel plus one extra tool, which is what the knowledge base buys you.
 
 ## The Writing Desk: citations for what you're writing
 
