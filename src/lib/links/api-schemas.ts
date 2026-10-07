@@ -62,6 +62,43 @@ export const channelsResponseSchema = z.object({
   ),
 });
 
+export const searchQuerySchema = z.object({
+  q: z.string().trim().min(2).max(300).openapi({
+    description:
+      "What to look for, in plain words. Matched against the meaning of the " +
+      "pages' contents, not their titles.",
+    example: "a tool to check colour contrast",
+  }),
+  channel: channelEnum.optional().openapi({
+    description: "Restrict the search to one channel",
+    example: "tools",
+  }),
+  limit: z.coerce.number().int().min(1).max(20).default(8).openapi({
+    description: "Results to return (max 20)",
+    example: 8,
+  }),
+});
+
+export const searchResultSchema = linkItemSchema
+  .extend({
+    score: z.number().openapi({
+      description: "Cosine similarity between the query and the page. Higher is closer.",
+      example: 0.53,
+    }),
+    passage: z.string().openapi({
+      description: "The passage from the page that matched the query",
+    }),
+  })
+  .openapi("SearchResult");
+
+export const searchResponseSchema = z.object({
+  data: z.array(searchResultSchema),
+  meta: z.object({
+    query: z.string(),
+    count: z.number().int(),
+  }),
+});
+
 export const hideRequestSchema = z.object({
   url: z.string().url().openapi({
     description: "Any URL variant of the link; normalized server-side",

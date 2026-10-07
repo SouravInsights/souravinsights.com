@@ -10,6 +10,9 @@ import {
   linkItemSchema,
   linksQuerySchema,
   linksResponseSchema,
+  searchQuerySchema,
+  searchResponseSchema,
+  searchResultSchema,
 } from "./api-schemas";
 
 const BASE_URL =
@@ -22,6 +25,7 @@ const BASE_URL =
 const registry = new OpenAPIRegistry();
 
 registry.register("LinkItem", linkItemSchema);
+registry.register("SearchResult", searchResultSchema);
 registry.register("Error", errorSchema);
 registry.registerComponent("securitySchemes", "bearerAuth", {
   type: "http",
@@ -59,6 +63,24 @@ registry.registerPath({
   responses: {
     200: jsonOf(channelsResponseSchema, "Channels and counts"),
     429: jsonOf(errorSchema, "Rate limit exceeded"),
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/search",
+  tags: ["search"],
+  summary: "Search the saved pages' contents by meaning",
+  description:
+    "Retrieval over the full text of every saved link, not their titles — so " +
+    "you can find a page you'd forgotten the name of. No model runs, so the " +
+    "same query always returns the same ranked list.",
+  request: { query: searchQuerySchema },
+  responses: {
+    200: jsonOf(searchResponseSchema, "Ranked matches, closest first"),
+    400: jsonOf(errorSchema, "Invalid query parameters"),
+    429: jsonOf(errorSchema, "Rate limit exceeded"),
+    502: jsonOf(errorSchema, "Embedding provider or database unavailable"),
   },
 });
 
