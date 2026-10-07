@@ -19,7 +19,8 @@ answer questions by finding the closest numbers — instead of matching keywords
 | **Writing Desk** | retrieval core + admin-only endpoint built; the *editor* is a separate spec |
 | Compare | built — `fetch_link`, SSRF-guarded |
 | Public search API (`/api/v1/search`) | built |
-| **MCP server** | built — `scripts/kb-mcp.ts`, stdio, usable from Cursor / Claude |
+| **MCP server** | built — hosted at `/api/mcp`, plus a stdio script for local use |
+| **Public docs** (`/docs`) | built — the endpoints, MCP and feeds, for humans |
 | PostHog signals | questions and citation clicks recorded; cost/latency dashboards not built |
 | Weekly re-read (`kb-refresh`) | built — rotating, 100 links per run |
 

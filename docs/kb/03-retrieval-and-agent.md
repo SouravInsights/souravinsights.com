@@ -86,15 +86,32 @@ The effect: the model cannot show a link we did not return. A made-up URL has no
 appear, so "don't invent links" becomes a property of the design rather than a request in the
 prompt.
 
-## The three experiences built on top
+## The surfaces built on top
 
-| Experience | Input → output | Status |
+| Surface | Input → output | Status |
 | :--- | :--- | :--- |
 | **Ask** | question → grounded answer with citation cards | **built** (public) |
 | **Writing Desk** | a draft paragraph → the saved passages that back it, each with a one-line "why" | **built** (admin-only) |
 | **Compare** | candidates → a small table with a recommendation; may fetch a page fresh | **built** — `fetch_link`, guarded |
+| **MCP** | the collection inside your own assistant | **built** — hosted and local |
 
-All three exist. Ask is public, the Desk is admin-only, and Compare is not a separate screen at all: it is the same panel plus one extra tool, which is what the knowledge base buys you.
+All four exist, and three of them needed no new data at all. Ask is public, the Desk is admin-only,
+Compare is not a separate screen (it is the same panel plus one extra tool), and MCP is the same
+`search()` behind a different protocol. That is what building the knowledge base *first* was
+supposed to buy.
+
+### Compare: reading a page fresh
+
+`fetch_link` is the agent's second tool, and the only place it reaches the open web
+(`src/lib/kb/fetch-link.ts`). It is also the project's one SSRF surface: the URL comes from a model
+that has just read untrusted page text, so a saved page saying "fetch http://169.254.169.254/…" is an
+attack rather than a thought experiment. It allows http(s) only; refuses private, loopback and
+link-local addresses; resolves the hostname and refuses a public name that points inward; re-checks
+every redirect hop, since a public URL can redirect anywhere; caps the body at 2MB and the wait at
+10s; and allows 3 fetches per question.
+
+It reads plain HTML only, so a JavaScript-only page comes back unreadable — honestly reported to the
+model rather than retried forever.
 
 ## The Writing Desk: citations for what you're writing
 
@@ -135,17 +152,25 @@ returns an empty list. That is the feature working.
 
 ## Using the collection from your editor — MCP
 
-The same retrieval, inside whatever assistant you're already working in. `scripts/kb-mcp.ts` is an
-MCP server over stdio exposing one tool, `search_knowledge`.
+The same retrieval, inside whatever assistant you're already working in. One tool,
+`search_knowledge`, defined once in `src/lib/kb/mcp.ts` and mounted twice.
 
-It calls the *same* `search()`. Nothing is stored twice, nothing is computed twice. That's the point:
-it's the honest test of whether retrieval really is the layer and every surface is just a way in.
+It calls the *same* `search()`. Nothing is stored twice and nothing is computed twice — it is the
+honest test of whether retrieval really is the layer and every surface is just a way in.
+
+| Mount | Endpoint | Who it's for |
+| :--- | :--- | :--- |
+| Hosted | `https://www.souravinsights.com/api/mcp` | anyone: point Cursor, Claude Desktop or a web connector at the URL |
+| Local | `npx tsx scripts/kb-mcp.ts` (stdio) | this machine, reading `.env` directly |
 
 ```jsonc
-// ~/.cursor/mcp.json  — or Claude Desktop's claude_desktop_config.json
+// ~/.cursor/mcp.json — hosted, nothing to install
+{ "mcpServers": { "insights": { "url": "https://www.souravinsights.com/api/mcp" } } }
+
+// …or local, against your own checkout
 {
   "mcpServers": {
-    "souravinsights": {
+    "insights": {
       "command": "npx",
       "args": ["tsx", "/absolute/path/to/souravinsights.com/scripts/kb-mcp.ts"]
     }
@@ -153,12 +178,16 @@ it's the honest test of whether retrieval really is the layer and every surface 
 }
 ```
 
-Then, mid-conversation: *"what have I saved about colour contrast?"* — and it searches 2,794
-passages rather than guessing from memory.
+Then, mid-conversation: *"what have I saved about colour contrast?"* — and it searches 2,794 passages
+rather than guessing from memory. The public version of this page is at `/docs`, written for people
+who are not me.
 
-**stdio, not an HTTP endpoint**, deliberately. The use case is "inside Cursor while I work", which is
-local; a local process needs no auth, no rate limiting, and no Chromium bundled into a serverless
-function. It reads the same `.env` the other scripts use.
+**Why the hosted mount is a Pages route, not `src/app/api`.** The SDK's transport takes Node's
+`IncomingMessage` + `ServerResponse`; App Router handlers only get a web `Request`, so serving MCP
+there means hand-rolling an adapter for streams and headers — the kind of code that fails
+mysteriously. Pages routes still hand out Node objects, so the SDK works as documented. One file
+beats one fragile adapter. It runs stateless, because there is one read-only tool and nothing to
+remember between calls.
 
 Two traps this server taught, both worth keeping in mind:
 
@@ -170,18 +199,6 @@ Two traps this server taught, both worth keeping in mind:
   `config()` call placed after `import { search }` runs too late and fails with "No database
   connection string was provided". `scripts/load-env.ts` is imported *first* to avoid it, and
   anchors to the file rather than the cwd, because an MCP client picks the cwd, not us.
-
-`fetch_link` — Compare's extra tool, and the only place the agent reaches the open web — is **built**
-(`src/lib/kb/fetch-link.ts`). It is also the project's one SSRF surface: the URL comes from a model
-that has just read untrusted page text, so a saved page saying "fetch http://169.254.169.254/…" is an
-attack rather than a thought experiment. It allows http(s) only; refuses private, loopback and
-link-local addresses; resolves the hostname and refuses a public name that points inward; re-checks
-every redirect hop, since a public URL can redirect anywhere; caps the body at 2MB and the wait at
-10s; and allows 3 fetches per question.
-
-It reads plain HTML only, so a JavaScript-only page comes back unreadable — honestly reported to the
-model rather than retried forever. `05-failure-modes.md` records the one gap that is known and
-accepted.
 
 ## One question, start to finish
 

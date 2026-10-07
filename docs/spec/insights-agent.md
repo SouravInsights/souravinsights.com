@@ -209,11 +209,14 @@ src/lib/kb/
   agent.ts        // streamText + one tool, capped at 4 steps
   suggestions.ts  // reads the derived chips
   writing-desk.ts // draft → claims → the fragments that back them
+  mcp.ts          // the collection as an MCP server: one tool, mounted twice
 
 src/app/api/insights/chat/route.ts     // the Ask endpoint (8/min, 60/day per IP)
 src/app/api/insights/desk/route.ts     // Writing Desk, admin-only for now
 src/app/api/v1/search/route.ts         // public semantic search — zod + OpenAPI
 src/app/curated-links/components/AskPanel.tsx
+src/app/docs/page.tsx                  // public docs: the endpoints, MCP, feeds
+src/pages/api/mcp.ts                   // hosted MCP — a Pages route, on purpose
 src/content/insights-suggestions.json  // generated chips, 6 per channel
 
 src/trigger/discord-links.ts  // intake (DONE)
@@ -249,7 +252,7 @@ Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration
 5. ~~**Writing Desk retrieval.**~~ **Done** — split the draft into claims, search once per claim, drop matches under a similarity floor, then let the model label only links it was handed. The *editor* is its own spec: decide it after using the Desk by curl on one real article.
 6. ~~**Weekly refresh.**~~ **Done** — `src/trigger/kb-refresh.ts`, rotating and capped.
 7. ~~**Compare/fetch tool.**~~ **Done** — `fetch_link`, SSRF-guarded, 24h cache, 3 per question.
-8. ~~**MCP server.**~~ **Done** — `scripts/kb-mcp.ts`, stdio, one tool over the same `search()`. It needs no new data, which is exactly why it was worth doing last: nothing had to change for it to work.
+8. ~~**MCP server.**~~ **Done** — the tool lives in `src/lib/kb/mcp.ts` and is mounted twice: `scripts/kb-mcp.ts` over stdio for local use, and `/api/mcp` over HTTP so anyone can point a client at it. It needed no new data, which is exactly why it was worth doing last: nothing had to change for it to work.
 
 Each step is independently shippable and verifiable. No step requires heroic faith.
 
