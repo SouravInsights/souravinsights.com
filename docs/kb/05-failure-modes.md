@@ -24,8 +24,9 @@ answer.**
 | What goes wrong | How it shows up | Fix |
 | :--- | :--- | :--- |
 | API rate limit / error | a partial run | batch the requests and retry; a re-run resumes safely |
-| Model swapped | vectors from two models mixed, silently | store which model made each vector; re-embed as a query |
+| Model swapped | vectors from two models mixed, silently | nothing prevents this yet — the model is named in one file (`model.ts`) and printed in the build report, and a swap means a full re-embed |
 | Wrong vector length | insert fails | the length is fixed by the model (1536); the column and `model.ts` must agree |
+| A page changes after we read it | the agent answers from a stale snapshot | the weekly `kb-refresh` re-reads 100 links (least-recently-read first); `content_hash` skips the re-embed when nothing changed |
 
 ## Retrieval
 

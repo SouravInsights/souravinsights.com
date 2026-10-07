@@ -105,9 +105,38 @@ recover), `thin` usually is not (a paywall won't lift).
   Re-reading a page can therefore never leave the tail of a longer previous version behind. (The
   earlier plan was to delete chunks past the new count; deleting all of them is simpler and has
   the same effect.)
-- `raw_text` and `content_hash` are stored per link for the future re-read job
-  (`src/trigger/kb-refresh.ts`, **not built**). Nothing compares the hash yet — extraction is
-  driven by status alone.
+- `raw_text` and `content_hash` are stored per link. The bulk script never compares the hash — it
+  is driven by status — but the weekly re-read below does, and that is what makes the re-read
+  cheap.
+
+## Keeping it fresh — the weekly re-read
+
+`src/trigger/kb-refresh.ts` runs every Monday, an hour after the health sweep, so pages that died
+overnight are already marked `dead` and never re-read:
+
+```
+Monday 09:00  links-health-check   → marks the newly dead rows
+Monday 10:00  kb-refresh           → re-reads 100 links, re-embeds only the changed ones
+```
+
+Three decisions worth naming, because each is a trap:
+
+**It rotates instead of filtering by date.** Ordering by `extracted_at` ascending — least recently
+read first — and capping the run at 100 means every link is re-read roughly monthly and none is
+frozen forever. The obvious alternative, "only links added in the last 90 days", was measured and
+dropped: it covered 79 of 500 links, so 84% of the collection would never have been re-read at all.
+
+**It re-fetches every page but re-embeds only changed ones.** We can't know a page changed without
+asking it, so the fetch always happens. The embedding call is what costs money, and that is exactly
+what `onlyIfChanged` skips — which is why the weekly job is nearly free.
+
+**It skips the never-fetched channels.** A `skipped` channel's text comes from the database row,
+not from a page, so nothing about it can go stale.
+
+The re-read runs through the same `ingestLink()` as the first read (`src/lib/kb/ingest.ts`), which
+is the point of that module existing: a refresh that chunked or embedded differently from the first
+read would quietly change the collection's quality, and the eval numbers would move with nobody
+knowing why.
 
 ## What "good" looks like — the actual numbers
 

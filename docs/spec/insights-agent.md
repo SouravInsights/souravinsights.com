@@ -172,6 +172,7 @@ Where the build disagreed with this spec, or the spec was silent and I chose. Br
 - **Eval scale.** The spec said ~40 answerable queries; there are 12. Written by hand against the real collection, so it is honest but small — a smoke test, not a benchmark.
 - **Suggestion chips exist at all.** Not in the spec. They started hand-written, drifted into title-echoes ("Scale your Next.js app"), and are now derived from the collection 6-per-channel and verified against the index by `scripts/kb-suggestions.ts`.
 - **`fetch_link` not built.** Compare is still step 6, so the SSRF guard has no code yet.
+- **`kb-refresh` rotates; it does not filter by date.** The spec said "a weekly re-read of the most recently added links". Measured against the real table, a 90-day window covered 79 of 500 links — 84% of the collection would never have been re-read, and `content_hash` would have been consulted only for the newest slice. The job now reads least-recently-read first and caps at 100 per run (353 links are eligible), so everything is re-read roughly monthly and nothing is frozen. The cap bounds the cost; the date filter only added blind spots.
 
 ---
 
@@ -184,6 +185,7 @@ src/lib/kb/
   model.ts        // the one file that names the models
   extract.ts      // the fallback ladder (see docs/kb/02-extraction.md)
   render.ts       // shared Chromium + a hard 25s cap per page
+  ingest.ts       // read → chunk → embed → store; the script and the refresh share it
   chunk.ts        // ~500 tok, 15% overlap, paragraph-aware
   embed.ts        // OpenRouter /embeddings, batched 100, retries with backoff
   search.ts       // vector search → group by link → rank by similarity
@@ -194,6 +196,9 @@ src/lib/kb/
 src/app/api/insights/chat/route.ts     // the Ask endpoint (8/min, 60/day per IP)
 src/app/curated-links/components/AskPanel.tsx
 src/content/insights-suggestions.json  // generated chips, 6 per channel
+
+src/trigger/discord-links.ts  // intake (DONE)
+src/trigger/kb-refresh.ts     // weekly re-read; least-recently-read first, capped at 100
 
 scripts/snapshot-links.ts   // Discord → links registry (DONE)
 scripts/kb-extract.ts       // extract → chunk → embed; --status re-reads weak rows
@@ -208,7 +213,6 @@ eval/kb-golden.json         // the test queries
 ```
 eval/fixtures/*.html            // frozen pages, for the extraction check
 src/app/api/v1/search/route.ts  // public JSON retrieval — zod + OpenAPI, like /links
-src/trigger/kb-refresh.ts       // weekly content_hash re-read of recent links
 ```
 
 Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration has been needed since.
@@ -223,7 +227,8 @@ Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration
 3. ~~**Golden eval.**~~ **Done** — 12 answerable + 4 unanswerable queries. See the eval section for what is still missing.
 4. ~~**Ask agent.**~~ **Done** — chat route, AskPanel, citations, rate limits. PostHog events not wired.
 5. **Writing Desk mode** on top of Ask. Use it for one real article; fix what annoys me.
-6. **Compare/fetch tool.** Then MCP. Then Watch/Tend as their own small specs.
+6. ~~**Weekly refresh.**~~ **Done** — `src/trigger/kb-refresh.ts`, rotating and capped.
+7. **Compare/fetch tool.** Then MCP. Then Watch/Tend as their own small specs.
 
 Each step is independently shippable and verifiable. No step requires heroic faith.
 
@@ -233,7 +238,7 @@ Each step is independently shippable and verifiable. No step requires heroic fai
 
 - **JS-heavy / bot-walled pages** (some articles, Twitter links): chromium fallback; failures stay description-level and marked. Accept partial coverage — 85% of a curated collection still beats 100% of nothing.
 - **Paywalled/long-chapter resources**: extract syllabus, not content; honest `thin` status.
-- **Stale content**: pages change; `content_hash` + a weekly re-read of the most recently added links keeps the KB fresh without a full re-crawl.
+- **Stale content**: pages change; `content_hash` + a weekly rotating re-read (least-recently-read first, 100 links per run) keeps the KB fresh without a full re-crawl.
 - **Scope creep into a graph database**: don't. Chunks + tags cover the use cases; entity/linkage graphs are a phase-2 garnish *if* the eval set ever demands them.
 
 ## Out of scope

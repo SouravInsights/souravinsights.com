@@ -16,7 +16,7 @@ answer questions by finding the closest numbers — instead of matching keywords
 | Retrieval eval | built — `recall@5` / `MRR@10` against a keyword baseline |
 | **Ask** agent + panel | built, live on the page |
 | Writing Desk, Compare | not started |
-| Weekly re-read (`kb-refresh`) | not started |
+| Weekly re-read (`kb-refresh`) | built — rotating, 100 links per run |
 | Public search API (`/api/v1/search`) | not started |
 | PostHog signals | not wired |
 
@@ -32,6 +32,7 @@ npx tsx scripts/kb-extract.ts --status failed,thin    # re-read the rows that ca
 npx tsx scripts/kb-report.ts --write                  # regenerate build-report.md
 npx tsx scripts/kb-eval.ts                            # the retrieval scoreboard
 npx tsx scripts/kb-suggestions.ts                     # regenerate the suggestion chips
+npx trigger.dev@latest dev                            # run the weekly tasks locally
 ```
 
 ## Read in order

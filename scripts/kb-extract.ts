@@ -1,10 +1,8 @@
 import "dotenv/config";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "../src/db";
-import { links, linkChunks } from "../src/db/schema";
-import { extract } from "../src/lib/kb/extract";
-import { chunkText } from "../src/lib/kb/chunk";
-import { embedTexts } from "../src/lib/kb/embed";
+import { links } from "../src/db/schema";
+import { ingestLink } from "../src/lib/kb/ingest";
 import { closeRenderer } from "../src/lib/kb/render";
 import { mapWithConcurrency } from "../src/lib/links/health";
 
@@ -38,7 +36,6 @@ const STATUSES = (flagValue("--status") ?? "pending")
   .filter(Boolean);
 const DRY = args.includes("--dry");
 const CONCURRENCY = 4;
-const INSERT_BATCH = 50;
 
 type LinkRow = {
   id: number;
@@ -46,6 +43,7 @@ type LinkRow = {
   title: string;
   description: string;
   channel: string;
+  contentHash: string | null;
 };
 
 async function pendingLinks(): Promise<LinkRow[]> {
@@ -62,6 +60,7 @@ async function pendingLinks(): Promise<LinkRow[]> {
       title: links.title,
       description: links.description,
       channel: links.channel,
+      contentHash: links.contentHash,
     })
     .from(links)
     .where(and(...conditions))
@@ -73,56 +72,11 @@ let read = 0;
 let storedPassages = 0;
 
 async function processLink(link: LinkRow): Promise<void> {
-  const result = await extract(link.url, link.channel);
-  tally[result.status] = (tally[result.status] ?? 0) + 1;
-
-  // Replace existing passages only when there's text worth keeping. Skipped
-  // channels are never fetched — that was the right call — but their title and
-  // description still get indexed as one passage, otherwise those ~138 links
-  // (portfolios, design, newsletters) are invisible to search and to the agent.
-  const text =
-    result.text ||
-    (result.status === "skipped"
-      ? [link.title, link.description].filter(Boolean).join("\n\n").trim()
-      : "");
-
-  if (text) {
-    const chunks = chunkText(text, {
-      title: result.title || link.title,
-      channel: link.channel,
-    });
-    const embeddings = await embedTexts(chunks.map((c) => c.embeddingText));
-
-    if (!DRY) {
-      await db.delete(linkChunks).where(eq(linkChunks.linkId, link.id));
-      for (let i = 0; i < chunks.length; i += INSERT_BATCH) {
-        const batch = chunks.slice(i, i + INSERT_BATCH).map((chunk, j) => ({
-          linkId: link.id,
-          chunkIndex: chunk.index,
-          content: chunk.content,
-          tokenCount: chunk.tokenCount,
-          embedding: embeddings[i + j],
-        }));
-        await db.insert(linkChunks).values(batch);
-      }
-    }
-    storedPassages += chunks.length;
-  }
-
-  if (!DRY) {
-    await db
-      .update(links)
-      .set({
-        rawText: text || null,
-        contentHash: result.contentHash,
-        extractStatus: result.status,
-        extractedAt: new Date(),
-        updatedAt: new Date(),
-        // Backfill the title for links that came in as "Untitled".
-        ...(result.title && !link.title ? { title: result.title } : {}),
-      })
-      .where(eq(links.id, link.id));
-  }
+  // Read → chunk → embed → store lives in ingestLink, shared with the weekly
+  // refresh (src/trigger/kb-refresh.ts) so the two paths cannot drift.
+  const outcome = await ingestLink(link, { dry: DRY });
+  tally[outcome.status] = (tally[outcome.status] ?? 0) + 1;
+  storedPassages += outcome.passages;
 
   read++;
   if (read % 10 === 0) {
