@@ -19,6 +19,7 @@ answer questions by finding the closest numbers — instead of matching keywords
 | **Writing Desk** | retrieval core + admin-only endpoint built; the *editor* is a separate spec |
 | Compare | built — `fetch_link`, SSRF-guarded |
 | Public search API (`/api/v1/search`) | built |
+| **MCP server** | built — `scripts/kb-mcp.ts`, stdio, usable from Cursor / Claude |
 | PostHog signals | questions and citation clicks recorded; cost/latency dashboards not built |
 | Weekly re-read (`kb-refresh`) | built — rotating, 100 links per run |
 
@@ -34,6 +35,7 @@ npx tsx scripts/kb-extract.ts --status failed,thin    # re-read the rows that ca
 npx tsx scripts/kb-report.ts --write                  # regenerate build-report.md
 npx tsx scripts/kb-eval.ts                            # the retrieval scoreboard
 npx tsx scripts/kb-suggestions.ts                     # regenerate the suggestion chips
+npx tsx scripts/kb-mcp.ts                             # the MCP server on stdio (Cursor/Claude spawn it)
 npx trigger.dev@latest dev                            # run the weekly tasks locally
 
 # Writing Desk — the saved links that back what you're writing (admin only)

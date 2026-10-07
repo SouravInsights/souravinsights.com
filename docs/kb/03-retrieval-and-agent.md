@@ -133,6 +133,44 @@ citations.
 The honest consequence: ask the Desk to back a claim your collection has nothing on, and it
 returns an empty list. That is the feature working.
 
+## Using the collection from your editor — MCP
+
+The same retrieval, inside whatever assistant you're already working in. `scripts/kb-mcp.ts` is an
+MCP server over stdio exposing one tool, `search_knowledge`.
+
+It calls the *same* `search()`. Nothing is stored twice, nothing is computed twice. That's the point:
+it's the honest test of whether retrieval really is the layer and every surface is just a way in.
+
+```jsonc
+// ~/.cursor/mcp.json  — or Claude Desktop's claude_desktop_config.json
+{
+  "mcpServers": {
+    "souravinsights": {
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/souravinsights.com/scripts/kb-mcp.ts"]
+    }
+  }
+}
+```
+
+Then, mid-conversation: *"what have I saved about colour contrast?"* — and it searches 2,794
+passages rather than guessing from memory.
+
+**stdio, not an HTTP endpoint**, deliberately. The use case is "inside Cursor while I work", which is
+local; a local process needs no auth, no rate limiting, and no Chromium bundled into a serverless
+function. It reads the same `.env` the other scripts use.
+
+Two traps this server taught, both worth keeping in mind:
+
+- **stdout is the protocol channel.** One stray `console.log` corrupts the handshake, and the client
+  reports something useless like "server disconnected". The script redirects `console.log` to
+  stderr, so a chatty dependency can't break it.
+- **The env has to load *before* the database module.** `src/db` opens its connection the moment it's
+  evaluated, and ES imports all run before any top-level statement in the importing file — so a
+  `config()` call placed after `import { search }` runs too late and fails with "No database
+  connection string was provided". `scripts/load-env.ts` is imported *first* to avoid it, and
+  anchors to the file rather than the cwd, because an MCP client picks the cwd, not us.
+
 `fetch_link` — Compare's extra tool, and the only place the agent reaches the open web — is **built**
 (`src/lib/kb/fetch-link.ts`). It is also the project's one SSRF surface: the URL comes from a model
 that has just read untrusted page text, so a saved page saying "fetch http://169.254.169.254/…" is an

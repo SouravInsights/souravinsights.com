@@ -225,11 +225,13 @@ scripts/kb-report.ts        // writes docs/kb/build-report.md
 scripts/kb-eval.ts          // the retrieval scoreboard
 scripts/kb-suggestions.ts   // derive the chips, then verify them against the index
 scripts/kb-fixtures.ts      // build the extraction fixtures from real pages
+scripts/kb-mcp.ts           // the collection inside Cursor / Claude, over stdio
+scripts/load-env.ts         // load .env before anything opens a DB connection
 eval/kb-golden.json         // the test queries
 eval/kb-fixtures.json       // saved pages + what the reader must find in each
 ```
 
-**Still to do here: MCP (step 8).** Everything else is either parked with a stated reason — see
+**Nothing outstanding in this spec.** What remains is either parked with a stated reason — see
 "Parked, and why" — or belongs to another spec: the browser editor is a publishing product, and HN
 ingestion is out of scope in `links-registry-and-api.md`.
 
@@ -247,7 +249,7 @@ Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration
 5. ~~**Writing Desk retrieval.**~~ **Done** — split the draft into claims, search once per claim, drop matches under a similarity floor, then let the model label only links it was handed. The *editor* is its own spec: decide it after using the Desk by curl on one real article.
 6. ~~**Weekly refresh.**~~ **Done** — `src/trigger/kb-refresh.ts`, rotating and capped.
 7. ~~**Compare/fetch tool.**~~ **Done** — `fetch_link`, SSRF-guarded, 24h cache, 3 per question.
-8. **MCP server.** The last step here. Exposes `search_knowledge`; needs no new data.
+8. ~~**MCP server.**~~ **Done** — `scripts/kb-mcp.ts`, stdio, one tool over the same `search()`. It needs no new data, which is exactly why it was worth doing last: nothing had to change for it to work.
 
 Each step is independently shippable and verifiable. No step requires heroic faith.
 
