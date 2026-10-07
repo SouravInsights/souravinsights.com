@@ -1,10 +1,11 @@
 import "dotenv/config";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "../src/db";
 import { links, linkChunks } from "../src/db/schema";
 import { extract } from "../src/lib/kb/extract";
 import { chunkText } from "../src/lib/kb/chunk";
 import { embedTexts } from "../src/lib/kb/embed";
+import { closeRenderer } from "../src/lib/kb/render";
 import { mapWithConcurrency } from "../src/lib/links/health";
 
 /**
@@ -15,6 +16,7 @@ import { mapWithConcurrency } from "../src/lib/links/health";
  *   npx tsx scripts/kb-extract.ts                 # all pending links
  *   npx tsx scripts/kb-extract.ts --limit 50      # first 50 (the QA loop)
  *   npx tsx scripts/kb-extract.ts --channel tools # one channel
+ *   npx tsx scripts/kb-extract.ts --status failed # re-read links that failed
  *   npx tsx scripts/kb-extract.ts --dry           # read only, write nothing
  *
  * Safe to re-run: it only touches rows still marked `pending`, and it replaces
@@ -28,6 +30,12 @@ const flagValue = (name: string) => {
 };
 const LIMIT = flagValue("--limit") ? Number(flagValue("--limit")) : undefined;
 const CHANNEL = flagValue("--channel");
+// Which rows to (re)process. Defaults to the unread ones; pass `--status failed`
+// or `--status failed,thin` to re-run extraction over rows that came back weak.
+const STATUSES = (flagValue("--status") ?? "pending")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 const DRY = args.includes("--dry");
 const CONCURRENCY = 4;
 const INSERT_BATCH = 50;
@@ -41,7 +49,7 @@ type LinkRow = {
 
 async function pendingLinks(): Promise<LinkRow[]> {
   const conditions = [
-    eq(links.extractStatus, "pending"),
+    inArray(links.extractStatus, STATUSES),
     isNull(links.hiddenAt),
   ];
   if (CHANNEL) conditions.push(eq(links.channel, CHANNEL));
@@ -114,20 +122,25 @@ async function processLink(link: LinkRow): Promise<void> {
 async function main() {
   const rows = await pendingLinks();
   console.log(
-    `KB build: ${rows.length} pending links${DRY ? " (dry run)" : ""}${
-      CHANNEL ? ` in #${CHANNEL}` : ""
-    }`
+    `KB build: ${rows.length} link(s) [${STATUSES.join(", ")}]${
+      DRY ? " (dry run)" : ""
+    }${CHANNEL ? ` in #${CHANNEL}` : ""}`
   );
 
-  await mapWithConcurrency(rows, CONCURRENCY, (link) =>
-    processLink(link).catch((error) => {
-      console.error(`  ✗ ${link.url}: ${(error as Error).message}`);
-      tally["error"] = (tally["error"] ?? 0) + 1;
-    })
-  );
+  try {
+    await mapWithConcurrency(rows, CONCURRENCY, (link) =>
+      processLink(link).catch((error) => {
+        console.error(`  ✗ ${link.url}: ${(error as Error).message}`);
+        tally["error"] = (tally["error"] ?? 0) + 1;
+      })
+    );
 
-  console.log(`\ndone: ${JSON.stringify(tally)}`);
-  console.log(`${storedPassages} passages stored across ${rows.length} links.`);
+    console.log(`\ndone: ${JSON.stringify(tally)}`);
+    console.log(`${storedPassages} passages stored across ${rows.length} links.`);
+  } finally {
+    // The render fallback reuses one browser; release it so the process exits.
+    await closeRenderer();
+  }
 }
 
 main().catch((err) => {

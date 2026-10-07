@@ -298,14 +298,20 @@ export async function extract(
   // Rung 1 produced a solid result — stop here, no browser needed.
   if (best && wordCount(best.text) >= THIN_WORDS) return finalize(best);
 
-  // Rung 2: render with a real browser, then Readability again.
+  // Rung 2: render with a real browser, then Readability again. Readability
+  // discards a lot of text on app-style pages, so if it finds almost nothing we
+  // fall back to the page's visible body text rather than record `failed`.
   const rendered = await renderHtml(url).catch(() => null);
   if (rendered) {
-    const article = readabilityText(rendered, url);
-    if (article && wordCount(article.text) > wordCount(best?.text ?? "")) {
+    const article = readabilityText(rendered.html, url);
+    const readable = article?.text ?? "";
+    const useBody =
+      wordCount(readable) < 50 && wordCount(rendered.text) > wordCount(readable);
+    const text = useBody ? rendered.text : readable;
+    if (wordCount(text) > wordCount(best?.text ?? "")) {
       best = {
-        text: article.text,
-        title: article.title,
+        text,
+        title: article?.title ?? "",
         via: "render",
         finalUrl: url,
       };
