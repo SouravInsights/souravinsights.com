@@ -44,6 +44,7 @@ type LinkRow = {
   id: number;
   url: string;
   title: string;
+  description: string;
   channel: string;
 };
 
@@ -59,6 +60,7 @@ async function pendingLinks(): Promise<LinkRow[]> {
       id: links.id,
       url: links.url,
       title: links.title,
+      description: links.description,
       channel: links.channel,
     })
     .from(links)
@@ -74,9 +76,18 @@ async function processLink(link: LinkRow): Promise<void> {
   const result = await extract(link.url, link.channel);
   tally[result.status] = (tally[result.status] ?? 0) + 1;
 
-  // Replace existing passages only when there's text worth keeping.
-  if (result.text) {
-    const chunks = chunkText(result.text, {
+  // Replace existing passages only when there's text worth keeping. Skipped
+  // channels are never fetched — that was the right call — but their title and
+  // description still get indexed as one passage, otherwise those ~138 links
+  // (portfolios, design, newsletters) are invisible to search and to the agent.
+  const text =
+    result.text ||
+    (result.status === "skipped"
+      ? [link.title, link.description].filter(Boolean).join("\n\n").trim()
+      : "");
+
+  if (text) {
+    const chunks = chunkText(text, {
       title: result.title || link.title,
       channel: link.channel,
     });
@@ -102,7 +113,7 @@ async function processLink(link: LinkRow): Promise<void> {
     await db
       .update(links)
       .set({
-        rawText: result.text || null,
+        rawText: text || null,
         contentHash: result.contentHash,
         extractStatus: result.status,
         extractedAt: new Date(),

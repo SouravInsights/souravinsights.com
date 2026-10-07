@@ -55,6 +55,21 @@ async function main() {
     .where(inArray(links.extractStatus, ["thin", "failed"]))
     .orderBy(links.extractStatus, links.url);
 
+  // Per channel, how much of it search can actually reach. A channel with
+  // links but no passages is invisible to the agent — worth seeing at a glance.
+  const coverage = (await db.execute(sql`
+    select l.channel,
+           count(distinct l.id)::int as links,
+           count(c.id)::int as passages,
+           count(distinct l.id) filter (where c.id is null)::int as missing
+    from links l
+    left join link_chunks c on c.link_id = l.id
+    where l.hidden_at is null
+    group by l.channel
+    order by links desc
+  `)) as unknown as { rows?: Record<string, unknown>[] } | Record<string, unknown>[];
+  const coverageRows = Array.isArray(coverage) ? coverage : coverage.rows ?? [];
+
   const L: string[] = [];
   L.push("# KB build report", "");
   L.push(
@@ -75,6 +90,19 @@ async function main() {
     `**Total links:** ${total} (${hidden} hidden). **Passages stored:** ${passages}.`,
     ""
   );
+  L.push("## Coverage per channel", "");
+  L.push(
+    "`missing` = links search cannot reach at all (no passage was stored).",
+    "",
+    "| Channel | Links | Passages | Missing |",
+    "| :--- | ---: | ---: | ---: |"
+  );
+  for (const row of coverageRows) {
+    L.push(
+      `| ${row.channel} | ${row.links} | ${row.passages} | ${row.missing} |`
+    );
+  }
+  L.push("");
   L.push("## Thin / failed (need attention)", "");
   L.push(
     "`thin` = under 200 words (a short landing page, a paywall, or a JS shell).",

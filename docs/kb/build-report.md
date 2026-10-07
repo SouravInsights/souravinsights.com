@@ -1,6 +1,6 @@
 # KB build report
 
-_Generated 2026-10-07T19:13:12.489Z. Regenerate: `npx tsx scripts/kb-report.ts --write`._
+_Generated 2026-10-07T20:25:48.142Z. Regenerate: `npx tsx scripts/kb-report.ts --write`._
 
 Embedding model `openai/text-embedding-3-small` · chat model `openai/gpt-4o-mini` · chunk target 500 tokens.
 
@@ -14,7 +14,21 @@ Embedding model `openai/text-embedding-3-small` · chat model `openai/gpt-4o-min
 | skipped | 138 |
 | pending | 9 |
 
-**Total links:** 500 (9 hidden). **Passages stored:** 2662.
+**Total links:** 500 (9 hidden). **Passages stored:** 2794.
+
+## Coverage per channel
+
+`missing` = links search cannot reach at all (no passage was stored).
+
+| Channel | Links | Passages | Missing |
+| :--- | ---: | ---: | ---: |
+| reading-list | 98 | 659 | 1 |
+| resources | 90 | 499 | 2 |
+| tools | 84 | 235 | 2 |
+| product-hunt | 81 | 1269 | 3 |
+| fav-portfolios | 75 | 71 | 4 |
+| design-inspo | 32 | 32 | 0 |
+| newsletters | 31 | 29 | 2 |
 
 ## Thin / failed (need attention)
 
