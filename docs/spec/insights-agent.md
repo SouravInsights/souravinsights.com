@@ -2,6 +2,8 @@
 
 Turn the curated-links collection from a list of URLs into a knowledge base you can think with. Read the actual contents of every link, store them, make them searchable by meaning, and put an agent on top that answers questions using only that knowledge.
 
+**Status:** the foundation (`links-registry-and-api.md`) is **shipped** — Postgres registry holds 500 links (9 provably dead never recorded), site/RSS/llms-full/homepage read the DB, public API at `/api/v1` with docs at `/api/docs`, admin hiding works, weekly health sweep runs, Discord is intake-only. This spec is what remains: extraction → embeddings → retrieval → the agent.
+
 ---
 
 ## The problems this solves (the actual pain)
@@ -37,7 +39,7 @@ That's the whole vocabulary. Everything below is these six pieces arranged sanel
 
 ## What the actual data looks like (checked, not assumed)
 
-Read the live collection (~700 links, 7 channels):
+Read the live collection (measured at snapshot: 510 unique → **500 recorded**, 7 channels):
 
 | Channel | What's actually there | Extraction strategy |
 | :--- | :--- | :--- |
@@ -47,28 +49,29 @@ Read the live collection (~700 links, 7 channels):
 | Products | SaaS pages (boat, Subframe, Conductor) | Homepage + /pricing → what it does, what it costs, who it's for. |
 | Portfolios, Design, Newsletters | Mostly visual or one-pagers | Description-level only. Deep fetch = money for nothing. |
 
-~350–450 of the 700 links deserve real extraction. The rest stay description-level. This split is also how the budget stays near zero.
+~360 of the 500 deserve real extraction (articles 100, resources 91, products 85, tools 84); the other 140 (portfolios, design, newsletters) stay description-level. Hidden links are never extracted. This split is also how the budget stays near zero.
 
 Also found in the live data: several links are `Untitled` — weak metadata at intake, which extraction fixes for free (real `<title>` from the page).
 
 ---
 
-## The hidden data-loss problem this fixes
+## The data-loss problem — already fixed
 
-`getMessagesFromChannel` fetches the **latest 100 messages per channel, no pagination**. Older links still exist in Discord but are unreachable by the site. Every new link buries the tail of the collection.
-
-**The knowledge base's first job is a snapshot:** copy everything into Postgres, keyed by normalized URL. From then on, new arrivals are appended and nothing is ever lost. The agent becomes the permanent memory the Discord API can't be.
+`getMessagesFromChannel` fetched the latest 100 messages per channel, no pagination — Articles had already hit the cap and was dropping old links. **Fixed by the registry (shipped):** 500 rows snapshotted into Postgres, the sync task appends new arrivals through a health gate, and every surface reads the DB. Extraction below runs against `extract_status='pending' AND hidden_at IS NULL` rows.
 
 ---
 
 ## Architecture — three pipelines, all boring
 
 ```
-INTAKE (offline, runs on a schedule + one-off backfill)
-  Discord channels ──► link registry (Postgres)
-                        │ per link, category-aware:
-                        │   fetch → extract text → clean
-                        └──► chunk (~500 tok) ──► embed ──► link_chunks (pgvector)
+INTAKE (live)
+  Discord ──► sync task ──► health gate ──► links (Postgres)
+
+KB BUILD (this spec)
+  links where extract_status='pending' and not hidden
+    │ per link, category-aware:
+    │   fetch → extract text → clean
+    └──► chunk (~500 tok) ──► embed ──► link_chunks (pgvector)
 
 ASK (runtime, per question)
   question ──► embed ──► vector search top-k chunks
@@ -81,8 +84,8 @@ LATER (same KB, new surfaces — no rebuilds)
 
 Reliability rules, applied everywhere:
 
-1. **Idempotent ingest.** Every URL stores a content hash; re-runs process only new/changed pages. Crash anywhere → rerun the script, nothing doubles.
-2. **Extraction fallback ladder, never fatal.** Static fetch → Readability → headless render (puppeteer/chromium already installed for link previews) → give up cleanly, mark `failed`, keep description-level data. One bad page can't block 700.
+1. **Idempotent ingest.** `url_key` uniqueness already prevents duplicate links (live). Extraction adds `content_hash` so re-runs process only new/changed pages. Crash anywhere → rerun the script, nothing doubles.
+2. **Extraction fallback ladder, never fatal.** Static fetch → Readability → headless render (puppeteer/chromium already installed for link previews) → give up cleanly, mark `failed`, keep description-level data. One bad page can't block 500.
 3. **The model can only cite what it received.** The UI renders only links returned by tool calls, so invented URLs are structurally impossible, not just prompt-discouraged.
 4. **Honest degradation.** No good chunks → "the collection doesn't cover this" + nearest category. Vector DB down → plain message, page itself unaffected (agent is additive, never in the page's rendering path).
 
@@ -95,7 +98,7 @@ Reliability rules, applied everywhere:
 | LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary. 1536 dims matches the existing `vector(1536)` column — no schema change. |
 | Vector + text store | **Neon Postgres + pgvector** (existing DB) | $0 — free tier (0.5GB); 5K chunks ≈ 35MB | One service, plain SQL, Drizzle already in the repo. Changed from my earlier Upstash Vector pick: chunks are relational (chunk → link → channel), and one dependency beats two free ones. pgvector is also the standard thing worth learning. |
 | Extraction | `fetch` + `@mozilla/readability` + `node-html-parser`; fallback to existing puppeteer/chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. |
-| Scheduling | Trigger.dev (existing task detects new Discord links) | $0 free tier | New-link detection already exists; add "then ingest it." |
+| Scheduling | Trigger.dev | $0 free tier | The sync task already detects + persists new links; extraction hooks in right after insert. |
 | Auth-ish for public APIs | Upstash Redis ratelimits + visitor cookie pattern (already used by likes) | $0 | Public agent without accounts. |
 
 **Budget reality:** runs on the existing OpenRouter balance. Rebuild the entire KB any time for ~5 cents. Chat at 1,000 queries/month ≈ $1. Everything else is on free tiers already in use.
@@ -106,7 +109,7 @@ Reliability rules, applied everywhere:
 
 The tables (`links`, `link_chunks`) and every column's reasoning live in `links-registry-and-api.md` — single source of truth, not repeated here. This spec only adds what retrieval does with them.
 
-Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, and boosts by like counts read live from Redis (never embedded — they change daily).
+Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, excludes hidden and dead rows (same filter as `getLinks()`), and boosts by like counts read live from Redis (never embedded — they change daily).
 
 **Chunking params (don't overthink):** ~500 tokens, ~15% overlap, split on paragraph boundaries. Citation unit = chunk → URL.
 
@@ -158,28 +161,30 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 src/lib/kb/
   extract.ts     // fetch + readability + chromium fallback, category-aware depth
   chunk.ts       // ~500 tok, overlap, paragraph-aware
-  embed.ts       // embedMany() wrapper
+  embed.ts       // OpenRouter /embeddings wrapper
   search.ts      // vector search + like-boost join
   model.ts       // the one file that knows which models we use
   prompt.ts      // system prompt + citation rules
 
-scripts/kb-backfill.ts    // snapshot Discord → links, extract, chunk, embed (idempotent)
-scripts/kb-eval.ts        // golden set → hit-rate@5
-eval/kb-golden.json       // the test queries
+scripts/snapshot-links.ts   // DONE — Discord → links registry
+scripts/kb-extract.ts       // pending rows: extract → chunk → embed (idempotent)
+scripts/kb-eval.ts          // golden set → hit-rate@5
+eval/kb-golden.json         // the test queries
 
-src/app/api/insights/chat/route.ts    // agent loop, streamed
-src/app/api/insights/search/route.ts  // raw retrieval, public JSON
+src/app/api/insights/chat/route.ts    // agent loop, streamed (site-internal)
+src/app/api/v1/search/route.ts        // public JSON retrieval — joins the v1 API
 src/app/curated-links/components/AskPanel.tsx
-src/trigger/kb-sync.ts    // new links → ingest (extends existing Discord task)
-drizzle/                  // migration: links + link_chunks (pgvector)
+src/trigger/discord-links.ts          // already persists new links; extraction hook goes here
 ```
+
+Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No new migration needed until the schema changes.
 
 ---
 
 ## Build order
 
-0. **Snapshot.** `links` table + backfill script, Discord → Postgres. Verify counts match the page. *Day 1 and the collection already stops losing history.*
-1. **Extraction loop.** 50 links → eyeball → fix → repeat, then bulk (~450 deep, rest thin). Cost: cents.
+0. ~~Snapshot.~~ **Done** (registry spec): 510 unique → 500 recorded, 9 dead skipped; site + API read the DB.
+1. **Extraction loop.** 50 links → eyeball → fix → repeat, then bulk (~360 deep, rest thin). Cost: cents.
 2. **Chunk + embed + search.** `search` API works from curl. Nothing LLM yet.
 3. **Golden eval.** ≥80% hit-rate@5 or iterate on chunks/extract until it is.
 4. **Ask agent.** Chat route + AskPanel, citations, rate limits, PostHog events.
