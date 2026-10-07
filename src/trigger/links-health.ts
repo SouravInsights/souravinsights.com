@@ -1,5 +1,5 @@
 import { schedules, logger } from "@trigger.dev/sdk/v3";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
 import { checkUrlHealth, mapWithConcurrency } from "@/lib/links/health";
@@ -23,7 +23,14 @@ export const linksHealthCheck = schedules.task({
         consecutiveFailures: links.consecutiveFailures,
       })
       .from(links)
-      .where(and(ne(links.health, "dead"), ne(links.health, "uncheckable")));
+      .where(
+        and(
+          ne(links.health, "dead"),
+          ne(links.health, "uncheckable"),
+          // Admin-hidden rows earn no checks — nobody sees them anyway.
+          isNull(links.hiddenAt)
+        )
+      );
 
     logger.info("health sweep starting", { count: rows.length });
 

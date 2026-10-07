@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
@@ -58,6 +59,7 @@ export default function InsightsList({
   likeCounts,
   shuffleSeed,
 }: InsightsListProps) {
+  const router = useRouter();
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -243,6 +245,8 @@ export default function InsightsList({
     if (response.ok) {
       setHiddenKeys((prev) => new Set(prev).add(normalizeUrl(link.url)));
       feedback.press();
+      // Re-render server components so the header count drops too.
+      router.refresh();
     }
   };
 

@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { hideRequestSchema } from "@/lib/links/api-schemas";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
@@ -29,6 +30,10 @@ export async function POST(request: NextRequest) {
   if (!found) {
     return err("not_found", "No link matches this URL", 404);
   }
+
+  // Bust the ISR caches that could still show the link.
+  revalidatePath("/curated-links");
+  revalidatePath("/api/curated-links/latest");
 
   return NextResponse.json({
     data: { id: normalizeUrl(parsed.data.url), hidden: true },

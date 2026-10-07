@@ -65,7 +65,7 @@ One row per URL, recorded when it entered the collection. Discord is intake, not
 
 | Column | Type | Stores / why |
 | :--- | :--- | :--- |
-| `extract_status` | `text`, default `'pending'`, CHECK | The KB's work queue: `pending / ok / thin / failed / skipped`. Extraction is just `WHERE extract_status = 'pending'`. `skipped` (portfolios etc. — intentionally description-only) is distinct from `failed` so retry policies can differ. |
+| `extract_status` | `text`, default `'pending'`, CHECK | The KB's work queue: `pending / ok / thin / failed / skipped`. Extraction is `WHERE extract_status = 'pending' AND hidden_at IS NULL` — hidden links never get embedded. `skipped` (portfolios etc. — intentionally description-only) is distinct from `failed` so retry policies can differ. |
 | `raw_text` | `text`, nullable | The cleaned page text. List queries never select it; fetched per link only. |
 | `content_hash` | `text` | sha256 of the extracted text. Skip re-extracting pages that haven't changed. |
 | `extracted_at` | `timestamptz` | When; drives staleness sweeps. |
@@ -115,7 +115,7 @@ A single failed request proves nothing — sites have bad minutes, and many bloc
 Rules:
 
 - **Snapshot:** the check runs *before* insert. Provably dead → never recorded. Anything ambiguous → recorded with its flag.
-- **Weekly job:** rechecks everything, updates `consecutive_failures`; `dead` links are excluded from page/API/RSS by query filter, never deleted.
+- **Weekly job:** rechecks everything *visible* (hidden rows earn no checks — nobody sees them), updates `consecutive_failures`; `dead` links are excluded from page/API/RSS by query filter, never deleted.
 - **Checker mechanics:** try HEAD first; if the server refuses HEAD, GET just the first KB. Use a real browser User-Agent (datacenter agents get walled). 10s timeout, follow ≤5 redirects, 10 URLs at a time.
 
 ---
@@ -172,7 +172,7 @@ Not built now. The schema just refuses to block it:
 2. Cut the surfaces (`curated-links` page, RSS, `llms-full.txt`, homepage) to `getLinks()`. Verify: per-channel counts match today minus skipped-dead; likes still work (keys unchanged); RSS differs only by removed dead links.
 3. Switch the Trigger.dev sync task to append into `links` (same health gate).
 4. Public API + admin endpoints + `?admin` trash UI + OpenAPI + Scalar docs + `llms.txt`.
-5. Hand off to the KB spec: extraction runs against `extract_status='pending'` rows.
+5. Hand off to the KB spec: extraction runs against `extract_status='pending' AND hidden_at IS NULL` rows.
 
 Each step deploys alone; the site never breaks between them.
 
