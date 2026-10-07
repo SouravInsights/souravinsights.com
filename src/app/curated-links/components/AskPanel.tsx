@@ -42,22 +42,28 @@ interface Match {
 }
 
 /**
- * Chips written the way a visitor would actually type — intent, not titles —
- * and each one is answerable from a link that is really in the collection.
+ * Chips are written the way a visitor would actually type: a need or a
+ * question, never a claim. "why shipping beats polishing" asserted an answer
+ * and scored 0.43 — the weakest of the set. Every chip here was run through
+ * search() against the live index and pulls back the link it points at.
+ *
+ * Four were rephrased after that check: the title-echoes kept retrieving the
+ * wrong link ("design skills for AI harnesses" landed on a listicle, not the
+ * tool), and the claim above was the vaguest match in the whole row.
  */
 const SUGGESTIONS = [
   "cheapest sandboxes for running agents",
   "a tool to check colour contrast",
   "what have I saved about designing AI agents?",
   "how to find problems worth solving as a staff engineer",
-  "why shipping beats polishing",
+  "when to stop perfecting and ship",
   "how to make interfaces feel predictable",
   "practical typography rules for the web",
   "learn AI engineering from scratch",
   "learn cloud computing from zero",
   "self-hosted durable objects",
   "a data warehouse built on duckdb",
-  "postgres tooling for AI agents",
+  "postgres intelligence for AI agents",
   "an open database of AI models",
   "voice to text on macOS",
   "screenshots of live websites",
@@ -68,12 +74,12 @@ const SUGGESTIONS = [
   "AI design generators",
   "how to deploy models in production",
   "design engineering resources",
-  "hand-picked design links",
+  "where to find good design links",
   "react best practices",
   "task runners for common coding tasks",
   "how to prevent cognitive debt from AI code",
-  "design skills for AI harnesses",
-  "small sharp unix tools",
+  "design defaults in AI-generated code",
+  "minimal command line tools",
   "how to turn an app into a context graph",
   "how to get more replies by writing less",
 ];
