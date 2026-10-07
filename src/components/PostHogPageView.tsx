@@ -12,9 +12,10 @@ export default function PostHogPageView(): null {
   useEffect(() => {
     // Track pageviews (PostHog will handle internal user filtering)
     if (pathname && posthog) {
+      const query = searchParams?.toString();
       let url = window.origin + pathname;
-      if (searchParams.toString()) {
-        url = url + `?${searchParams.toString()}`;
+      if (query) {
+        url = url + `?${query}`;
       }
       posthog.capture("$pageview", {
         $current_url: url,

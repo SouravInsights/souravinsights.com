@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function BlogHeader() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("q") || "";
+  const initialQuery = searchParams?.get("q") || "";
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   const handleSearch = (e: React.FormEvent) => {
