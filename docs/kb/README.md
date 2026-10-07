@@ -17,7 +17,9 @@ answer questions by finding the closest numbers — instead of matching keywords
 | [`05-failure-modes.md`](./05-failure-modes.md) | What can go wrong, and the fix |
 
 The formal spec is at [`../spec/insights-agent.md`](../spec/insights-agent.md); the critique
-at [`../review/insights-agent-review.md`](../review/insights-agent-review.md).
+at [`../review/insights-agent-review.md`](../review/insights-agent-review.md). The current
+state of the build is snapshotted in [`build-report.md`](./build-report.md) — link counts and
+the thin/failed list (`npx tsx scripts/kb-report.ts --write` to refresh it).
 
 ## The whole system in one picture
 
