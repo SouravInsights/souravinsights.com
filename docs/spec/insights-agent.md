@@ -4,6 +4,8 @@ Turn the curated-links collection from a list of URLs into a knowledge base you 
 
 **Status:** the foundation (`links-registry-and-api.md`) is **shipped** — Postgres registry holds 500 links (9 provably dead never recorded), site/RSS/llms-full/homepage read the DB, public API at `/api/v1` with docs at `/api/docs`, admin hiding works, weekly health sweep runs, Discord is intake-only. This spec is what remains: extraction → embeddings → retrieval → the agent.
 
+**Reviewed** by Cline (model: DeepSeek v4.1 flash high) — see [`../review/insights-agent-review.md`](../review/insights-agent-review.md). Plain-language walkthrough: [`../kb/`](../kb/README.md).
+
 ---
 
 ## The problems this solves (the actual pain)
@@ -63,31 +65,37 @@ Also found in the live data: several links are `Untitled` — weak metadata at i
 
 ## Architecture — three pipelines, all boring
 
-```
-INTAKE (live)
-  Discord ──► sync task ──► health gate ──► links (Postgres)
+```mermaid
+flowchart TD
+    subgraph INTAKE["INTAKE (live)"]
+        direction LR
+        DSC[Discord] --> SYNC[sync task] --> GATE[health gate] --> LINKS[("links (Postgres)")]
+    end
 
-KB BUILD (this spec)
-  links where extract_status='pending' and not hidden
-    │ per link, category-aware:
-    │   fetch → extract text → clean
-    └──► chunk (~500 tok) ──► embed ──► link_chunks (pgvector)
+    subgraph BUILD["KB BUILD (this spec)"]
+        direction LR
+        PEND["pending, not hidden<br/>category-aware extract"] --> CHUNK["chunk ~500 tok"] --> EMBED[embed] --> CHUNKS[("link_chunks (pgvector)")]
+    end
 
-ASK (runtime, per question)
-  question ──► embed ──► vector search top-k chunks
-           ──► agent loop: model + search_knowledge tool (calls it 1–2× per question)
-           ──► answer grounded in chunks, real citations, streamed
+    subgraph ASK["ASK (runtime, per question)"]
+        direction LR
+        Q[question] --> QE[embed] --> VS["vector search →<br/>aggregate to links → rank"] --> AG["agent loop:<br/>model + search_knowledge"] --> ANS[answer + citations, streamed]
+    end
 
-LATER (same KB, new surfaces — no rebuilds)
-  MCP server • write-assist mode • watch/alerts • HN as second source
+    LATER["LATER (same KB, new surfaces):<br/>MCP · write-assist · watch/alerts · HN"]
+
+    LINKS -.->|pending rows| PEND
+    CHUNKS -.->|vectors| VS
+    ANS -.-> LATER
 ```
 
 Reliability rules, applied everywhere:
 
 1. **Idempotent ingest.** `url_key` uniqueness already prevents duplicate links (live). Extraction adds `content_hash` so re-runs process only new/changed pages. Crash anywhere → rerun the script, nothing doubles.
-2. **Extraction fallback ladder, never fatal.** Static fetch → Readability → headless render (puppeteer/chromium already installed for link previews) → give up cleanly, mark `failed`, keep description-level data. One bad page can't block 500.
+2. **Extraction fallback ladder, never fatal.** Static fetch → Readability (needs a real DOM — jsdom or linkedom, not `node-html-parser`) → headless render (verify Chromium is reachable where extraction runs, not just in the link-preview route) → give up cleanly, mark `failed`, keep description-level data. One bad page can't block 500.
 3. **The model can only cite what it received.** The UI renders only links returned by tool calls, so invented URLs are structurally impossible, not just prompt-discouraged.
 4. **Honest degradation.** No good chunks → "the collection doesn't cover this" + nearest category. Vector DB down → plain message, page itself unaffected (agent is additive, never in the page's rendering path).
+5. **The open web is untrusted.** The Compare tool's `fetch_link` fetches a URL the user supplies, so allow only http(s) and block private/internal addresses (SSRF guard). Fetched page text is treated as data, not instructions (prompt injection).
 
 ---
 
@@ -95,9 +103,9 @@ Reliability rules, applied everywhere:
 
 | Piece | Choice | Cost | Why |
 | :--- | :--- | :--- | :--- |
-| LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary. 1536 dims matches the existing `vector(1536)` column — no schema change. |
+| LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary. 1536 dims matches the existing `vector(1536)` column — no schema change. **Open item:** name the chat model (one tool-calling-capable id) in `model.ts`. |
 | Vector + text store | **Neon Postgres + pgvector** (existing DB) | $0 — free tier (0.5GB); 5K chunks ≈ 35MB | One service, plain SQL, Drizzle already in the repo. Changed from my earlier Upstash Vector pick: chunks are relational (chunk → link → channel), and one dependency beats two free ones. pgvector is also the standard thing worth learning. |
-| Extraction | `fetch` + `@mozilla/readability` + `node-html-parser`; fallback to existing puppeteer/chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. |
+| Extraction | `fetch` + `@mozilla/readability` over **jsdom or linkedom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. |
 | Scheduling | Trigger.dev | $0 free tier | The sync task already detects + persists new links; extraction hooks in right after insert. |
 | Auth-ish for public APIs | Upstash Redis ratelimits + visitor cookie pattern (already used by likes) | $0 | Public agent without accounts. |
 
@@ -109,7 +117,7 @@ Reliability rules, applied everywhere:
 
 The tables (`links`, `link_chunks`) and every column's reasoning live in `links-registry-and-api.md` — single source of truth, not repeated here. This spec only adds what retrieval does with them.
 
-Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, excludes hidden and dead rows (same filter as `getLinks()`), and boosts by like counts read live from Redis (never embedded — they change daily).
+Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, excludes hidden and dead rows (same filter as `getLinks()`), and ranks by meaning alone. Two details worth pinning down: group the nearest chunks by link before ranking (the closest chunks can all be from one page), and don't rank by likes — the collection gets too few likes for that signal to mean anything.
 
 **Chunking params (don't overthink):** ~500 tokens, ~15% overlap, split on paragraph boundaries. Citation unit = chunk → URL.
 
@@ -119,7 +127,7 @@ Embedding text per chunk = chunk content. Retrieval joins back through `links` f
 
 ### 1. Ask — the public agent (solves problems 2 & 3)
 
-Chat panel on the page. One tool: `search_knowledge(query, channel?)`. The loop: retrieve → maybe search again with a refined query → answer in a few sentences with real citations rendered as link cards (favicon, domain, likes).
+Chat panel on the page. One tool: `search_knowledge(query, channel?)`. The loop: retrieve → maybe search again with a refined query → answer in a few sentences with real citations rendered as link cards (favicon, domain, title). The page keeps its existing like button; citations just don't show like counts.
 
 Because retrieval is over **contents**, this does what the page never could:
 - "something to test color contrast" → finds tools whose *pages* mention it
@@ -148,7 +156,7 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 ## How retrieval quality is proven (not vibes)
 
 1. **Golden eval set** — commit ~30 test queries → expected URLs to the repo, written against the *live* collection ("fuzzy recall" cases especially: describe content, not title).
-2. Script runs retrieval only (no LLM) → report **hit-rate@5**. Ship the agent only when ≥ 80%.
+2. Script runs retrieval only (no LLM) → report **recall@5** (measured per **link**, since citations are links). Run the same queries through today's keyword search as a baseline — the new search must beat it. Ship the agent only when ≥ 80%.
 3. Re-run after any ingest change (chunk size, extractor tweaks, tags). Watch the number move — that's the feedback loop that teaches RAG intuition.
 4. **Extraction QA loop**: before bulk ingest, run 50 diverse links, *read the extracts by eye*, fix the extractor, repeat. Weak extractor = weak KB, so this loop is the real product work.
 5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog event on every query + existing UTM params measure whether answers get clicked.
@@ -162,7 +170,7 @@ src/lib/kb/
   extract.ts     // fetch + readability + chromium fallback, category-aware depth
   chunk.ts       // ~500 tok, overlap, paragraph-aware
   embed.ts       // OpenRouter /embeddings wrapper
-  search.ts      // vector search + like-boost join
+  search.ts      // vector search, grouped by link
   model.ts       // the one file that knows which models we use
   prompt.ts      // system prompt + citation rules
 
@@ -199,11 +207,11 @@ Each step is independently shippable and verifiable. No step requires heroic fai
 
 - **JS-heavy / bot-walled pages** (some articles, Twitter links): chromium fallback; failures stay description-level and marked. Accept partial coverage — 85% of a curated collection still beats 100% of nothing.
 - **Paywalled/long-chapter resources**: extract syllabus, not content; honest `thin` status.
-- **Stale content**: pages change; `content_hash` + weekly re-check of the ~50 most-liked links keeps the KB fresh without a full re-crawl.
+- **Stale content**: pages change; `content_hash` + a weekly re-read of the most recently added links keeps the KB fresh without a full re-crawl.
 - **Scope creep into a graph database**: don't. Chunks + tags cover the use cases; entity/linkage graphs are a phase-2 garnish *if* the eval set ever demands them.
 
 ## Out of scope
 
 - Accounts, chat history, saved sessions.
-- Crawling beyond the 7 channels' linked pages (no second-hop links). The graph grows by curation, not by spidering.
+- Crawling beyond the 7 channels' linked pages. One exception, declared up front: reading a single same-domain page the strategy table already names (`/pricing`, a GitHub README) is allowed; anything past that is a spider, and out. The graph grows by curation.
 - Agent writes anywhere except its own tables. Discord stays the intake; humans delete; the agent only adds.
