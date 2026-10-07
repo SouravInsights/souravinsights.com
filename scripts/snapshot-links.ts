@@ -97,7 +97,7 @@ async function main() {
           ? ""
           : candidate.description.replace(/\s+/g, " ").trim(),
       channel: candidate.channel,
-      discordId: candidate.id,
+      discordId: BigInt(candidate.id),
       addedAt: candidate.addedAt,
       health:
         health.verdict === "retry"

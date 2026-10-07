@@ -3,7 +3,7 @@ export const revalidate = 300;
 import React from "react";
 import InsightsList from "@/app/curated-links/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
-import { getDiscordData } from "./utils/discord-data";
+import { getInsightsData } from "./utils/links-data";
 import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CuratedLinksPage() {
-  const { channels, linkData } = await getDiscordData();
+  const { channels, linkData } = await getInsightsData();
 
   // Screenshots are captured out of band and cached in Blob; resolving them
   // here means a hover just points at a stored, immutable image.

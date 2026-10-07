@@ -25,9 +25,9 @@ export const links = pgTable(
 
     // identity
     source: text("source").notNull().default("discord"),
-    // Snowflake; string mode because u64 exceeds Number.MAX_SAFE_INTEGER and
-    // the value doubles as the Redis like key (strings) used across the app.
-    discordId: bigint("discord_id", { mode: "string" }).unique(),
+    // Snowflake as JS BigInt: u64 exceeds Number.MAX_SAFE_INTEGER. Doubles as
+    // the Redis like key — converted to string at read boundaries.
+    discordId: bigint("discord_id", { mode: "bigint" }).unique(),
     urlKey: text("url_key").notNull().unique(),
     url: text("url").notNull(),
     title: text("title").notNull().default(""),
