@@ -8,6 +8,7 @@ import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
+import { AskPanel } from "./components/AskPanel";
 import { LinksCountBadge } from "./components/LinksCountBadge";
 import { Metadata } from "next";
 
@@ -97,6 +98,10 @@ export default async function CuratedLinksPage() {
             action={<LinksCountBadge total={totalLinks} />}
           />
         </FadeIn>
+
+        <div className="mt-8">
+          <AskPanel />
+        </div>
 
         <InsightsList
           channels={channels}
