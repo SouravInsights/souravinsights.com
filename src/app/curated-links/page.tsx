@@ -1,6 +1,7 @@
 export const revalidate = 300;
 
 import React from "react";
+import Link from "next/link";
 import InsightsList from "@/app/curated-links/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
 import { getInsightsData } from "./utils/links-data";
@@ -122,6 +123,21 @@ export default async function CuratedLinksPage() {
             shuffleSeed={shuffleSeed}
           />
         </div>
+
+        {/* One line, and only one. The collection is a public dataset as well as
+            a page, but this page is for browsing — everything else lives at
+            /docs, which is where a developer would look for it. */}
+        <p className="type-caption mt-12 text-faint-foreground">
+          This collection is queryable — two public endpoints, and an MCP server for your
+          editor.{" "}
+          <Link
+            href="/docs"
+            className="font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40"
+          >
+            Using the Collection
+          </Link>
+          .
+        </p>
       </div>
     </div>
   );
