@@ -8,26 +8,40 @@ the feedback loop.
 
 | Check | Needs a model call? | Status |
 | :--- | :--- | :--- |
-| 1. Extraction | no | **not built** |
+| 1. Extraction | no | **built** |
 | 2. Retrieval | no (embeddings only) | **built** — the ship gate |
 | 3. Answer grounding | yes | **not built** |
-| 4. Live signals | — | **not wired** |
+| 4. Live signals | — | **partly wired** — questions and citation clicks recorded |
 
-Only check 2 is a script today. The rest are written down because they are what "done" means — not
-because the code exists. Keeping the gap visible is the point: a doc that describes unbuilt things
-as if they ran is how you end up trusting a number nobody computes.
+Checks 1 and 2 run as one script. Check 3 is not written, and check 4 is only half instrumented.
+Keeping the gap visible is the point: a doc that describes unbuilt things as if they ran is how you
+end up trusting a number nobody computes.
 
-## Check 1 — Extraction (offline, deterministic) — not built
+## Check 1 — Extraction (offline, deterministic) — built
 
-**What it would be:** ~30 saved pages (`eval/fixtures/*.html`), each with a phrase that must appear
-in the extracted text and a rough word range.
-**How:** parse the saved HTML with the real extractor. No network, so it runs in seconds.
-**Metric:** pass rate. **Gate: ≥ 90%.**
-**Why saved pages:** live pages change, which makes the test flaky. Freezing the HTML once means the
+**What:** 25 saved pages in `eval/fixtures/`, listed in `eval/kb-fixtures.json`. For each, a phrase
+that must appear in the extracted text and the word count the reader produced when the fixture was
+made.
+**How:** `readArticle` — the same reader ingestion uses — over the saved HTML. No network, so it
+runs in seconds and gives the same answer every time.
+**Metric:** pass rate. **Gate: ≥ 90%.** Currently **25/25**.
+**Why saved pages:** live pages change, which makes a test flaky. Freezing the HTML once means the
 test measures our code, not the internet.
 
-Until it exists, extraction is checked by reading `docs/kb/build-report.md`. That is a measurement,
-but a coarse one: it says a page produced 71 words, not that they were the *right* 71 words.
+Two details make it trustworthy:
+
+- **The expected phrase comes from the raw HTML, not from our own output.** It's a window from the
+  middle of the longest paragraph in the saved page — so the check asks "did Readability keep the
+  body?", not "does it agree with itself?".
+- **A page only becomes a fixture if the reader already passes it.** A golden set records the
+  behaviour you intend to keep; seeding it with known-broken pages makes the suite permanently red.
+  The 10 pages that didn't qualify are printed when you build the set, which is itself useful.
+
+Length tolerance is wide (40–250% of the recorded count). This is a tripwire for "extraction
+collapsed", not a diff: a page edit that adds three paragraphs is not a failure.
+
+Rebuild the set with `npx tsx scripts/kb-fixtures.ts` (it hits the network, so run it deliberately —
+about 5MB of HTML lives in the repo).
 
 ## Check 2 — Retrieval (the ship gate) — built
 
@@ -36,10 +50,15 @@ but a coarse one: it says a page produced 71 words, not that they were the *righ
 ```jsonc
 {
   "answerable": [
-    { "query": "a tool to check color contrast", "expect": ["contrast-checker-key"] },
-    { "query": "why nested rounded corners look wrong", "expect": ["corners-are-relative-key"] }
+    { "query": "why designing agents is still hard", "expect": ["lucumr.pocoo.org/2025/11/21/agents-are-hard"] },
+    { "query": "cheapest sandboxes for running AI agents", "expect": ["boat.dev"] },
+    { "query": "small sharp tooling for software", "expect": ["brandur.org/small-sharp-tools"] }
+    // …12 in total
   ],
-  "unanswerable": [{ "query": "best restaurants in Lisbon" }]
+  "unanswerable": [
+    { "query": "best pizza in rome" }
+    // …4 in total
+  ]
 }
 ```
 
@@ -58,6 +77,18 @@ search doesn't beat it, it isn't earning its complexity.
 
 **Gate: `recall@5 ≥ 0.80`, beats the baseline, and the unanswerable queries fall below the cutoff.**
 
+**Where it stands** (`npx tsx scripts/kb-eval.ts`):
+
+| | recall@5 | MRR@10 |
+| :--- | ---: | ---: |
+| semantic | **1.000** | **1.000** |
+| keyword baseline | 0.750 | 0.328 |
+
+All four unanswerable queries landed below the cutoff. The *margin* is worth knowing, though: the
+closest was 0.345 against a cutoff of 0.35. That gate passes by 0.005, so a single new unanswerable
+query could flip it — which is exactly why the cutoff is a tunable (`KB_CUTOFF`) rather than a
+number buried in the code.
+
 ## Check 3 — Answer grounding — not built
 
 **What it would be:** ~20 questions whose answer is in the collection, run through the full agent.
@@ -70,10 +101,15 @@ search doesn't beat it, it isn't earning its complexity.
 Today this is a manual smoke test. The wiring is real — the UI cannot render a citation that didn't
 come from the tool — but nothing is automated.
 
-## Check 4 — Live signals (PostHog) — not wired
+## Check 4 — Live signals (PostHog) — partly wired
 
-- Do people click the cited links?
-- Query volume, rate-limit hits, p95 latency, cost per query.
+Recorded today, from the panel:
+
+- `insights_asked` on every question — the question itself and its length.
+- `insights_citation_clicked` on every citation click — url, channel, position in the list.
+
+Not built: volume, rate-limit hits, p95 latency and cost per query. PostHog could answer those;
+nothing on the server side emits them yet, so the honest status is "half instrumented".
 
 Success looks like: citations get clicked, and cost stays flat.
 

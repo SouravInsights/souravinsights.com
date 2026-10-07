@@ -14,12 +14,13 @@ answer questions by finding the closest numbers — instead of matching keywords
 | Extraction | built — 500 links: 255 `ok`, 89 `thin`, 138 `skipped`, 9 `failed`; 2,794 passages |
 | Chunk + embed + search | built |
 | Retrieval eval | built — `recall@5` / `MRR@10` against a keyword baseline |
+| Extraction eval | built — 25 saved pages, read offline, 25/25 |
 | **Ask** agent + panel | built, live on the page |
 | **Writing Desk** | retrieval core + admin-only endpoint built; the *editor* is a separate spec |
-| Compare | not started |
+| Compare | built — `fetch_link`, SSRF-guarded |
+| Public search API (`/api/v1/search`) | built |
+| PostHog signals | questions and citation clicks recorded; cost/latency dashboards not built |
 | Weekly re-read (`kb-refresh`) | built — rotating, 100 links per run |
-| Public search API (`/api/v1/search`) | not started |
-| PostHog signals | not wired |
 
 These docs describe what exists, and label what doesn't. Where a page teaches something unbuilt, it
 says so — a doc that reads as if everything already ran is worse than no doc at all.

@@ -159,9 +159,9 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 2. **Retrieval check** — `scripts/kb-eval.ts` runs retrieval only (no LLM) and prints **recall@5** and **MRR@10**, measured per **link** since citations are links, next to a keyword baseline over title/description/url, plus unanswerable queries that must fall below a similarity cutoff. Gate: recall@5 ≥ 0.80 *and* beats the baseline.
 3. Re-run after any ingest change (chunk size, extractor tweaks, extraction fixes). Watch the number move — that's the feedback loop that teaches RAG intuition.
 4. **Extraction QA loop**: read the extracts by eye, fix the extractor, repeat. Weak extractor = weak KB, so this is the real product work.
-5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog measures whether cited answers get clicked.
+5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog records every question (`insights_asked`) and every citation click (`insights_citation_clicked`), which is the signal that says whether answers are actually used.
 
-**Not built yet:** the ~30 saved-HTML fixtures that would make the extraction check deterministic, and an automated grounding check for the answers. Both are spelled out in `docs/kb/04-evals.md`.
+**Extraction check: built.** `scripts/kb-fixtures.ts` froze 25 real pages into `eval/fixtures/`, and `kb-eval.ts` now reads each of them offline with the real reader — 25/25 at the moment. **Still not built:** the automated answer-grounding check (check 3 in `docs/kb/04-evals.md`).
 
 ---
 
@@ -202,6 +202,7 @@ src/lib/kb/
 
 src/app/api/insights/chat/route.ts     // the Ask endpoint (8/min, 60/day per IP)
 src/app/api/insights/desk/route.ts     // Writing Desk, admin-only for now
+src/app/api/v1/search/route.ts         // public semantic search — zod + OpenAPI
 src/app/curated-links/components/AskPanel.tsx
 src/content/insights-suggestions.json  // generated chips, 6 per channel
 
@@ -213,15 +214,14 @@ scripts/kb-extract.ts       // extract → chunk → embed; --status re-reads we
 scripts/kb-report.ts        // writes docs/kb/build-report.md
 scripts/kb-eval.ts          // the retrieval scoreboard
 scripts/kb-suggestions.ts   // derive the chips, then verify them against the index
+scripts/kb-fixtures.ts      // build the extraction fixtures from real pages
 eval/kb-golden.json         // the test queries
+eval/kb-fixtures.json       // saved pages + what the reader must find in each
 ```
 
-**To build**
-
-```
-eval/fixtures/*.html            // frozen pages, for the extraction check
-src/app/api/v1/search/route.ts  // public JSON retrieval — zod + OpenAPI, like /links
-```
+**Not built, and deliberately elsewhere.** Nothing from this spec is outstanding. What remains
+belongs to other specs: the browser editor (a publishing product), the MCP server, Watch and Tend,
+and the HN source. They all sit on this layer without changing it.
 
 Tables exist (`drizzle/0008` pgvector, `0009` links + link_chunks). No migration has been needed since.
 

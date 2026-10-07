@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, Loader2, Sparkles } from "lucide-react";
+import posthog from "posthog-js";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
@@ -210,6 +211,14 @@ export function AskPanel({ suggestions }: AskPanelProps) {
   const submit = (text: string) => {
     const value = text.trim();
     if (!value || busy) return;
+
+    // The signal that matters later: do the answers get used, and do people come
+    // back? Cheap to record now, impossible to reconstruct afterwards.
+    posthog.capture("insights_asked", {
+      question: value,
+      length: value.length,
+    });
+
     sendMessage({ text: value });
     setInput("");
   };
@@ -260,11 +269,19 @@ export function AskPanel({ suggestions }: AskPanelProps) {
                         <Sources defaultOpen>
                           <SourcesTrigger count={citations.length} />
                           <SourcesContent>
-                            {citations.map((citation) => (
+                            {citations.map((citation, index) => (
                               <Source
                                 key={citation.url}
                                 href={citation.url}
                                 title={citation.title}
+                                onClick={() =>
+                                  posthog.capture("insights_citation_clicked", {
+                                    url: citation.url,
+                                    channel: citation.channel,
+                                    position: index + 1,
+                                    total: citations.length,
+                                  })
+                                }
                               />
                             ))}
                           </SourcesContent>
