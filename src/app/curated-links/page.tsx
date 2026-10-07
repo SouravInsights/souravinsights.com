@@ -119,11 +119,19 @@ export default async function CuratedLinksPage() {
             it. The line used to sit at the very bottom of the page in the
             faintest text tier, below ~490 links, where nobody found it. */}
         <p className="type-caption mt-4">
-          All of this is queryable from outside the site. Search it over HTTP, or
-          wire it into your editor with MCP.{" "}
+          All of this is queryable from outside the site, over{" "}
+          <Link href="/api/docs" className={linkClass}>
+            HTTP
+          </Link>{" "}
+          or from your editor with{" "}
+          <Link href="/docs#mcp" className={linkClass}>
+            MCP
+          </Link>
+          .{" "}
           <Link href="/docs" className={linkClass}>
             Using the Collection
-          </Link>
+          </Link>{" "}
+          has the rest.
         </p>
 
         {/* Browse is a separate mode from Ask, so it gets its own heading and a

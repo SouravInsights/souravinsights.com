@@ -7,6 +7,7 @@ import { sql } from "drizzle-orm";
 import { db } from "@/db";
 import { linkChunks } from "@/db/schema";
 import { getLinks } from "@/lib/links/queries";
+import { highlight } from "@/lib/highlight";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { CopyButton } from "@/components/CopyButton";
@@ -137,22 +138,38 @@ function Endpoint({
  * sits inside a Card: a border here would just be a box in a box. The label is
  * what makes a block scannable, by telling you whether you are looking at a
  * request or a response.
+ *
+ * The tokens are coloured by shiki at render time. Shiki escapes the code it is
+ * given, so the markup handed to `dangerouslySetInnerHTML` is generated, never
+ * interpolated user input.
  */
-function CodePanel({ label, code }: { label: string; code: string }) {
+async function CodePanel({
+  label,
+  lang,
+  code,
+}: {
+  label: string;
+  lang: string;
+  code: string;
+}) {
+  const html = await highlight(code, lang);
+
   return (
     <figure className="bg-foreground/[0.03]">
       <figcaption className="flex items-center justify-between gap-3 py-1.5 pl-4 pr-3">
         <span className="type-label">{label}</span>
         <CopyButton value={code} label={label} />
       </figcaption>
+      {/* Focusable so a keyboard user can scroll a long line; `role` with a
+          name because a scrollable region needs both to be announced. */}
       <pre
         tabIndex={0}
         role="region"
         aria-label={`${label} example`}
         translate="no"
-        className="overflow-x-auto px-4 pb-4 font-mono text-xs leading-relaxed text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40"
+        className="code-panel overflow-x-auto px-4 pb-4 font-mono text-xs leading-relaxed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40"
       >
-        <code>{code}</code>
+        <code dangerouslySetInnerHTML={{ __html: html }} />
       </pre>
     </figure>
   );
@@ -255,10 +272,12 @@ export default async function DocsPage() {
                   <>
                     <CodePanel
                       label="Bash"
+                      lang="bash"
                       code={`curl "https://www.souravinsights.com/api/v1/search?q=a%20tool%20to%20check%20colour%20contrast&limit=2"`}
                     />
                     <CodePanel
                       label="JSON"
+                      lang="json"
                       code={`{
   "data": [
     {
@@ -306,10 +325,12 @@ export default async function DocsPage() {
                   <>
                     <CodePanel
                       label="Bash"
+                      lang="bash"
                       code={`curl "https://www.souravinsights.com/api/v1/links?channel=tools&limit=1"`}
                     />
                     <CodePanel
                       label="JSON"
+                      lang="json"
                       code={`{
   "data": [
     {
@@ -337,13 +358,12 @@ export default async function DocsPage() {
               </Endpoint>
 
               <p className="type-body mt-6 max-w-2xl text-muted-foreground">
-                The full reference has every parameter, and a playground to try them
-                in. It is generated from the same schemas that validate requests, so it
-                cannot drift from behaviour.{" "}
+                Every parameter, and a playground to try them in, live at{" "}
                 <Link href="/api/docs" className={linkClass}>
-                  Open the reference
+                  /api/docs
                 </Link>
-                .
+                . It is generated from the same schemas that validate requests, so
+                it cannot drift from behaviour.
               </p>
             </Section>
           </FadeIn>
@@ -357,13 +377,18 @@ export default async function DocsPage() {
               <p className="type-body max-w-2xl text-muted-foreground">
                 Point any MCP client at <K>https://www.souravinsights.com/api/mcp</K>.
                 It exposes one tool, <K>search_knowledge</K>, backed by the same
-                retrieval as the endpoints above. A question asked in your editor and
-                one asked on the site find the same links.
+                retrieval as the{" "}
+                <a href="#search" className={linkClass}>
+                  search endpoint
+                </a>
+                . A question asked in your editor and one asked on the site find the
+                same links.
               </p>
 
               <Card className="mt-6">
                 <CodePanel
                   label="Config"
+                  lang="json"
                   code={`{
   "mcpServers": {
     "insights": {

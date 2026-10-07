@@ -332,3 +332,29 @@
 .tweet-embed:hover .react-tweet-theme {
   --tweet-border: 1px solid hsl(var(--foreground) / 0.25);
 }
+
+/*
+  Code highlighting, for code that lives in a component instead of markdown
+  (where rehype-pretty-code handles it). Shiki is called with `defaultColor:
+  false` and both palettes, so every token arrives carrying --shiki-light and
+  --shiki-dark as inline variables and nothing is coloured until a theme class
+  picks one. One render, both themes, no second pass.
+
+  The dark palette is `github-dark`, matching the blog. The light one is
+  `github-light` rather than reusing it: github-dark's plain text is near
+  white, so on the page's pale panel it would disappear.
+
+  Only the foreground. Shiki's own background variables are left alone so the
+  panel keeps the surface the rest of the page's boxes use.
+*/
+.code-panel code {
+  color: hsl(var(--foreground));
+}
+
+.code-panel span {
+  color: var(--shiki-light);
+}
+
+.dark .code-panel span {
+  color: var(--shiki-dark);
+}
