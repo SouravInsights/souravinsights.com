@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en" data-lang-switch>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Bubbles</title>
+  <meta name="description" content="Independent blog posts, ranked by the community. Good stuff bubbles up. The rest pops.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1e1d1b" media="(prefers-color-scheme: dark)">
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.classList.add(t);var ru=localStorage.getItem('bubbles-readunit');if(ru==='words')document.documentElement.classList.add('readunit-words');var rtTog=function(e){var el=e.target&&e.target.closest&&e.target.closest('.entry-readtime');if(!el)return;if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();var on=document.documentElement.classList.toggle('readunit-words');try{if(on)localStorage.setItem('bubbles-readunit','words');else localStorage.removeItem('bubbles-readunit');}catch(_){}};document.addEventListener('click',rtTog);document.addEventListener('keydown',rtTog);var ab=localStorage.getItem('bubbles-abstracts');if(ab==='1')document.documentElement.classList.add('show-abstracts');var abTog=function(e){var el=e.target&&e.target.closest&&e.target.closest('.abstract-toggle');if(!el)return;e.preventDefault();var on=document.documentElement.classList.toggle('show-abstracts');try{if(on)localStorage.setItem('bubbles-abstracts','1');else localStorage.removeItem('bubbles-abstracts');}catch(_){}};document.addEventListener('click',abTog);if(localStorage.getItem('banner-wordfilter-dismissed'))document.documentElement.classList.add('no-banner');try{var s=JSON.parse(localStorage.getItem('bubbles-seen')||'{}');var ids=Object.keys(s);if(ids.length){var css=ids.map(function(id){return'.entry[data-entry-id="'+id+'"] .entry-title'}).join(',');var st=document.createElement('style');st.textContent=css+'{color:#9e9589}';document.head.appendChild(st)}}catch(e){};var st2=document.createElement('style');st2.textContent='[data-ts-rel]{font-size:0}';document.head.appendChild(st2);window.__tsRelStyle=st2;var bl=localStorage.getItem('bubbles-lang');var p=location.pathname;if(document.documentElement.hasAttribute('data-lang-switch')){var dePages=['/','/new','/hot','/about','/faq','/legal','/privacy','/rss','/support'];if(bl==='de'&&dePages.indexOf(p)>-1){location.replace(p==='/'?'/de/':'/de'+p);return}if(bl==='en'&&p.indexOf('/de/')===0){var ep=p.replace('/de','');location.replace(ep||'/');return}}})()</script>
+  <link rel="icon" href="/static/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="/static/style.css?v=tm6mcy">
+  <link rel="canonical" href="https://bubbles.town/">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles" href="/feed">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — New" href="/feed/new">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Hot" href="/feed/hot">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles Briefing" href="/briefing/feed">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles Weekly" href="/weekly/feed">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Art" href="/feed/cat/art">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Crafts" href="/feed/cat/crafts">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Culture" href="/feed/cat/culture">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Film &amp; TV" href="/feed/cat/film">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Food" href="/feed/cat/food">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Gaming" href="/feed/cat/gaming">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — History" href="/feed/cat/history">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Life" href="/feed/cat/life">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Music" href="/feed/cat/music">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Nature" href="/feed/cat/nature">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Politics" href="/feed/cat/politics">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Science" href="/feed/cat/science">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Tech" href="/feed/cat/tech">
+  <link rel="alternate" type="application/atom+xml" title="Bubbles — Writing" href="/feed/cat/writing">
+  
+  
+  <meta property="og:title" content="Bubbles">
+  <meta property="og:description" content="Independent blog posts, ranked by the community. Good stuff bubbles up. The rest pops.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bubbles.town/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://bubbles.town/static/bubbles_1200x630.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bubbles">
+  <meta name="twitter:description" content="Independent blog posts, ranked by the community. Good stuff bubbles up. The rest pops.">
+  
+  <link rel="next" href="https://bubbles.town/?p=2">
+  <script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  (function(){
+    function oldBot(ua, now) {
+      if (/Lightpanda|HeadlessChrome|PhantomJS/.test(ua)) return true;
+      if (!/Windows|Macintosh|Mac OS X|Linux|X11|Android|iPhone|iPad|iPod|CrOS|BSD/.test(ua)) return true;
+      var mm;
+      if ((mm = ua.match(/Android (\d+)/)) && +mm[1] < 10) return true;
+      if ((mm = ua.match(/(?:iPhone|iPad|iPod).*? OS (\d+)_/)) && +mm[1] < 13) return true;
+      if (/Android|iPhone|iPad|iPod|Mobile|CrOS|QtWebEngine|Electron|Waterfox|PaleMoon|SeaMonkey|Basilisk/.test(ua)) return false;
+      if (!/Windows NT|Macintosh|Linux|X11/.test(ua)) return false;
+      var m, anchorV, anchorT;
+      if ((m = ua.match(/Firefox\/(\d+)/))) {
+        if ([115, 128, 140].indexOf(+m[1]) > -1) return false; 
+        anchorV = 142; anchorT = Date.UTC(2025, 7, 19);
+      } else if ((m = ua.match(/Edg\/(\d+)/) || ua.match(/Chrome\/(\d+)/))) {
+        anchorV = 140; anchorT = Date.UTC(2025, 8, 2);
+      } else {
+        return false;
+      }
+      var current = anchorV + Math.floor((now - anchorT) / 864e5 / 365.25 * 13);
+      return +m[1] <= current - 30;
+    }
+    if (navigator.webdriver || oldBot(navigator.userAgent || '', Date.now())) return;
+    var s = document.createElement('script');
+    s.defer = true;
+    s.setAttribute('data-domain', 'bubbles.town');
+    s.src = 'https://stats.bubbles.town/js/script.js';
+    document.head.appendChild(s);
+  })();
+  </script>
+  <script>
+  window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) };
+  (function(){
+    if (location.pathname !== '/search') return;
+    var p = new URLSearchParams(location.search);
+    var q = (p.get('q') || '').trim().toLowerCase();
+    if (!q) return;
+    if (q.length > 100) q = q.slice(0, 100);
+    var lang = p.get('lang') || 'en';
+    plausible('Search', {props: {query: q, lang: lang}});
+  })();
+  </script>
+</head>
+<body data-lang="en" data-tab="front">
+  <div class="banner" id="banner">
+    🙈 <strong>New: You can now <a href="https://dshbx.de/blog/bubbles/entry/f3238233-a208-4f70-b2ff-3a4c36ac4356">hide posts by keyword</a></strong>. Do you like it? → <a href="mailto:hello@bubbles.town">hello@bubbles.town</a>
+    <button class="banner-close" onclick="this.parentElement.remove();localStorage.setItem('banner-wordfilter-dismissed','1')" aria-label="Close">&times;</button>
+  </div>
+  <header>
+    <div class="header-top">
+      <span class="logo"><a href="/" class="logo-text">Bubbles</a><a href="/random?lang=en" class="logo-icon-link" title="Open a random post" aria-label="Open a random post"><img src="/static/header-icon.png" alt="" class="logo-icon"></a></span>
+      <div class="header-meta">
+        <a href="/auth/login" class="handle-link signed-out">Sign in</a>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <div class="nav-links">
+        <a href="/" class="active">top</a>
+        <a href="/new">new</a>
+        <a href="/hot">hot</a>
+        <a href="/my">my</a>
+        
+      </div>
+      <div class="nav-right">
+        <div class="cat-multi" id="cat-multi" data-selected="" data-vmin="0" data-vmax="0" data-longreads="" data-blocked="" data-long-label="Long" data-cats-label="cats" data-words-label="words" data-all-label="Filter" data-filtered-label="Filtered">
+        <button type="button" class="cat-multi-toggle" id="cat-multi-toggle" aria-haspopup="true" aria-expanded="false">
+          <span class="cat-multi-label">Filter</span>
+          <span class="cat-multi-chevron">▾</span>
+        </button>
+        <span class="filter-chip" id="filter-chip-cats" hidden><span class="filter-chip-label"></span><button type="button" class="filter-chip-x" aria-label="Clear category filter">×</button></span>
+        <span class="filter-chip" id="filter-chip-votes" hidden><span class="filter-chip-label"></span><button type="button" class="filter-chip-x" aria-label="Clear vote filter">×</button></span>
+        <span class="filter-chip" id="filter-chip-long" hidden><span class="filter-chip-label">Long</span><button type="button" class="filter-chip-x" aria-label="Clear longreads filter">×</button></span>
+        <span class="filter-chip" id="filter-chip-words" hidden><span class="filter-chip-label"></span><button type="button" class="filter-chip-x" aria-label="Clear word filter">×</button></span>
+        <div class="cat-multi-panel" id="cat-multi-panel" hidden>
+          <div class="cat-multi-head">
+            <span class="cat-multi-section-title">Categories</span>
+            <div class="cat-multi-head-actions">
+              <button type="button" class="cat-multi-all" data-label-all="All">All</button>
+              <button type="button" class="cat-multi-none" data-label-none="None">None</button>
+            </div>
+          </div>
+          <div class="cat-multi-list">
+            <label class="cat-multi-item"><input type="checkbox" value="art" class="cat-multi-check"><span>Art</span></label><label class="cat-multi-item"><input type="checkbox" value="crafts" class="cat-multi-check"><span>Crafts</span></label><label class="cat-multi-item"><input type="checkbox" value="culture" class="cat-multi-check"><span>Culture</span></label><label class="cat-multi-item"><input type="checkbox" value="film" class="cat-multi-check"><span>Film &amp; TV</span></label><label class="cat-multi-item"><input type="checkbox" value="food" class="cat-multi-check"><span>Food</span></label><label class="cat-multi-item"><input type="checkbox" value="gaming" class="cat-multi-check"><span>Gaming</span></label><label class="cat-multi-item"><input type="checkbox" value="history" class="cat-multi-check"><span>History</span></label><label class="cat-multi-item"><input type="checkbox" value="life" class="cat-multi-check"><span>Life</span></label><label class="cat-multi-item"><input type="checkbox" value="music" class="cat-multi-check"><span>Music</span></label><label class="cat-multi-item"><input type="checkbox" value="nature" class="cat-multi-check"><span>Nature</span></label><label class="cat-multi-item"><input type="checkbox" value="politics" class="cat-multi-check"><span>Politics</span></label><label class="cat-multi-item"><input type="checkbox" value="science" class="cat-multi-check"><span>Science</span></label><label class="cat-multi-item"><input type="checkbox" value="tech" class="cat-multi-check"><span>Tech</span></label><label class="cat-multi-item"><input type="checkbox" value="writing" class="cat-multi-check"><span>Writing</span></label>
+          </div>
+          <div class="cat-multi-words">
+            <label class="cat-multi-words-switch" id="cat-multi-words-switch" hidden><input type="checkbox" class="cat-multi-words-check" aria-label="Hide words"></label>
+            <button type="button" class="cat-multi-words-open" id="cat-multi-words">
+              <span class="cat-multi-section-title">Hide words</span>
+              <span class="cat-multi-words-right"><span class="cat-multi-words-count" data-active="active" data-off="off"></span><span class="cat-multi-words-chev">&rsaquo;</span></span>
+            </button>
+          </div>
+          <div class="cat-multi-votes">
+            <span class="cat-multi-section-title">Votes</span>
+            <div class="cat-multi-votes-buttons">
+              <button type="button" class="cat-multi-vote-btn" data-vmin="0">ANY</button>
+              <button type="button" class="cat-multi-vote-btn" data-vmin="3">3+</button>
+              <button type="button" class="cat-multi-vote-btn" data-vmin="5">5+</button>
+              <button type="button" class="cat-multi-vote-btn" data-vmin="10">10+</button>
+            </div>
+            <div class="cat-multi-votes-custom">
+              <label class="cat-multi-votes-custom-label">FROM <input type="number" min="0" max="9999" step="1" class="cat-multi-vmin-input" inputmode="numeric"></label>
+              <label class="cat-multi-votes-custom-label">TO <input type="number" min="0" max="9999" step="1" class="cat-multi-vmax-input" inputmode="numeric"></label>
+            </div>
+          </div>
+          <div class="cat-multi-longreads">
+            <span class="cat-multi-section-title">Length</span>
+            <label class="cat-multi-item"><input type="checkbox" class="cat-multi-longreads-check"><span>Longreads only (5&#43; min)</span></label>
+          </div>
+          <div class="cat-multi-actions">
+            <button type="button" class="cat-multi-reset">RESET</button>
+            <div class="cat-multi-actions-right">
+              <button type="button" class="cat-multi-cancel">Cancel</button>
+              <button type="button" class="cat-multi-apply">Apply</button>
+            </div>
+          </div>
+        </div>
+        <div class="words-modal" id="words-modal" hidden>
+          <div class="words-modal-backdrop"></div>
+          <div class="words-modal-box" role="dialog" aria-modal="true" aria-labelledby="words-modal-title">
+            <div class="words-modal-head">
+              <h2 id="words-modal-title">Hide posts by word</h2>
+              <button type="button" class="words-modal-close" aria-label="Cancel">&times;</button>
+            </div>
+            <p class="words-modal-lede">Posts whose title or text contains one of these words are left out of every view.</p>
+            <input type="text" class="words-input" id="words-input" placeholder="Add a word, press Enter" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40">
+            <p class="words-hint">Whole words only: ai catches &#34;AI-generated&#34; but not &#34;openai&#34;. Add a star for word beginnings: llm* catches llm and llms.</p>
+            <p class="words-limit" id="words-limit" hidden>99 words is the limit</p>
+            <div class="words-chips" id="words-chips"></div>
+            <div class="words-modal-actions">
+              <button type="button" class="words-clear">Remove all</button>
+              <div class="words-modal-actions-right">
+                <button type="button" class="words-cancel">Cancel</button>
+                <button type="button" class="words-save" data-save="Save" data-activate="Activate">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lang-toggle">
+          <a href="/" class="lang-btn active" data-lang="en">EN</a>
+          <a href="/de/" class="lang-btn" data-lang="de">DE</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main>
+    
+
+
+
+<ol class="entries" start="1" style="--start:1">
+  
+  <li class="entry" data-entry-id="44797989">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797989">
+        <div class="entry-top">
+          <a href="https://www.davidrevoy.com/article1177/malicious-compliance" class="entry-title" title="Blog post: https://www.davidrevoy.com/article1177/malicious-compliance">Malicious Compliance</a>
+          <a href="/source/davidrevoy.com" class="entry-source" title="davidrevoy.com">(David Revoy)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T17:02:00Z">5 hours ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44797989&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797989" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Blog post: https://www.davidrevoy.com/article1177/malicious-compliance</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">6</span>
+        
+          <a href="/auth/login?vote=44797989&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797838">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797838">
+        <div class="entry-top">
+          <a href="https://kevquirk.com/my-hobby-is-learning" class="entry-title" title="
+                    I&#39;ve had lots of hobbies over the years. To name a few off the top of my head, there&#39;s been fish keeping, guitar, harmonica, fountain pens, watches, motorbikes, this blog, web development, 3D printing, tattoos, digital minimalism, table tennis, and many more.
+Some of my hobbies have stuck, but I&#39;ve never gotten so enthralled into a hobby that I become obsessed. Instead, there&#39;s generally 4 steps in the process:
+
+I decide I want to take up a hobby.
+I read, watch videos, an...">My Hobby Is Learning</a>
+          <a href="/source/kevquirk.com" class="entry-source" title="kevquirk.com">(Kev Quirk)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T12:42:00Z">9 hours ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44797838&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797838" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I&#39;ve had lots of hobbies over the years. To name a few off the top of my head, there&#39;s been fish keeping, guitar, harmonica, fountain pens, watches, motorbikes, this blog, web development, 3D printing, tattoos, digital minimalism, table tennis, and many more. Some of my hobbies have stuck, but I&#39;ve never gotten so enthralled into a hobby that I become obsessed. Instead, there&#39;s generally 4 steps in the process: I decide I want to take up a hobby. I read, watch videos, and obsessively learn…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">8</span>
+        
+          <a href="/auth/login?vote=44797838&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797854">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797854">
+        <div class="entry-top">
+          <a href="https://musings101.bearblog.dev/is-google-limiting-ai-searches/" class="entry-title">Is Google limiting -ai Searches</a>
+          <a href="/source/musings101.bearblog.dev" class="entry-source" title="musings101.bearblog.dev">(Darwins_Toffees)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T13:24:21Z">8 hours ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44797854&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797854" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Today I wanted to try and find an extension for iOS that would automatically block the google AI results on searches. I know you can type in -ai and have them not show, but wanted to make it simple and also sometimes I go from spotlight search to safari and don&#39;t add it there. So can I add a iOS extension that will eliminate google search AI and maybe other sources of AI answers like Amazon and others. When I searched for &#34;any good apps for removing AI from safari on iOS -ai&#34; I was greeted with…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">6</span>
+        
+          <a href="/auth/login?vote=44797854&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797761">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797761">
+        <div class="entry-top">
+          <a href="https://hakkerman.eu/blog/hypertext/" class="entry-title">Hypertext and Gemtext</a>
+          <a href="/source/hakkerman.eu" class="entry-source" title="hakkerman.eu">(HakkerBlog)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T09:19:25Z">12 hours ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44797761&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797761" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I just realized that I don&#39;t know what hypertext actually is. Like I know HTML and I build HTTP APIs for a living, both of which have hypertext in their names, but what is actually hypertext? What is the definition of hypertext? A quick visit to wikipedia later tells me that for text to be considered hypertext, it needs to: Be text On a monitor (or just any electric form I guess) With links to other documents Which can be accessed immediately The prefix hyper isn&#39;t just a marketing gimmick…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">6</span>
+        
+          <a href="/auth/login?vote=44797761&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797132">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797132">
+        <div class="entry-top">
+          <a href="https://anildash.com/2026/10/06/kill-unalive/" class="entry-title">We are going to kill “unalive”</a>
+          <a href="/source/anildash.com" class="entry-source" title="anildash.com">(Anil Dash)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-06T06:35:04Z">1 day ago</span> · <span class="entry-readtime" role="button" tabindex="0" title="Show reading time or word count"><span class="rt-min">9 min read</span><span class="rt-words">1894 words</span></span> · <span class="entry-cat">Culture</span> · <a href="/auth/login?hide=44797132&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797132" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I talk to a lot of old people, those who were born in the 20th century, and if I ask them what the word “unalive” means, they usually have no idea what I’m talking about, except for some of them who have kids or who study Internet culture. This will, of course, probably seem very weird to most people who were born in or grew up in the 21st century. Just to recap for the olds: “unalive” is the word you use to represent concepts like dying, or death, or killing or being killed, on digital…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">20</span>
+        
+          <a href="/auth/login?vote=44797132&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797614">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797614">
+        <div class="entry-top">
+          <a href="https://www.dnalounge.com/backstage/log/2026/10/06.html" class="entry-title" title="Normally I reserve my vitriol for the slopbros for my personal blog, but this has become extremely DNA Lounge-related of late, as I shall explain. (This counts as plumbing-related, the internet being a series of tubes, full of toxic slop.)
+
+As you may be aware, our web site ...">Wherein the slopbros won&#39;t stop</a>
+          <a href="/source/dnalounge.com/backstage/log" class="entry-source" title="dnalounge.com">(DNA Lounge)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T02:06:57Z">20 hours ago</span> · <span class="entry-cat">Culture</span> · <a href="/auth/login?hide=44797614&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797614" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Normally I reserve my vitriol for the slopbros for my personal blog, but this has become extremely DNA Lounge-related of late, as I shall explain. (This counts as plumbing-related, the internet being a series of tubes, full of toxic slop.) As you may be aware, our web site is being constantly, relentlessly hammered by AI scrapers. I am spending an absurd number of hours just trying to keep things barely functional under this brutal onslaught. It&#39;s not only us, obviously; this toxic blight…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">7</span>
+        
+          <a href="/auth/login?vote=44797614&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797799">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797799">
+        <div class="entry-top">
+          <a href="https://heatherburns.tech/2026/10/07/threads-bind-us/" class="entry-title" title="The thing about bearing witness to the past is that you can also see it in the present.">The threads that bind us</a>
+          <a href="/source/webdevlaw.uk/blog" class="entry-source" title="webdevlaw.uk">(Hi, I&#39;m Heather Burns)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T11:23:43Z">10 hours ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44797799&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797799" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">The thing about bearing witness to the past is that you can also see it in the present.</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">3</span>
+        
+          <a href="/auth/login?vote=44797799&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44798068">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44798068">
+        <div class="entry-top">
+          <a href="https://moviecrashcourse.com/2026/10/07/the-sting-1973/" class="entry-title" title="This was actually a second-time watch for me, but I’ll get to that later. This was also a second collaboration for its creative team, reuniting Paul Newman, Robert Redford, and director George Roy Hill, who had all previously worked together on Butch Cassidy and The Sundance Kid. This film also steps back in time, and… Continue reading The Sting (1973)">The Sting (1973)</a>
+          <a href="/source/moviecrashcourse.com" class="entry-source" title="moviecrashcourse.com">(The Movie Crash Course)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T19:37:21Z">2 hours ago</span> · <span class="entry-cat">Film &amp; TV</span> · <a href="/auth/login?hide=44798068&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44798068" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">This was actually a second-time watch for me, but I’ll get to that later. This was also a second collaboration for its creative team, reuniting Paul Newman, Robert Redford, and director George Roy Hill, who had all previously worked together on Butch Cassidy and The Sundance Kid. This film also steps back in time, and back into illegal hijinks; Newman is “Johnny Hooker”, a small-time con-man in Depression-era Illinois. He and his partner “Luther” (Robert Earl Jones) pull off a highly successful…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44798068&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44798051">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44798051">
+        <div class="entry-top">
+          <a href="https://propupthebar.blogspot.com/2026/10/londons-pub-of-year-2026.html" class="entry-title">London&#39;s Pub of the Year 2026</a>
+          <a href="/source/propupthebar.blogspot.com" class="entry-source" title="propupthebar.blogspot.com">(Prop Up the Bar)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T19:03:25Z">3 hours ago</span> · <span class="entry-readtime" role="button" tabindex="0" title="Show reading time or word count"><span class="rt-min">7 min read</span><span class="rt-words">1378 words</span></span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44798051&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44798051" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">On the first day of October the sun was still shining and London was calling (to the faraway towns).My main aim was to visit the 2026 CAMRA Greater London pub of the year. The Cockpit in Chislehurst claims that accolade, one of the 16 winners throughout the country which get the chance to be beaten to overall winner by the Tamworth Tap.A direct train from central London would whisk me to Chislehurst too early for the pub, so I instead caught the non-stop service from Victoria to Bromley, from…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44798051&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797403">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797403">
+        <div class="entry-top">
+          <a href="https://orchidfiles.com/account-bans-on-reddit/" class="entry-title" title="I wanted to share my open-source solution on Reddit. I created an account, found a community where people post links to their projects, and posted a link to my GitHub project there. The post was immediately deleted, and my account was banned.It turns out you first need to write">Account bans on Reddit</a>
+          <a href="/source/orchidfiles.com" class="entry-source" title="orchidfiles.com">(Orchid Files)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-06T16:08:26Z">1 day ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44797403&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797403" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I wanted to share my open-source solution on Reddit. I created an account, found a community where people post links to their projects, and posted a link to my GitHub project there. The post was immediately deleted, and my account was banned.It turns out you first need to write normal comments and posts without links to make it seem like you’re a regular user who isn’t trying to promote anything. Only then can you post a link.Okay, so I registered a new account from a different IP address and…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">8</span>
+        
+          <a href="/auth/login?vote=44797403&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44798037">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44798037">
+        <div class="entry-top">
+          <a href="https://sylvia.studio/posts/the-most-visited-links" class="entry-title" title="I’m using neatstats for my blog as a beta tester (it’s a service from omg.lol and I love it!). Today I was not feeling well and I needed to write...">The most visited links</a>
+          <a href="/source/sylvia.studio" class="entry-source" title="sylvia.studio">(Sylvia’s Studio)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T18:05:52Z">4 hours ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44798037&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44798037" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I’m using neatstats for my blog as a beta tester (it’s a service from omg.lol and I love it!). Today I was not feeling well and I needed to write something fun but had no idea. I saw the link to the stats in my bookmarks bar, and was curious to see what posts were clicked on the most. I needed a little confidence boost, I guess. And boy, did it deliver! Here are my most visited posts since I started tracking on neatstats. Who I blog for Let go of your fantasy self Start using your hands, a sort…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44798037&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44798024">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44798024">
+        <div class="entry-top">
+          <a href="https://everythingflowsglasgow.blogspot.com/2026/10/without-you.html" class="entry-title">Without You</a>
+          <a href="/source/everythingflowsglasgow.blogspot.com" class="entry-source" title="everythingflowsglasgow.blogspot.com">(Everything Flows)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T18:05:44Z">4 hours ago</span> · <span class="entry-readtime" role="button" tabindex="0" title="Show reading time or word count"><span class="rt-min">8 min read</span><span class="rt-words">1565 words</span></span> · <span class="entry-cat">Music</span> · <a href="/auth/login?hide=44798024&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44798024" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Cover version of the month #124Harry Nilsson covers Badfinger ... and so does Mariah CareyI always thought that Without You was a Harry Nilsson song, and ... it kind of is. I guess I came to this conclusion because his name was mentioned regularly back in 1994 when Mariah Carey took the song to number 1. In fact, the song was written by Pete Ham and Tom Evans of the Welsh band Badfinger who released albums via Apple and received huge support from Paul McCartney. Macca wrote Come And Get It for…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44798024&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796698">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796698">
+        <div class="entry-top">
+          <a href="https://email-is-good.com/2026/10/05/1/" class="entry-title" title="Kids be like: Email everyone in the world and ask them for a dollar. To their AI agent. I wonder how any AI agents got/read this email and what they did with it.">$1</a>
+          <a href="/source/email-is-good.com" class="entry-source" title="email-is-good.com">(Email is good.)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T13:37:43Z">2 days ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44796698&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796698" class="entry-comments">3 comments</a>
+        </div>
+        <p class="entry-excerpt">Kids be like: Email everyone in the world and ask them for a dollar. To their AI agent. I wonder how any AI agents got/read this email and what they did with it.</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">15</span>
+        
+          <a href="/auth/login?vote=44796698&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797742">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797742">
+        <div class="entry-top">
+          <a href="https://person-al.github.io/%F0%9F%97%A8%EF%B8%8F/2026/10/07/we-re-on-the-verge-of-democratizing-only-the-worst-part-of.html" class="entry-title" title="We’re on the verge of democratizing only the worst part of celebrity: the pervasive hovering cameras that are always there to preserve and distribute your failures. Cory Doctorow on Meta glasses">🗨️ we’re on the verge of democratizing only the worst part of celebrity</a>
+          <a href="/source/person-al.github.io" class="entry-source" title="person-al.github.io">(Let’s get Person-al)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T08:48:05Z">13 hours ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44797742&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797742" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">We’re on the verge of democratizing only the worst part of celebrity: the pervasive hovering cameras that are always there to preserve and distribute your failures. Cory Doctorow on Meta glasses Related to: 🌰 blockchain developers need to keep user privacy top of mind 🗨️ getting attention is the only job 🌰 social networks are designed to make resolving arguments impossible</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">2</span>
+        
+          <a href="/auth/login?vote=44797742&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797931">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797931">
+        <div class="entry-top">
+          <a href="https://sethw.xyz/blog/2026/10/07/it-aint-hard-but-its-hard-to-do/" class="entry-title" title="A four mile trail run got me to 10 miles, but I wanted 12. I was literally in bed, but I got up, put on some shorts, and set off into the night. It’s not hard, but it’s hard to do. I wanted to be able to write down that I did 12 miles, two … Continue reading &#34;IT AIN’T HARD, BUT IT’S HARD TO DO&#34;">IT AIN’T HARD, BUT IT’S HARD TO DO</a>
+          <a href="/source/sethw.xyz" class="entry-source" title="sethw.xyz">(HELLO, I&#39;M SETH WERKHEISER)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T15:19:15Z">6 hours ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44797931&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797931" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">A four mile trail run got me to 10 miles, but I wanted 12. I was literally in bed, but I got up, put on some shorts, and set off into the night. It’s not hard, but it’s hard to do. I wanted to be able to write down that I did 12 miles, two days in a row. Walking isn’t hard. But getting started is hard. Getting out the door. Remembering the gloves. All the tiny details, the decisions that need to be made – they all add up. It ain’t hard, but it’s hard to do. Today is day 135 of walking 10&#43; miles…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44797931&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796843">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796843">
+        <div class="entry-top">
+          <a href="https://victor.kropp.name/blog/2026/git-3-0-to-use-sha-256-hashes/" class="entry-title" title="Git is used everywhere in software development.
+And this very blog is also stored in Git.
+Obviously, I use Git a lot.
+I even have a regularly updated blog post with various tips and tricks.
+Git uses SHA-1 hashes to address contents it stores.
+The most important word in this sentence is address.
+Cause the aformentioned hash is not intended to provide security or verification.
+The upcoming Git 3.0 is going to switch the default for commit hashes from SHA-1 to SHA-256, the newer more secure algo...">Git 3.0 to use SHA-256 hashes</a>
+          <a href="/source/victor.kropp.name" class="entry-source" title="victor.kropp.name">(Victor Kropp)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T17:32:49Z">2 days ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44796843&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796843" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Git is used everywhere in software development. And this very blog is also stored in Git. Obviously, I use Git a lot. I even have a regularly updated blog post with various tips and tricks. Git uses SHA-1 hashes to address contents it stores. The most important word in this sentence is address. Cause the aformentioned hash is not intended to provide security or verification. The upcoming Git 3.0 is going to switch the default for commit hashes from SHA-1 to SHA-256, the newer more secure…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">9</span>
+        
+          <a href="/auth/login?vote=44796843&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44794704">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44794704">
+        <div class="entry-top">
+          <a href="https://widdershins.verja.net/everyones-packing-up/" class="entry-title">Everyone&#39;s Packing Up</a>
+          <a href="/source/widdershins.bearblog.dev" class="entry-source" title="widdershins.bearblog.dev">(Thoughts of Widdershins)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-01T20:20:00Z">6 days ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44794704&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44794704" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I see a lot of posts about people leaving platforms. This one about leaving Reddit, this one about leaving WordPress, and a bunch of others about leaving Discord, GitHub, Codeberg, Photoshop, and more. There are also those talking about leaving the web entirely for the smallweb (Gopher, Gemini, etc). The reasons vary. Pricing changes, AI training on everything you post, a new owner, a new policy, or just the slow feeling that the place stopped being built for you. But the posts all have the…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">34</span>
+        
+          <a href="/auth/login?vote=44794704&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796912">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796912">
+        <div class="entry-top">
+          <a href="https://www.coryd.dev/posts/2026/ai-companies-are-parasites" class="entry-title" title="Merriam-Webster:
+
+An organism living in, on, or with another organism in order to obtain nutrients, grow, or multiply often in a state that directly or indirectly harms the host.
+
+That&#39;s it, right? The whole thing, their entire business model.
+
+Scrape the whole of the internet, destroy books, siphon everything they can from whoever they can without compensation, and call it fair use.
+Train models on said stolen data.
+Sell metered access to the models.
+Repeat until you&#39;ve killed the host.
+Hope...">AI companies are parasites</a>
+          <a href="/source/coryd.dev" class="entry-source" title="coryd.dev">(Cory Dransfeldt)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T19:29:00Z">2 days ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44796912&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796912" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Merriam-Webster: An organism living in, on, or with another organism in order to obtain nutrients, grow, or multiply often in a state that directly or indirectly harms the host. That&#39;s it, right? The whole thing, their entire business model. Scrape the whole of the internet, destroy books, siphon everything they can from whoever they can without compensation, and call it fair use. Train models on said stolen data. Sell metered access to the models. Repeat until you&#39;ve killed the host. Hope you…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">8</span>
+        
+          <a href="/auth/login?vote=44796912&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797975">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797975">
+        <div class="entry-top">
+          <a href="https://questionsconsidered.blog/2026/10/07/7931/" class="entry-title" title="Is AI-produced work inherently (and importantly) different from one that is entirely made by a human, even if we cannot tell the difference? If you fool me by telling me only halfway through a piece that it was made by AI, I’m impressed. But now I hear it in a new, flat key, and finish […]">Is AI-produced work inherently (and importantly) different from one that is entirely made by a human, even if we cann...</a>
+          <a href="/source/questionsconsidered.blog" class="entry-source" title="questionsconsidered.blog">(Questions Considered)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T16:46:24Z">5 hours ago</span> · <span class="entry-cat">Culture</span> · <a href="/auth/login?hide=44797975&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797975" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Is AI-produced work inherently (and importantly) different from one that is entirely made by a human, even if we cannot tell the difference? If you fool me by telling me only halfway through a piece that it was made by AI, I’m impressed. But now I hear it in a new, flat key, and finish the track only to be polite. This isn’t out of some principle: I just don’t find it that compelling or moving and can’t seem to get into it because I know there’s no one there. The Inventor of the Thinking…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44797975&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796830">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796830">
+        <div class="entry-top">
+          <a href="https://robertbirming.com/make-photo-pages/" class="entry-title">Let&#39;s make /photo pages</a>
+          <a href="/source/robertbirming.com" class="entry-source" title="robertbirming.com">(Robert Birming)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T16:37:00Z">2 days ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44796830&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796830" class="entry-comments">2 comments</a>
+        </div>
+        <p class="entry-excerpt">Cameras spotted during a house inspection I’ve mentioned before that I would love to see some more photos on blogs. Even if text is the main thing on your blog, a photo every now and then is such a lovely bonus for me as a reader. Maintaining a gallery is a bit of a hassle on most indie platforms. I’ve tried various ways of doing it, but it always ends up the same way: I forget to update it. Therefore, I decided to create a /photo slash page. Like a /now page, but just for photography. One…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">6</span>
+        
+          <a href="/auth/login?vote=44796830&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797002">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797002">
+        <div class="entry-top">
+          <a href="https://www.emgoto.com/philocoffea-omotesando/" class="entry-title" title="Philocoffea is a coffee shop founded by Tetsu Kasuya, winner of the 2016 World Brewers Cup. Even if you haven&#39;t heard of him, you may have heard of his famous &#34;4:6&#34; method for making pour-over coffee. Their first branch opened in 2018 in Chiba, and they have since expanded to five stores, including this Omotesando store which only recently opened in 2025.">PHILOCOFFEA, Omotesando</a>
+          <a href="/source/emgoto.com" class="entry-source" title="emgoto.com">(Emma Goto)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T23:17:21Z">1 day ago</span> · <span class="entry-readtime" role="button" tabindex="0" title="Show reading time or word count"><span class="rt-min">5 min read</span><span class="rt-words">1090 words</span></span> · <span class="entry-cat">Food</span> · <a href="/auth/login?hide=44797002&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797002" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Philocoffea is a coffee shop founded by Tetsu Kasuya, winner of the 2016 World Brewers Cup. Even if you haven’t heard of him, you may have heard of his famous “4:6” method for making pour-over coffee. Their first branch opened in 2018 in Chiba, and they have since expanded to five stores, including this Omotesando store which only recently opened in 2025. The store is tucked away down a flight of stairs. I visited around midday on a Saturday, but surprisingly it wasn’t too crowded. The interior…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">5</span>
+        
+          <a href="/auth/login?vote=44797002&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44794971">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44794971">
+        <div class="entry-top">
+          <a href="https://korin.uk/england-til-i-die" class="entry-title" title="I watched a documentary on Channel 4 recently called England &#39;Til I Die (embedded below from YouTube). It follows a group of racist thugs and how they want all the &#34;rapist Muslims&#34; out.
+Horrible, vile people.
+
+These idiots often quote that the asylum seekers are here to rape and pillage. They&#39;re not, you fucking morons. They&#39;re here because it&#39;s not safe wherever they&#39;ve come from.
+
+GET THEM OUT!
+
+This is another quote we see a lot. But what have you done for this country? Except squat around...">England &#39;Til I Die</a>
+          <a href="/source/korin.uk" class="entry-source" title="korin.uk">(Korin)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-02T09:04:00Z">5 days ago</span> · <span class="entry-cat">Culture</span> · <a href="/auth/login?hide=44794971&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44794971" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I watched a documentary on Channel 4 recently called England &#39;Til I Die (embedded below from YouTube). It follows a group of racist thugs and how they want all the &#34;rapist Muslims&#34; out. Horrible, vile people. These idiots often quote that the asylum seekers are here to rape and pillage. They&#39;re not, you fucking morons. They&#39;re here because it&#39;s not safe wherever they&#39;ve come from. GET THEM OUT! This is another quote we see a lot. But what have you done for this country? Except squat around in…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">20</span>
+        
+          <a href="/auth/login?vote=44794971&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796547">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796547">
+        <div class="entry-top">
+          <a href="https://korin.uk/the-3am-internet-hall-monitors" class="entry-title" title="There’s a special breed of internet weirdo who spends so much time staring at a screen that their brain has completely turned to mush.
+To them, the entire world is on fire 24x7. There is no middle ground, no nuance, and no sense of proportion whatsoever. Someone having an annoying opinion on a blog isn&#39;t just someone being a bit of a twat; it’s an existential crisis that requires a boycott, a campaign website, and multiple days of frantic keyboard warrior activism.
+Everything is connected in ...">The 3AM Internet Hall Monitors</a>
+          <a href="/source/korin.uk" class="entry-source" title="korin.uk">(Korin)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T09:04:00Z">2 days ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44796547&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796547" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">There’s a special breed of internet weirdo who spends so much time staring at a screen that their brain has completely turned to mush. To them, the entire world is on fire 24x7. There is no middle ground, no nuance, and no sense of proportion whatsoever. Someone having an annoying opinion on a blog isn&#39;t just someone being a bit of a twat; it’s an existential crisis that requires a boycott, a campaign website, and multiple days of frantic keyboard warrior activism. Everything is connected in…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">7</span>
+        
+          <a href="/auth/login?vote=44796547&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797873">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797873">
+        <div class="entry-top">
+          <a href="https://widdershins.verja.net/thoughts-on-rush-and-music-as-i-get-older/" class="entry-title">Thoughts on Rush and Music as I get older</a>
+          <a href="/source/widdershins.bearblog.dev" class="entry-source" title="widdershins.bearblog.dev">(Thoughts of Widdershins)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T13:52:15Z">8 hours ago</span> · <span class="entry-readtime" role="button" tabindex="0" title="Show reading time or word count"><span class="rt-min">5 min read</span><span class="rt-words">1022 words</span></span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44797873&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797873" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">I have been a live performing musician for over 40 years now. I started in my teens, and here I am at 60 still doing it. A couple of things got me thinking about this. First, I am slowing down... big time. A 3-4 hour show locally is usually more like a 7-8 hour show if it is local. I have a gig this Friday from 9 p.m.-1 a.m. that is slightly over an hour away. I play more of these because there aren&#39;t very many local gigs to play. This means I&#39;m loading gear at 5:30 p.m. and heading out at 6…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44797873&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44790033">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44790033">
+        <div class="entry-top">
+          <a href="https://drewdevault.com/blog/Why-is-HN-like-that/" class="entry-title" title="Hacker News (aka HN) is a link aggregator where “hackers”1 gather to discuss technology, politics, and anything which “good hackers would find interesting”. HN is a means by which its host, prominent startup incubator Y Combinator, projects soft power, promotes startups it funds, and feeds people with ideas into its incubation program. Hacker News is one of the most popular forums for discussing technology online today – perhaps the biggest.HN also has a pronounced political bias, which is gr...">Why is Hacker News like that?</a>
+          <a href="/source/drewdevault.com" class="entry-source" title="drewdevault.com">(Drew DeVault)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-09-23T15:16:07Z">14 days ago</span> · <span class="entry-readtime" role="button" tabindex="0" title="Show reading time or word count"><span class="rt-min">16 min read</span><span class="rt-words">3259 words</span></span> · <span class="entry-cat">Culture</span> · <a href="/auth/login?hide=44790033&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44790033" class="entry-comments">1 comment</a>
+        </div>
+        <p class="entry-excerpt">Hacker News (aka HN) is a link aggregator where “hackers”1 gather to discuss technology, politics, and anything which “good hackers would find interesting”. HN is a means by which its host, prominent startup incubator Y Combinator, projects soft power, promotes startups it funds, and feeds people with ideas into its incubation program. Hacker News is one of the most popular forums for discussing technology online today – perhaps the biggest.HN also has a pronounced political bias, which is…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">61</span>
+        
+          <a href="/auth/login?vote=44790033&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796800">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796800">
+        <div class="entry-top">
+          <a href="https://markbtomlinson.com/post/2026/2026-10-05-disable-rounded-tabs-firefox/" class="entry-title" title="Modify the &#39;about:config&#39;">Disable Rounded Tabs Firefox</a>
+          <a href="/source/markbtomlinson.com/post" class="entry-source" title="markbtomlinson.com">(Mark B Tomlinson)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T15:27:21Z">2 days ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44796800&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796800" class="entry-comments">1 comment</a>
+        </div>
+        <p class="entry-excerpt">To turn off the Firefox rounded Tabs: In the browser address bar type: about:config Then search for: nova Then change the boolean value of: browser.nova.enabled to false If you can’t find the setting you can add it.</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">5</span>
+        
+          <a href="/auth/login?vote=44796800&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796478">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796478">
+        <div class="entry-top">
+          <a href="https://ashittyfirstdraft.xyz/posts/2026-10-05-stop-sending-your-ai-slop/" class="entry-title" title="My work’s slack is filled with messages that start with “here is what my Claude said” followed by a long vomit of text.
+This is a cry to stop it, please. There is an assumption that your LLM produces better output than mine. That your prompting skills are so advanced that mine pale in comparison. I should be honored to read the slop your AI generates.
+No, just no. I can ask the tool the same question to have it return the same answer, without needing to read your garbage.">Stop Sending Your AI Slop</a>
+          <a href="/source/ashittyfirstdraft.xyz" class="entry-source" title="ashittyfirstdraft.xyz">(Home on A Shitty First Draft)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-05T05:59:09Z">2 days ago</span> · <span class="entry-cat">Tech</span> · <a href="/auth/login?hide=44796478&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796478" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">My work’s slack is filled with messages that start with “here is what my Claude said” followed by a long vomit of text. This is a cry to stop it, please. There is an assumption that your LLM produces better output than mine. That your prompting skills are so advanced that mine pale in comparison. I should be honored to read the slop your AI generates. No, just no. I can ask the tool the same question to have it return the same answer, without needing to read your garbage.</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">6</span>
+        
+          <a href="/auth/login?vote=44796478&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797810">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797810">
+        <div class="entry-top">
+          <a href="https://www.acdw.net/tmbg-bucket-hat" class="entry-title">They Might Be Giants gave me a bucket hat</a>
+          <a href="/source/acdw.net" class="entry-source" title="acdw.net">(Case Duckworth)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-07T06:10:00Z">16 hours ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44797810&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797810" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">We take our kid to some concert, like the Wiggles but it isn’t the Wiggles. That band does their thing and leaves, and then They Might Be Giants comes on! My wife and I are very excited. The kid is nonplussed. (It’s funny because my wife actually doesn’t super care about TMBG, but anyway.) TMBG play a few songs, and my kid wants to leave but they bring out that big stick that John womps on the ground. I don’t know the actual name of it but I say, “We can’t leave—look they have the Wompin’…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">1</span>
+        
+          <a href="/auth/login?vote=44797810&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44796178">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44796178">
+        <div class="entry-top">
+          <a href="https://signoregalilei.com/2026/10/04/these-6-countries-secretly-have-the-same-name/" class="entry-title" title="Country names aren’t always unique in the world. Look on a world map and you’ll see 2 Koreas, 2 Congos, and a full 4 Guineas. But there are some examples that are more hidden. Specifically, there are many combinations of countries whose names might look different in English, but ultimately come from the same meaning. […]">These 6 countries secretly have the same name</a>
+          <a href="/source/signoregalilei.com" class="entry-source" title="signoregalilei.com">(Signore Galilei)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-04T16:09:49Z">3 days ago</span> · <span class="entry-cat">Culture</span> · <a href="/auth/login?hide=44796178&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44796178" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">Country names aren’t always unique in the world. Look on a world map and you’ll see 2 Koreas, 2 Congos, and a full 4 Guineas. But there are some examples that are more hidden. Specifically, there are many combinations of countries whose names might look different in English, but ultimately come from the same meaning. Let’s look at some international etymology buddies and see what we can find. Many country names have multiple candidate meanings, so we can’t be certain which meaning is the most…</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">10</span>
+        
+          <a href="/auth/login?vote=44796178&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+  <li class="entry" data-entry-id="44797383">
+    <div class="entry-main">
+      <div class="entry-content" data-entry-href="/entry/44797383">
+        <div class="entry-top">
+          <a href="https://amytrieslife.com/blog/maybe-we-re-already-living-parts-of-the-life-we-want/" class="entry-title" title="hi friends! it&#39;s been quite some time...">when the things we wished for become ordinary</a>
+          <a href="/source/amytrieslife.com/blog" class="entry-source" title="amytrieslife.com">(Amy Tries Life)</a>
+        </div>
+        <div class="entry-meta">
+          <span class="entry-age" data-ts-rel="2026-10-06T15:28:48Z">1 day ago</span> · <span class="entry-cat">Life</span> · <a href="/auth/login?hide=44797383&amp;return=%2f" class="entry-hide" rel="nofollow" title="Log in to hide">hide</a> · <a href="/entry/44797383" class="entry-comments">0 comments</a>
+        </div>
+        <p class="entry-excerpt">hi friends! it&#39;s been quite some time...</p>
+      </div>
+      <div class="vote-cell">
+        <span class="vote-count">2</span>
+        
+          <a href="/auth/login?vote=44797383&amp;return=%2f" class="vote-arrow" rel="nofollow" title="Log in to vote">▲</a>
+        
+      </div>
+    </div>
+  </li>
+  
+</ol>
+
+<nav class="pagination">
+  <a href="/?p=2">Page 2 &rarr;</a>
+</nav>
+
+
+
+  </main>
+  <footer>
+    <div class="footer-tagline">Good stuff bubbles up. 🫧</div>
+    <form class="footer-search" action="/search" method="get">
+      <input type="text" name="q" placeholder="Search..." aria-label="Search...">
+      <input type="hidden" name="lang" value="en">
+      <button type="submit">Go</button>
+    </form>
+    <div class="footer-links">
+      <a href="/about">About</a> ·
+      <a href="/editions">Briefing</a> ·
+      <a href="/classics">Classics</a> ·
+      <a href="/random?lang=en" title="Open a random post">Random</a> ·
+      <a href="/faq">FAQ</a> ·
+      <a href="/rss">RSS</a> ·
+      <a href="/fediverse">Fediverse</a>
+    </div>
+    <div class="footer-links footer-links-secondary">
+      <a href="/support">Support Bubbles</a> ·
+      <a href="/legal">Legal</a> ·
+      <a href="/privacy">Privacy</a> ·
+      <a href="/auth/login">Sign in</a>
+    </div>
+    <div class="theme-row">
+      <button class="theme-toggle" id="theme-toggle">☾</button>
+      <button class="abstract-toggle" id="abstract-toggle" title="Show post previews" aria-label="Show post previews">&#8801;</button>
+    </div>
+  </footer>
+  <script>
+  (function(){
+    var btn=document.getElementById('theme-toggle');
+    var themes=['light','dark','oled','sepia','brutal',''];
+    var icons={light:'\u2600',dark:'\u263E',oled:'\u25CF',sepia:'\uD83D\uDCD6',brutal:'\u26A1','':'\u25D0'};
+    var labels={light:'Light',dark:'Dark',oled:'OLED',sepia:'Sepia',brutal:'Brutal','':'System'};
+    function cur(){var r=document.documentElement;for(var i=0;i<themes.length-1;i++){if(r.classList.contains(themes[i]))return themes[i]}return ''}
+    function icon(){return icons[cur()]}
+    btn.textContent=icon();
+    btn.title=labels[cur()];
+    btn.onclick=function(){
+      var r=document.documentElement;
+      var c=cur();
+      var idx=(themes.indexOf(c)+1)%themes.length;
+      var n=themes[idx];
+      r.classList.remove('light','dark','oled','sepia','brutal');
+      if(n)r.classList.add(n);
+      if(n)localStorage.setItem('theme',n);else localStorage.removeItem('theme');
+      btn.textContent=icon();
+      btn.title=labels[n];
+    };
+    window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',function(){
+      if(!document.documentElement.classList.contains('light')&&!document.documentElement.classList.contains('dark'))btn.textContent=icon();
+    });
+  })();
+  </script>
+  <script>
+  document.querySelectorAll('.lang-btn').forEach(function(a){
+    a.onclick=function(e){
+      e.preventDefault();
+      var lang=a.dataset.lang;
+      localStorage.setItem('bubbles-lang',lang);
+      var p=location.pathname;
+      var q=location.search;
+      
+      var dePages={'/':'/de/','/new':'/de/new','/hot':'/de/hot','/about':'/de/about','/faq':'/de/faq','/legal':'/de/legal','/privacy':'/de/privacy','/rss':'/de/rss','/fediverse':'/de/fediverse','/support':'/de/support','/classics':'/de/classics','/hall-of-fame':'/de/hall-of-fame','/my':'/de/my'};
+      if(lang==='de'){
+        
+        if(dePages[p]){location.href=dePages[p];return}
+        
+        if(p.startsWith('/entry/')||p.startsWith('/source/')){
+          document.querySelectorAll('.lang-btn').forEach(function(l){l.classList.toggle('active',l.dataset.lang==='de')});return}
+        
+        if(p==='/votes'||p==='/account'){
+          var sep=q?'&':'?';
+          location.href=p+q+(q.indexOf('lang=')>-1?'':sep+'lang=de');return}
+        
+        if(p==='/auth/login'){location.href=p+'?lang=de';return}
+        location.href='/de/';
+      } else {
+        
+        if(p.startsWith('/de/')){
+          var enPath=p.replace('/de','');
+          location.href=enPath||'/';return}
+        
+        if(q.indexOf('lang=de')>-1){
+          var newQ=q.replace(/[?&]lang=de/,'').replace(/^\?$/,'');
+          location.href=p+newQ;return}
+        
+        
+        if(p.startsWith('/entry/')||p.startsWith('/source/')){
+          document.querySelectorAll('.lang-btn').forEach(function(l){l.classList.toggle('active',l.dataset.lang==='en')});return}
+        location.href='/';
+      }
+    }
+  })
+  </script>
+  
+  <script src="/static/card-link.js?v=tm6mcy" defer></script>
+  
+  <script src="/static/keys.js?v=tm6mcy" defer></script>
+  <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js');</script>
+  <script>
+  (function(){
+    var lang=document.body.dataset.lang||'en';
+    var i18n={en:{now:'just now',pfx:'',min:' min ago',h:'h ago',d:'d ago',quip:'Still reading? Good taste never sleeps.'},de:{now:'gerade eben',pfx:'vor ',min:' Min.',h:' Std.',d:' T.',quip:'Noch da? Guter Geschmack kennt keinen Feierabend.'}};
+    var s=i18n[lang]||i18n.en;
+    document.querySelectorAll('[data-ts]').forEach(function(el){
+      var d=new Date(el.dataset.ts);
+      el.title=d.toLocaleDateString(undefined,{year:'numeric',month:'2-digit',day:'2-digit'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+    });
+    document.querySelectorAll('[data-ts-rel]').forEach(function(el){
+      var d=new Date(el.dataset.tsRel);
+      if(isNaN(d))return;
+      var m=Math.round((Date.now()-d.getTime())/60000);
+      if(m<1)el.textContent=s.now;
+      else if(m<60)el.textContent=s.pfx+m+s.min;
+      else if(m<1440)el.textContent=s.pfx+Math.round(m/60)+s.h;
+      else el.textContent=s.pfx+Math.round(m/1440)+s.d;
+      el.title=d.toLocaleDateString(undefined,{year:'numeric',month:'2-digit',day:'2-digit'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+    });
+    if(window.__tsRelStyle)window.__tsRelStyle.remove();
+    var h=new Date().getHours();
+    if(h===0){var t=document.querySelector('.footer-tagline');if(t)t.textContent=s.quip+' \uD83E\uDEE7'}
+  })();
+  </script>
+  <script>
+  (function(){
+    var root=document.getElementById('cat-multi');
+    if(!root)return;
+    var toggle=document.getElementById('cat-multi-toggle');
+    var panel=document.getElementById('cat-multi-panel');
+    var labelEl=root.querySelector('.cat-multi-label');
+    var checks=Array.prototype.slice.call(root.querySelectorAll('.cat-multi-check'));
+    var voteBtns=Array.prototype.slice.call(root.querySelectorAll('.cat-multi-vote-btn'));
+    var vminInput=root.querySelector('.cat-multi-vmin-input');
+    var vmaxInput=root.querySelector('.cat-multi-vmax-input');
+    var longCheck=root.querySelector('.cat-multi-longreads-check');
+    var chipCats=document.getElementById('filter-chip-cats');
+    var chipCatsLabel=chipCats?chipCats.querySelector('.filter-chip-label'):null;
+    var chipVotes=document.getElementById('filter-chip-votes');
+    var chipVotesLabel=chipVotes?chipVotes.querySelector('.filter-chip-label'):null;
+    var chipLong=document.getElementById('filter-chip-long');
+    var chipWords=document.getElementById('filter-chip-words');
+    var chipWordsLabel=chipWords?chipWords.querySelector('.filter-chip-label'):null;
+    var wordsBtn=document.getElementById('cat-multi-words');
+    var wordsCount=root.querySelector('.cat-multi-words-count');
+    var wordsModal=document.getElementById('words-modal');
+    var wordsInput=document.getElementById('words-input');
+    var chips=document.getElementById('words-chips');
+    var limitNote=document.getElementById("words-limit");
+    var wordsSave=wordsModal?wordsModal.querySelector(".words-save"):null;
+    var wordsSwitch=document.getElementById("cat-multi-words-switch");
+    var wordsCheck=root.querySelector(".cat-multi-words-check");
+    var allCats=checks.map(function(c){return c.value});
+    var TOTAL=allCats.length;
+
+    
+    
+    
+    
+    var serverSel=(root.dataset.selected||'').split(',').filter(Boolean);
+    var serverVmin=parseInt(root.dataset.vmin,10)||0;
+    var serverVmax=parseInt(root.dataset.vmax,10)||0;
+    var savedCats=[];
+    var savedVotes='';
+    try{var raw=localStorage.getItem('bubbles-cats')||'';if(raw)savedCats=raw.split(',').filter(Boolean);}catch(e){}
+    try{savedVotes=localStorage.getItem('bubbles-votes')||'';}catch(e){}
+    var urlParams=new URLSearchParams(window.location.search);
+    var hasUrlCats=urlParams.has('cat')||urlParams.has('except');
+    var hasUrlVotes=urlParams.has('votes');
+    var hasUrlLong=urlParams.has('longreads');
+    var serverLong=root.dataset.longreads==='1';
+    var savedLong='';
+    try{savedLong=localStorage.getItem('bubbles-longreads')||'';}catch(e){}
+
+    var selected;
+    if(hasUrlCats){selected=serverSel.slice();}
+    else if(savedCats.length&&savedCats.length<TOTAL){selected=savedCats.filter(function(c){return allCats.indexOf(c)>-1});}
+    else{selected=[];}
+
+    var vmin=0,vmax=0;
+    if(hasUrlVotes){vmin=serverVmin;vmax=serverVmax;}
+    else if(savedVotes){var p=parseVotes(savedVotes);vmin=p.min;vmax=p.max;}
+
+    var longOn=false;
+    if(hasUrlLong){longOn=serverLong;}
+    else if(savedLong==='1'){longOn=true;}
+
+    
+    
+    var WORD_LIMIT=99;
+    var hasUrlBlocked=urlParams.has('blocked');
+    var serverBlocked=parseWords(root.dataset.blocked||'');
+    var savedBlocked='',savedOff='';
+    try{savedBlocked=localStorage.getItem('bubbles-blocked')||'';}catch(e){}
+    try{savedOff=localStorage.getItem('bubbles-blocked-off')||'';}catch(e){}
+    
+    
+    
+    var blocked,blockedOff=false;
+    if(hasUrlBlocked){blocked=serverBlocked.slice();}
+    else{blocked=parseWords(savedBlocked);blockedOff=savedOff==='1'&&blocked.length>0;}
+
+    function parseWords(s){
+      var seen={},out=[];
+      String(s||'').split(/[\s,]+/).forEach(function(w){
+        w=w.trim().toLowerCase();
+        var star=w.slice(-1)==='*';
+        if(star)w=w.slice(0,-1);
+        w=w.replace(/[^0-9A-Za-zÀ-ſ]/g,'');
+        if(!w)return;
+        if(star)w+='*';
+        if(seen[w]||out.length>=WORD_LIMIT)return;
+        seen[w]=true;out.push(w);
+      });
+      return out;
+    }
+
+    function parseVotes(s){
+      s=String(s||'').trim();
+      if(!s)return{min:0,max:0};
+      if(s.indexOf('-')<0){var n=parseInt(s,10)||0;return{min:n,max:n};}
+      var parts=s.split('-');
+      return{min:parseInt(parts[0],10)||0,max:parseInt(parts[1],10)||0};
+    }
+    function serialiseVotes(min,max){
+      if(!min&&!max)return'';
+      if(min&&max){return min===max?String(min):(min+'-'+max);}
+      if(min)return min+'-';
+      return'-'+max;
+    }
+    function votesLabel(min,max){
+      if(!min&&!max)return'';
+      if(min&&max){return min===max?String(min):(min+'–'+max);}
+      if(min)return min+'+';
+      return'≤'+max;
+    }
+
+    function isAll(arr){return arr.length===0||arr.length===TOTAL}
+
+    function labelText(sel,vmn,vmx){
+      var catPart;
+      if(isAll(sel))catPart='';
+      else if(sel.length===1){
+        var cb=checks.find(function(c){return c.value===sel[0]});
+        catPart=cb?cb.parentElement.querySelector('span').textContent:sel[0];
+      }
+      else if(sel.length<=3){
+        catPart=sel.map(function(c){var cb=checks.find(function(x){return x.value===c});return cb?cb.parentElement.querySelector('span').textContent:c}).join(', ');
+      }
+      else{catPart=sel.length+' of '+TOTAL;}
+      var votePart=votesLabel(vmn,vmx);
+      var longPart=longOn?(root.dataset.longLabel||'Longreads'):'';
+      var parts=[];
+      if(catPart)parts.push(catPart);
+      if(votePart)parts.push(votePart);
+      if(longPart)parts.push(longPart);
+      if(!parts.length)return root.dataset.allLabel||'All categories';
+      return parts.join(' · ');
+    }
+
+    function syncChecks(){
+      checks.forEach(function(cb){cb.checked=isAll(selected)||selected.indexOf(cb.value)>-1});
+    }
+    function syncVotes(){
+      
+      
+      voteBtns.forEach(function(b){
+        var bvmin=parseInt(b.dataset.vmin,10)||0;
+        var active=(vmax===0&&vmin===bvmin);
+        b.classList.toggle('active',active);
+      });
+      vminInput.value=vmin?String(vmin):'';
+      vmaxInput.value=vmax?String(vmax):'';
+    }
+    function syncLong(){if(longCheck)longCheck.checked=longOn;}
+    function wordsLabel(){
+      
+      
+      if(!blocked.length)return'';
+      return blocked.length===1?("-"+blocked[0]):("-"+blocked.length+" "+(root.dataset.wordsLabel||"words"));
+    }
+    function wordsOn(){return blocked.length>0&&!blockedOff}
+    
+    
+    
+    function showWordsCount(off){
+      if(!wordsCount)return;
+      wordsCount.textContent=blocked.length?(blocked.length+' '+(off?(wordsCount.dataset.off||'off'):(wordsCount.dataset.active||'active'))):'';
+      wordsCount.classList.toggle('is-off',off&&blocked.length>0);
+    }
+    function syncWords(){
+      var off=blocked.length>0&&blockedOff;
+      showWordsCount(off);
+      if(wordsSwitch)wordsSwitch.hidden=blocked.length===0;
+      if(wordsCheck)wordsCheck.checked=!off;
+      if(wordsSave)wordsSave.textContent=off?(wordsSave.dataset.activate||'Activate'):(wordsSave.dataset.save||'Save');
+      if(chips)chips.classList.toggle('words-chips-off',off);
+      if(!chips)return;
+      chips.textContent='';
+      blocked.forEach(function(w){
+        var chip=document.createElement('span');
+        chip.className='words-chip';
+        var label=document.createElement('span');
+        label.textContent=w;
+        var x=document.createElement('button');
+        x.type='button';x.className='words-chip-x';x.setAttribute('aria-label','remove '+w);x.textContent='×';
+        x.addEventListener('click',function(){blocked=blocked.filter(function(o){return o!==w});syncWords();});
+        chip.appendChild(label);chip.appendChild(x);
+        chips.appendChild(chip);
+      });
+      if(limitNote)limitNote.hidden=blocked.length<WORD_LIMIT;
+      if(wordsInput)wordsInput.disabled=blocked.length>=WORD_LIMIT;
+    }
+    function render(){
+      var active=!isAll(selected)||vmin>0||vmax>0||longOn||wordsOn();
+      labelEl.textContent=active?(root.dataset.filteredLabel||'Filtered'):labelText(selected,vmin,vmax);
+      root.classList.toggle('cat-active',active);
+      if(chipWords){
+        chipWords.hidden=!wordsOn();
+        if(wordsOn()&&chipWordsLabel)chipWordsLabel.textContent=wordsLabel();
+      }
+      if(chipCats){
+        var catsOn=!isAll(selected);
+        chipCats.hidden=!catsOn;
+        if(catsOn&&chipCatsLabel){
+          if(selected.length===1){var cb=checks.find(function(c){return c.value===selected[0]});chipCatsLabel.textContent=cb?cb.parentElement.querySelector('span').textContent:selected[0];}
+          else{chipCatsLabel.textContent=selected.length+" "+(root.dataset.catsLabel||"cats");}
+        }
+      }
+      if(chipVotes){var vOn=vmin>0||vmax>0;chipVotes.hidden=!vOn;if(vOn&&chipVotesLabel)chipVotesLabel.textContent=votesLabel(vmin,vmax)+' ▲';}
+      if(chipLong){chipLong.hidden=!longOn;}
+    }
+
+    syncChecks();
+    syncVotes();
+    syncLong();
+    syncWords();
+    render();
+    
+    
+    var rndLinks=Array.prototype.slice.call(document.querySelectorAll('a[href^="/random"]'));
+    function updateRandom(){
+      rndLinks.forEach(function(a){
+        try{
+          var ru=new URL(a.getAttribute('href'),window.location.origin);
+          setFilterParams(ru,selected,vmin,vmax,longOn,wordsOn()?blocked:[]);
+          a.setAttribute('href',ru.pathname+ru.search);
+        }catch(e){}
+      });
+    }
+    updateRandom();
+
+    var listTabs=['front','new','hot','my'];
+    var tab=document.body.getAttribute('data-tab')||'';
+    if(!tab){var a=document.querySelector('nav a.active');if(a)tab=a.textContent.trim().toLowerCase();if(tab==='top')tab='front';}
+    
+    
+    
+    var isListPage=listTabs.indexOf(tab)>-1||location.pathname==='/search';
+    
+    
+    
+    if(isListPage&&(!hasUrlCats||!hasUrlVotes||!hasUrlLong||!hasUrlBlocked)){
+      var needCatApply=!hasUrlCats&&savedCats.length&&savedCats.length<TOTAL;
+      var needVoteApply=!hasUrlVotes&&savedVotes;
+      var needLongApply=!hasUrlLong&&savedLong==='1';
+      
+      var needWordApply=!hasUrlBlocked&&savedOff!=="1"&&parseWords(savedBlocked).length>0;
+      if(needCatApply||needVoteApply||needLongApply||needWordApply){
+        var seedSel=needCatApply?savedCats.filter(function(c){return allCats.indexOf(c)>-1}):serverSel;
+        var seedVotes=needVoteApply?parseVotes(savedVotes):{min:serverVmin,max:serverVmax};
+        var seedLong=needLongApply?true:serverLong;
+        var seedWords=needWordApply?parseWords(savedBlocked):serverBlocked;
+        applyToURL(seedSel,seedVotes.min,seedVotes.max,seedLong,seedWords);
+        return;
+      }
+    }
+
+    
+    
+    function setFilterParams(u,sel,vmn,vmx,lng,blk){
+      u.searchParams.delete('cat');u.searchParams.delete('except');u.searchParams.delete('votes');u.searchParams.delete('longreads');u.searchParams.delete('blocked');
+      if(blk&&blk.length)u.searchParams.set('blocked',blk.join(','));
+      if(!isAll(sel)){
+        var inc=sel.slice().sort().join(',');
+        var exc=allCats.filter(function(c){return sel.indexOf(c)===-1}).sort().join(',');
+        if(('cat='+inc).length<=('except='+exc).length){u.searchParams.set('cat',inc);}
+        else{u.searchParams.set('except',exc);}
+      }
+      var vs=serialiseVotes(vmn||0,vmx||0);
+      if(vs)u.searchParams.set('votes',vs);
+      if(lng)u.searchParams.set('longreads','1');
+    }
+
+    function applyToURL(sel,vmn,vmx,lng,blk){
+      
+      
+      if(blk===undefined)blk=wordsOn()?blocked:[];
+      var u=new URL(window.location);
+      u.searchParams.delete('p');
+      setFilterParams(u,sel,vmn,vmx,lng,blk);
+      window.location=u.toString();
+    }
+
+    function openPanel(){
+      syncChecks();syncVotes();syncLong();syncWords();
+      var rect=root.getBoundingClientRect();
+      if(window.innerWidth-rect.right>=rect.left){panel.style.left='0';panel.style.right='auto';}
+      else{panel.style.right='0';panel.style.left='auto';}
+      panel.hidden=false;
+      toggle.setAttribute('aria-expanded','true');
+    }
+    function closePanel(){
+      panel.hidden=true;
+      toggle.setAttribute('aria-expanded','false');
+    }
+    toggle.addEventListener('click',function(e){e.stopPropagation();if(panel.hidden)openPanel();else closePanel()});
+    document.addEventListener('click',function(e){if(!root.contains(e.target))closePanel()});
+
+    root.querySelector('.cat-multi-all').addEventListener('click',function(){checks.forEach(function(cb){cb.checked=true})});
+    root.querySelector('.cat-multi-none').addEventListener('click',function(){checks.forEach(function(cb){cb.checked=false})});
+
+    
+    
+    voteBtns.forEach(function(b){
+      b.addEventListener('click',function(){
+        var n=parseInt(b.dataset.vmin,10)||0;
+        vminInput.value=n?String(n):'';
+        vmaxInput.value='';
+        voteBtns.forEach(function(x){x.classList.toggle('active',x===b)});
+      });
+    });
+    function clearVoteBtns(){voteBtns.forEach(function(b){b.classList.remove('active')});
+      
+      if(!vminInput.value&&!vmaxInput.value){
+        var any=voteBtns.find(function(b){return (parseInt(b.dataset.vmin,10)||0)===0});
+        if(any)any.classList.add('active');
+      }
+    }
+    vminInput.addEventListener('input',clearVoteBtns);
+    vmaxInput.addEventListener('input',clearVoteBtns);
+
+    root.querySelector('.cat-multi-reset').addEventListener('click',function(){
+      checks.forEach(function(cb){cb.checked=true});
+      vminInput.value='';vmaxInput.value='';
+      voteBtns.forEach(function(b){b.classList.toggle('active',(parseInt(b.dataset.vmin,10)||0)===0)});
+      if(longCheck)longCheck.checked=false;
+      if(blocked.length){blockedOff=true;try{localStorage.setItem("bubbles-blocked-off","1")}catch(e){}}
+      syncWords();
+      try{localStorage.removeItem("bubbles-cats")}catch(e){}
+      try{localStorage.removeItem('bubbles-votes')}catch(e){}
+      try{localStorage.removeItem('bubbles-longreads')}catch(e){}
+      if(!isListPage){selected=[];vmin=0;vmax=0;longOn=false;render();updateRandom();closePanel();return}
+      applyToURL([],0,0,false,[]);
+    });
+    root.querySelector('.cat-multi-cancel').addEventListener('click',function(){syncChecks();syncVotes();syncLong();closePanel()});
+    var chipCatsX=chipCats?chipCats.querySelector('.filter-chip-x'):null;
+    if(chipCatsX){chipCatsX.addEventListener('click',function(e){
+      e.stopPropagation();
+      selected=[];syncChecks();
+      try{localStorage.removeItem('bubbles-cats')}catch(ex){}
+      if(!isListPage){render();updateRandom();return;}
+      applyToURL([],vmin,vmax,longOn);
+    });}
+    var chipVotesX=chipVotes?chipVotes.querySelector('.filter-chip-x'):null;
+    if(chipVotesX){chipVotesX.addEventListener('click',function(e){
+      e.stopPropagation();
+      vmin=0;vmax=0;syncVotes();
+      try{localStorage.removeItem('bubbles-votes')}catch(ex){}
+      if(!isListPage){render();updateRandom();return;}
+      applyToURL(selected,0,0,longOn);
+    });}
+    var chipLongX=chipLong?chipLong.querySelector('.filter-chip-x'):null;
+    if(chipLongX){chipLongX.addEventListener('click',function(e){
+      e.stopPropagation();
+      longOn=false;syncLong();
+      try{localStorage.removeItem('bubbles-longreads')}catch(ex){}
+      if(!isListPage){render();updateRandom();return;}
+      applyToURL(selected,vmin,vmax,false);
+    });}
+    var chipWordsX=chipWords?chipWords.querySelector('.filter-chip-x'):null;
+    if(chipWordsX){chipWordsX.addEventListener("click",function(e){
+      e.stopPropagation();
+      
+      blockedOff=true;syncWords();
+      try{localStorage.setItem("bubbles-blocked-off","1")}catch(ex){}
+      if(!isListPage){render();updateRandom();return;}
+      applyToURL(selected,vmin,vmax,longOn,[]);
+    });}
+
+    
+    var wordsBackup=[],offBackup=false;
+    function openWords(){
+      if(!wordsModal)return;
+      wordsBackup=blocked.slice();offBackup=blockedOff;
+      syncWords();
+      wordsModal.hidden=false;
+      closePanel();
+      if(wordsInput){wordsInput.value='';setTimeout(function(){wordsInput.focus()},0);}
+    }
+    function closeWords(restore){
+      if(!wordsModal)return;
+      if(restore){blocked=wordsBackup.slice();blockedOff=offBackup;syncWords();}
+      wordsModal.hidden=true;
+    }
+    function addTyped(){
+      if(!wordsInput)return;
+      var before=blocked.length;
+      var added=parseWords(blocked.join(",")+","+wordsInput.value);
+      
+      
+      if(added.length>before)blockedOff=false;
+      blocked=added;
+      wordsInput.value="";
+      syncWords();
+    }
+    if(wordsBtn)wordsBtn.addEventListener("click",function(e){e.stopPropagation();openWords()});
+    if(wordsCheck)wordsCheck.addEventListener("change",function(){showWordsCount(!wordsCheck.checked)});
+    if(wordsInput){
+      wordsInput.addEventListener('keydown',function(e){
+        
+        
+        
+        if(e.key==='Enter'||e.key===','){e.preventDefault();addTyped();}
+      });
+      wordsInput.addEventListener('blur',addTyped);
+    }
+    if(wordsModal){
+      wordsModal.querySelector('.words-modal-backdrop').addEventListener('click',function(){closeWords(true)});
+      wordsModal.querySelector('.words-modal-close').addEventListener('click',function(){closeWords(true)});
+      wordsModal.querySelector('.words-cancel').addEventListener('click',function(){closeWords(true)});
+      
+      wordsModal.querySelector(".words-clear").addEventListener("click",function(){blocked=[];blockedOff=false;syncWords();});
+      wordsModal.querySelector('.words-save').addEventListener('click',function(){
+        addTyped();
+        blockedOff=false;
+        try{
+          if(blocked.length)localStorage.setItem("bubbles-blocked",blocked.join(","));
+          else localStorage.removeItem("bubbles-blocked");
+          localStorage.removeItem("bubbles-blocked-off");
+        }catch(e){}
+        wordsModal.hidden=true;
+        if(!isListPage){render();updateRandom();return;}
+        applyToURL(selected,vmin,vmax,longOn,blocked);
+      });
+      document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!wordsModal.hidden)closeWords(true)});
+    }
+
+    root.querySelector('.cat-multi-apply').addEventListener('click',function(){
+      var picked=checks.filter(function(cb){return cb.checked}).map(function(cb){return cb.value});
+      if(picked.length===0||picked.length===TOTAL){
+        try{localStorage.removeItem('bubbles-cats')}catch(e){}
+      }else{
+        try{localStorage.setItem('bubbles-cats',picked.slice().sort().join(','))}catch(e){}
+      }
+      var nvmin=Math.max(0,parseInt(vminInput.value,10)||0);
+      var nvmax=Math.max(0,parseInt(vmaxInput.value,10)||0);
+      if(nvmin&&nvmax&&nvmin>nvmax){var t=nvmin;nvmin=nvmax;nvmax=t;}
+      var vs=serialiseVotes(nvmin,nvmax);
+      if(!vs){try{localStorage.removeItem('bubbles-votes')}catch(e){}}
+      else{try{localStorage.setItem('bubbles-votes',vs)}catch(e){}}
+      var noff=!!(wordsCheck&&blocked.length&&!wordsCheck.checked);
+      blockedOff=noff;
+      try{if(noff)localStorage.setItem("bubbles-blocked-off","1");else localStorage.removeItem("bubbles-blocked-off")}catch(e){}
+      var nlong=!!(longCheck&&longCheck.checked);
+      if(nlong){try{localStorage.setItem('bubbles-longreads','1')}catch(e){}}
+      else{try{localStorage.removeItem('bubbles-longreads')}catch(e){}}
+      if(!isListPage){selected=picked;vmin=nvmin;vmax=nvmax;longOn=nlong;syncWords();render();updateRandom();closePanel();return}
+      applyToURL(picked,nvmin,nvmax,nlong,noff?[]:blocked);
+    });
+  })();
+  </script>
+  
+  <script>
+  (function(){
+    var k=[38,38,40,40,37,39,37,39,66,65],p=0;
+    document.addEventListener('keydown',function(e){
+      if(e.keyCode===k[p]){p++;if(p===k.length){p=0;bubbleRain()}}else{p=0}
+    });
+    function bubbleRain(){
+      for(var i=0;i<60;i++){
+        var b=document.createElement('div');
+        b.className='easter-bubble';
+        var s=6+Math.random()*24;
+        var drift=(-30+Math.random()*60)+'px';
+        b.style.cssText='left:'+Math.random()*100+'vw;width:'+s+'px;height:'+s+'px;--drift:'+drift+';animation-duration:'+(3+Math.random()*4)+'s;animation-delay:'+Math.random()*3+'s';
+        document.body.appendChild(b);
+        setTimeout(function(el){el.remove()},7000,b);
+      }
+    }
+  })();
+  </script>
+</body>
+</html>
