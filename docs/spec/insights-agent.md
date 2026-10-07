@@ -66,27 +66,23 @@ Also found in the live data: several links are `Untitled` — weak metadata at i
 ## Architecture — three pipelines, all boring
 
 ```mermaid
-flowchart TD
-    subgraph INTAKE["INTAKE (live)"]
+flowchart LR
+    subgraph INTAKE["INTAKE · live"]
         direction LR
-        DSC[Discord] --> SYNC[sync task] --> GATE[health gate] --> LINKS[("links (Postgres)")]
+        DSC([Discord]) --> SYNC["sync + health gate"] --> LINKS[("links (Postgres)")]
     end
-
-    subgraph BUILD["KB BUILD (this spec)"]
+    subgraph BUILD["KB BUILD · this spec"]
         direction LR
         PEND["pending, not hidden<br/>category-aware extract"] --> CHUNK["chunk ~500 tok"] --> EMBED[embed] --> CHUNKS[("link_chunks (pgvector)")]
     end
-
-    subgraph ASK["ASK (runtime, per question)"]
+    subgraph ASK["ASK · per question"]
         direction LR
-        Q[question] --> QE[embed] --> VS["vector search →<br/>aggregate to links → rank"] --> AG["agent loop:<br/>model + search_knowledge"] --> ANS[answer + citations, streamed]
+        Q([question]) --> VS["embed → search → rank"] --> AG["agent loop:<br/>model + search_knowledge"] --> ANS([answer + citations])
     end
 
-    LATER["LATER (same KB, new surfaces):<br/>MCP · write-assist · watch/alerts · HN"]
-
-    LINKS -.->|pending rows| PEND
+    LINKS -.->|pending| PEND
     CHUNKS -.->|vectors| VS
-    ANS -.-> LATER
+    ANS -.-> LATER["LATER · MCP · writing desk · watch/alerts · HN"]
 ```
 
 Reliability rules, applied everywhere:
