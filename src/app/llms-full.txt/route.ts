@@ -1,5 +1,5 @@
 import { CHANNEL_LABELS, CHANNEL_ORDER } from "@/app/curated-links/utils/channels";
-import { getDiscordData } from "@/app/curated-links/utils/discord-data";
+import { getInsightsData } from "@/app/curated-links/utils/links-data";
 import { dedupeByUrl, sortByNewestId } from "@/app/curated-links/utils/urlUtils";
 
 export const revalidate = 300;
@@ -14,7 +14,7 @@ const BASE_URL =
  * anything else that would rather read text than scrape the page.
  */
 export async function GET() {
-  const { channels, linkData } = await getDiscordData();
+  const { linkData } = await getInsightsData();
 
   const sections = CHANNEL_ORDER.map((name) => {
     const links = dedupeByUrl(sortByNewestId(linkData[name] || [])).filter(

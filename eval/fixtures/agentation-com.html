@@ -1,0 +1,832 @@
+<!DOCTYPE html><!--E0fIulhm39ghxRM8vc5nc--><html lang="en"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/_next/static/css/07ce57db0999cfda.css" data-precedence="next"/><link rel="stylesheet" href="/_next/static/css/894500f1dd6135ac.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-3de223601645e915.js"/><script src="/_next/static/chunks/a7d82fdb-60a4083d28298469.js" async=""></script><script src="/_next/static/chunks/263-20a6f92cc069de84.js" async=""></script><script src="/_next/static/chunks/main-app-19d1433d59587ed2.js" async=""></script><script src="/_next/static/chunks/23-13db9c300e260523.js" async=""></script><script src="/_next/static/chunks/281-0e1e3bc668f37fee.js" async=""></script><script src="/_next/static/chunks/549-f9bbb72fc96fddbc.js" async=""></script><script src="/_next/static/chunks/app/layout-3be910eca5a03267.js" async=""></script><script src="/_next/static/chunks/app/not-found-0bb0e444242f0b74.js" async=""></script><script src="/_next/static/chunks/416-8bde8cc5cd0a5acc.js" async=""></script><script src="/_next/static/chunks/app/page-3fd2498c48adf6c2.js" async=""></script><title>Agentation</title><meta name="description" content="The visual feedback tool for agents."/><meta property="og:title" content="Agentation"/><meta property="og:description" content="The visual feedback tool for agents."/><meta property="og:image" content="https://agentation.com/og-image.png"/><meta property="og:image:width" content="2400"/><meta property="og:image:height" content="1260"/><meta property="og:image:alt" content="Agentation visual feedback and UI annotations"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Agentation"/><meta name="twitter:description" content="The visual feedback tool for agents."/><meta name="twitter:image" content="https://agentation.com/og-image.png"/><link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16"/><link rel="icon" href="/icon.png?3890125bf12cbe0a" type="image/png" sizes="192x192"/><link rel="apple-touch-icon" href="/apple-icon.png?e8dd87e09e31d2bf" type="image/png" sizes="180x180"/><script>(function i(a,b,c,d){let e=null;try{e=localStorage.getItem(a)}catch{}let f=d(b,c(e),Date.now(),Math.random());document.documentElement.style.setProperty("--agentation-download-start",JSON.stringify(f.displayed.toLocaleString("en-US")));try{localStorage.setItem(a,JSON.stringify(f))}catch{}})("agentation:download-counter:v2",24358220,function j(a){try{let b=JSON.parse(a??"null");return(b?.version===1||b?.version===2)&&Number.isSafeInteger(b.displayed)&&Number.isSafeInteger(b.verifiedTotal)&&b.displayed>=0&&b.displayed<=b.verifiedTotal&&Number.isFinite(b.updatedAt)&&b.updatedAt>0&&(void 0===b.checkedAt||Number.isFinite(b.checkedAt)&&b.checkedAt>0)&&(void 0===b.verifiedThrough||/^\d{4}-\d{2}-\d{2}$/.test(b.verifiedThrough))?b:null}catch{return null}},function k(a,b,c,d){let e=Math.max(a,b?.verifiedTotal??0),f=Math.round(4e5+5e5*Math.max(0,Math.min(1,d))),g=b?.version===1&&b.displayed===b.verifiedTotal,h=b&&!g?b.displayed:Math.max(0,e-f);return{...b,version:2,displayed:h,verifiedTotal:e,updatedAt:c}});</script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Cascadia+Code:ital@1&amp;display=swap" rel="stylesheet"/><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script></head><body><div hidden=""><!--$--><!--/$--></div><div class="mobile-notice"><span class="mobile-notice-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></span>Agentation is currently desktop only.</div><nav class="mobile-nav" aria-label="Documentation"><div class="mobile-nav-header"><a aria-label="Agentation home" style="display:flex;color:#E5484D" href="/"><svg width="96" height="29.928802588996763" viewBox="0 0 927 289" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.91413 212.065C-1.87561 207.269 -1.6758 195.98 3.21955 185.69C13.1101 166.008 37.8866 149.724 70.056 140.233C81.3453 136.836 93.4338 134.139 105.722 131.941C128.401 105.766 150.879 77.2926 171.26 52.1165C190.941 27.7397 209.124 6.75958 222.112 1.46461C229.804 -1.73235 236.298 0.365664 238.096 7.15921C240.694 16.9499 232.901 34.733 224.01 53.8149C213.02 77.6922 201.731 102.469 192.939 123.049L214.918 120.751C220.513 120.052 222.211 122.05 221.812 126.046C221.512 130.042 219.914 132.14 215.718 132.54L187.944 135.038C182.549 149.724 179.452 163.211 183.049 173.301C185.446 180.295 191.74 180.395 198.834 175.999C205.627 171.803 212.221 164.61 218.415 156.018L227.307 160.613C217.216 176.298 205.228 187.588 192.54 190.685C179.952 193.782 171.06 187.588 168.762 175.299C166.764 165.209 170.261 150.623 176.155 136.037C157.573 137.635 136.593 140.033 116.412 143.53C92.1351 171.203 68.2577 194.381 44.6801 207.469C29.7943 215.661 17.8057 217.759 8.91413 212.065ZM12.6106 200.076C17.0064 206.27 28.5954 201.275 39.7848 194.781C57.468 184.591 77.5489 166.808 96.431 146.627C70.8553 152.022 50.075 159.115 34.5897 169.105C20.1035 178.496 7.51546 192.683 12.6106 200.076ZM124.904 129.143C142.787 126.646 161.669 124.747 181.051 124.148C189.243 103.668 201.131 77.2925 212.321 52.8158C220.313 35.3324 227.007 20.0469 225.508 14.4523C224.409 10.6559 213.52 19.7473 202.73 31.7359C178.553 58.4105 151.379 98.0728 124.904 129.143Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M292.044 122.85C288.647 113.059 278.756 110.262 267.667 113.059C246.087 118.155 225.507 137.936 216.715 158.716C208.823 177.398 214.318 189.986 227.705 190.885C244.689 191.984 263.471 172.603 276.059 154.42C284.651 142.132 292.144 130.842 292.044 122.85ZM281.154 124.848C273.661 120.253 262.572 125.048 252.481 133.54C241.192 143.031 233 154.92 229.503 165.21C227.006 172.803 227.405 178.497 233.3 178.797C243.69 179.396 259.075 163.012 271.563 144.23C277.857 134.739 285.15 127.346 281.154 124.848Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M285.452 126.846C287.65 122.75 291.546 122.351 294.743 124.249C297.641 126.047 298.04 128.645 296.042 133.34C287.85 150.124 278.659 167.807 270.366 183.692C283.554 175.4 295.742 167.907 307.631 160.414C310.728 158.516 313.426 159.016 315.224 162.013C317.022 165.01 315.623 167.907 312.327 170.105C297.74 179.396 281.556 188.088 264.272 197.879C249.686 226.352 236.199 255.724 218.316 273.906C208.026 284.397 196.936 291.19 187.645 287.993C177.754 284.696 177.455 274.306 181.151 264.216C190.742 238.44 221.113 213.064 256.28 191.984C265.971 172.902 276.76 147.227 285.452 126.846ZM247.988 209.468C224.01 225.153 203.93 243.036 194.838 260.919C190.542 269.411 190.043 275.005 194.339 276.204C200.433 277.803 211.023 268.312 219.615 256.823C229.805 243.236 239.496 225.453 247.988 209.468Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M320.516 165.607C320.516 175.198 326.111 180.893 336.501 179.694C357.182 177.396 380.959 157.615 401.04 130.94C403.538 127.643 406.535 126.644 409.332 129.042C411.53 131.04 411.13 134.537 408.833 137.734C390.15 163.11 362.377 187.686 339.299 190.783C321.116 193.381 308.728 186.687 306.43 172.9C302.633 151.021 324.912 122.448 345.493 113.956C359.18 108.262 369.77 111.259 371.868 120.051C375.065 133.738 358.68 152.919 320.516 165.607ZM321.915 154.118C346.292 146.226 359.979 134.637 359.979 126.345C359.979 120.25 350.788 122.748 344.294 127.044C334.903 133.238 326.611 143.129 321.915 154.118Z" fill="currentColor"></path><path d="M371.77 184.391C381.061 164.809 392.949 140.632 403.24 118.953C405.138 114.957 407.336 113.758 411.232 113.658C416.127 113.358 418.225 115.057 415.728 120.551L407.136 138.235C421.422 124.448 435.909 114.457 446.399 113.958C456.689 113.458 462.683 119.153 459.486 129.443C456.989 137.935 451.194 148.525 446.598 160.713C443.601 168.406 441.004 175.999 445.699 178.596C452.293 182.293 468.877 170.204 485.462 146.627C488.059 143.13 490.856 143.03 493.254 145.528C495.552 147.726 494.853 150.823 492.854 154.12C476.47 177.298 458.587 192.483 443.801 190.984C431.013 189.686 427.517 179.595 431.413 166.708C434.51 156.617 440.604 144.129 444.8 134.338C447.897 127.345 447.897 124.747 440.604 128.044C422.321 136.636 401.841 158.715 388.454 180.694L384.557 188.087C382.759 191.284 380.661 191.184 376.765 191.084C372.369 190.985 369.771 189.286 371.77 184.391Z" fill="currentColor"></path><path d="M515.534 83.3884L533.516 52.0182C535.714 48.1219 536.214 46.8231 541.009 46.8231L544.906 46.9231C548.203 46.9231 548.402 48.3217 546.304 52.0182L528.921 83.0887L522.827 93.7785C513.436 110.662 502.646 132.841 496.052 150.025C490.258 165.211 490.957 175.401 496.252 178.198C504.444 182.594 519.03 170.206 532.717 153.422C535.315 150.225 538.412 150.025 540.61 152.523C542.908 155.12 541.709 158.017 539.411 161.015C526.423 178.098 509.14 192.485 494.553 190.986C479.468 189.488 474.373 177.999 478.868 161.614C483.964 143.132 498.65 113.26 509.539 94.378L515.534 83.3884ZM661.495 84.4874L679.178 52.0182C681.176 48.3217 681.576 46.5234 686.171 46.5234H690.367C693.464 46.5234 693.365 48.2218 691.566 51.5187L674.383 83.9878L668.988 94.378C660.795 110.063 652.004 129.145 645.81 146.528C640.015 162.313 642.113 174.402 648.407 178.098C658.997 184.293 676.68 168.508 690.467 150.525C693.065 147.128 695.962 146.928 698.66 149.725C701.157 152.223 699.659 155.52 697.361 158.817C683.374 178.498 666.59 192.285 651.005 190.986C632.422 189.687 626.628 175.501 632.223 157.318C638.716 136.038 648.807 113.56 656.3 94.8775L661.495 84.4874Z" fill="currentColor"></path><path d="M484.562 91.6272C557.493 90.1287 630.257 88.9964 702.855 88.2305" stroke="currentColor" stroke-width="10.49" stroke-linecap="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M604.508 139.984C606.706 134.864 604.373 119.953 597.929 115.357C594.707 113.06 590.212 111.811 585.067 111.861C563.887 112.161 540.909 134.339 531.817 155.619C523.625 174.601 527.022 189.687 540.609 190.886C554.396 192.184 569.382 179.497 581.37 166.609C575.875 183.093 583.268 191.585 595.457 191.285C611.342 190.986 628.126 174.202 640.914 156.319L634.719 148.626C622.631 164.811 607.545 179.996 598.354 179.097C589.463 178.198 592.659 167.308 598.354 154.321L604.508 139.984ZM593.758 125.448C587.464 120.053 575.276 126.147 565.785 134.839C554.895 144.829 547.003 157.018 543.806 167.508C541.708 174.501 542.907 179.097 547.502 178.997C558.292 178.697 575.376 160.415 586.465 142.831C591.86 134.24 596.756 128.445 593.758 125.448Z" fill="currentColor"></path><path d="M705.454 118.753C707.352 114.857 709.45 113.258 713.546 113.458C719.541 113.558 720.839 115.356 718.242 121.251C713.346 132.34 707.152 145.228 703.156 156.018C698.86 167.307 697.661 175.199 702.257 178.296C708.751 182.692 725.335 168.905 737.024 151.522C739.621 147.725 742.619 147.226 745.116 149.923C747.314 152.321 746.315 155.618 744.217 158.815C731.729 177.797 714.246 192.683 700.159 190.884C686.572 189.086 683.575 179.895 687.071 165.608C690.468 151.921 699.46 131.341 705.454 118.753Z" fill="currentColor"></path><path d="M725.534 78.7914C729.331 75.7943 733.926 75.6944 736.724 79.0911C740.02 83.1872 735.725 92.4784 730.829 95.1759C726.933 97.4737 722.437 96.5745 720.939 92.9779C719.14 88.682 721.538 81.9884 725.534 78.7914Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M803.659 144.129C818.844 143.43 831.932 136.037 838.825 125.447C841.123 121.951 843.921 122.25 846.318 124.848C848.716 127.445 847.317 131.242 844.62 134.738C834.629 148.325 819.444 155.818 800.062 155.119C790.571 177.098 774.487 191.085 755.605 191.185C738.321 191.285 730.828 179.596 735.124 162.712C740.918 139.734 760.8 116.955 778.583 112.659C790.971 109.762 801.96 114.558 805.058 124.648C806.756 130.043 805.857 137.136 803.659 144.129ZM787.474 123.849C778.483 120.951 766.194 130.842 757.503 142.631C750.509 152.122 745.414 163.511 746.513 171.803C747.512 179.696 754.306 181.894 763.097 177.598C775.785 171.404 787.374 154.919 792.27 139.434C795.167 130.343 793.868 125.947 787.474 123.849Z" fill="currentColor"></path><path d="M810.853 184.59C820.044 165.508 832.732 140.132 840.825 120.251C842.923 115.156 845.62 112.958 849.816 113.557C855.311 114.157 855.81 116.454 852.813 122.848L845.72 138.334C859.307 125.146 875.192 114.157 885.882 113.657C896.871 113.058 899.769 120.251 896.172 131.041C892.775 141.231 886.581 154.119 883.884 165.508C882.185 172.601 882.585 177.297 887.081 178.895C894.374 181.592 905.463 173.3 916.453 162.71C919.45 159.813 922.147 159.513 924.745 162.011C927.542 164.709 926.643 167.406 923.946 170.103C910.059 184.49 897.071 193.281 884.283 190.584C871.096 187.887 868.199 178.795 870.796 165.907C873.394 153.02 880.487 139.832 883.384 130.541C884.983 125.346 883.284 125.046 877.989 127.644C857.908 137.135 838.327 159.014 826.139 181.193L821.743 188.586C819.945 191.483 817.547 191.183 813.85 190.984C809.954 190.684 809.055 188.486 810.853 184.59Z" fill="currentColor"></path></svg></a><button type="button" class="mobile-nav-toggle " aria-label="Toggle navigation" aria-expanded="false" aria-controls="_R_lb_"><span class="mobile-nav-icon" aria-hidden="true"><span></span><span></span></span></button></div><div id="_R_lb_" class="mobile-nav-links " aria-hidden="true"><div class="mobile-nav-links-inner"><a class="mobile-nav-link active" aria-current="page" tabindex="-1" href="/">Overview</a><a class="mobile-nav-link " tabindex="-1" href="/install">Install</a><a class="mobile-nav-link " tabindex="-1" href="/features">Features</a><a class="mobile-nav-link " tabindex="-1" href="/output">Output</a><a class="mobile-nav-link " tabindex="-1" href="/schema">Schema</a><a class="mobile-nav-link " tabindex="-1" href="/mcp">MCP</a><a class="mobile-nav-link " tabindex="-1" href="/api">API</a><a class="mobile-nav-link " tabindex="-1" href="/webhooks">Webhooks</a><a class="mobile-nav-link " tabindex="-1" href="/changelog">Changelog</a><a class="mobile-nav-link " tabindex="-1" href="/blog">Blog</a><a class="mobile-nav-link " tabindex="-1" href="/faq">FAQ</a></div></div></nav><nav class="side-nav" aria-label="Documentation"><div class="side-nav-logo"><a aria-label="Agentation home" style="display:flex;cursor:default;pointer-events:none" tabindex="-1" href="/"><svg width="96" height="29.928802588996763" viewBox="0 0 927 289" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.91413 212.065C-1.87561 207.269 -1.6758 195.98 3.21955 185.69C13.1101 166.008 37.8866 149.724 70.056 140.233C81.3453 136.836 93.4338 134.139 105.722 131.941C128.401 105.766 150.879 77.2926 171.26 52.1165C190.941 27.7397 209.124 6.75958 222.112 1.46461C229.804 -1.73235 236.298 0.365664 238.096 7.15921C240.694 16.9499 232.901 34.733 224.01 53.8149C213.02 77.6922 201.731 102.469 192.939 123.049L214.918 120.751C220.513 120.052 222.211 122.05 221.812 126.046C221.512 130.042 219.914 132.14 215.718 132.54L187.944 135.038C182.549 149.724 179.452 163.211 183.049 173.301C185.446 180.295 191.74 180.395 198.834 175.999C205.627 171.803 212.221 164.61 218.415 156.018L227.307 160.613C217.216 176.298 205.228 187.588 192.54 190.685C179.952 193.782 171.06 187.588 168.762 175.299C166.764 165.209 170.261 150.623 176.155 136.037C157.573 137.635 136.593 140.033 116.412 143.53C92.1351 171.203 68.2577 194.381 44.6801 207.469C29.7943 215.661 17.8057 217.759 8.91413 212.065ZM12.6106 200.076C17.0064 206.27 28.5954 201.275 39.7848 194.781C57.468 184.591 77.5489 166.808 96.431 146.627C70.8553 152.022 50.075 159.115 34.5897 169.105C20.1035 178.496 7.51546 192.683 12.6106 200.076ZM124.904 129.143C142.787 126.646 161.669 124.747 181.051 124.148C189.243 103.668 201.131 77.2925 212.321 52.8158C220.313 35.3324 227.007 20.0469 225.508 14.4523C224.409 10.6559 213.52 19.7473 202.73 31.7359C178.553 58.4105 151.379 98.0728 124.904 129.143Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M292.044 122.85C288.647 113.059 278.756 110.262 267.667 113.059C246.087 118.155 225.507 137.936 216.715 158.716C208.823 177.398 214.318 189.986 227.705 190.885C244.689 191.984 263.471 172.603 276.059 154.42C284.651 142.132 292.144 130.842 292.044 122.85ZM281.154 124.848C273.661 120.253 262.572 125.048 252.481 133.54C241.192 143.031 233 154.92 229.503 165.21C227.006 172.803 227.405 178.497 233.3 178.797C243.69 179.396 259.075 163.012 271.563 144.23C277.857 134.739 285.15 127.346 281.154 124.848Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M285.452 126.846C287.65 122.75 291.546 122.351 294.743 124.249C297.641 126.047 298.04 128.645 296.042 133.34C287.85 150.124 278.659 167.807 270.366 183.692C283.554 175.4 295.742 167.907 307.631 160.414C310.728 158.516 313.426 159.016 315.224 162.013C317.022 165.01 315.623 167.907 312.327 170.105C297.74 179.396 281.556 188.088 264.272 197.879C249.686 226.352 236.199 255.724 218.316 273.906C208.026 284.397 196.936 291.19 187.645 287.993C177.754 284.696 177.455 274.306 181.151 264.216C190.742 238.44 221.113 213.064 256.28 191.984C265.971 172.902 276.76 147.227 285.452 126.846ZM247.988 209.468C224.01 225.153 203.93 243.036 194.838 260.919C190.542 269.411 190.043 275.005 194.339 276.204C200.433 277.803 211.023 268.312 219.615 256.823C229.805 243.236 239.496 225.453 247.988 209.468Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M320.516 165.607C320.516 175.198 326.111 180.893 336.501 179.694C357.182 177.396 380.959 157.615 401.04 130.94C403.538 127.643 406.535 126.644 409.332 129.042C411.53 131.04 411.13 134.537 408.833 137.734C390.15 163.11 362.377 187.686 339.299 190.783C321.116 193.381 308.728 186.687 306.43 172.9C302.633 151.021 324.912 122.448 345.493 113.956C359.18 108.262 369.77 111.259 371.868 120.051C375.065 133.738 358.68 152.919 320.516 165.607ZM321.915 154.118C346.292 146.226 359.979 134.637 359.979 126.345C359.979 120.25 350.788 122.748 344.294 127.044C334.903 133.238 326.611 143.129 321.915 154.118Z" fill="currentColor"></path><path d="M371.77 184.391C381.061 164.809 392.949 140.632 403.24 118.953C405.138 114.957 407.336 113.758 411.232 113.658C416.127 113.358 418.225 115.057 415.728 120.551L407.136 138.235C421.422 124.448 435.909 114.457 446.399 113.958C456.689 113.458 462.683 119.153 459.486 129.443C456.989 137.935 451.194 148.525 446.598 160.713C443.601 168.406 441.004 175.999 445.699 178.596C452.293 182.293 468.877 170.204 485.462 146.627C488.059 143.13 490.856 143.03 493.254 145.528C495.552 147.726 494.853 150.823 492.854 154.12C476.47 177.298 458.587 192.483 443.801 190.984C431.013 189.686 427.517 179.595 431.413 166.708C434.51 156.617 440.604 144.129 444.8 134.338C447.897 127.345 447.897 124.747 440.604 128.044C422.321 136.636 401.841 158.715 388.454 180.694L384.557 188.087C382.759 191.284 380.661 191.184 376.765 191.084C372.369 190.985 369.771 189.286 371.77 184.391Z" fill="currentColor"></path><path d="M515.534 83.3884L533.516 52.0182C535.714 48.1219 536.214 46.8231 541.009 46.8231L544.906 46.9231C548.203 46.9231 548.402 48.3217 546.304 52.0182L528.921 83.0887L522.827 93.7785C513.436 110.662 502.646 132.841 496.052 150.025C490.258 165.211 490.957 175.401 496.252 178.198C504.444 182.594 519.03 170.206 532.717 153.422C535.315 150.225 538.412 150.025 540.61 152.523C542.908 155.12 541.709 158.017 539.411 161.015C526.423 178.098 509.14 192.485 494.553 190.986C479.468 189.488 474.373 177.999 478.868 161.614C483.964 143.132 498.65 113.26 509.539 94.378L515.534 83.3884ZM661.495 84.4874L679.178 52.0182C681.176 48.3217 681.576 46.5234 686.171 46.5234H690.367C693.464 46.5234 693.365 48.2218 691.566 51.5187L674.383 83.9878L668.988 94.378C660.795 110.063 652.004 129.145 645.81 146.528C640.015 162.313 642.113 174.402 648.407 178.098C658.997 184.293 676.68 168.508 690.467 150.525C693.065 147.128 695.962 146.928 698.66 149.725C701.157 152.223 699.659 155.52 697.361 158.817C683.374 178.498 666.59 192.285 651.005 190.986C632.422 189.687 626.628 175.501 632.223 157.318C638.716 136.038 648.807 113.56 656.3 94.8775L661.495 84.4874Z" fill="currentColor"></path><path d="M484.562 91.6272C557.493 90.1287 630.257 88.9964 702.855 88.2305" stroke="currentColor" stroke-width="10.49" stroke-linecap="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M604.508 139.984C606.706 134.864 604.373 119.953 597.929 115.357C594.707 113.06 590.212 111.811 585.067 111.861C563.887 112.161 540.909 134.339 531.817 155.619C523.625 174.601 527.022 189.687 540.609 190.886C554.396 192.184 569.382 179.497 581.37 166.609C575.875 183.093 583.268 191.585 595.457 191.285C611.342 190.986 628.126 174.202 640.914 156.319L634.719 148.626C622.631 164.811 607.545 179.996 598.354 179.097C589.463 178.198 592.659 167.308 598.354 154.321L604.508 139.984ZM593.758 125.448C587.464 120.053 575.276 126.147 565.785 134.839C554.895 144.829 547.003 157.018 543.806 167.508C541.708 174.501 542.907 179.097 547.502 178.997C558.292 178.697 575.376 160.415 586.465 142.831C591.86 134.24 596.756 128.445 593.758 125.448Z" fill="currentColor"></path><path d="M705.454 118.753C707.352 114.857 709.45 113.258 713.546 113.458C719.541 113.558 720.839 115.356 718.242 121.251C713.346 132.34 707.152 145.228 703.156 156.018C698.86 167.307 697.661 175.199 702.257 178.296C708.751 182.692 725.335 168.905 737.024 151.522C739.621 147.725 742.619 147.226 745.116 149.923C747.314 152.321 746.315 155.618 744.217 158.815C731.729 177.797 714.246 192.683 700.159 190.884C686.572 189.086 683.575 179.895 687.071 165.608C690.468 151.921 699.46 131.341 705.454 118.753Z" fill="currentColor"></path><path d="M725.534 78.7914C729.331 75.7943 733.926 75.6944 736.724 79.0911C740.02 83.1872 735.725 92.4784 730.829 95.1759C726.933 97.4737 722.437 96.5745 720.939 92.9779C719.14 88.682 721.538 81.9884 725.534 78.7914Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M803.659 144.129C818.844 143.43 831.932 136.037 838.825 125.447C841.123 121.951 843.921 122.25 846.318 124.848C848.716 127.445 847.317 131.242 844.62 134.738C834.629 148.325 819.444 155.818 800.062 155.119C790.571 177.098 774.487 191.085 755.605 191.185C738.321 191.285 730.828 179.596 735.124 162.712C740.918 139.734 760.8 116.955 778.583 112.659C790.971 109.762 801.96 114.558 805.058 124.648C806.756 130.043 805.857 137.136 803.659 144.129ZM787.474 123.849C778.483 120.951 766.194 130.842 757.503 142.631C750.509 152.122 745.414 163.511 746.513 171.803C747.512 179.696 754.306 181.894 763.097 177.598C775.785 171.404 787.374 154.919 792.27 139.434C795.167 130.343 793.868 125.947 787.474 123.849Z" fill="currentColor"></path><path d="M810.853 184.59C820.044 165.508 832.732 140.132 840.825 120.251C842.923 115.156 845.62 112.958 849.816 113.557C855.311 114.157 855.81 116.454 852.813 122.848L845.72 138.334C859.307 125.146 875.192 114.157 885.882 113.657C896.871 113.058 899.769 120.251 896.172 131.041C892.775 141.231 886.581 154.119 883.884 165.508C882.185 172.601 882.585 177.297 887.081 178.895C894.374 181.592 905.463 173.3 916.453 162.71C919.45 159.813 922.147 159.513 924.745 162.011C927.542 164.709 926.643 167.406 923.946 170.103C910.059 184.49 897.071 193.281 884.283 190.584C871.096 187.887 868.199 178.795 870.796 165.907C873.394 153.02 880.487 139.832 883.384 130.541C884.983 125.346 883.284 125.046 877.989 127.644C857.908 137.135 838.327 159.014 826.139 181.193L821.743 188.586C819.945 191.483 817.547 191.183 813.85 190.984C809.954 190.684 809.055 188.486 810.853 184.59Z" fill="currentColor"></path></svg></a></div><div class="side-nav-scroll"><div class="nav-links"><div class="nav-item-wrapper"><a class="nav-link active" aria-current="page" href="/">Overview</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/install">Install</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/features">Features</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/output">Output</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/schema">Schema<span class="nav-badge">AFS 1.1</span></a></div><div class="nav-section">Tools</div><div class="nav-item-wrapper"><a class="nav-link " href="/mcp">MCP</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/api">API</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/webhooks">Webhooks</a></div><div class="nav-section">Resources</div><div class="nav-item-wrapper"><a class="nav-link " href="/changelog">Changelog</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/blog">Blog</a></div><div class="nav-item-wrapper"><a class="nav-link " href="/faq">FAQ</a></div></div><div class="nav-meta"><span class="nav-dot">·</span><a href="https://github.com/benjitaylor/agentation" target="_blank" rel="noopener noreferrer" class="nav-github" aria-label="GitHub"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M6.71356 13.6687C6.71354 13.5709 6.69203 13.4744 6.65053 13.3858C6.60903 13.2973 6.54857 13.219 6.47343 13.1564C6.3983 13.0939 6.31032 13.0486 6.21574 13.0238C6.12115 12.9991 6.02228 12.9954 5.92613 13.0131C5.0534 13.1733 3.95152 13.1974 3.65855 12.3744C3.40308 11.7371 2.97993 11.1808 2.43394 10.7644C2.39498 10.7432 2.35785 10.7189 2.32294 10.6915C2.27515 10.5655 2.19028 10.4569 2.07951 10.38C1.96875 10.3032 1.83729 10.2618 1.70249 10.2612H1.69924C1.52297 10.2611 1.35386 10.3309 1.22891 10.4552C1.10397 10.5796 1.03337 10.7483 1.03257 10.9246C1.02996 11.4682 1.57324 11.8165 1.79364 11.9344C2.05353 12.1955 2.26241 12.5028 2.40952 12.8406C2.65236 13.5229 3.35809 14.5581 5.38674 14.4246C5.3874 14.448 5.38804 14.4702 5.38836 14.4904L5.39129 14.6687C5.39129 14.8456 5.46153 15.0151 5.58655 15.1402C5.71158 15.2652 5.88115 15.3354 6.05796 15.3354C6.23477 15.3354 6.40434 15.2652 6.52936 15.1402C6.65439 15.0151 6.72463 14.8456 6.72463 14.6687L6.72137 14.4565C6.71812 14.3302 6.71356 14.1472 6.71356 13.6687ZM13.8249 3.58471C13.8461 3.50137 13.8669 3.40893 13.8851 3.30476C13.9929 2.56182 13.8989 1.80355 13.613 1.10943C13.5769 1.01894 13.5215 0.937432 13.4505 0.870629C13.3796 0.803826 13.295 0.753341 13.2025 0.722714C12.9652 0.642634 12.0889 0.48508 10.4131 1.55605C9.02014 1.22824 7.57009 1.22824 6.17711 1.55605C4.50816 0.500767 3.63641 0.643967 3.40138 0.719487C3.30663 0.748874 3.21965 0.799091 3.14682 0.866459C3.07399 0.933826 3.01716 1.01664 2.98048 1.10882C2.68869 1.81627 2.59571 2.59 2.7116 3.34645C2.72789 3.43173 2.74546 3.51051 2.76369 3.58277C2.21141 4.3184 1.91723 5.21568 1.92678 6.13551C1.92498 6.34073 1.93443 6.5459 1.9551 6.75009C2.17777 9.81845 4.17776 10.7397 5.5713 11.0561C5.54234 11.1394 5.51597 11.2286 5.49253 11.323C5.45076 11.4945 5.47871 11.6756 5.57026 11.8266C5.66182 11.9775 5.80949 12.086 5.98091 12.1283C6.15233 12.1705 6.3335 12.143 6.4847 12.0519C6.63589 11.9607 6.74477 11.8133 6.78745 11.642C6.82987 11.4199 6.9386 11.2158 7.09931 11.0567C7.19648 10.9717 7.26683 10.8602 7.30181 10.7359C7.33679 10.6115 7.33488 10.4797 7.29632 10.3565C7.25777 10.2332 7.18422 10.1238 7.08463 10.0416C6.98504 9.95937 6.8637 9.90785 6.73537 9.89332C4.43264 9.6303 3.43296 8.69215 3.28257 6.6277C3.26591 6.46419 3.25841 6.29987 3.26011 6.13551C3.24942 5.47995 3.466 4.8409 3.87306 4.32692C3.91397 4.27334 3.95753 4.22184 4.0036 4.17262C4.08522 4.08129 4.1401 3.96923 4.16221 3.84876C4.18432 3.72828 4.1728 3.60404 4.12893 3.48968C4.08396 3.36937 4.04933 3.24543 4.02542 3.11923C3.97111 2.76038 3.98892 2.39429 4.07782 2.04241C4.65724 2.20606 5.20256 2.47243 5.68782 2.82886C5.76806 2.88231 5.85887 2.91788 5.95407 2.93316C6.04927 2.94843 6.14664 2.94306 6.23958 2.91741C7.58698 2.55174 9.00752 2.55197 10.3548 2.91807C10.4483 2.9437 10.5461 2.94877 10.6417 2.93292C10.7373 2.91707 10.8283 2.88069 10.9085 2.82628C11.3915 2.46837 11.9345 2.19961 12.512 2.03266C12.6005 2.3761 12.6203 2.73363 12.5703 3.08474C12.5462 3.2231 12.5084 3.35874 12.4577 3.48969C12.4138 3.60406 12.4023 3.72829 12.4244 3.84877C12.4465 3.96925 12.5014 4.0813 12.583 4.17263C12.6344 4.23057 12.6859 4.29307 12.7321 4.35167C13.1363 4.85695 13.3492 5.48865 13.3334 6.13551C13.3346 6.30858 13.3262 6.48159 13.3083 6.65373C13.1615 8.69084 12.1579 9.62965 9.84442 9.89331C9.71606 9.90793 9.59471 9.95953 9.49513 10.0418C9.39555 10.1241 9.32203 10.2336 9.28351 10.3569C9.24499 10.4802 9.24313 10.6121 9.27816 10.7365C9.31319 10.8608 9.38359 10.9723 9.48081 11.0574C9.64657 11.2207 9.75553 11.433 9.79169 11.6628C9.83674 11.8413 9.85743 12.0251 9.85321 12.2091V13.7651C9.84669 14.1967 9.84669 14.5203 9.84669 14.6687C9.84669 14.8455 9.91692 15.0151 10.0419 15.1401C10.167 15.2651 10.3365 15.3354 10.5134 15.3354C10.6902 15.3354 10.8597 15.2651 10.9848 15.1401C11.1098 15.0151 11.18 14.8455 11.18 14.6687C11.18 14.5242 11.18 14.2071 11.1865 13.7755V12.2091C11.1919 11.9143 11.1572 11.6202 11.0833 11.3347C11.0622 11.241 11.0364 11.1485 11.0059 11.0574C12.02 10.8889 12.9415 10.366 13.6063 9.5818C14.271 8.79757 14.636 7.8029 14.6361 6.77483C14.658 6.56245 14.6683 6.34902 14.6667 6.13551C14.6815 5.21469 14.3849 4.31586 13.8249 3.58472L13.8249 3.58471Z"></path></svg></a></div></div></nav><main class="main-content"><article class="article article-home"><div class="docs-install-stats"><a class="docs-download-count" href="https://www.npmjs.com/package/agentation" title="npm downloads through 2026-09-19"><span class="docs-download-placeholder" aria-hidden="true" style="--download-fallback:&quot;23,708,220&quot;"></span><span>downloads</span></a><button type="button" class="docs-copy docs-command" aria-label="Copy install command" title="Copy install command"><code>npm install agentation -D</code><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="10.5px" height="10.5px" rx="2" style="transform:translateX(4.75px) translateY(8.75px);transform-origin:50% 50%;transform-box:fill-box"></rect><g mask="url(#_R_89av5b_)"><rect width="10.5px" height="10.5px" rx="2" style="transform:translateX(8.75px) translateY(4.75px);transform-origin:50% 50%;transform-box:fill-box"></rect></g><path d="M9.25 12.25 11 14.25 15 10" opacity="0" pathLength="1" stroke-dashoffset="0" stroke-dasharray="0 1"></path><mask id="_R_89av5b_" maskUnits="userSpaceOnUse"><rect width="24" height="24" fill="white" stroke="none"></rect><rect fill="black" stroke="black" width="10.5px" height="10.5px" rx="2" style="transform:translateX(4.75px) translateY(8.75px);transform-origin:50% 50%;transform-box:fill-box"></rect></mask></svg><span class="docs-sr-only" role="status"></span></button></div><header class="docs-header"><h1 class="docs-sr-only">Visual feedback for agents</h1><p class="tagline">Agentation turns UI annotations into structured context that AI coding agents can understand and act on. Click any element, add a note, and paste the output into Claude Code, Codex, Grok, or any AI tool.</p></header><div class="hero-demo-container reduced-motion"><style>
+        .hero-demo-container {
+          position: relative;
+          width: 100%;
+          margin: 1.5rem 0 2rem;
+        }
+
+        .hero-demo-browser {
+          position: relative;
+          width: 100%;
+          height: 300px;
+          background: #F6F5F4;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .hero-demo-browser-bar {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 12px;
+          background: #fff;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .hero-demo-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+
+        .hero-demo-dot.red { background: #ff5f57; }
+        .hero-demo-dot.yellow { background: #febc2e; }
+        .hero-demo-dot.green { background: #28c840; }
+
+        .hero-demo-url-bar {
+          flex: 1;
+          margin-left: 8px;
+          padding: 4px 10px;
+          background: rgba(0, 0, 0, 0.04);
+          border-radius: 6px;
+          font-size: 10px;
+          color: rgba(0, 0, 0, 0.4);
+          font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .hero-demo-content {
+          position: relative;
+          height: calc(100% - 38px);
+          display: flex;
+          overflow: hidden;
+        }
+
+        /* Sidebar - narrow icon-only */
+        .hero-demo-sidebar {
+          width: 44px;
+          background: #fff;
+          border-right: 1px solid rgba(0, 0, 0, 0.06);
+          padding: 12px 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .hero-demo-sidebar-logo {
+          width: 20px;
+          height: 20px;
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+          margin-bottom: 8px;
+        }
+
+        .hero-demo-sidebar-icon {
+          width: 16px;
+          height: 16px;
+          background: rgba(0, 0, 0, 0.08);
+          border-radius: 4px;
+        }
+
+        .hero-demo-sidebar-icon.active {
+          background: rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-demo-sidebar-icon.selected {
+          box-shadow: 0 0 0 2px #22c55e;
+          background: rgba(34, 197, 94, 0.15);
+        }
+
+        .hero-demo-sidebar-icon.circle {
+          border-radius: 50%;
+        }
+
+        .hero-demo-sidebar-icons {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .hero-demo-sidebar-bottom {
+          margin-top: auto;
+        }
+
+        /* Main content area */
+        .hero-demo-main {
+          flex: 1;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Header row */
+        .hero-demo-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .hero-demo-header-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .hero-demo-logo {
+          width: 18px;
+          height: 18px;
+          background: linear-gradient(135deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.08) 100%);
+          border-radius: 5px;
+        }
+
+        .hero-demo-title-text {
+          font-size: 11px;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.5);
+          font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .hero-demo-button {
+          width: 55px;
+          height: 26px;
+          background: rgba(0, 0, 0, 0.08);
+          border-radius: 5px;
+        }
+
+        .hero-demo-avatar {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: rgba(0, 0, 0, 0.1);
+          flex-shrink: 0;
+        }
+
+        /* Metrics row */
+        .hero-demo-metrics {
+          display: flex;
+          gap: 12px;
+        }
+
+        .hero-demo-metric {
+          flex: 1;
+          background: white;
+          border-radius: 8px;
+          padding: 12px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+          transition: box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        .hero-demo-metric.selected {
+          box-shadow: 0 0 0 2px #22c55e;
+          background: rgba(34, 197, 94, 0.04);
+        }
+
+        .hero-demo-metric-label {
+          width: 45px;
+          height: 5px;
+          background: rgba(0, 0, 0, 0.08);
+          border-radius: 2px;
+          margin-bottom: 8px;
+        }
+
+        .hero-demo-metric-value {
+          width: 50px;
+          height: 18px;
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 3px;
+        }
+
+        .hero-demo-metric-value.wide {
+          width: 65px;
+        }
+
+        /* Table */
+        .hero-demo-table {
+          flex: 1;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+          overflow: hidden;
+        }
+
+        .hero-demo-table-header {
+          display: flex;
+          padding: 10px 14px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+          gap: 20px;
+        }
+
+        .hero-demo-th {
+          height: 6px;
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 2px;
+        }
+
+        .hero-demo-table-row {
+          display: flex;
+          padding: 12px 14px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+          gap: 20px;
+          align-items: center;
+        }
+
+        .hero-demo-td {
+          height: 7px;
+          background: rgba(0, 0, 0, 0.06);
+          border-radius: 2px;
+        }
+
+        .hero-demo-td-pill {
+          width: 48px;
+          height: 18px;
+          background: rgba(0, 0, 0, 0.04);
+          border-radius: 9px;
+        }
+
+        .hero-demo-button-highlight {
+          position: absolute;
+          border: 2px solid rgba(59, 130, 246, 0.7);
+          border-radius: 8px;
+          background: transparent;
+          opacity: 0;
+          transform: scale(0.98);
+          transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+          pointer-events: none;
+          box-sizing: border-box;
+        }
+
+        .hero-demo-button-highlight.visible {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        /* Drag selection box - dashed style like FeaturesDemo */
+        .hero-demo-drag-box {
+          position: absolute;
+          border: 1.5px dashed #22c55e;
+          border-radius: 8px;
+          background: rgba(34, 197, 94, 0.08);
+          pointer-events: none;
+          z-index: 45;
+        }
+
+        /* Area outline - stays visible after drag */
+        .hero-demo-area-outline {
+          position: absolute;
+          border: 2px dashed #22c55e;
+          border-radius: 8px;
+          opacity: 0;
+          transition: opacity 0.15s ease;
+          pointer-events: none;
+          background: rgba(34, 197, 94, 0.05);
+          z-index: 44;
+        }
+
+        .hero-demo-area-outline.visible {
+          opacity: 1;
+        }
+
+        /* Cursor */
+        .hero-demo-cursor {
+          position: absolute;
+          pointer-events: none;
+          z-index: 100;
+          transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          display: grid;
+        }
+
+        .hero-demo-cursor.dragging {
+          transition: none;
+        }
+
+        .hero-demo-cursor.dragging * {
+          transition: none !important;
+        }
+
+        .hero-demo-cursor-pointer,
+        .hero-demo-cursor-crosshair,
+        .hero-demo-cursor-ibeam {
+          grid-area: 1 / 1;
+          transform: scale(1);
+          transform-origin: top left;
+          transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .hero-demo-cursor-pointer.hidden {
+          transform: scale(0);
+          opacity: 0;
+        }
+
+        .hero-demo-cursor-crosshair.hidden {
+          transform: scale(0);
+          opacity: 0;
+        }
+
+        .hero-demo-cursor-ibeam.hidden {
+          transform: scale(0);
+          opacity: 0;
+        }
+
+        .hero-demo-cursor-ibeam {
+          transform-origin: center center;
+        }
+
+        .hero-demo-cursor svg {
+          display: block;
+          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Toolbar - dark mode */
+        .hero-demo-toolbar {
+          position: absolute;
+          bottom: 12px;
+          right: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #1a1a1a;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.15);
+          transition: width 0.36s cubic-bezier(0.19, 1, 0.22, 1), transform 0.36s cubic-bezier(0.19, 1, 0.22, 1), background 0.15s ease;
+          width: 36px;
+          height: 36px;
+          border-radius: 18px;
+        }
+
+        .hero-demo-toolbar.hovered:not(.expanded) {
+          background: #2a2a2a;
+        }
+
+        .hero-demo-toolbar.clicking:not(.expanded) {
+          background: #333;
+          transform: scale(0.95);
+        }
+
+        .hero-demo-toolbar.expanded {
+          width: 200px;
+        }
+
+        /* One persistent end-cap icon, matching ToolbarToggleIcon in the package. */
+        .hero-demo-toolbar-icon {
+          position: absolute;
+          top: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          color: rgba(255, 255, 255, 0.85);
+        }
+
+        .hero-demo-toolbar-icon svg { overflow: visible; }
+        .hero-demo-toolbar-icon path {
+          transform-box: fill-box;
+          transform-origin: center;
+          transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.16s ease;
+        }
+        .hero-demo-toggle-top,
+        .hero-demo-toggle-middle { vector-effect: non-scaling-stroke; }
+        .hero-demo-toolbar-icon .hero-demo-toggle-bottom { transform-origin: left center; }
+        .expanded .hero-demo-toggle-top { transform: translateY(5.25px) rotate(45deg) scaleX(1.1422494); }
+        .expanded .hero-demo-toggle-middle { transform: translateX(3.5px) rotate(-45deg) scaleX(2.4748737); }
+        .expanded .hero-demo-toggle-bottom { transform: scaleX(0); opacity: 0; }
+        .expanded .hero-demo-toggle-sparkle { transform: scale(0); opacity: 0; }
+
+        .hero-demo-toolbar-buttons {
+          position: absolute;
+          right: 4px;
+          top: 4px;
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          pointer-events: none;
+          opacity: 0;
+          filter: blur(6px);
+          transform: scale(0.4);
+          transform-origin: right center;
+          transition: filter 0.14s ease-out, opacity 0.14s ease-out, transform 0.36s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .hero-demo-toolbar.expanded .hero-demo-toolbar-buttons {
+          opacity: 1;
+          filter: blur(0);
+          transform: scale(1);
+          transition: filter 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease-out, transform 0.42s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-demo-toolbar,
+          .hero-demo-toolbar-icon path,
+          .hero-demo-toolbar-buttons,
+          .hero-demo-toolbar.expanded .hero-demo-toolbar-buttons { transition: none; }
+          .hero-demo-toolbar-buttons { filter: none; transform: none; }
+        }
+
+        .hero-demo-toolbar-btn {
+          flex-shrink: 0;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: transparent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(255, 255, 255, 0.85);
+          transition: color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .hero-demo-toolbar-btn.active {
+          color: #3b82f6;
+          background-color: rgba(59, 130, 246, 0.25);
+        }
+
+        .hero-demo-toolbar-btn.hovered {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-demo-toolbar-btn.disabled {
+          opacity: 0.35;
+        }
+
+        .hero-demo-toolbar-divider {
+          width: 1px;
+          height: 12px;
+          background: rgba(255, 255, 255, 0.15);
+          margin: 0 2px;
+        }
+
+        /* Popup - dark mode */
+        .hero-demo-popup {
+          position: absolute;
+          width: 200px;
+          padding: 10px 12px 12px;
+          background: #1a1a1a;
+          border-radius: 14px;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+          opacity: 0;
+          transform: translate(-50%, 0) scale(0.95) translateY(4px);
+          transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+          z-index: 50;
+        }
+
+        .hero-demo-popup.visible {
+          opacity: 1;
+          transform: translate(-50%, 0) scale(1) translateY(0);
+        }
+
+        .hero-demo-popup-header {
+          font-size: 10px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.5);
+          margin-bottom: 6px;
+          font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .hero-demo-popup-input {
+          width: 100%;
+          height: 40px;
+          padding: 6px 8px;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 6px;
+          font-size: 11px;
+          color: #fff;
+          font-family: system-ui, -apple-system, sans-serif;
+          line-height: 1.4;
+          box-sizing: border-box;
+        }
+
+        .hero-demo-popup-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 5px;
+          margin-top: 6px;
+        }
+
+        .hero-demo-popup-btn {
+          padding: 5px 12px;
+          font-size: 10px;
+          font-weight: 500;
+          border-radius: 14px;
+          font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .hero-demo-popup-btn.cancel {
+          background: transparent;
+          color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-demo-popup-btn.submit {
+          background: #3b82f6;
+          color: white;
+        }
+
+        .hero-demo-popup-btn.submit.green {
+          background: #22c55e;
+        }
+
+        .hero-demo-popup-btn.submit.orange {
+          background: #f59e0b;
+        }
+
+        /* Marker - matches real marker */
+        .hero-demo-marker {
+          position: absolute;
+          width: 22px;
+          height: 22px;
+          background: #3b82f6;
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 600;
+          font-family: system-ui, -apple-system, sans-serif;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.3);
+          transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+          z-index: 40;
+        }
+
+        .hero-demo-marker.visible {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        .hero-demo-marker.green {
+          background: #34c759;
+          border-radius: 6px;
+          width: 26px;
+          height: 26px;
+        }
+
+        .hero-demo-marker.orange {
+          background: #f59e0b;
+        }
+
+        /* Text selection highlight */
+        .hero-demo-text-selection {
+          position: absolute;
+          background: rgba(59, 130, 246, 0.25);
+          border-radius: 2px;
+          pointer-events: none;
+          z-index: 35;
+          height: 16px;
+        }
+
+        /* Browser fades when terminal appears */
+        .hero-demo-browser {
+          transition: opacity 0.3s ease;
+        }
+
+        .hero-demo-browser.faded {
+          opacity: 0.4;
+        }
+
+        /* Copied output */
+        .hero-demo-terminal {
+          position: absolute;
+          top: 20px;
+          right: 25px;
+          width: 340px;
+          height: 280px;
+          background: #fff;
+          border-radius: 10px;
+          overflow: hidden;
+          border: 1px solid rgba(0, 0, 0, 0.09);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+          opacity: 0;
+          transform: translateY(8px) scale(0.98);
+          transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+          z-index: 60;
+        }
+
+        .hero-demo-terminal.visible {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        .hero-demo-terminal-bar {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 12px;
+          background: #fff;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .hero-demo-terminal-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+
+        .hero-demo-terminal-dot.red { background: #ff5f57; }
+        .hero-demo-terminal-dot.yellow { background: #febc2e; }
+        .hero-demo-terminal-dot.green { background: #28c840; }
+
+        .hero-demo-terminal-title {
+          flex: 1;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+          color: rgba(0, 0, 0, 0.85);
+          font-family: system-ui, -apple-system, sans-serif;
+          margin-right: 36px;
+        }
+
+        .hero-demo-terminal-content {
+          padding: 12px 14px;
+          font-family: "SF Mono", "SFMono-Regular", ui-monospace, Consolas, monospace;
+          font-size: 10px;
+          line-height: 1.6;
+          color: rgba(0, 0, 0, 0.7);
+          white-space: pre-wrap;
+          overflow: hidden;
+        }
+
+        .hero-demo-terminal-welcome {
+          margin-bottom: 8px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+          .hero-demo-browser {
+            height: 260px;
+            border-radius: 10px;
+          }
+
+          .hero-demo-browser-bar {
+            padding: 8px 10px;
+          }
+
+          .hero-demo-dot {
+            width: 6px;
+            height: 6px;
+          }
+
+          .hero-demo-url-bar {
+            font-size: 9px;
+            padding: 3px 8px;
+          }
+
+          .hero-demo-sidebar {
+            display: none;
+          }
+
+          .hero-demo-main {
+            padding: 12px;
+            gap: 10px;
+          }
+
+          .hero-demo-logo {
+            width: 14px;
+            height: 14px;
+          }
+
+          .hero-demo-title-text {
+            font-size: 10px;
+          }
+
+          .hero-demo-button {
+            width: 45px;
+            height: 22px;
+          }
+
+          .hero-demo-avatar {
+            width: 22px;
+            height: 22px;
+          }
+
+          .hero-demo-metrics {
+            gap: 8px;
+          }
+
+          .hero-demo-metric {
+            padding: 10px;
+          }
+
+          .hero-demo-metric-label {
+            width: 35px;
+            height: 4px;
+            margin-bottom: 6px;
+          }
+
+          .hero-demo-metric-value {
+            width: 40px;
+            height: 14px;
+          }
+
+          .hero-demo-table-header {
+            padding: 8px 10px;
+            gap: 14px;
+          }
+
+          .hero-demo-th {
+            height: 5px;
+          }
+
+          .hero-demo-table-row {
+            padding: 10px;
+            gap: 14px;
+          }
+
+          .hero-demo-td {
+            height: 6px;
+          }
+
+          .hero-demo-td-pill {
+            width: 38px;
+            height: 14px;
+          }
+
+          .hero-demo-toolbar {
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            bottom: 8px;
+            right: 8px;
+          }
+
+          .hero-demo-toolbar.expanded { width: 165px; }
+          .hero-demo-toolbar-icon { width: 28px; height: 28px; }
+          .hero-demo-toolbar-icon svg { width: 16px; height: 16px; }
+          .hero-demo-toolbar-buttons { top: 3px; right: 3px; }
+
+          .hero-demo-toolbar-btn {
+            width: 22px;
+            height: 22px;
+          }
+
+          .hero-demo-toolbar-btn svg {
+            width: 13px;
+            height: 13px;
+          }
+
+          .hero-demo-toolbar-divider {
+            height: 16px;
+            margin: 0 4px;
+          }
+
+          .hero-demo-popup {
+            width: 190px;
+            padding: 8px 10px 10px;
+            border-radius: 12px;
+          }
+
+          .hero-demo-popup-header {
+            font-size: 9px;
+          }
+
+          .hero-demo-popup-input {
+            height: 32px;
+            font-size: 9px;
+          }
+
+          .hero-demo-popup-btn {
+            padding: 4px 10px;
+            font-size: 9px;
+          }
+
+          .hero-demo-marker {
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+          }
+
+          .hero-demo-marker.green {
+            width: 22px;
+            height: 22px;
+          }
+
+          .hero-demo-marker.orange {
+            width: 18px;
+            height: 18px;
+          }
+
+          .hero-demo-terminal {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            width: auto;
+            height: 240px;
+            border-radius: 8px;
+          }
+
+          .hero-demo-terminal-bar {
+            padding: 10px 12px;
+          }
+
+          .hero-demo-terminal-dot {
+            width: 10px;
+            height: 10px;
+          }
+
+          .hero-demo-terminal-title {
+            font-size: 11px;
+            margin-right: 30px;
+          }
+
+          .hero-demo-terminal-content {
+            padding: 10px 12px;
+            font-size: 9px;
+          }
+        }
+      </style><div aria-hidden="true" class="hero-demo-browser "><div class="hero-demo-browser-bar"><div class="hero-demo-dot red"></div><div class="hero-demo-dot yellow"></div><div class="hero-demo-dot green"></div><div class="hero-demo-url-bar">localhost:3000</div></div><div class="hero-demo-content"><div class="hero-demo-sidebar"><div class="hero-demo-sidebar-logo"></div><div class="hero-demo-sidebar-icons"><div class="hero-demo-sidebar-icon "></div><div class="hero-demo-sidebar-icon active "></div><div class="hero-demo-sidebar-icon "></div></div><div class="hero-demo-sidebar-bottom"><div class="hero-demo-sidebar-icon circle"></div></div></div><div class="hero-demo-main"><div class="hero-demo-header"><div class="hero-demo-header-left"><div class="hero-demo-logo"></div><span class="hero-demo-title-text">Benji&#x27;s dashboard</span></div><div class="hero-demo-button"></div></div><div class="hero-demo-metrics"><div class="hero-demo-metric "><div class="hero-demo-metric-label"></div><div class="hero-demo-metric-value"></div></div><div class="hero-demo-metric "><div class="hero-demo-metric-label" style="width:55px"></div><div class="hero-demo-metric-value wide"></div></div><div class="hero-demo-metric "><div class="hero-demo-metric-label" style="width:38px"></div><div class="hero-demo-metric-value" style="width:40px"></div></div></div><div class="hero-demo-table"><div class="hero-demo-table-header"><div class="hero-demo-th" style="width:60px"></div><div class="hero-demo-th" style="width:45px"></div><div class="hero-demo-th" style="width:40px"></div></div><div class="hero-demo-table-row"><div class="hero-demo-td" style="width:70px"></div><div class="hero-demo-td" style="width:50px"></div><div class="hero-demo-td-pill"></div></div><div class="hero-demo-table-row"><div class="hero-demo-td" style="width:55px"></div><div class="hero-demo-td" style="width:42px"></div><div class="hero-demo-td-pill" style="width:42px"></div></div><div class="hero-demo-table-row"><div class="hero-demo-td" style="width:62px"></div><div class="hero-demo-td" style="width:38px"></div><div class="hero-demo-td-pill"></div></div></div><div class="hero-demo-toolbar   "><div class="hero-demo-toolbar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hero-demo-toggle-top" d="M5.5 6.75H18.5"></path><path class="hero-demo-toggle-middle" d="M5.5 12H11.5"></path><path class="hero-demo-toggle-bottom" d="M5.5 17.25H9.25"></path><path class="hero-demo-toggle-sparkle" d="M16 12.75L16.5179 13.9677C16.8078 14.6494 17.3506 15.1922 18.0323 15.4821L19.25 16L18.0323 16.5179C17.3506 16.8078 16.8078 17.3506 16.5179 18.0323L16 19.25L15.4821 18.0323C15.1922 17.3506 14.6494 16.8078 13.9677 16.5179L12.75 16L13.9677 15.4821C14.6494 15.1922 15.1922 14.6494 15.4821 13.9677L16 12.75Z"></path></svg></div><div class="hero-demo-toolbar-buttons"><div class="hero-demo-toolbar-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 6L8 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M16 18L16 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div class="hero-demo-toolbar-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3.91752 12.7539C3.65127 12.2996 3.65037 11.7515 3.9149 11.2962C4.9042 9.59346 7.72688 5.49994 12 5.49994C16.2731 5.49994 19.0958 9.59346 20.0851 11.2962C20.3496 11.7515 20.3487 12.2996 20.0825 12.7539C19.0908 14.4459 16.2694 18.4999 12 18.4999C7.73064 18.4999 4.90918 14.4459 3.91752 12.7539Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 14.8261C13.5608 14.8261 14.8261 13.5608 14.8261 12C14.8261 10.4392 13.5608 9.17392 12 9.17392C10.4392 9.17392 9.17391 10.4392 9.17391 12C9.17391 13.5608 10.4392 14.8261 12 14.8261Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div><div class="hero-demo-toolbar-btn  "><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4.75 11.25C4.75 10.4216 5.42157 9.75 6.25 9.75H12.75C13.5784 9.75 14.25 10.4216 14.25 11.25V17.75C14.25 18.5784 13.5784 19.25 12.75 19.25H6.25C5.42157 19.25 4.75 18.5784 4.75 17.75V11.25Z" stroke="currentColor" stroke-width="1.5"></path><path d="M17.25 14.25H17.75C18.5784 14.25 19.25 13.5784 19.25 12.75V6.25C19.25 5.42157 18.5784 4.75 17.75 4.75H11.25C10.4216 4.75 9.75 5.42157 9.75 6.25V6.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div class="hero-demo-toolbar-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10 11.5L10.125 15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14 11.5L13.87 15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9 7.5V6.25C9 5.42157 9.67157 4.75 10.5 4.75H13.5C14.3284 4.75 15 5.42157 15 6.25V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.5 7.75H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M6.75 7.75L7.11691 16.189C7.16369 17.2649 7.18708 17.8028 7.41136 18.2118C7.60875 18.5717 7.91211 18.8621 8.28026 19.0437C8.69854 19.25 9.23699 19.25 10.3139 19.25H13.6861C14.763 19.25 15.3015 19.25 15.7197 19.0437C16.0879 18.8621 16.3912 18.5717 16.5886 18.2118C16.8129 17.8028 16.8363 17.2649 16.8831 16.189L17.25 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div class="hero-demo-toolbar-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M10.6504 5.81117C10.9939 4.39628 13.0061 4.39628 13.3496 5.81117C13.5715 6.72517 14.6187 7.15891 15.4219 6.66952C16.6652 5.91193 18.0881 7.33479 17.3305 8.57815C16.8411 9.38134 17.2748 10.4285 18.1888 10.6504C19.6037 10.9939 19.6037 13.0061 18.1888 13.3496C17.2748 13.5715 16.8411 14.6187 17.3305 15.4219C18.0881 16.6652 16.6652 18.0881 15.4219 17.3305C14.6187 16.8411 13.5715 17.2748 13.3496 18.1888C13.0061 19.6037 10.9939 19.6037 10.6504 18.1888C10.4285 17.2748 9.38135 16.8411 8.57815 17.3305C7.33479 18.0881 5.91193 16.6652 6.66952 15.4219C7.15891 14.6187 6.72517 13.5715 5.81117 13.3496C4.39628 13.0061 4.39628 10.9939 5.81117 10.6504C6.72517 10.4285 7.15891 9.38134 6.66952 8.57815C5.91193 7.33479 7.33479 5.91192 8.57815 6.66952C9.38135 7.15891 10.4285 6.72517 10.6504 5.81117Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.5"></circle></svg></div><div class="hero-demo-toolbar-divider"></div><div class="hero-demo-toolbar-btn" aria-hidden="true"></div></div></div></div><div class="hero-demo-button-highlight " style="top:78px;left:16px;width:76px;height:41px"></div><div class="hero-demo-area-outline " style="left:0;top:0;width:0;height:0"></div><div class="hero-demo-marker visible" style="top:52px;left:104px">1</div><div class="hero-demo-marker visible" style="top:105px;left:224px">2</div><div class="hero-demo-marker " style="top:98.5px;left:54px">3</div><div class="hero-demo-marker green " style="top:0;left:0">4</div><div class="hero-demo-marker orange " style="top:0;left:0">5</div><div class="hero-demo-popup " style="left:0;top:0"><div class="hero-demo-popup-header">button.submit-btn</div><div class="hero-demo-popup-input"><span style="opacity:0.4">|</span></div><div class="hero-demo-popup-actions"><div class="hero-demo-popup-btn cancel">Cancel</div><div class="hero-demo-popup-btn submit  ">Add</div></div></div><div class="hero-demo-cursor " style="left:280px;top:180px"><div class="hero-demo-cursor-pointer "><svg height="24" width="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" transform="translate(10 7)"><path d="m6.148 18.473 1.863-1.003 1.615-.839-2.568-4.816h4.332l-11.379-11.408v16.015l3.316-3.221z" fill="#fff"></path><path d="m6.431 17 1.765-.941-2.775-5.202h3.604l-8.025-8.043v11.188l2.53-2.442z" fill="#000"></path></g></svg></div><div class="hero-demo-cursor-crosshair hidden"><svg width="17" height="17" viewBox="0 0 17 17" fill="none"><line x1="8.5" y1="0" x2="8.5" y2="17" stroke="black" stroke-width="1"></line><line x1="0" y1="8.5" x2="17" y2="8.5" stroke="black" stroke-width="1"></line></svg></div><div class="hero-demo-cursor-ibeam hidden"><svg width="10" height="16" viewBox="0 0 10 16" fill="none"><path d="M3 1H7M3 15H7M5 1V15" stroke="black" stroke-width="1" stroke-linecap="round"></path></svg></div></div></div></div><div aria-hidden="true" class="hero-demo-terminal "><div class="hero-demo-terminal-bar"><div class="hero-demo-terminal-dot red"></div><div class="hero-demo-terminal-dot yellow"></div><div class="hero-demo-terminal-dot green"></div><div class="hero-demo-terminal-title">Feedback for your agent</div></div><div class="hero-demo-terminal-content"><span style="opacity:0.4">█</span></div></div></div><section><h2>How you use it</h2><ol><li>Click the <svg style="display:inline-block;vertical-align:-0.45em;width:1.5em;height:1.5em;margin:0 -0.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 12L5.5 12"></path><path d="M18.5 6.75L5.5 6.75"></path><path d="M9.25 17.25L5.5 17.25"></path><path d="M16 12.75L16.5179 13.9677C16.8078 14.6494 17.3506 15.1922 18.0323 15.4821L19.25 16L18.0323 16.5179C17.3506 16.8078 16.8078 17.3506 16.5179 18.0323L16 19.25L15.4821 18.0323C15.1922 17.3506 14.6494 16.8078 13.9677 16.5179L12.75 16L13.9677 15.4821C14.6494 15.1922 15.1922 14.6494 15.4821 13.9677L16 12.75Z"></path></svg> icon in the bottom-right corner to activate</li><li><strong>Hover</strong> over elements to see their names highlighted</li><li><strong>Click</strong> any element to add an annotation</li><li>Write your feedback and click <strong>Add</strong></li><li>Click <svg style="display:inline-block;vertical-align:-0.45em;width:1.5em;height:1.5em;margin:0 -0.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4.75 11.25C4.75 10.4216 5.42157 9.75 6.25 9.75H12.75C13.5784 9.75 14.25 10.4216 14.25 11.25V17.75C14.25 18.5784 13.5784 19.25 12.75 19.25H6.25C5.42157 19.25 4.75 18.5784 4.75 17.75V11.25Z"></path><path d="M17.25 14.25H17.75C18.5784 14.25 19.25 13.5784 19.25 12.75V6.25C19.25 5.42157 18.5784 4.75 17.75 4.75H11.25C10.4216 4.75 9.75 5.42157 9.75 6.25V6.75"></path></svg> to copy formatted markdown</li><li>Paste into your agent</li></ol><aside class="docs-callout"><p>With <a href="/mcp">MCP</a>, your agent can read feedback directly. Connect your agent, add a note, then ask it to address your annotations.</p></aside></section><section><h2>How agents use it</h2><p>Give the output to Claude, Codex, Gemini, Grok, or any coding agent with access to your codebase. Depending on your output settings and what the page exposes, it includes:</p><ul><li><strong>CSS selectors</strong> to grep your codebase</li><li><strong>Source file paths</strong> to jump directly to the right line</li><li><strong>React component tree</strong> to understand the hierarchy</li><li><strong>Computed styles</strong> to understand current appearance</li><li><strong>Your feedback</strong> with intent and priority</li></ul><p>Without Agentation, you’d have to describe the element (“the blue button in the sidebar”) and hope the agent guesses right. With Agentation, you give it <code>.sidebar &gt; button.primary</code> and it can grep for that directly.</p></section><section class="demo-section hide-on-mobile"><h2>Try it</h2><p>The toolbar is active on this page. Try annotating these demo elements:</p><div class="demo-elements"><div class="button-group"><button class="demo-button">Primary</button><button class="demo-button secondary">Secondary</button><button class="demo-button" style="background:#3c82f7">Modal</button><button class="demo-button" style="background:#7c3aed">Shadow Modal</button></div><input type="text" class="demo-input" placeholder="Try selecting this text..." value=""/><div class="demo-card"><h3>Example Card</h3><p>Click on this card or select this text to create an annotation. The output will include the element path and your feedback.</p></div></div></section><section class="demo-section hide-on-mobile"><h2>Animation pause demo</h2><p>Click <svg style="display:inline-block;vertical-align:-0.45em;width:1.5em;height:1.5em;margin:0 -0.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 6L8 18"></path><path d="M16 18L16 6"></path></svg> in the toolbar to freeze this animation:</p><div class="animation-demo"><div class="progress-bar-demo"><div class="progress-bar"></div></div></div></section><section><h2>Agents talk back</h2><p>With <a href="/mcp">MCP integration</a> and the <a href="/schema">Annotation Format Schema</a>, agents don’t just read your annotations — they can respond to them:</p><ul><li><strong>“What annotations do I have?”</strong>: List all feedback across pages</li><li><strong>“Should this be 24px or 16px?”</strong>: Agent asks for clarification</li><li><strong>“Fixed the padding”</strong>: Agent resolves with a summary</li><li><strong>“Clear all annotations”</strong>: Dismiss everything at once</li></ul><p>Follow-up questions and resolutions stay attached to the original annotation.</p></section><section><h2>Best practices</h2><ul><li><strong>Be specific</strong>: “Button text unclear” is better than “fix this”</li><li><strong>One issue per annotation</strong>: easier for the agent to address individually</li><li><strong>Include context</strong>: mention what you expected vs. what you see</li><li><strong>Use text selection</strong>: for typos or content issues, select the exact text</li><li><strong>Pause animations</strong>: to annotate a specific animation frame</li></ul></section><section><h2>Licensing</h2><p>Agentation is free for individuals and companies for internal use. Use it to annotate your own projects, debug your own apps, or streamline feedback within your team. <!-- --> <a href="mailto:benji@dip.org">Contact us</a> for a commercial license if you&#x27;re redistributing Agentation as part of a product you sell.</p></section><section class="quickstart-links"><nav class="docs-links" aria-label="Related documentation"><a href="/mcp"><span>Set up real-time sync with MCP</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></a><a href="/webhooks"><span>Push annotations to external services</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></a><a href="/api"><span>Build your own integration with the API</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></a></nav></section></article><footer class="footer" style="display:flex;justify-content:space-between;align-items:baseline;gap:20px"><p>Made by<!-- --> <a href="https://x.com/benjitaylor" target="_blank" rel="noopener noreferrer">Benji Taylor</a>,<!-- --> <a href="https://x.com/seldom" target="_blank" rel="noopener noreferrer">Dennis Jin</a>, and<!-- --> <a href="https://x.com/alexvanderzon" target="_blank" rel="noopener noreferrer">Alex Vanderzon</a></p><a href="/colophon">Colophon</a></footer><div style="display:none"></div><!--$--><!--/$--></main><script src="/_next/static/chunks/webpack-3de223601645e915.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[7547,[\"23\",\"static/chunks/23-13db9c300e260523.js\",\"281\",\"static/chunks/281-0e1e3bc668f37fee.js\",\"549\",\"static/chunks/549-f9bbb72fc96fddbc.js\",\"177\",\"static/chunks/app/layout-3be910eca5a03267.js\"],\"MobileNav\"]\n3:I[214,[\"23\",\"static/chunks/23-13db9c300e260523.js\",\"281\",\"static/chunks/281-0e1e3bc668f37fee.js\",\"549\",\"static/chunks/549-f9bbb72fc96fddbc.js\",\"177\",\"static/chunks/app/layout-3be910eca5a03267.js\"],\"SideNav\"]\n4:I[7248,[],\"\"]\n5:I[2166,[],\"\"]\n6:I[134,[\"281\",\"static/chunks/281-0e1e3bc668f37fee.js\",\"345\",\"static/chunks/app/not-found-0bb0e444242f0b74.js\"],\"default\"]\n7:I[6426,[\"23\",\"static/chunks/23-13db9c300e260523.js\",\"281\",\"static/chunks/281-0e1e3bc668f37fee.js\",\"549\",\"static/chunks/549-f9bbb72fc96fddbc.js\",\"177\",\"static/chunks/app/layout-3be910eca5a03267.js\"],\"ToolbarProvider\"]\n8:I[9341,[],\"ClientPageRoot\"]\n9:I[3326,[\"23\",\"static/chunks/23-13db9c300e260523.js\",\"281\",\"static/chunks/281-0e1e3bc668f37fee.js\",\"416\",\"static/chunks/416-8bde8cc5cd0a5acc.js\",\"974\",\"static/chunks/app/page-3fd2498c48adf6c2.js\"],\"default\"]\nc:I[8253,[],\"OutletBoundary\"]\ne:I[3880,[],\"AsyncMetadataOutlet\"]\n10:I[8253,[],\"ViewportBoundary\"]\n12:I[8253,[],\"MetadataBoundary\"]\n13:\"$Sreact.suspense\"\n15:I[6460,[],\"\"]\n:HL[\"/_next/static/css/07ce57db0999cfda.css\",\"style\"]\n:HL[\"/_next/static/css/894500f1dd6135ac.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"E0fIulhm39ghxRM8vc5nc\",\"p\":\"\",\"c\":[\"\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"__PAGE__\",{}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/07ce57db0999cfda.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[[\"$\",\"script\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"(function i(a,b,c,d){let e=null;try{e=localStorage.getItem(a)}catch{}let f=d(b,c(e),Date.now(),Math.random());document.documentElement.style.setProperty(\\\"--agentation-download-start\\\",JSON.stringify(f.displayed.toLocaleString(\\\"en-US\\\")));try{localStorage.setItem(a,JSON.stringify(f))}catch{}})(\\\"agentation:download-counter:v2\\\",24358220,function j(a){try{let b=JSON.parse(a??\\\"null\\\");return(b?.version===1||b?.version===2)\u0026\u0026Number.isSafeInteger(b.displayed)\u0026\u0026Number.isSafeInteger(b.verifiedTotal)\u0026\u0026b.displayed\u003e=0\u0026\u0026b.displayed\u003c=b.verifiedTotal\u0026\u0026Number.isFinite(b.updatedAt)\u0026\u0026b.updatedAt\u003e0\u0026\u0026(void 0===b.checkedAt||Number.isFinite(b.checkedAt)\u0026\u0026b.checkedAt\u003e0)\u0026\u0026(void 0===b.verifiedThrough||/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(b.verifiedThrough))?b:null}catch{return null}},function k(a,b,c,d){let e=Math.max(a,b?.verifiedTotal??0),f=Math.round(4e5+5e5*Math.max(0,Math.min(1,d))),g=b?.version===1\u0026\u0026b.displayed===b.verifiedTotal,h=b\u0026\u0026!g?b.displayed:Math.max(0,e-f);return{...b,version:2,displayed:h,verifiedTotal:e,updatedAt:c}});\"}}],[\"$\",\"link\",null,{\"href\":\"https://fonts.googleapis.com/css2?family=Inter:wght@100..900\u0026family=Cascadia+Code:ital@1\u0026display=swap\",\"rel\":\"stylesheet\"}]]}],[\"$\",\"body\",null,{\"children\":[[\"$\",\"div\",null,{\"className\":\"mobile-notice\",\"children\":[[\"$\",\"span\",null,{\"className\":\"mobile-notice-icon\",\"children\":[\"$\",\"svg\",null,{\"width\":\"14\",\"height\":\"14\",\"viewBox\":\"0 0 24 24\",\"fill\":\"none\",\"stroke\":\"currentColor\",\"strokeWidth\":\"2\",\"strokeLinecap\":\"round\",\"strokeLinejoin\":\"round\",\"children\":[[\"$\",\"rect\",null,{\"x\":\"2\",\"y\":\"3\",\"width\":\"20\",\"height\":\"14\",\"rx\":\"2\",\"ry\":\"2\"}],[\"$\",\"line\",null,{\"x1\":\"8\",\"y1\":\"21\",\"x2\":\"16\",\"y2\":\"21\"}],[\"$\",\"line\",null,{\"x1\":\"12\",\"y1\":\"17\",\"x2\":\"12\",\"y2\":\"21\"}]]}]}],\"Agentation is currently desktop only.\"]}],[\"$\",\"$L2\",null,{}],[\"$\",\"$L3\",null,{}],[\"$\",\"main\",null,{\"className\":\"main-content\",\"children\":[\"$\",\"$L4\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L5\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[\"$\",\"$L6\",null,{}],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}],[\"$\",\"$L7\",null,{}]]}]]}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"$L8\",null,{\"Component\":\"$9\",\"searchParams\":{},\"params\":{},\"promises\":[\"$@a\",\"$@b\"]}],[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/894500f1dd6135ac.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"$Lc\",null,{\"children\":[\"$Ld\",[\"$\",\"$Le\",null,{\"promise\":\"$@f\"}]]}]]}],{},null,false]},null,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$L10\",null,{\"children\":\"$L11\"}],null],[\"$\",\"$L12\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$13\",null,{\"fallback\":null,\"children\":\"$L14\"}]}]}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$15\",[]],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"a:{}\nb:\"$0:f:0:1:2:children:1:props:children:0:props:params\"\n"])</script><script>self.__next_f.push([1,"11:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\nd:null\n"])</script><script>self.__next_f.push([1,"16:I[5928,[],\"IconMark\"]\n"])</script><script>self.__next_f.push([1,"f:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"Agentation\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"The visual feedback tool for agents.\"}],[\"$\",\"meta\",\"2\",{\"property\":\"og:title\",\"content\":\"Agentation\"}],[\"$\",\"meta\",\"3\",{\"property\":\"og:description\",\"content\":\"The visual feedback tool for agents.\"}],[\"$\",\"meta\",\"4\",{\"property\":\"og:image\",\"content\":\"https://agentation.com/og-image.png\"}],[\"$\",\"meta\",\"5\",{\"property\":\"og:image:width\",\"content\":\"2400\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:image:height\",\"content\":\"1260\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:image:alt\",\"content\":\"Agentation visual feedback and UI annotations\"}],[\"$\",\"meta\",\"8\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"9\",{\"name\":\"twitter:title\",\"content\":\"Agentation\"}],[\"$\",\"meta\",\"10\",{\"name\":\"twitter:description\",\"content\":\"The visual feedback tool for agents.\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:image\",\"content\":\"https://agentation.com/og-image.png\"}],[\"$\",\"link\",\"12\",{\"rel\":\"icon\",\"href\":\"/favicon.ico\",\"type\":\"image/x-icon\",\"sizes\":\"16x16\"}],[\"$\",\"link\",\"13\",{\"rel\":\"icon\",\"href\":\"/icon.png?3890125bf12cbe0a\",\"type\":\"image/png\",\"sizes\":\"192x192\"}],[\"$\",\"link\",\"14\",{\"rel\":\"apple-touch-icon\",\"href\":\"/apple-icon.png?e8dd87e09e31d2bf\",\"type\":\"image/png\",\"sizes\":\"180x180\"}],[\"$\",\"$L16\",\"15\",{}]],\"error\":null,\"digest\":\"$undefined\"}\n"])</script><script>self.__next_f.push([1,"14:\"$f:metadata\"\n"])</script></body></html>

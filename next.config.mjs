@@ -46,6 +46,35 @@ const nextConfig = {
     domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
   },
 
+  /**
+   * The public surface is a dataset, not a session — anyone should be able to
+   * query it from a script, a notebook, a page on another origin, or an MCP
+   * client. The spec promised "CORS open"; without these headers a browser
+   * blocks the response before the caller ever sees it.
+   *
+   * Only the public API. The site's own routes are same-origin and don't need
+   * this, and the admin endpoints still require a bearer token — CORS is about
+   * who may *read* a response, not about who is allowed to act.
+   */
+  async headers() {
+    const corsHeaders = [
+      { key: "Access-Control-Allow-Origin", value: "*" },
+      { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
+      {
+        key: "Access-Control-Allow-Headers",
+        // The MCP two are what a browser-based MCP client sends.
+        value:
+          "Authorization, Content-Type, MCP-Protocol-Version, Mcp-Session-Id",
+      },
+      { key: "Access-Control-Expose-Headers", value: "Mcp-Session-Id" },
+    ];
+
+    return [
+      { source: "/api/v1/:path*", headers: corsHeaders },
+      { source: "/api/mcp", headers: corsHeaders },
+    ];
+  },
+
   experimental: {
     // Chromium + puppeteer must stay outside the server bundle and their
     // binary must be traced into the /api/link-preview function on Vercel.

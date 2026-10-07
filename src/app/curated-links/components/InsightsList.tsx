@@ -1,9 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Pencil, Search, Shuffle, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
@@ -13,7 +14,6 @@ import {
   sortByNewestId,
 } from "../utils/urlUtils";
 import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
-import { NoteEditorModal } from "./NoteEditorModal";
 import { LikeButton } from "./LikeButton";
 import { FadeIn } from "@/components/FadeIn";
 import {
@@ -59,21 +59,19 @@ export default function InsightsList({
   likeCounts,
   shuffleSeed,
 }: InsightsListProps) {
+  const router = useRouter();
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
-  const [isAdminMode, setIsAdminMode] = useState(false);
-  const [curatedLinks, setCuratedLinks] = useState<LinkData[]>([]);
-  const [selectedLinkForEditing, setSelectedLinkForEditing] =
-    useState<LinkData | null>(null);
-  const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
   const [sort, setSort] = useState<"newest" | "liked" | "shuffle">("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"list" | "grid">("list");
+  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [hiddenKeys, setHiddenKeys] = useState<Set<string>>(new Set());
   // Captured previews start server-rendered, then fill in as we warm misses.
   const [previewMap, setPreviewMap] = useState(previews);
   const warmedRef = useRef<Set<string>>(new Set());
@@ -213,6 +211,44 @@ export default function InsightsList({
   useEffect(() => {
     window.localStorage.setItem("insights:sort-v2", sort);
   }, [sort]);
+
+  // Admin mode: ?admin in the URL; the key is prompted once and stored in
+  // this browser only. Hiding is reversible server-side (hidden_at).
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has("admin")) return;
+    const stored = window.localStorage.getItem("insights_admin_key");
+    const key =
+      stored ?? window.prompt("Admin key (stored in this browser only)");
+    if (key) {
+      window.localStorage.setItem("insights_admin_key", key);
+      setAdminKey(key);
+    }
+  }, []);
+
+  const hideLink = async (link: EnrichedLink) => {
+    if (!adminKey) return;
+    if (!window.confirm(`Hide “${link.title}” from every surface?`)) return;
+    const response = await fetch("/api/v1/links/hide", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${adminKey}`,
+      },
+      body: JSON.stringify({ url: link.url }),
+    });
+    if (response.status === 401) {
+      window.localStorage.removeItem("insights_admin_key");
+      setAdminKey(null);
+      window.alert("Wrong admin key.");
+      return;
+    }
+    if (response.ok) {
+      setHiddenKeys((prev) => new Set(prev).add(normalizeUrl(link.url)));
+      feedback.press();
+      // Re-render server components so the header count drops too.
+      router.refresh();
+    }
+  };
 
   // A card shows the shader while it's on screen and its screenshot isn't ready
   // yet. Off-screen cards render nothing, so only the cards in view ever run a
@@ -366,91 +402,9 @@ export default function InsightsList({
     };
   }, [view, sortedLinks, visibleItems]);
 
-  // Admin mode is opt-in via ?adminKey=...
-  useEffect(() => {
-    const adminKey = new URLSearchParams(window.location.search).get(
-      "adminKey"
-    );
-    if (adminKey && adminKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
-      setIsAdminMode(true);
-    }
-  }, []);
-
-  const fetchCuratedLinks = async () => {
-    try {
-      const response = await fetch("/api/curated-links", {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
-        },
-      });
-      if (!response.ok) return;
-      const data = await response.json();
-      setCuratedLinks(data.links);
-    } catch (error) {
-      console.error("Error fetching curated links:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (isAdminMode) fetchCuratedLinks();
-  }, [isAdminMode]);
-
-  const openEditor = (link: EnrichedLink) => {
-    const curated = curatedLinks.find(
-      (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-    );
-    setSelectedLinkForEditing({ ...link, ...(curated ?? {}) });
-    setIsEditorModalOpen(true);
-  };
-
-  const handleSaveNotes = async (
-    linkId: string,
-    notes: string,
-    creatorTwitter?: string
-  ) => {
-    try {
-      await fetch("/api/curated-links/save-notes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
-        },
-        body: JSON.stringify({ linkId, notes, creatorTwitter }),
-      });
-      await fetchCuratedLinks();
-    } catch (error) {
-      console.error("Error saving notes:", error);
-    }
-  };
-
-  const addToCollection = async (data: {
-    linkId: string;
-    notes: string;
-    creatorTwitter: string;
-    category: string;
-  }) => {
-    const link = links.find((item) => item.id === data.linkId);
-    if (!link) throw new Error("Link not found");
-
-    await fetch("/api/curated-links", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_API_KEY}`,
-      },
-      body: JSON.stringify({
-        title: link.title,
-        url: link.url,
-        description: link.description,
-        category: data.category,
-        notes: data.notes,
-        creatorTwitter: data.creatorTwitter,
-      }),
-    });
-    await fetchCuratedLinks();
-  };
-
-  const visibleLinks = sortedLinks.slice(0, visibleItems);
+  const visibleLinks = sortedLinks
+    .filter((link) => !hiddenKeys.has(normalizeUrl(link.url)))
+    .slice(0, visibleItems);
 
   return (
     <PreviewCardProvider>
@@ -666,14 +620,6 @@ export default function InsightsList({
         />
       </div>
 
-      {isAdminMode && (
-        <div className="mt-4 flex items-center rounded-md border border-border px-3 py-2">
-          <span className="type-caption">
-            Admin · {curatedLinks.length} curated
-          </span>
-        </div>
-      )}
-
       {/* Links */}
       <div className="mt-6">
         {visibleLinks.length === 0 ? (
@@ -692,9 +638,6 @@ export default function InsightsList({
 
             <div className="flex flex-col">
               {visibleLinks.map((link, index) => {
-                const isCurated = curatedLinks.some(
-                  (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-                );
                 const href = appendUTMParams(link.url, {
                   utm_source: "souravinsights.com",
                   utm_medium: "curated_links",
@@ -711,9 +654,8 @@ export default function InsightsList({
                           previewMap[link.url] ??
                           `/api/link-preview?url=${encodeURIComponent(link.url)}`
                         }
-                        isAdminMode={isAdminMode}
-                        isCurated={isCurated}
-                        onEdit={() => openEditor(link)}
+                        isAdmin={adminKey !== null}
+                        onHide={() => hideLink(link)}
                       />
                     </FadeIn>
                   </div>
@@ -727,9 +669,6 @@ export default function InsightsList({
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {visibleLinks.map((link, index) => {
-              const isCurated = curatedLinks.some(
-                (item) => normalizeUrl(item.url) === normalizeUrl(link.url)
-              );
               const href = appendUTMParams(link.url, {
                 utm_source: "souravinsights.com",
                 utm_medium: "curated_links",
@@ -748,10 +687,9 @@ export default function InsightsList({
                     isVisible={visibleUrls.has(link.url)}
                     isFailed={failedUrls.has(link.url)}
                     onPreviewError={() => refreshPreview(link.url)}
-                    isAdminMode={isAdminMode}
-                    isCurated={isCurated}
-                    onEdit={() => openEditor(link)}
                     warmUrl={previewMap[link.url] ? undefined : link.url}
+                    isAdmin={adminKey !== null}
+                    onHide={() => hideLink(link)}
                   />
                 </FadeIn>
               );
@@ -776,14 +714,6 @@ export default function InsightsList({
         )}
       </div>
 
-      <NoteEditorModal
-        isOpen={isEditorModalOpen}
-        onClose={() => setIsEditorModalOpen(false)}
-        selectedLink={selectedLinkForEditing}
-        onSaveNotes={handleSaveNotes}
-        onAddToCollection={addToCollection}
-        currentCategory={activeChannel}
-      />
       </div>
     </PreviewCardProvider>
   );
@@ -793,16 +723,14 @@ function LinkRow({
   link,
   href,
   previewSrc,
-  isAdminMode,
-  isCurated,
-  onEdit,
+  isAdmin,
+  onHide,
 }: {
   link: EnrichedLink;
   href: string;
   previewSrc: string;
-  isAdminMode: boolean;
-  isCurated: boolean;
-  onEdit: () => void;
+  isAdmin: boolean;
+  onHide: () => void;
 }) {
   return (
     <PreviewCardTrigger
@@ -837,14 +765,14 @@ function LinkRow({
       </a>
 
       <div className="flex w-24 shrink-0 items-center justify-end gap-2">
-        {isAdminMode && (
+        {isAdmin && (
           <button
             type="button"
-            onClick={onEdit}
-            aria-label={isCurated ? "Edit notes" : "Add to collection"}
-            className="text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
+            onClick={onHide}
+            aria-label="Hide link"
+            className="text-muted-foreground opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100 focus-visible:opacity-100"
           >
-            <Pencil className="h-3.5 w-3.5" />
+            <Trash2 className="h-3.5 w-3.5" />
           </button>
         )}
         <LikeButton linkId={link.id} />
@@ -860,10 +788,9 @@ function LinkGridCard({
   isVisible,
   isFailed,
   onPreviewError,
-  isAdminMode,
-  isCurated,
-  onEdit,
   warmUrl,
+  isAdmin,
+  onHide,
 }: {
   link: EnrichedLink;
   href: string;
@@ -871,10 +798,9 @@ function LinkGridCard({
   isVisible?: boolean;
   isFailed?: boolean;
   onPreviewError: () => void;
-  isAdminMode: boolean;
-  isCurated: boolean;
-  onEdit: () => void;
   warmUrl?: string;
+  isAdmin: boolean;
+  onHide: () => void;
 }) {
   return (
     <div
@@ -926,14 +852,14 @@ function LinkGridCard({
           {shortDomain(link.url)}
         </span>
         <div className="flex shrink-0 items-center gap-2">
-          {isAdminMode && (
+          {isAdmin && (
             <button
               type="button"
-              onClick={onEdit}
-              aria-label={isCurated ? "Edit notes" : "Add to collection"}
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              onClick={onHide}
+              aria-label="Hide link"
+              className="text-muted-foreground transition-colors hover:text-red-600"
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           )}
           <LikeButton linkId={link.id} />

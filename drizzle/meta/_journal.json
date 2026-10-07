@@ -50,6 +50,27 @@
       "when": 1753556567841,
       "tag": "0006_illegal_texas_twister",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791313824452,
+      "tag": "0007_drop-dead-link-tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791369326623,
+      "tag": "0008_pgvector-extension",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791369327285,
+      "tag": "0009_links-registry",
+      "breakpoints": true
     }
   ]
 }

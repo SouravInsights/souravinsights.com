@@ -1,6 +1,6 @@
 import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
-import { getDiscordData } from "../utils/discord-data";
-import { dedupeByUrl, snowflakeDate, sortByNewestId } from "../utils/urlUtils";
+import { getInsightsData } from "../utils/links-data";
+import { dedupeByUrl, sortByNewestId } from "../utils/urlUtils";
 
 export const revalidate = 300;
 // Render on request so the feed reflects the live collection rather than being
@@ -23,7 +23,7 @@ function escapeXml(value: string): string {
 }
 
 export async function GET() {
-  const { channels, linkData } = await getDiscordData();
+  const { channels, linkData } = await getInsightsData();
 
   const categoryById = new Map<string, string>();
   for (const name of CHANNEL_ORDER) {
@@ -55,7 +55,7 @@ export async function GET() {
         description
           ? `      <description>${escapeXml(description)}</description>`
           : null,
-        `      <pubDate>${snowflakeDate(link.id).toUTCString()}</pubDate>`,
+        `      <pubDate>${link.addedAt.toUTCString()}</pubDate>`,
         "    </item>",
       ]
         .filter(Boolean)

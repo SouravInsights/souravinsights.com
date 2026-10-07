@@ -1,14 +1,18 @@
 export const revalidate = 300;
 
 import React from "react";
+import Link from "next/link";
 import InsightsList from "@/app/curated-links/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
-import { getDiscordData } from "./utils/discord-data";
+import { getInsightsData } from "./utils/links-data";
 import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
+import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
+import { AskPanel } from "./components/AskPanel";
 import { LinksCountBadge } from "./components/LinksCountBadge";
+import { getSuggestions } from "@/lib/kb/suggestions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,7 +34,11 @@ export const metadata: Metadata = {
 };
 
 export default async function CuratedLinksPage() {
-  const { channels, linkData } = await getDiscordData();
+  const { channels, linkData } = await getInsightsData();
+
+  // Chips come from the collection itself (scripts/kb-suggestions.ts), not
+  // from a hand-written list that drifts into title-echoes.
+  const suggestions = getSuggestions();
 
   // Screenshots are captured out of band and cached in Blob; resolving them
   // here means a hover just points at a stored, immutable image.
@@ -98,13 +106,38 @@ export default async function CuratedLinksPage() {
           />
         </FadeIn>
 
-        <InsightsList
-          channels={channels}
-          linkData={linkData}
-          previews={previews}
-          likeCounts={likeCounts}
-          shuffleSeed={shuffleSeed}
-        />
+        <div className="mt-8">
+          <AskPanel suggestions={suggestions} />
+        </div>
+
+        {/* Browse is a separate mode from Ask, so it gets its own heading and a
+            wider gap than the header→panel step — otherwise the two blocks read
+            as one and the panel's edge touches the list's toolbar. */}
+        <div className="mt-16">
+          <SectionHeader title="Browse the collection" />
+          <InsightsList
+            channels={channels}
+            linkData={linkData}
+            previews={previews}
+            likeCounts={likeCounts}
+            shuffleSeed={shuffleSeed}
+          />
+        </div>
+
+        {/* One line, and only one. The collection is a public dataset as well as
+            a page, but this page is for browsing — everything else lives at
+            /docs, which is where a developer would look for it. */}
+        <p className="type-caption mt-12 text-faint-foreground">
+          This collection is queryable — two public endpoints, and an MCP server for your
+          editor.{" "}
+          <Link
+            href="/docs"
+            className="font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40"
+          >
+            Using the Collection
+          </Link>
+          .
+        </p>
       </div>
     </div>
   );

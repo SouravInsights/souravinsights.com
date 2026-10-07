@@ -1,0 +1,22 @@
+{
+  "answerable": [
+    { "query": "why designing agents is still hard", "expect": ["lucumr.pocoo.org/2025/11/21/agents-are-hard"] },
+    { "query": "cheapest sandboxes for running AI agents", "expect": ["boat.dev"] },
+    { "query": "a cloud data warehouse built on duckdb", "expect": ["motherduck.com"] },
+    { "query": "how to find problems worth solving as a staff engineer", "expect": ["lalitm.com/post/find-problems-staff-engineer"] },
+    { "query": "dithered chart components for shadcn dashboards", "expect": ["tripwire.sh/dither-kit"] },
+    { "query": "an app to learn things you thought you couldn't", "expect": ["wondering.app"] },
+    { "query": "an open-source database of AI models", "expect": ["models.dev"] },
+    { "query": "convert structured data into markdown", "expect": ["knap.md"] },
+    { "query": "get more replies by saying less", "expect": ["gkogan.co/increase-reply-rates"] },
+    { "query": "why senior engineers burn out", "expect": ["sunilpai.dev/posts/the-senior-engineer-death-spiral"] },
+    { "query": "self-hosted durable objects", "expect": ["celld.dev"] },
+    { "query": "small sharp tooling for software", "expect": ["brandur.org/small-sharp-tools"] }
+  ],
+  "unanswerable": [
+    { "query": "best pizza in rome" },
+    { "query": "how to potty train a puppy" },
+    { "query": "current mortgage rates in the uk" },
+    { "query": "who won the 2022 world cup" }
+  ]
+}

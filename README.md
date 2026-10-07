@@ -1,80 +1,52 @@
-# 🌿 My Digital Garden
-
-Welcome to my Digital Garden - a dynamic, customizable curation of my favorite links and resources. This project serves as an extension of myself, housing curations and insights from various sources
-
-## 🌟 Features
-
-- 📊 Discord Integration: Automatically fetches and displays links shared on one of my private Discord server
-- 🎨 Customizable Themes: Multiple card designs to showcase links in visually appealing ways (hope you like them 🥹)
-- 🌓 Dark/Light Mode: Switch between dark and light themes (not properly implemented for all card designs, I'm working on it... 🙃)
-- 🔍 Search Functionality: Easily find specific links across all categories (could be improved a lot)
-- 📱 Responsive Design: Optimized for both desktop and mobile viewing
-- 📈 Analytics Integration: Track link popularity and user engagement with PostHog (super awesome too I must say)
-- 🔄 Load More: Efficiently handle large numbers of links with "Load More" functionality
-- 🐍 Interactive Footer: Features a fun "Language Muncher" Snake game, to make the footer less boring 😅
-
-## 🛠️ Tech Stack
-
-- [Next.js](https://nextjs.org/)
-- [React](https://reactjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Discord.js](https://discord.js.org/)
-- [PostHog](https://posthog.com/)
-
-## 🚀 Getting Started
-
-1. Clone the repository:
-
-   ```
-   git clone https://github.com/SouravInsights/souravinsights.com.git
-   ```
-
-2. Install dependencies:
-
-   ```
-   cd souravinsights.com
-   yarn install
-   ```
-
-3. Set up environment variables:
-   Create a `.env.local` file in the root directory and add the following:
-
-   ```
-   DISCORD_BOT_TOKEN=your_discord_bot_token
-   DISCORD_CLIENT_ID=your_discord_client_id
-   DISCORD_GUILD_ID=your_discord_guild_id
-   NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
-   NEXT_PUBLIC_POSTHOG_HOST=your_posthog_host
-   ```
-
-4. Run the development server:
-   ```
-   yarn dev
-   ```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📜 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 🙏 Acknowledgements
-
-- [Discord API](https://discord.com/developers/docs/intro)
-- [Lucide Icons](https://lucide.dev/)
-- [React ColorFul](https://github.com/omgovich/react-colorful)
+<div align="center">
+  <a href="https://www.souravinsights.com">
+    <img alt="Sourav Insights" src="./public/sourav-avatar.jpg" width="96" height="96">
+  </a>
+  <h1>souravinsights.com</h1>
+  <p><strong>My little corner of the internet.</strong></p>
+  <p>Essays on design and engineering, a collection of links worth keeping, a reading shelf, films, and a few small things I built for fun.</p>
+  <p>
+    <a href="https://www.souravinsights.com">Site</a> |
+    <a href="https://www.souravinsights.com/blog">Writing</a> |
+    <a href="https://www.souravinsights.com/curated-links">Insights</a> |
+    <a href="https://www.souravinsights.com/docs">Collection API</a>
+  </p>
+</div>
 
 ---
 
-Built with ❤️ by [SouravInsights](https://souravinsights.com/)
+I'm a product engineer. I write about design and engineering, keep a collection of links worth keeping, and build small things when I get curious. This repo is all of it.
+
+It's a personal site, so it's a workshop. Some of it is finished, some of it is experiments I haven't thrown away yet, and it changes whenever I learn something worth writing down.
+
+## What's here
+
+| | |
+| :--- | :--- |
+| **Writing** | Essays, kept as MDX in `src/content/posts` and rendered statically |
+| **Insights** | Around 490 saved links, searchable by meaning rather than by title |
+| **Shelves** | The books and the films I've finished |
+| **Projects** | Side projects, and a few toys that live in the footer |
+
+## The collection
+
+Most of what I save is worth keeping and impossible to find again, which is a silly problem to have.
+
+“The article about why nested rounded corners look wrong” found nothing, because the article is called *Corners are relative* and search only ever looked at titles.
+
+So every saved page is now read, split into passages and embedded. Around 2,800 passages sit behind it, and search matches what a page says instead of what it is called. Ask the panel on the Insights page a question and it answers with links it actually retrieved, so it cannot cite something that does not exist.
+
+Two weekly jobs keep that honest: one checks the links are still alive, the other re-reads a slice of the collection so pages that changed do not go stale.
+
+## Reading the code
+
+Where I would start:
+
+- **`docs/kb/`** explains how the collection works, from zero, with the reasoning behind each choice.
+- **`docs/spec/`** is what got built, including a section naming every place the build disagreed with the plan.
+- **`docs/review/`** is the critique of the original spec, and why the extractor is not a hosted service.
+- **`/docs` on the live site** explains how to query the collection from code or an agent.
+
+## Built with
+
+Next.js App Router and TypeScript, with Tailwind and shadcn/ui for the interface and Framer Motion for the small animations. The collection runs on Postgres with pgvector, Drizzle for the schema, Upstash Redis for likes and rate limits, and Trigger.dev for the weekly jobs.

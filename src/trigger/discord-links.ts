@@ -1,11 +1,21 @@
 import { schedules, logger } from "@trigger.dev/sdk/v3";
 import { Redis } from "@upstash/redis";
+import { sql } from "drizzle-orm";
 import {
   getChannels,
   getMessagesFromChannel,
   extractUrl,
+  extractTitle,
+  extractDescription,
   type DiscordMessage,
 } from "@/app/curated-links/utils/discordApi";
+import {
+  normalizeUrl,
+  snowflakeDate,
+} from "@/app/curated-links/utils/urlUtils";
+import { checkUrlHealth } from "@/lib/links/health";
+import { db } from "@/db";
+import { links } from "@/db/schema";
 
 // Initialize Upstash Redis client
 const redis = new Redis({
@@ -75,11 +85,64 @@ export const checkDiscordLinks = schedules.task({
             })),
           });
 
+          // Persist through the health gate — provably dead links are never
+          // recorded. Discord is intake-only; the site reads Postgres.
+          const seen = new Set<string>();
+          const rows: (typeof links.$inferInsert)[] = [];
+          for (const message of newMessages) {
+            const url = extractUrl(message.content, message.embeds);
+            if (!url) continue;
+            const health = await checkUrlHealth(url);
+            if (health.verdict === "dead") {
+              logger.info("Skipping dead link", { url });
+              continue;
+            }
+            const urlKey = normalizeUrl(health.finalUrl);
+            if (seen.has(urlKey)) continue;
+            seen.add(urlKey);
+            const title = extractTitle(message.embeds);
+            const description = extractDescription(message.embeds);
+            rows.push({
+              urlKey,
+              url: health.finalUrl,
+              title: title === "Untitled" ? "" : title,
+              description:
+                description === "No description available"
+                  ? ""
+                  : description.replace(/\s+/g, " ").trim(),
+              channel: channel.name,
+              discordId: BigInt(message.id),
+              addedAt: snowflakeDate(message.id),
+              health: health.verdict === "retry" ? "dying" : health.verdict,
+              consecutiveFailures: health.verdict === "retry" ? 1 : 0,
+              healthCheckedAt: new Date(),
+            });
+          }
+
+          if (rows.length > 0) {
+            await logger.trace("insert-links", async () => {
+              for (const row of rows) {
+                await db
+                  .insert(links)
+                  .values(row)
+                  .onConflictDoUpdate({
+                    target: links.urlKey,
+                    set: {
+                      discordId: row.discordId,
+                      addedAt: row.addedAt,
+                      updatedAt: new Date(),
+                    },
+                    // Only a newer repost refreshes the row.
+                    setWhere: sql`${links.addedAt} < excluded.added_at`,
+                  });
+              }
+              logger.info("Links persisted", { count: rows.length });
+            });
+          }
+
           // Pre-generate preview screenshots for the new links so the first
           // hover on the site is instant rather than a cold capture.
-          const urls = newMessages
-            .map((message) => extractUrl(message.content, message.embeds))
-            .filter((url): url is string => Boolean(url));
+          const urls = rows.map((row) => row.url);
 
           if (urls.length > 0) {
             await logger.trace("warm-link-previews", async () => {

@@ -207,6 +207,35 @@
     );
   }
 
+  /* The suggestion chips auto-scroll and are clipped at both edges, so both
+     edges fade rather than cutting a chip in half. Same reasoning as
+     .draft-preview-fade: a mask beats a theme-specific overlay. */
+  .suggestions-fade {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 1.5rem,
+      black calc(100% - 1.5rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 1.5rem,
+      black calc(100% - 1.5rem),
+      transparent 100%
+    );
+  }
+
+  /* No rubber-band bounce at the edges. Gated to fine pointers so touch
+     devices keep pull-to-refresh. */
+  @media (pointer: fine) {
+    html,
+    body {
+      overscroll-behavior: none;
+    }
+  }
+
 }
 /*
   Shipstack screen geometry

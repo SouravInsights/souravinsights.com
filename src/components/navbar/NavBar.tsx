@@ -14,6 +14,7 @@ import {
   Boxes,
   Gamepad2,
   Clapperboard,
+  Braces,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -34,6 +35,7 @@ const navItems = [
 const detachedRoutes = [
   { name: "Game", path: "/play", icon: Gamepad2 },
   { name: "Movies", path: "/movies", icon: Clapperboard },
+  { name: "Docs", path: "/docs", icon: Braces },
 ];
 
 const isActivePath = (pathname: string | null, path: string) =>
