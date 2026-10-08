@@ -125,7 +125,7 @@ export function getOpenApiDocument() {
       title: "Insights Links API",
       version: "0.1.0",
       description:
-        "Read-only access to the curated links collection at souravinsights.com/curated-links. " +
+        "Read-only access to the curated links collection at souravinsights.com/insights. " +
         "Admin endpoints require an Authorization: Bearer key.",
     },
     servers: [{ url: BASE_URL }],

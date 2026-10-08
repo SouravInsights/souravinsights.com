@@ -404,7 +404,11 @@
 
 .curio-eye {
   transform-box: view-box;
-  transform-origin: center;
+  /* The eyes' own middle line, in user units: they sit at y 22–34, one unit
+     above the body's centre, so `center` (y 32) would squash them toward their
+     bottom edge instead of their middle. Named rather than inherited — this is
+     the one number here that mirrors the component. */
+  transform-origin: 32px 28px;
   animation: curio-blink 5.4s ease-in-out infinite;
 }
 

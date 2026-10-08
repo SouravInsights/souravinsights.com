@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { and, desc, eq, isNull, lt, ne, or } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
-import { normalizeUrl } from "@/app/curated-links/utils/urlUtils";
+import { normalizeUrl } from "@/app/insights/utils/urlUtils";
 import { linksQuerySchema } from "@/lib/links/api-schemas";
 import { apiLimiter, clientIp } from "@/lib/links/ratelimit";
 

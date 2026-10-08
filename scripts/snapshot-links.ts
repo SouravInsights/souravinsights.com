@@ -7,13 +7,13 @@ import {
   extractUrl,
   getChannels,
   getMessagesFromChannel,
-} from "../src/app/curated-links/utils/discordApi";
+} from "../src/app/insights/utils/discordApi";
 import {
   dedupeByUrl,
   normalizeUrl,
   snowflakeDate,
   sortByNewestId,
-} from "../src/app/curated-links/utils/urlUtils";
+} from "../src/app/insights/utils/urlUtils";
 import { checkUrlHealth, mapWithConcurrency } from "../src/lib/links/health";
 
 // Usage: npx tsx scripts/snapshot-links.ts [--dry]

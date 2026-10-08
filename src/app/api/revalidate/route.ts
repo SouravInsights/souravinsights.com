@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
     }
 
-    // Trigger revalidation of the curated-links page
-    revalidatePath("/curated-links");
+    // Trigger revalidation of the insights page
+    revalidatePath("/insights");
 
     return NextResponse.json({
       revalidated: true,

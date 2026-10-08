@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { CHANNEL_ORDER } from "@/app/curated-links/utils/channels";
+import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
 import { search } from "./search";
 
 /**

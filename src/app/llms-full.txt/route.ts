@@ -1,6 +1,6 @@
-import { CHANNEL_LABELS, CHANNEL_ORDER } from "@/app/curated-links/utils/channels";
-import { getInsightsData } from "@/app/curated-links/utils/links-data";
-import { dedupeByUrl, sortByNewestId } from "@/app/curated-links/utils/urlUtils";
+import { CHANNEL_LABELS, CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { getInsightsData } from "@/app/insights/utils/links-data";
+import { dedupeByUrl, sortByNewestId } from "@/app/insights/utils/urlUtils";
 
 export const revalidate = 300;
 // Render on request so the file reflects the live collection.
@@ -41,7 +41,7 @@ export async function GET() {
 
 A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more.
 
-Source: ${BASE_URL}/curated-links
+Source: ${BASE_URL}/insights
 
 ${sections}
 `;

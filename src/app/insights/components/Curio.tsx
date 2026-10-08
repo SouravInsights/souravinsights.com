@@ -236,14 +236,14 @@ export function Curio({ size = 32, busy = false, still = false }: CurioProps) {
         transform="rotate(18 40 48)"
       />
 
-      {/* The lean lands on this group. Both eyes sit on the view-box centre
-          line (y 32), so the blink keyframes can keep squashing them around
-          plain `center` and still hit each eye's own middle. */}
+      {/* The lean lands on this group. The eyes' middle line is y 28 — not the
+          view-box centre, which is why globals.css names that value instead of
+          using `center`. Change the y values here and that value has to follow. */}
       <g ref={eyesRef}>
         <g className="curio-eye">
           <rect
             x={18.5}
-            y={26}
+            y={22}
             width={11}
             height={12}
             rx={5.25}
@@ -251,18 +251,18 @@ export function Curio({ size = 32, busy = false, still = false }: CurioProps) {
           />
           {/* The catchlight is what makes these eyes rather than a pause
               button: a glyph has nothing catching the light. */}
-          <circle cx={21.9} cy={29.6} r={1.7} fill={CATCHLIGHT} />
+          <circle cx={21.9} cy={25.6} r={1.7} fill={CATCHLIGHT} />
         </g>
         <g className="curio-eye">
           <rect
             x={34.5}
-            y={26}
+            y={22}
             width={11}
             height={12}
             rx={5.25}
             fill={EYE_COLOR}
           />
-          <circle cx={37.9} cy={29.6} r={1.7} fill={CATCHLIGHT} />
+          <circle cx={37.9} cy={25.6} r={1.7} fill={CATCHLIGHT} />
         </g>
       </g>
     </svg>

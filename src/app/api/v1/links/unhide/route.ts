@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hideRequestSchema } from "@/lib/links/api-schemas";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
 import { setLinkHidden } from "@/lib/links/visibility";
-import { normalizeUrl } from "@/app/curated-links/utils/urlUtils";
+import { normalizeUrl } from "@/app/insights/utils/urlUtils";
 
 const err = (code: string, message: string, status: number) =>
   NextResponse.json({ error: { code, message } }, { status });
@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
     return err("not_found", "No link matches this URL", 404);
   }
 
-  revalidatePath("/curated-links");
-  revalidatePath("/api/curated-links/latest");
+  revalidatePath("/insights");
+  revalidatePath("/api/insights/latest");
 
   return NextResponse.json({
     data: { id: normalizeUrl(parsed.data.url), hidden: false },

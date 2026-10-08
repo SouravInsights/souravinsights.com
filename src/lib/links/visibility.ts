@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
-import { normalizeUrl } from "@/app/curated-links/utils/urlUtils";
+import { normalizeUrl } from "@/app/insights/utils/urlUtils";
 
 /**
  * Admin visibility control. Hiding sets hidden_at (the link leaves the page,

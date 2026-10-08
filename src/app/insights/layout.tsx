@@ -3,17 +3,21 @@ import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
 import dynamic from "next/dynamic";
 
-const DESCRIPTION = `Explore a curated collection of useful links and resources. 
-This page is an extension of myself and will house all of my curations, all of the resources, 
-links that I personally have discovered from various sources!`;
+/**
+ * The route's fallback metadata. The page sets its own title, description and OG
+ * block, so what actually renders from here is the OG image and the Twitter
+ * card — kept in step with the page anyway, because a duplicate that says
+ * something different is a trap for whoever edits this next.
+ */
+const DESCRIPTION = `A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them.`;
 
 export const metadata: Metadata = {
-  title: "My Digital Garden - Curated Links by SouravInsights",
+  title: "Insights — My Digital Garden | SouravInsights",
   description: DESCRIPTION,
   openGraph: {
-    title: "My Digital Garden - Curated Links",
+    title: "Insights — My Digital Garden",
     description: DESCRIPTION,
-    url: "https://souravinsights.com",
+    url: "https://souravinsights.com/insights",
     type: "website",
     images: [
       {
@@ -26,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "My Digital Garden - Curated Links",
+    title: "Insights — My Digital Garden",
     description: DESCRIPTION,
     images: ["/curated-page-og-image.jpg"],
   },

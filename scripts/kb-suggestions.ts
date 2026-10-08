@@ -13,7 +13,7 @@ import { mapWithConcurrency } from "../src/lib/links/health";
 import {
   CHANNEL_LABELS,
   CHANNEL_ORDER,
-} from "../src/app/curated-links/utils/channels";
+} from "../src/app/insights/utils/channels";
 
 /**
  * Derive the Ask panel's suggestion chips from the collection itself.

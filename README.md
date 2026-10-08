@@ -8,7 +8,7 @@
   <p>
     <a href="https://www.souravinsights.com">Site</a> |
     <a href="https://www.souravinsights.com/blog">Writing</a> |
-    <a href="https://www.souravinsights.com/curated-links">Insights</a> |
+    <a href="https://www.souravinsights.com/insights">Insights</a> |
     <a href="https://www.souravinsights.com/docs">Collection API</a>
   </p>
 </div>

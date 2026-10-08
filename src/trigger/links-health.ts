@@ -3,7 +3,7 @@ import { and, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
 import { checkUrlHealth, mapWithConcurrency } from "@/lib/links/health";
-import { normalizeUrl } from "@/app/curated-links/utils/urlUtils";
+import { normalizeUrl } from "@/app/insights/utils/urlUtils";
 
 /**
  * Weekly health sweep (docs/spec/links-registry-and-api.md §2). Conclusive

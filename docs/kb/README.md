@@ -1,6 +1,6 @@
 # The Insights Knowledge Base — how it works
 
-A plain-language walkthrough of the agent + RAG pipeline behind `souravinsights.com/curated-links`.
+A plain-language walkthrough of the agent + RAG pipeline behind `souravinsights.com/insights`.
 No prior background assumed.
 
 **In one line:** we convert each saved link into numbers that represent its meaning, then

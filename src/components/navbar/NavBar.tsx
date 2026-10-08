@@ -26,7 +26,7 @@ const navItems = [
   { name: "Projects", path: "/projects", icon: Boxes },
   { name: "Blog", path: "/blog", icon: BookText },
   { name: "Books", path: "/books", icon: BookOpen },
-  { name: "Insights", path: "/curated-links", icon: BookmarkCheck },
+  { name: "Insights", path: "/insights", icon: BookmarkCheck },
 ];
 
 /* Pages that live outside the menu (the footer's appendix links). They

@@ -6,7 +6,7 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { CHANNEL_ORDER } from "@/app/curated-links/utils/channels";
+import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
 import { chatModel } from "./model";
 import { SYSTEM_PROMPT } from "./prompt";
 import { search } from "./search";

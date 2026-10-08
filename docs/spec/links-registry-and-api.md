@@ -169,7 +169,7 @@ Not built now. The schema just refuses to block it:
 
 0. Migration: `links` + `link_chunks` (chunks stay empty until the KB step).
 1. `scripts/snapshot-links.ts`: Discord → dedupe → health gate → insert. Log inserted / skipped-dead / uncheckable counts.
-2. Cut the surfaces (`curated-links` page, RSS, `llms-full.txt`, homepage) to `getLinks()`. Verify: per-channel counts match today minus skipped-dead; likes still work (keys unchanged); RSS differs only by removed dead links.
+2. Cut the surfaces (`insights` page, RSS, `llms-full.txt`, homepage) to `getLinks()`. Verify: per-channel counts match today minus skipped-dead; likes still work (keys unchanged); RSS differs only by removed dead links.
 3. Switch the Trigger.dev sync task to append into `links` (same health gate).
 4. Public API + admin endpoints + `?admin` trash UI + OpenAPI + Scalar docs + `llms.txt`.
 5. Hand off to the KB spec: extraction runs against `extract_status='pending' AND hidden_at IS NULL` rows.

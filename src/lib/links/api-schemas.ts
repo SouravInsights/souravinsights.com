@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
-import { CHANNEL_ORDER } from "@/app/curated-links/utils/channels";
+import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
 
 extendZodWithOpenApi(z);
 

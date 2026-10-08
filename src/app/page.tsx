@@ -414,9 +414,9 @@ export default function Home() {
         <section className="group/section">
           <FadeIn>
             <SectionHeader
-              title="Curated Links"
-              href="/curated-links"
-              description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
+              title="Insights"
+              href="/insights"
+              description="A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them."
             />
           </FadeIn>
           <FavoriteLinks />

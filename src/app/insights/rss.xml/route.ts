@@ -67,11 +67,11 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Insights | SouravInsights</title>
-    <link>${BASE_URL}/curated-links</link>
+    <link>${BASE_URL}/insights</link>
     <description>A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more.</description>
     <language>en</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${BASE_URL}/curated-links/rss.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${BASE_URL}/insights/rss.xml" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
 </rss>

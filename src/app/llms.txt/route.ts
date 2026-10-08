@@ -17,14 +17,14 @@ export function GET() {
 - [Home](${BASE_URL}/): Intro, companies I've worked with, side projects, recent essays, and tools I use
 - [Projects](${BASE_URL}/projects): Side projects and notes about them
 - [Blog](${BASE_URL}/blog): Essays on design, engineering, startups, and life
-- [Insights](${BASE_URL}/curated-links): A constantly updating collection of links worth keeping — articles, tools, portfolios and more
+- [Insights](${BASE_URL}/insights): A constantly updating collection of links worth keeping — articles, tools, portfolios and more
 - [Books](${BASE_URL}/books): Books I'm reading and have read
 - [Movies](${BASE_URL}/movies): Films that stayed with me
 - [Play](${BASE_URL}/play): Small browser experiments
 
 ## Feeds
 
-- [Insights RSS](${BASE_URL}/curated-links/rss.xml): New links as they're added
+- [Insights RSS](${BASE_URL}/insights/rss.xml): New links as they're added
 
 ## API
 

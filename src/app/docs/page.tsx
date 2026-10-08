@@ -228,7 +228,7 @@ export default async function DocsPage() {
             </p>
             <p>
               This is the retrieval behind the Ask panel on the{" "}
-              <Link href="/curated-links" className={linkClass}>
+              <Link href="/insights" className={linkClass}>
                 Insights page
               </Link>
               , exposed without the chat layer. No model runs, so the same query
@@ -421,7 +421,7 @@ export default async function DocsPage() {
                     and text, not pages, so there is no RSC payload to fetch. */}
                 <li>
                   <a
-                    href="/curated-links/rss.xml"
+                    href="/insights/rss.xml"
                     className="group flex flex-col gap-0.5 py-3 sm:grid sm:grid-cols-[9rem_1fr] sm:items-baseline sm:gap-4"
                   >
                     <span className="type-heading transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">

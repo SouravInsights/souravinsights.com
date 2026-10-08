@@ -31,7 +31,7 @@ export function FavoriteLinks() {
   useEffect(() => {
     async function fetchFavorites() {
       try {
-        const response = await fetch("/api/curated-links/latest");
+        const response = await fetch("/api/insights/latest");
         const data = await response.json();
         if (data.success) {
           setFavorites(data.links.slice(0, 6));

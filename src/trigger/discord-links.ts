@@ -8,11 +8,11 @@ import {
   extractTitle,
   extractDescription,
   type DiscordMessage,
-} from "@/app/curated-links/utils/discordApi";
+} from "@/app/insights/utils/discordApi";
 import {
   normalizeUrl,
   snowflakeDate,
-} from "@/app/curated-links/utils/urlUtils";
+} from "@/app/insights/utils/urlUtils";
 import { checkUrlHealth } from "@/lib/links/health";
 import { db } from "@/db";
 import { links } from "@/db/schema";

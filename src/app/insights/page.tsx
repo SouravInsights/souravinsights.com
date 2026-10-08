@@ -2,7 +2,7 @@ export const revalidate = 300;
 
 import React from "react";
 import Link from "next/link";
-import InsightsList from "@/app/curated-links/components/InsightsList";
+import InsightsList from "@/app/insights/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
 import { getInsightsData } from "./utils/links-data";
 import { getPreviewMap } from "@/lib/link-preview";
@@ -18,18 +18,18 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Insights | SouravInsights",
   description:
-    "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles curated from my Discord community.",
+    "A constantly updating collection of links I find worth keeping, plus Curio — an agent that answers from them. Queryable over HTTP and MCP.",
   alternates: {
     types: {
-      "application/rss+xml": "/curated-links/rss.xml",
+      "application/rss+xml": "/insights/rss.xml",
     },
   },
   openGraph: {
     title: "Insights | My Digital Garden",
     description:
-      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles.",
+      "A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them.",
     type: "website",
-    url: "https://www.souravinsights.com/curated-links",
+    url: "https://www.souravinsights.com/insights",
   },
 };
 
@@ -78,8 +78,8 @@ export default async function CuratedLinksPage() {
     "@type": "CollectionPage",
     name: "Insights | My Digital Garden",
     description:
-      "A constantly updating digital garden of design inspiration, dev tools, portfolios, newsletters, and must-read articles.",
-    url: "https://www.souravinsights.com/curated-links",
+      "A constantly updating collection of links I find worth keeping, plus Curio — an agent that answers from them. Queryable over HTTP and MCP.",
+    url: "https://www.souravinsights.com/insights",
     author: {
       "@type": "Person",
       name: "SouravInsights",
@@ -105,7 +105,7 @@ export default async function CuratedLinksPage() {
         <FadeIn y={20} duration={0.3}>
           <PageHeader
             title="Insights"
-            description="A constantly updating collection of links I find worth keeping, including articles, tools, portfolios and more."
+            description="A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them."
             action={<LinksCountBadge total={totalLinks} />}
           />
         </FadeIn>
