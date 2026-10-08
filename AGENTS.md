@@ -5,6 +5,7 @@
 - Use examples when possible. Propose ASCII drawings or better, mermaid diagrams to explain complete systems.
 - No over-engineering. Every feature, abstraction, or safeguard must be justified by a current requirement or an observed failure — never an imagined future one.
 - If what I build drifts from a spec — or the spec is silent and I pick an interpretation — say so in the chat, and update the spec in the same change. Code and spec must never disagree silently.
+- Do not run `next build` for small fixes. `tsc --noEmit` plus `next lint` on the touched files is the check for a logic change. Build when the change adds a route, page or feature, touches config, deps, Tailwind/CSS emission, metadata or prerendered output — or when the build is the only way to see what the change produced.
 
 When you write a commit message, follow these 7 rules:
 Rule 1: Separate the subject line from the body with a single blank line.
