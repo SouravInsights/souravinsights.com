@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 /** Pixels per second a chip row drifts. Slow enough to read and to click. */
 const DRIFT_PX_PER_SEC = 30;
@@ -30,17 +30,32 @@ export function useChipDrift(
     wrap = false,
   }: { playing: boolean; direction?: 1 | -1; wrap?: boolean }
 ) {
+  // Pausing tears this effect down and rebuilds it, so anything with a side
+  // effect in its body happens again on every hover-out. Two things must not:
+  // where the row was placed — re-applying that teleported the middle lane's
+  // chips by half a row, which is a layout jump, not a pause — and which way a
+  // reversed row was heading, which must survive the pause as well.
+  // `placedRef` is keyed to the row, so a swapped row still gets placed.
+  const placedRef = useRef<HTMLDivElement | null>(null);
+  const dirRef = useRef<1 | -1>(direction);
+
+  useEffect(() => {
+    dirRef.current = direction;
+  }, [direction]);
+
   useEffect(() => {
     const row = ref.current;
     if (!row || !playing) return;
 
+    if (placedRef.current !== row) {
+      placedRef.current = row;
+      // A row drifting left needs room to move before its first wrap, and one
+      // set of chips is exactly the room it needs.
+      if (wrap && dirRef.current < 0) row.scrollLeft = row.scrollWidth / 2;
+    }
+
     let frame = 0;
     let last = performance.now();
-    let dir = direction;
-
-    // A row drifting left needs room to move before its first wrap, and one set
-    // of chips is exactly the room it needs.
-    if (wrap && dir < 0) row.scrollLeft = row.scrollWidth / 2;
 
     const step = (now: number) => {
       const elapsed = now - last;
@@ -48,16 +63,16 @@ export function useChipDrift(
 
       const max = row.scrollWidth - row.clientWidth;
       if (max > 0) {
-        row.scrollLeft += (DRIFT_PX_PER_SEC * elapsed * dir) / 1000;
+        row.scrollLeft += (DRIFT_PX_PER_SEC * elapsed * dirRef.current) / 1000;
 
         if (wrap) {
           const set = row.scrollWidth / 2;
           if (row.scrollLeft >= set) row.scrollLeft -= set;
           else if (row.scrollLeft <= 0) row.scrollLeft += set;
         } else if (row.scrollLeft >= max) {
-          dir = -1;
+          dirRef.current = -1;
         } else if (row.scrollLeft <= 0) {
-          dir = 1;
+          dirRef.current = 1;
         }
       }
 
