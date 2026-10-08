@@ -1,335 +1,88 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import { ArrowUp, Loader2 } from "lucide-react";
-import posthog from "posthog-js";
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { ArrowUp, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import {
-  Message,
-  MessageContent,
-  MessageResponse,
-} from "@/components/ai-elements/message";
-import {
-  Source,
-  Sources,
-  SourcesContent,
-  SourcesTrigger,
-} from "@/components/ai-elements/sources";
 import { Suggestion } from "@/components/ai-elements/suggestion";
-import { Curio } from "./Curio";
+import { Curio } from "@/components/curio/Curio";
+import { CurioIntro, CurioTranscript } from "@/components/curio/CurioConversation";
+import { useChipDrift } from "@/components/curio/use-chip-drift";
+import { shuffled, useCurioChat } from "@/components/curio/use-curio-chat";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 /**
- * The Ask panel — the public agent on top of the knowledge base.
+ * The Ask panel — Curio at card size, inside the /insights page.
  *
- * Two things this deliberately does:
- * - Answers render as markdown (MessageResponse → Streamdown), so lists,
- *   links and code in a reply actually look like what they are.
- * - Citations come from the search tool's OUTPUT, never from the model's
- *   prose, so a made-up URL has nowhere to appear.
+ * The plumbing (chat, phase, citations, the transcript, the intro) comes from
+ * `@/components/curio`, the same code the full page at /curio uses, so the rule
+ * that an answer may only cite what a tool returned is written down once.
+ *
+ * What is deliberately different here, and only here:
+ * - The panel keeps the page's scroll. It is one block on a page about
+ *   something else, so it never takes the viewport.
+ * - It reserves no height until a conversation exists — an empty 384px box would
+ *   outrank the actual content on first paint.
+ * - One chip row, reversing at its ends rather than looping. Three looping lanes
+ *   belong to the full page, where there is room for them.
  */
 
-interface Match {
-  url: string;
-  title: string;
-  channel: string;
-  passage: string;
-}
-
-/**
- * Chips are supplied by the server (see `src/lib/kb/suggestions.ts`), derived
- * from the collection so every category is covered and the wording stays a
- * need rather than a title-echo.
- */
 interface AskPanelProps {
   suggestions: string[];
 }
 
-/** Fisher-Yates. Unseeded on purpose — we want a different order per visit. */
-function shuffled<T>(items: readonly T[]): T[] {
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
-
-/** Pixels per second the chip row drifts. Slow enough to read and to click. */
-const DRIFT_PX_PER_SEC = 30;
-
-/**
- * Drift the chip row sideways while leaving it scrollable by hand.
- *
- * A translate-based marquee cannot do both: it clones its children and clips
- * the overflow, so there is nothing for a wheel or a drag to move. Nudging a
- * native scroll container each frame gives the same drift, keeps the browser's
- * own scrolling, and loops by reversing at each end instead of jumping.
- */
-function useAutoScroll(ref: RefObject<HTMLDivElement | null>, playing: boolean) {
-  useEffect(() => {
-    const row = ref.current;
-    if (!row || !playing) return;
-
-    let frame = 0;
-    let last = performance.now();
-    let direction = 1;
-
-    const step = (now: number) => {
-      const elapsed = now - last;
-      last = now;
-
-      const max = row.scrollWidth - row.clientWidth;
-      if (max > 0) {
-        row.scrollLeft += (DRIFT_PX_PER_SEC * elapsed * direction) / 1000;
-        if (row.scrollLeft >= max) direction = -1;
-        else if (row.scrollLeft <= 0) direction = 1;
-      }
-
-      frame = requestAnimationFrame(step);
-    };
-
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [ref, playing]);
-}
-
-type Part = {
-  type: string;
-  state?: string;
-  text?: string;
-  input?: { query?: string; url?: string };
-  output?: unknown;
-};
-
-/** The domain of a URL, for showing which page is being read. */
-function hostOf(url: string): string | null {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
-}
-
-/**
- * What the agent is doing *right now*.
- *
- * Without this the panel is a blank box for ~10 seconds, because the answer only
- * starts streaming after the model has decided to search, the tool has run, and
- * the model has produced its first token. The tool part's `state` maps exactly
- * onto those waits:
- *   input-streaming → the model is still emitting the call  ("Thinking…")
- *   input-available  → we're running the tool                ("Searching…", "Reading…")
- *   output-available → the model is composing the answer     ("Writing…")
- * We read the *last* tool part, so a search followed by a `fetch_link` reports
- * the fetch. Returns null once answer text starts arriving.
- */
-function phaseOf(parts: Part[]): string | null {
-  if (parts.some((part) => part.type === "text" && part.text)) return null;
-
-  const tool = [...parts].reverse().find((part) => part.type.startsWith("tool-"));
-  if (!tool || tool.state === "input-streaming") return "Thinking…";
-  if (tool.state === "output-available") return "Writing…";
-
-  if (tool.type === "tool-fetch_link") {
-    const host = tool.input?.url ? hostOf(tool.input.url) : null;
-    return host ? `Reading ${host}…` : "Reading that page…";
-  }
-
-  const query = tool.input?.query;
-  return query ? `Searching for “${query}”…` : "Searching the collection…";
-}
-
-/**
- * Every link the tools returned in this message. `fetch_link` counts too: a page
- * read fresh is what a comparison is actually based on, so hiding it would leave
- * the recommendation citing nothing.
- */
-function citationsOf(parts: { type: string; state?: string; output?: unknown }[]) {
-  const seen = new Set<string>();
-  const out: Match[] = [];
-
-  for (const part of parts) {
-    if (part.state !== "output-available") continue;
-
-    if (part.type === "tool-search_knowledge") {
-      const matches = (part.output as { matches?: Match[] } | undefined)?.matches ?? [];
-      for (const match of matches) {
-        if (seen.has(match.url)) continue;
-        seen.add(match.url);
-        out.push(match);
-      }
-      continue;
-    }
-
-    if (part.type === "tool-fetch_link") {
-      const page = part.output as
-        | { url?: string; title?: string; text?: string; error?: string }
-        | undefined;
-      if (!page?.url || page.error || seen.has(page.url)) continue;
-      seen.add(page.url);
-      out.push({
-        url: page.url,
-        title: page.title || page.url,
-        channel: "web",
-        passage: (page.text ?? "").slice(0, 240),
-      });
-    }
-  }
-
-  return out;
-}
-
 export function AskPanel({ suggestions }: AskPanelProps) {
-  const [input, setInput] = useState("");
-  const [chips, setChips] = useState<string[]>(suggestions);
+  const { messages, busy, error, phase, input, setInput, submit } = useCurioChat();
+  const [chips, setChips] = useState(suggestions);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
-  // Shuffle once per visit so the same chips aren't always first. Done on mount
-  // rather than during render, so server and client agree on the first paint.
+  // Shuffle once per visit so the same chips aren't always first, and on mount
+  // rather than during render so server and client agree on the first paint.
   useEffect(() => setChips(shuffled(suggestions)), [suggestions]);
-
-  const { messages, sendMessage, status, error } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
-  });
-
-  const busy = status === "submitted" || status === "streaming";
-
-  // The live phase shown while we wait: derived from the newest assistant
-  // message, so it works during `submitted` (no message yet) and `streaming`.
-  const lastParts = (messages.filter((m) => m.role === "assistant").at(-1)?.parts ??
-    []) as Part[];
-  const phase = busy ? phaseOf(lastParts) : null;
-
-  const submit = (text: string) => {
-    const value = text.trim();
-    if (!value || busy) return;
-
-    // The signal that matters later: do the answers get used, and do people come
-    // back? Cheap to record now, impossible to reconstruct afterwards.
-    posthog.capture("insights_asked", {
-      question: value,
-      length: value.length,
-    });
-
-    sendMessage({ text: value });
-    setInput("");
-  };
 
   // Pause while the pointer or keyboard focus is on the row — a moving target
   // you can't click is worse than a static one.
   const playing = !hovered && !focused && !reduceMotion;
-
   const rowRef = useRef<HTMLDivElement>(null);
-  useAutoScroll(rowRef, playing);
+  useChipDrift(rowRef, { playing });
 
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-background">
       {/* The identity bar, the way a chat product's top bar works: the mark and
-          the name on the left, what it answers from on the right. */}
-      <header className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-4 py-3">
-        {/* 30, not 26: the drawing is wider than tall (52.7 x 44.9 in its own
-            box), so the square element has to be a little bigger than the bot
-            you see for it to read at the size it did before the antenna came
-            off. Both numbers here are just weight next to the text.
+          the name on the left, what it answers from beside it, and the way to the
+          full page on the right.
 
-            `still`: this mark sits beside a heading you are reading, so it
-            holds the taps. The hero above the input is where they have a job.
-            The busy breath still runs here — it is this mark's reason to
-            exist. */}
+          `size={30}` and `still`: 30 because the drawing is wider than tall
+          (52.7 x 44.9 in its own box) so the square element is bigger than the
+          bot you see; still because this mark sits beside a heading you are
+          reading, while the hero below is the one that taps. The busy breath
+          still runs here — it is this mark's reason to exist. */}
+      <header className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-4 py-3">
         <Curio size={30} busy={busy} still />
         <h2 className="type-body font-medium text-foreground">Curio</h2>
         <span className="type-caption text-faint-foreground">
           answers come only from saved links
         </span>
+        <Link
+          href="/curio"
+          className="type-caption ml-auto inline-flex shrink-0 items-center gap-1 rounded-sm text-muted-foreground transition-colors hover:text-green-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 dark:hover:text-green-500"
+        >
+          Open full page
+          <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+        </Link>
       </header>
 
-      {/* Only reserve scroll height once there's a conversation — an empty
-          384px box would outrank the actual content on first paint. */}
       <Conversation className={messages.length > 0 ? "h-96" : undefined}>
         <ConversationContent className="gap-5 p-4">
-          {/* The hero, the way chat products open: the mark introduces itself
-              above the input, and leaves once there is anything to read. Not a
-              permanent fixture — a mark parked beside the input in a live
-              conversation reads as a form field. */}
-          {messages.length === 0 && (
-            <div className="flex flex-col items-center gap-3 py-3 text-center">
-              <Curio size={64} />
-              <div className="flex flex-col gap-1">
-                <p className="type-heading">Meet Curio</p>
-                <p className="type-caption text-faint-foreground">
-                  Ask anything from the collection, or tap a suggestion below.
-                </p>
-              </div>
-            </div>
-          )}
+          {messages.length === 0 && <CurioIntro size={64} />}
 
-          {messages.map((message) => {
-            const text = message.parts
-              .filter((part) => part.type === "text")
-              .map((part) => (part as { text: string }).text)
-              .join("");
-            const citations = citationsOf(
-              message.parts as { type: string; state?: string; output?: unknown }[]
-            );
-
-            return (
-              <Message key={message.id} from={message.role}>
-                <MessageContent>
-                  {message.role === "assistant" ? (
-                    <>
-                      {text && <MessageResponse>{text}</MessageResponse>}
-                      {citations.length > 0 && (
-                        <Sources defaultOpen>
-                          <SourcesTrigger count={citations.length} />
-                          <SourcesContent>
-                            {citations.map((citation, index) => (
-                              <Source
-                                key={citation.url}
-                                href={citation.url}
-                                title={citation.title}
-                                onClick={() =>
-                                  posthog.capture("insights_citation_clicked", {
-                                    url: citation.url,
-                                    channel: citation.channel,
-                                    position: index + 1,
-                                    total: citations.length,
-                                  })
-                                }
-                              />
-                            ))}
-                          </SourcesContent>
-                        </Sources>
-                      )}
-                    </>
-                  ) : (
-                    text
-                  )}
-                </MessageContent>
-              </Message>
-            );
-          })}
-
-          {phase && (
-            <div className="flex items-center gap-2 text-faint-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span className="type-caption">{phase}</span>
-            </div>
-          )}
-
-          {error && (
-            <p className="type-caption text-red-600">
-              Something went wrong — try again in a moment.
-            </p>
-          )}
+          <CurioTranscript messages={messages} phase={phase} error={error} />
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -352,7 +105,7 @@ export function AskPanel({ suggestions }: AskPanelProps) {
               a drag or an arrow key moves it by hand. Scrollbar hidden. */}
           <div
             ref={rowRef}
-            className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="no-scrollbar flex flex-nowrap items-center gap-2 overflow-x-auto pb-1"
           >
             {chips.map((suggestion) => (
               <Suggestion
@@ -394,4 +147,3 @@ export function AskPanel({ suggestions }: AskPanelProps) {
     </section>
   );
 }
-

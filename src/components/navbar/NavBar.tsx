@@ -15,6 +15,7 @@ import {
   Gamepad2,
   Clapperboard,
   Braces,
+  Sparkles,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -27,6 +28,7 @@ const navItems = [
   { name: "Blog", path: "/blog", icon: BookText },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/insights", icon: BookmarkCheck },
+  { name: "Curio", path: "/curio", icon: Sparkles },
 ];
 
 /* Pages that live outside the menu (the footer's appendix links). They
@@ -109,6 +111,11 @@ const Navbar: React.FC = () => {
     ? { duration: 0 }
     : { type: "spring" as const, stiffness: 380, damping: 34 };
 
+  /* The pill is a fixed overlay, so its band is a contract: a screen that wants
+     its own top edge reserves it — 4.25rem on mobile (the pill is 4rem plus 2px
+     of border, measured), 5rem from md up. /play and /curio both do. The only
+     thing that may take the pill off the screen is the pill itself (scrolling
+     down, a live Shipstack run); a route does not get to switch navigation off. */
   return (
     <>
       {/* Desktop Navbar */}
