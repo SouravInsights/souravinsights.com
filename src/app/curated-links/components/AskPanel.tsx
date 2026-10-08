@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { ArrowUp, Loader2, Sparkles } from "lucide-react";
+import { ArrowUp, Loader2 } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -23,6 +23,7 @@ import {
   SourcesTrigger,
 } from "@/components/ai-elements/sources";
 import { Suggestion } from "@/components/ai-elements/suggestion";
+import { Curio } from "./Curio";
 
 /**
  * The Ask panel — the public agent on top of the knowledge base.
@@ -232,9 +233,20 @@ export function AskPanel({ suggestions }: AskPanelProps) {
 
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-background">
+      {/* The identity bar, the way a chat product's top bar works: the mark and
+          the name on the left, what it answers from on the right. */}
       <header className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-4 py-3">
-        <Sparkles className="h-4 w-4 text-green-700 dark:text-green-500" />
-        <h2 className="type-body font-medium text-foreground">Ask the collection</h2>
+        {/* 30, not 26: the drawing is wider than tall (52.7 x 44.9 in its own
+            box), so the square element has to be a little bigger than the bot
+            you see for it to read at the size it did before the antenna came
+            off. Both numbers here are just weight next to the text.
+
+            `still`: this mark sits beside a heading you are reading, so it
+            holds the taps. The hero above the input is where they have a job.
+            The busy breath still runs here — it is this mark's reason to
+            exist. */}
+        <Curio size={30} busy={busy} still />
+        <h2 className="type-body font-medium text-foreground">Curio</h2>
         <span className="type-caption text-faint-foreground">
           answers come only from saved links
         </span>
@@ -244,10 +256,20 @@ export function AskPanel({ suggestions }: AskPanelProps) {
           384px box would outrank the actual content on first paint. */}
       <Conversation className={messages.length > 0 ? "h-96" : undefined}>
         <ConversationContent className="gap-5 p-4">
+          {/* The hero, the way chat products open: the mark introduces itself
+              above the input, and leaves once there is anything to read. Not a
+              permanent fixture — a mark parked beside the input in a live
+              conversation reads as a form field. */}
           {messages.length === 0 && (
-            <p className="type-caption text-faint-foreground">
-              Ask a question, or tap a suggestion below.
-            </p>
+            <div className="flex flex-col items-center gap-3 py-3 text-center">
+              <Curio size={64} />
+              <div className="flex flex-col gap-1">
+                <p className="type-heading">Meet Curio</p>
+                <p className="type-caption text-faint-foreground">
+                  Ask anything from the collection, or tap a suggestion below.
+                </p>
+              </div>
+            </div>
           )}
 
           {messages.map((message) => {

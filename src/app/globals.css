@@ -358,3 +358,163 @@
 .dark .code-panel span {
   color: var(--shiki-dark);
 }
+
+/*
+  Curio, the Insights agent's mascot
+  ----------------------------------
+  Unlayered like the blocks around it: nothing else styles these elements, so
+  there is no cascade to lose to.
+
+  Three motions, one property each, so none of them can overwrite another:
+  - the taps, and a steady breath while an answer is being fetched — a
+    `transform` on the SVG element itself;
+  - the blink — a `transform` on each eye group, squashed around the view-box
+    centre, which is also the eyes' own vertical centre. `transform-box` is
+    written out because a browser that ignores it must land on the same point;
+  - the lean toward the pointer, which the component writes as a `transform`
+    *attribute* on the group wrapping the eyes.
+
+  Under reduced motion the ambient two stop and the lean stays. Following your
+  own pointer is a response to your hand, the same category as a hover; taps and
+  blinks are animation that plays at you on its own. Only the second kind is
+  what the setting is about.
+*/
+.curio {
+  /* Anchored at the bottom of the box, which sits a few pixels under the feet —
+     the drawing is letterboxed inside a square box, so the two are not the same
+     line. Close enough that the squash grows up out of the floor rather than
+     around the middle, and it does not need a pixel value pinned to the feet
+     that would drift the next time the drawing changes. */
+  transform-origin: bottom center;
+  animation: curio-hop 3.6s infinite;
+}
+
+/* The header mark holds still. Two bots tapping at once is one bot too many —
+   both are saying "lively", so the second copy is only noise, and this one sits
+   beside a heading you are reading. The hero above the input is where the taps
+   have a job. This rule is deliberately above `data-busy` below: same
+   specificity, so the later rule wins and the breath survives here. */
+.curio[data-still="true"] {
+  animation: none;
+}
+
+.curio[data-busy="true"] {
+  animation: curio-pulse 1.15s ease-in-out infinite;
+}
+
+.curio-eye {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: curio-blink 5.4s ease-in-out infinite;
+}
+
+/* "tupuk tupuk tupuk" — a burst of them, then a rest, which is what a ball
+   tapped on a table actually does: three bounces, each lower and quicker than
+   the last, then stillness until someone taps it again. A crouch, three taps and
+   the settle take 2.1s; then 1.37s — 38% of the cycle — with nothing moving.
+
+   Three things keep this from reading as a metronome, which the flat version did:
+
+   - Anticipation. 0.14s of compression before it springs, so the leap has a
+     cause. It also closes the loop: 0% and 100% are now the same upright resting
+     pose, which is what stopped this animation from snapping every cycle.
+   - The bounce is not symmetric. The rise gets 9% of the cycle and decelerates
+     (`cubic-bezier(0.2, 0.85, 0.35, 1)` — fastest leaving the floor, nothing
+     left at the top), then it *hangs* for 7% drifting down 1%, then the fall
+     takes 8% and accelerates into the landing (`cubic-bezier(0.65, 0, 0.8,
+     0.15)`, the exact mirror). Nearly a third of the first bounce's airtime is
+     spent almost still, and that is the whole difference between a jump and a
+     servo.
+   - The burst decays: -13%, -8.5%, -5%, and the landing squash decays with it
+     (7%, 6%, 5.5%). Even taps at even heights forever is a clock.
+
+   Squash and stretch is anchored at the feet (see `transform-origin` on
+   .curio), so the bot flattens onto the floor and stretches back up out of it.
+   The animation's own timing function never applies — every segment declares
+   its own. */
+@keyframes curio-hop {
+  /* at rest: identical to 100%, so the loop has no seam */
+  0% {
+    transform: translateY(0) scale(1, 1);
+    animation-timing-function: ease-out;
+  }
+  /* the crouch, then the spring */
+  4% {
+    transform: translateY(0) scale(1.05, 0.92);
+    animation-timing-function: cubic-bezier(0.2, 0.85, 0.35, 1);
+  }
+  /* tap 1, apex */
+  13% {
+    transform: translateY(-13%) scale(0.98, 1.035);
+    animation-timing-function: ease-in-out;
+  }
+  /* the hang: it drifts down a single percent over a quarter of the airtime */
+  20% {
+    transform: translateY(-12%) scale(0.98, 1.035);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.8, 0.15);
+  }
+  /* lands */
+  28% {
+    transform: translateY(0) scale(1.04, 0.93);
+    animation-timing-function: cubic-bezier(0.2, 0.85, 0.35, 1);
+  }
+  /* tap 2: half the height, no hang — this one is just the ball coming back */
+  36% {
+    transform: translateY(-8.5%) scale(0.985, 1.03);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.8, 0.15);
+  }
+  44% {
+    transform: translateY(0) scale(1.035, 0.94);
+    animation-timing-function: cubic-bezier(0.2, 0.85, 0.35, 1);
+  }
+  /* tap 3: the last small one, barely off the floor */
+  50% {
+    transform: translateY(-5%) scale(0.99, 1.02);
+    animation-timing-function: cubic-bezier(0.65, 0, 0.8, 0.15);
+  }
+  56% {
+    transform: translateY(0) scale(1.03, 0.945);
+    animation-timing-function: ease-out;
+  }
+  /* the squash relaxes, and then nothing moves for 1.37s */
+  62%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+/* Busy: quicker, taller, with a breath of scale. Enough to read at a glance at
+   the sizes Curio is drawn at, not enough to pull the eye off an answer as it
+   streams. */
+@keyframes curio-pulse {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-9%) scale(1.05);
+  }
+}
+
+/* ~130ms shut, once every 5.4s — long enough apart that it stays a surprise. */
+@keyframes curio-blink {
+  0%,
+  97.6% {
+    transform: scaleY(1);
+  }
+  98.4%,
+  99.2% {
+    transform: scaleY(0.12);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curio,
+  .curio[data-busy="true"],
+  .curio-eye {
+    animation: none;
+  }
+}

@@ -189,6 +189,7 @@ Where the build disagreed with this spec, or the spec was silent and I chose. Br
 - **`kb-refresh` rotates; it does not filter by date.** The spec said "a weekly re-read of the most recently added links". Measured against the real table, a 90-day window covered 79 of 500 links — 84% of the collection would never have been re-read, and `content_hash` would have been consulted only for the newest slice. The job now reads least-recently-read first and caps at 100 per run (353 links are eligible), so everything is re-read roughly monthly and nothing is frozen. The cap bounds the cost; the date filter only added blind spots.
 - **The Desk's similarity floor is 0.45, not the eval's 0.35.** Different questions: the eval asks "is this in the collection at all", the Desk asks "does this passage back this claim". Measured on two drafts — one the collection cannot support, one it can — noise sat at 0.35–0.44 and genuine support at 0.53 and 0.63. At 0.35 the model dutifully wrote three confident reasons to cite unrelated pages; at 0.45 that draft returns an empty list, which is the honest answer. The cost is real and accepted: a genuine secondary support around 0.4x is now missed. Precision wins because a wrong attribution gets published.
 - **Writing Desk is a retrieval core, not an editor.** The spec bundled "where I write" together with "what backs this claim". They are different products, and only the second one needs a knowledge base. The core shipped; the editor became its own spec.
+- **The agent has a name: Curio.** The spec never named it — it only ever says "the agent" or "the collection's agent". It is Curio now, and the name is the Ask panel's own heading, with its mark beside it in that header and a larger one filling the empty state above the input (`src/app/curated-links/components/Curio.tsx`). The eyes follow the pointer and look up while an answer is being fetched. Decoration only, deliberately: no retrieval path, no data, no model call is involved. Placed where a chat product puts a mark — the panel's top bar and the empty state — after a first pass that parked it in a strip directly above the input, where a mark plus a name label reads as a form field rather than an identity.
 
 ---
 
@@ -215,6 +216,7 @@ src/app/api/insights/chat/route.ts     // the Ask endpoint (8/min, 60/day per IP
 src/app/api/insights/desk/route.ts     // Writing Desk, admin-only for now
 src/app/api/v1/search/route.ts         // public semantic search — zod + OpenAPI
 src/app/curated-links/components/AskPanel.tsx
+src/app/curated-links/components/Curio.tsx  // the agent's mascot (decoration only)
 src/app/docs/page.tsx                  // public docs: the endpoints, MCP, feeds
 src/pages/api/mcp.ts                   // hosted MCP — a Pages route, on purpose
 src/content/insights-suggestions.json  // generated chips, quota'd per channel
