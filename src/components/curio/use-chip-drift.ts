@@ -3,7 +3,7 @@
 import { useEffect, useRef, type RefObject } from "react";
 
 /** Pixels per second a chip row drifts. Slow enough to read and to click. */
-const DRIFT_PX_PER_SEC = 30;
+const DRIFT_PX_PER_SEC = 40;
 
 /**
  * Drift a chip row sideways while leaving it scrollable by hand.

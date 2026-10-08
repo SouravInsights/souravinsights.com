@@ -10,6 +10,12 @@ export type SuggestionProps = Omit<ComponentProps<typeof Button>, "onClick"> & {
   onClick?: (suggestion: string) => void;
 };
 
+/**
+ * A suggestion chip. `h-8` and `px-3` rather than the `sm` button's `h-9`/`px-4`:
+ * these arrive in lanes of three, six at a time, where a 36px pill with 16px of
+ * side padding reads as a row of buttons competing with the page. 32px is still
+ * a comfortable tap target and is the height the site's own small controls use.
+ */
 export const Suggestion = ({
   suggestion,
   onClick,
@@ -25,7 +31,7 @@ export const Suggestion = ({
 
   return (
     <Button
-      className={cn("cursor-pointer rounded-full px-4", className)}
+      className={cn("h-8 cursor-pointer rounded-full px-3", className)}
       onClick={handleClick}
       size={size}
       type="button"

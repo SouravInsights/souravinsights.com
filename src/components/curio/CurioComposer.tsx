@@ -49,6 +49,10 @@ export function CurioComposer({
       }}
       className="flex items-end gap-2 rounded-lg border border-border bg-card p-2 transition-colors focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30"
     >
+      {/* `min-h-9` matches the send button's height, so an empty box is exactly as
+          tall as the button and both centre on the same line. Without it the
+          single-line textarea comes out ~1px shorter, `items-end` bottom-aligns
+          the two, and the placeholder sits off the box's centre. */}
       <textarea
         ref={textareaRef}
         value={value}
@@ -66,7 +70,7 @@ export function CurioComposer({
             send();
           }
         }}
-        className="max-h-40 min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-base leading-relaxed outline-none placeholder:text-faint-foreground sm:text-sm"
+        className="max-h-40 min-h-9 min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-base leading-relaxed outline-none placeholder:text-faint-foreground sm:text-sm"
       />
       <button
         type="submit"
