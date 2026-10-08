@@ -36,6 +36,21 @@ export const metadata: Metadata = {
       "An agent that answers from my curated collection of links, citing the pages it used and nothing else.",
     type: "website",
     url: "https://www.souravinsights.com/curio",
+    images: [
+      {
+        url: "/curio-og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Curio, an agent that answers from my curated collection",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Curio | Ask my collection",
+    description:
+      "An agent that answers from my curated collection of links, citing the pages it used and nothing else.",
+    images: ["/curio-og-image.png"],
   },
 };
 
