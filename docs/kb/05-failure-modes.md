@@ -54,9 +54,12 @@ Two ways the *words* fail — this is where a demo usually loses trust:
 
 | What goes wrong | How it shows up | Fix |
 | :--- | :--- | :--- |
-| A chip the collection can't answer | a visitor clicks it and gets "not covered" | `kb-suggestions.ts` runs every chip through `search()` and drops any scoring below `MIN_SCORE` (0.3) |
+| A chip the collection can't answer | a visitor clicks it and gets "not covered" | `kb-suggestions.ts` verifies every chip against the index: score ≥ `MIN_SCORE` (0.35), *and* the item the chip claims to be about must rank in the top three |
+| A chip that is true and boring | "updates on React Native development" — answerable, clicked by nobody | the model reads each item's stored opening passage, must name its subject, and `EMPTY_SHAPES` refuses the empty shapes outright |
+| Six chips about one link | "where to find design portfolios", "what to include in a design portfolio", "how to present a design project" | one chip per item, and no repeated question |
+| A chip promising a prediction | "what UX behaviours will reshape design in 2025" | banned in the prompt by name: no trends, no forecasts |
 | A citation that doesn't really support the claim | a published article cites the wrong source | the Writing Desk passes only matches above `0.45` to the model; below that it's topic-adjacency, and a helpful model will write a confident reason for it anyway |
-| Chips drift into echoes of link titles | they read like a table of contents, not questions | derive them per channel, phrased as questions, 6 each |
+| Chips drift into echoes of link titles | they read like a table of contents, not questions | derive them per channel from the stored passage, phrased as hooks, quota'd by channel size |
 | Copy promises a feature that isn't built | the page lies quietly | status lives in one place and the docs match it |
 
 ## Security (the ones that matter most)
@@ -108,6 +111,15 @@ description as one passage. Lesson: a deliberate skip has to say what *is* still
 your Next.js app") — promises the collection doesn't keep. Fix: derive them per channel *and verify
 each one against the index* before shipping it. Lesson: the copy is part of the system; it needs a
 check too.
+
+**Then the chips became true and boring.** The first derived version paraphrased titles into needs,
+and a rule forbidding names ("never name a specific product or person") left it nothing to be specific
+*with*: "updates on React Native development", "where to explore creative workspaces". Nothing was
+broken. They retrieved well, they passed every gate, and nobody would click one. Fix: hand the model
+the stored opening passage instead of the title, require a named subject, quota the channels by how
+much there is to read, and refuse the empty shapes in code. Lesson: "answerable" and "interesting" are
+different properties, and only the first can be measured — scores for the boring chips and the good
+ones sat in the same 0.44–0.70 band, so the gate can guard the promise and not the hook.
 
 **The Writing Desk cited sources that backed nothing.** Its first real run took a draft about RAG
 internals and returned three confident citations — none of which supported a single claim. The

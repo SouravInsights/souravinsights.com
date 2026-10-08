@@ -235,14 +235,33 @@ call is not a web request — a per-minute limit alone still lets one person run
 
 ## How the suggestion chips are chosen
 
-The chips under the input are not hand-written. `scripts/kb-suggestions.ts` asks a model to write
-questions *per channel* — 6 each, 42 total, so every category is covered by construction — and then
-**verifies every chip against the index**: it runs each one through `search()` and drops any whose
-best hit scores below `MIN_SCORE` (0.3).
+The chips under the input are not hand-written, and they are not topics. `scripts/kb-suggestions.ts`
+gives the model the **opening passage we stored** for each candidate link — title, URL, the human
+note, and the first 200 characters of the page's own text — and asks for hooks. The material matters
+more than the wording: with a title and a rule against naming anything, the model wrote "updates on
+React Native development". With the pages' own words, and a rule that a chip must name its subject, it
+writes "how cutting email length 90% got 8x more replies".
 
-That second step is the whole point. A chip is a promise that the collection can answer it. Without
-the check, a plausible-sounding question ("How do I scale a Postgres cluster?") would ship and then
-fail in front of a visitor. `src/lib/kb/suggestions.ts` simply reads the committed
+Three gates run over the candidates, all three in code rather than in the prompt, because the prompt
+is what failed:
+
+- **Empty shapes are refused.** `EMPTY_SHAPES` drops "updates on X", "where to find X", "best X for Y",
+  "how to improve X". Every one of those passed the index check — a vague query still matches
+  *something* — which is exactly why they needed a gate of their own.
+- **The index check.** Every chip runs through `search()`, must clear the cutoff the eval measured
+  (`0.35`, `kb-eval.ts`), and the item it claims to be about (its `about` title) must come back in the
+  top three. A chip is a promise that the collection can answer it, and both halves of that promise
+  are checkable.
+- **One chip per item, no repeats.** Otherwise a channel spends its whole quota on six flavours of one
+  link — which is what the old portfolio chips were.
+
+Quotas are hand-set per channel, not equal: reading-list and resources hold the most links (98 and 90
+against newsletters' 31) and the most to read, so they carry 20 and 16 chips against newsletters' 5.
+The copy is written by `suggestionModel()` — Claude, not the chat model: the mini model wrote "the
+focus of Learn Inference" where this one wrote "what Amit Varma and Ajay Shah cited most across 128
+episodes". The script runs by hand, a few times a year, for about 25 cents.
+
+`src/lib/kb/suggestions.ts` simply reads the committed
 `src/content/insights-suggestions.json`; swapping that import for a Redis read is the seam if the
 chips ever need to refresh without a deploy.
 

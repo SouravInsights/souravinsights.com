@@ -21,6 +21,17 @@ export const EMBEDDING_MODEL_ID = "openai/text-embedding-3-small";
 export const CHAT_MODEL_ID = "openai/gpt-4o-mini";
 
 /**
+ * Used by one offline script, `scripts/kb-suggestions.ts`, which writes the Ask
+ * panel's suggestion chips. It is deliberately not the chat model: a chip is the
+ * only copy here with no retrieval to hide behind, and gpt-4o-mini writes topics
+ * ("updates on React Native development") where this model writes hooks ("what
+ * Amit Varma and Ajay Shah cited most across 128 episodes"). The script runs by
+ * hand, a few times a year: seven calls ≈ $0.25, against ~$0.001 per live query
+ * for the chat model, which is why the split exists at all.
+ */
+export const SUGGESTION_MODEL_ID = "anthropic/claude-sonnet-4.6";
+
+/**
  * Built lazily so importing this file never throws when the key is absent
  * (e.g. during a Next build step that never touches the models).
  */
@@ -36,3 +47,6 @@ export const embeddingModel = () =>
 
 /** The chat model, for the agent that writes answers. */
 export const chatModel = () => client()(CHAT_MODEL_ID);
+
+/** The copy model, for the offline script that writes the suggestion chips. */
+export const suggestionModel = () => client()(SUGGESTION_MODEL_ID);

@@ -1,58 +1,84 @@
 {
   "reading-list": [
-    "how to create a context graph",
-    "what is production minimalism",
-    "benefits of small programs",
-    "how to serve large coding models",
-    "ways to improve email response rates",
-    "strategies for finding engineering problems"
+    "how a context graph maps every resource an app connects to",
+    "what Kelly Johnson's KISS principle means for production stacks",
+    "how Heroku's small sharp tools philosophy shapes composable programs",
+    "how Modal serves trillion-parameter coding agents at scale",
+    "why cutting email length 90% got 8x more replies",
+    "how building skill and shipping skill work against each other",
+    "what the senior engineer death spiral looks like from inside",
+    "why AI coding might stop engineers from developing expertise",
+    "how a staff engineer listens broadly to find problems worth solving",
+    "where Armin Ronacher's agent abstractions keep breaking unexpectedly",
+    "how 22,580 GPT-2 models fit inside Kimi K3",
+    "how Amplitude built an autonomous pipeline from idea to production",
+    "how Cursor auto-approves low-risk pull requests without a reviewer",
+    "why hosting Git at scale is a nightmare Linus never anticipated",
+    "how Britain's postwar sugar rationing lowered cancer risk decades later",
+    "what 132,003 players reveal about optimal lawn-mowing paths",
+    "why manually retyping LLM code prevents cognitive debt",
+    "how task runners make common coding tasks consistent across a team",
+    "why devtools being closed source breaks the age of personalized software",
+    "how to read a Chrome DevTools flame chart without getting lost"
   ],
   "resources": [
-    "how do query engines work",
-    "where to learn cloud computing",
-    "what are best practices for LLM inference",
-    "where to find unique illustrations",
-    "resources for product design guidance",
-    "best books for creative professionals"
+    "how a query planner reads and executes a SQL statement",
+    "which HTTP status codes mean the server never saw the request",
+    "where the bill actually lands when serving a generative model",
+    "what harness engineering means for Codex and Claude",
+    "how time-to-first-token differs from throughput in LLM serving",
+    "which books Amit Varma and Ajay Shah return to most often",
+    "what makes an interface feel predictable rather than surprising",
+    "how THE ECHO framework connects a brand to cultural movement",
+    "what GitHub Next learned asking agents if they can be proud",
+    "how Aaron Francis ships faster without lowering code quality",
+    "what Vercel packaged as reusable skills for AI coding agents",
+    "what nervous system protocol handles acute panic in under a minute",
+    "how motion animation directs attention on a UI without words",
+    "which emotions make an app feature land on first use",
+    "what tech stack decisions shaped your favourite consumer apps",
+    "how independent blogs differ from algorithm-ranked content feeds"
   ],
   "product-hunt": [
-    "how to design and build tools",
-    "where to find coding sandboxes",
-    "what is a cloud data warehouse",
-    "how to replace ChatGPT",
-    "how to simplify email interactions",
-    "best way to compress images"
+    "how Subframe connects a design canvas to live code",
+    "what makes boat sandboxes cheaper for long-running agents",
+    "how MotherDuck gives every agent its own compute",
+    "how Jan runs AI models without sending data to the cloud",
+    "what AtAt does when you type @@ in any app",
+    "how a 29MB model on Cactus knows when to hand off",
+    "why Equals guarantees the same answer to the same question",
+    "how hilos connects a designer's plain-words request to a repo diff"
   ],
   "newsletters": [
-    "how to improve reading retention",
-    "where to find system design resources",
-    "best newsletters for software engineers",
-    "how to learn about AI design",
-    "where to explore creative workspaces",
-    "updates on React Native development"
+    "what Readwise does with your Kindle highlights each day",
+    "how The Pudding turns data into a visual essay",
+    "what a venture fund pitch deck actually needs",
+    "how Felix Haas frames AI decisions for product designers",
+    "what the Brain Food newsletter sends 750,000 readers on Sunday"
   ],
   "fav-portfolios": [
-    "where to find design portfolios",
-    "how to create a personal website",
-    "what makes a good designer portfolio",
-    "where to showcase creative work",
-    "how to present a design project",
-    "what to include in a design portfolio"
+    "how Sujan Khadgi turns case studies into AI conversations",
+    "what Kian Bazarjani is building with avelin.app",
+    "how Sam makes programming topics visual and interactive",
+    "what design engineering components Jakub Krehel showcases at Interfere",
+    "how Alex Harri Jónsson explains TypeScript edge cases",
+    "how Josh Pigford describes his role at Maybe"
   ],
   "tools": [
-    "how to create dithered charts",
-    "where to find an infinite canvas",
-    "what tool helps manage OSS security",
-    "how to automate marketing insights",
-    "best way to visualize CSS layers",
-    "where to generate SVG shapes"
+    "how celld runs Durable Objects without Cloudflare",
+    "what ordered-dither fills replace in dither-kit charts",
+    "how Tripwire screens a PR before it hits main",
+    "how Kimaki maps Discord channels to coding sessions",
+    "what continuous curve lisse borrows from Figma and iOS",
+    "how Scritto moves only the characters that changed",
+    "what an ink stroke from Highlighters does that a coloured box cannot",
+    "how Knap adds logic and filters inside a Markdown file"
   ],
   "design-inspo": [
-    "where to find design inspiration",
-    "how to create app store screenshots",
-    "what are best web design examples",
-    "where to get animation resources",
-    "what is trending in UX design",
-    "how to design effective navigation"
+    "how Mobbin's 300,000 screenshots save UI research hours",
+    "what makes an App Store screenshot convert downloads",
+    "which React Native libraries power smooth animations",
+    "how 21st.dev ships polished UIs faster than shadcn",
+    "how Flourish turns data into interactive stories without code"
   ]
 }
