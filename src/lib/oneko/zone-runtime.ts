@@ -266,7 +266,9 @@ export function updateZoneTarget(
           x: (favorite.rect.left + favorite.rect.right) / 2,
           y: (favorite.rect.top + favorite.rect.bottom) / 2,
         }
-      : { x: s.mousePosX, y: s.mousePosY };
+      : // The pointer's aim, not the raw cursor: over a control that is the point
+        // outside it, so the cat stops beside the button rather than on it.
+        (s.pointerTarget ?? { x: s.mousePosX, y: s.mousePosY });
   zones.movementTarget = zones.blocked.length
     ? (nearestSafePoint(desired, zones.blocked, width, height, radius) ?? {
         x: s.nekoPosX,

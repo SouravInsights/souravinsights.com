@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Twitter, Github, Bike, Footprints, Coffee, Music } from "lucide-react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
-import { SectionHeader } from "@/components/SectionHeader";
+import { Panel } from "@/components/Panel";
 import { FadeIn } from "@/components/FadeIn";
 import { ReadingShelf } from "@/components/ReadingShelf";
 import { MoviesShelf } from "@/components/MoviesShelf";
@@ -306,136 +306,113 @@ const HeroSection = () => {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background transition-colors duration-200">
+    <div className="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8">
       {/* 0cred verification */}
-      <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07"></div>
+      <div className="f2934f51-f127-4d33-aed6-0d621f9e3f07" />
 
-      <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32 space-y-16 sm:space-y-24">
-        {/* Hero Section */}
-        <FadeIn y={20} duration={0.3}>
-          <HeroSection />
-        </FadeIn>
+      {/* Every panel is an h2 section, so the page owes them an h1 — and it had
+          none, which is why CardTitle (an h3) was the wrong tool for the labels.
+          Assistive tech and crawlers get a heading; the design gets the hero. */}
+      <h1 className="sr-only">
+        Sourav Insights — writing, projects, and the things I keep
+      </h1>
 
-        {/* Experience Section */}
-        <section>
-          <FadeIn>
-            <SectionHeader
-              title="Companies"
-              description="I've had the chance to work with some great teams building things people use"
-            />
+      {/* A dashboard, not a scroll: every block is a panel on a twelve-column
+          grid, so the page is scanned rather than read downwards. The old page
+          was one column of sections separated by whitespace — the shape of a
+          document — and its top padding was 128px of clearance for a navbar
+          that no longer floats over anything. */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="lg:col-span-12">
+          <FadeIn y={20} duration={0.3}>
+            <HeroSection />
           </FadeIn>
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-            {companies.map((company, index) => (
+        </div>
+
+        <Panel
+          title="Companies"
+          className="lg:col-span-4"
+          bodyClassName="flex flex-wrap content-start gap-x-6 gap-y-4"
+        >
+          {companies.map((company, index) => (
+            <motion.a
+              key={company.name}
+              href={company.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
+            >
+              <div className="relative h-6 w-6 shrink-0">
+                <Image
+                  src={company.logo}
+                  alt={`${company.name} logo`}
+                  fill
+                  className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
+                />
+              </div>
+              <span className="type-body text-foreground">{company.name}</span>
+            </motion.a>
+          ))}
+        </Panel>
+
+        <Panel
+          title="Side Projects"
+          href="/projects"
+          className="lg:col-span-8"
+          bodyClassName="grid grid-cols-1 content-start gap-x-8 gap-y-6 sm:grid-cols-3"
+        >
+          {featuredProjects.map((project, index) => {
+            const logoIsSvg = project.logo.endsWith(".svg");
+
+            return (
               <motion.a
-                key={company.name}
-                href={company.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
+                key={project.slug}
+                href={`/projects#${project.slug}`}
+                className="group flex flex-col"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
               >
-                <div className="relative w-6 h-6 shrink-0">
-                  <Image
-                    src={company.logo}
-                    alt={`${company.name} logo`}
-                    fill
-                    className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
-                  />
-                </div>
-                <span className="type-body text-foreground">
-                  {company.name}
-                </span>
-              </motion.a>
-            ))}
-          </div>
-        </section>
-
-        {/* Projects Section */}
-        <section className="group/section">
-          <FadeIn>
-            <SectionHeader
-              title="Side Projects"
-              href="/projects"
-              description="Things I build when I'm curious about something or need to scratch a personal itch."
-            />
-          </FadeIn>
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
-            {featuredProjects.map((project, index) => {
-              const logoIsSvg = project.logo.endsWith(".svg");
-
-              return (
-                <motion.a
-                  key={project.slug}
-                  href={`/projects#${project.slug}`}
-                  className="group flex flex-col"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
-                      <Image
-                        src={project.logo}
-                        alt={`${project.name} logo`}
-                        fill
-                        unoptimized={logoIsSvg}
-                        className="object-cover"
-                      />
-                    </div>
-                    <h3 className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors">
-                      {project.name}
-                    </h3>
+                <div className="flex items-center gap-2.5">
+                  <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
+                    <Image
+                      src={project.logo}
+                      alt={`${project.name} logo`}
+                      fill
+                      unoptimized={logoIsSvg}
+                      className="object-cover"
+                    />
                   </div>
-                  <p className="type-caption mt-2">{project.note}</p>
-                </motion.a>
-              );
-            })}
-          </div>
-        </section>
+                  <h3 className="type-heading transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+                    {project.name}
+                  </h3>
+                </div>
+                <p className="type-caption mt-2">{project.note}</p>
+              </motion.a>
+            );
+          })}
+        </Panel>
 
-        {/* Paired sections — long link/article lists up top, then the two
-            shelves, then tools beside the opinions, matched by height. */}
-        <div className="grid grid-cols-1 gap-x-16 gap-y-16 sm:gap-y-24 md:grid-cols-2 md:items-start">
-        {/* Blog Section */}
-        <section className="group/section">
-          <FadeIn>
-            <SectionHeader
-              title="Recent Essays"
-              href="/blog"
-              description="Some thoughts on life, learning, and whatever random things I get curious about at 2 AM"
-            />
-          </FadeIn>
+        <Panel title="Recent Essays" href="/blog" className="lg:col-span-6">
           <EssayHighlights />
-        </section>
+        </Panel>
 
-        {/* Favorite Links Section */}
-        <section className="group/section">
-          <FadeIn>
-            <SectionHeader
-              title="Insights"
-              href="/insights"
-              description="A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them."
-            />
-          </FadeIn>
+        <Panel title="Insights" href="/insights" className="lg:col-span-6">
           <FavoriteLinks />
-        </section>
+        </Panel>
 
-        {/* Reading Section */}
-        <ReadingShelf />
+        <Panel title="Reading" href="/books" className="lg:col-span-6">
+          <ReadingShelf />
+        </Panel>
 
-        {/* Movies Section */}
-        <MoviesShelf />
+        <Panel title="Movies" href="/movies" className="lg:col-span-6">
+          <MoviesShelf />
+        </Panel>
 
-        {/* My Toolkit Section */}
-        <section>
-          <FadeIn>
-            <SectionHeader
-              title="Things I Use"
-              description="The software, tools, and habits that help me get things done"
-            />
-          </FadeIn>
+        <Panel title="Things I Use" className="lg:col-span-7">
           <div className="flex flex-col">
             {Object.entries(myToolkit).map(([key, category], groupIndex) => (
               <div key={key}>
@@ -490,12 +467,17 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </section>
+        </Panel>
 
-        {/* Unpopular Opinions Section */}
-        <OpinionsSection />
-        </div>
+        <Panel
+          title="Unpopular Opinions"
+          className="lg:col-span-5"
+          bodyClassName="p-2"
+        >
+          <OpinionsSection />
+        </Panel>
       </div>
     </div>
   );
 }
+

@@ -210,7 +210,7 @@ export default async function DocsPage() {
       {/* Wider than a prose column on purpose: the examples are long URLs and
           JSON, and they are the reason anyone is here. The prose inside caps
           itself at max-w-2xl instead, so reading stays comfortable. */}
-      <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32">
+      <div className="mx-auto max-w-5xl px-5 pb-10 pt-6 sm:px-6 sm:pt-8">
         <FadeIn y={20} duration={0.3}>
           <PageHeader
             title="Using the Collection"

@@ -34,11 +34,12 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
   const started = messages.length > 0;
 
   return (
-    /* An app screen: the layout above has already reserved the navbar's band, so
-       this column takes everything left and lands exactly on the viewport — the
-       page itself never scrolls. `svh`, not `vh` or `dvh`: the height must not
+    /* An app screen: the shell's frame is a rail on the left, and a tab bar at
+       the bottom on a phone — so the column takes everything left and lands
+       exactly on the viewport, and the page itself never scrolls. One number,
+       owned by globals.css. `svh`, not `vh` or `dvh`: the height must not
        change when a phone's toolbars slide. */
-    <div className="flex h-[calc(100svh-4.25rem)] flex-col md:h-[calc(100vh-5rem)]">
+    <div className="flex h-[calc(100svh-var(--tabbar-space))] flex-col">
       {/* No title bar. The navbar already names where you are — a second row
           saying "Curio" under a pill that says "Curio" is chrome paying for
           itself twice, and the space it ate is the reason this page exists. The

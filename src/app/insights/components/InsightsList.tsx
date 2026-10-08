@@ -410,7 +410,9 @@ export default function InsightsList({
     <PreviewCardProvider>
       <div>
       {/* App bar — view toggle on the left; filters and search on the right.
-          Sticks under the navbar and takes the top edge once it scrolls away. */}
+          Sticks to the top of the panel: the frame is a rail on the left and a
+          tab bar at the bottom, so nothing is above it to fight for the edge
+          (the floating navbar used to duck out of the way for this). */}
       <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
         {/* View toggle — a display choice, so it stays put on the left. */}
         <div className={`${searchOpen ? "hidden sm:block" : "block"} shrink-0`}>

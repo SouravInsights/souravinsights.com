@@ -7,15 +7,16 @@ import dynamic from "next/dynamic";
  * The route's fallback metadata. The page sets its own title, description and OG
  * block, so what actually renders from here is the OG image and the Twitter
  * card — kept in step with the page anyway, because a duplicate that says
- * something different is a trap for whoever edits this next.
+ * something different is a trap for whoever edits this next. Word for word, em
+ * dashes included: the page's standfirst is the same sentence.
  */
-const DESCRIPTION = `A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them.`;
+const DESCRIPTION = `A constantly updating collection of links I find worth keeping: articles, tools, portfolios. Curio answers from them.`;
 
 export const metadata: Metadata = {
-  title: "Insights — My Digital Garden | SouravInsights",
+  title: "Insights | My Digital Garden | SouravInsights",
   description: DESCRIPTION,
   openGraph: {
-    title: "Insights — My Digital Garden",
+    title: "Insights | My Digital Garden",
     description: DESCRIPTION,
     url: "https://souravinsights.com/insights",
     type: "website",
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Insights — My Digital Garden",
+    title: "Insights | My Digital Garden",
     description: DESCRIPTION,
     images: ["/curated-page-og-image.jpg"],
   },

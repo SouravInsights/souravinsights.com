@@ -772,7 +772,7 @@ export function MoviesClient({
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20 relative">
+    <div className="relative bg-background text-foreground selection:bg-primary/20">
       {/* Preview toggle - matches CV page pattern */}
       {isUserAuthenticated && (
         <button
@@ -806,45 +806,44 @@ export function MoviesClient({
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4 pb-24 pt-28 sm:pb-28 sm:pt-36">
-        {/* Page header — editorial bordered block, matching home page section style */}
-        <div className="mb-10 sm:mb-14">
-          <div className="border border-border rounded-lg px-4 py-8 sm:px-8 sm:py-10 bg-background relative overflow-hidden">
-            {/* Subtle dot-grid background */}
-            <div
-              className="absolute inset-0 opacity-[0.04]"
-              style={{
-                backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
-                backgroundSize: "3rem 3rem",
-              }}
+      <div className="mx-auto max-w-6xl px-5 pb-10 pt-6 sm:px-6 sm:pt-8">
+        {/* The same rhythm as every other page's PageHeader — title with its
+            count beside it, standfirst, rule — and the same pill as Insights.
+            The bordered box with the dot grid was this page's own invention, and
+            it is what made the page read as a different site. It is not
+            PageHeader itself only because these two fields stay editable. */}
+        <header className="mb-8">
+          <div className="flex items-center justify-between gap-6">
+            <EditableField
+              as="h1"
+              value={data.header.title}
+              onChange={(val) => updateHeader("title", val)}
+              isEditing={isEditing}
+              placeholder="Page title"
+              className="type-display"
             />
-            <div className="relative z-10">
-              <EditableField
-                as="h1"
-                value={data.header.title}
-                onChange={(val) => updateHeader("title", val)}
-                isEditing={isEditing}
-                placeholder="Page title"
-                className="type-display mb-3"
-              />
-              <EditableField
-                as="p"
-                value={data.header.description}
-                onChange={(val) => updateHeader("description", val)}
-                isEditing={isEditing}
-                multiline
-                placeholder="What this page means to you..."
-                className="type-body text-muted-foreground max-w-xl"
-              />
-              {data.movies.length > 0 && (
-                <p className="type-caption mt-4 font-mono tabular-nums text-faint-foreground">
-                  {data.movies.length}{" "}
-                  {data.movies.length === 1 ? "film" : "films"} collected
-                </p>
-              )}
-            </div>
+            {data.movies.length > 0 && (
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums">
+                <span className="font-medium text-foreground">
+                  {data.movies.length}
+                </span>
+                <span className="text-faint-foreground">
+                  {data.movies.length === 1 ? "film" : "films"}
+                </span>
+              </span>
+            )}
           </div>
-        </div>
+          <EditableField
+            as="p"
+            value={data.header.description}
+            onChange={(val) => updateHeader("description", val)}
+            isEditing={isEditing}
+            multiline
+            placeholder="What this page means to you..."
+            className="type-body mt-3 max-w-2xl text-muted-foreground"
+          />
+          <div className="rule mt-5" aria-hidden="true" />
+        </header>
 
         {/* Film grid */}
         {data.movies.length === 0 && !isEditing ? (

@@ -13,6 +13,17 @@ export const MIN_OBSTACLE_AREA = 500;
 export const OBSTACLE_SELECTOR =
   "h1,h2,h3,h4,h5,h6,p,blockquote,a,button,img,svg,picture,video,nav,header,label,[role='button'],[data-oneko-obstacle]";
 
+/**
+ * Controls the cat may not stand on.
+ *
+ * A cat resting on the button you are reaching for is in the way of the click, so
+ * while the pointer is over one of these the aim becomes the nearest point
+ * outside its box. Prose and images are deliberately absent: standing on a
+ * paragraph is harmless, standing on a control is not.
+ */
+export const POINTER_KEEP_OUT_SELECTOR =
+  "a[href],button,[role='button'],input,select,textarea,summary,[contenteditable='true']";
+
 // Grid / route config
 export const CELL_SIZE = 16;
 export const SPRITE_RADIUS = 8;

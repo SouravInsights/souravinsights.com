@@ -151,10 +151,10 @@ export default function TetrisGame() {
   }, [playing]);
 
   return (
-    // 4rem above (the layout's pt-16) + 0 below. Heights live in
+    // The tab bar's band below, nothing above. Heights live in
     // globals.css (.play-root) so vh can fall back for svh — old WebViews
     // don't know svh and must not drop the declaration. While a run is
-    // LIVE the same file hands the navbar's whole band to the well; the
+    // LIVE the same file hands the tab bar's band to the well; the
     // grow/shrink only ever happens behind a veil — start, pause, game
     // over — never mid-play.
     <div className="play-root flex min-h-0 flex-col overscroll-none pt-2 md:flex-1 md:pt-0">

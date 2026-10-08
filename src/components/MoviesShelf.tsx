@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import type { HTMLAttributes } from "react";
 import Image from "next/image";
 import { Film } from "lucide-react";
-import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 
@@ -123,16 +122,5 @@ function Shelf() {
  * reading shelf's layout so the two columns read as a symmetric pair.
  */
 export function MoviesShelf() {
-  return (
-    <section className="group/section">
-      <FadeIn>
-        <SectionHeader
-          title="Movies"
-          href="/movies"
-          description="Films I keep coming back to, the ones that left something behind."
-        />
-      </FadeIn>
-      <Shelf />
-    </section>
-  );
+  return <Shelf />;
 }

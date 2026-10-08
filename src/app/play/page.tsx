@@ -36,12 +36,19 @@ export const metadata: Metadata = {
 const PlayPage: React.FC = () => {
   return (
     <div>
-      {/* Not the shared `container`; its 2rem gutters are dead space on a
-          phone, and the game deserves every pixel of the screen. */}
-      <div className="mx-auto w-full max-w-4xl px-3 md:flex md:h-[calc(100vh-5rem)] md:flex-col md:px-0">
+      {/* Not the shared `container`: its 2rem gutters are dead space on a
+          phone, and the game deserves every pixel of the screen. From md up it
+          is the site's own page rhythm — a real gutter and the page's own top
+          padding — and the column is the viewport minus the tab bar's band, so
+          the deck still fills what is left below the header rather than hanging
+          at the top edge with nothing above it. */}
+      <div className="mx-auto flex w-full max-w-4xl flex-col px-3 md:h-[calc(100svh-var(--tabbar-space))] md:px-6 md:pt-8">
         <div className="hidden shrink-0 md:block">
           <FadeIn y={20} duration={0.3}>
-            <PageHeader title="Shipstack" />
+            <PageHeader
+              title="Shipstack"
+              description="Just Tetris. Fill rows, clear them, chase tetrises."
+            />
           </FadeIn>
         </div>
 

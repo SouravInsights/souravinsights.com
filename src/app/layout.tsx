@@ -5,8 +5,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { SoundProvider } from "@/context/SoundContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import Navbar from "@/components/navbar/NavBar";
-import ClientFooterWrapper from "@/components/footer/ClientFooterWrapper";
+import { AppShell } from "@/components/nav/AppShell";
 import { PHProvider } from "@/context/PostHogProvider";
 import dynamic from "next/dynamic";
 
@@ -72,10 +71,13 @@ export default function RootLayout({
           <PostHogPageView />
           <ThemeProvider>
             <SoundProvider>
-              <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
-                <Navbar />
-                <main className="flex-grow">{children}</main>
-                <ClientFooterWrapper />
+              <div className="flex min-h-dvh flex-col bg-background text-foreground transition-colors duration-200">
+                {/* The frame draws the chrome and owns the offsets (--rail,
+                    --tabbar-space); every page below only has to fill what is
+                    left, and no page reserves a band of its own any more. */}
+                <AppShell>
+                  <main className="flex-grow">{children}</main>
+                </AppShell>
               </div>
             </SoundProvider>
             <SpeedInsights />

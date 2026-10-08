@@ -28,8 +28,12 @@ export function SoundToggle() {
   const sound = useUISound();
   const moved = useRef(false);
 
-  // The pill is centred on narrow screens, so the trigger isn't a useful
-  // anchor there — the panel would hang off to one side.
+  // Where the dial opens is stated rather than left to collide. In the rail it
+  // is a box beside a 32px button in the footer, so it opens to the right of
+  // the column, bottom-aligned with the trigger. Defaulting to "bottom" let it
+  // flip on collision and land over the rail's own nav rows, which read as a
+  // glitch. On a phone the trigger sits in a centred pill, where it is not a
+  // useful anchor — hence the point anchor below.
   const isNarrow = useMediaQuery("(max-width: 767px)");
 
   const Icon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
@@ -72,8 +76,9 @@ export function SoundToggle() {
       </PopoverTrigger>
 
       <PopoverContent
+        side={isNarrow ? "top" : "right"}
         align={isNarrow ? "center" : "end"}
-        sideOffset={isNarrow ? 10 : 16}
+        sideOffset={isNarrow ? 10 : 12}
         collisionPadding={12}
         className="w-fit rounded-lg p-0.5"
       >

@@ -47,7 +47,7 @@ export function CurioComposer({
         event.preventDefault();
         send();
       }}
-      className="flex items-end gap-2 rounded-2xl border border-border bg-card p-2 transition-colors focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30"
+      className="flex items-end gap-2 rounded-lg border border-border bg-card p-2 transition-colors focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30"
     >
       <textarea
         ref={textareaRef}
@@ -72,7 +72,7 @@ export function CurioComposer({
         type="submit"
         disabled={busy || !value.trim()}
         aria-label="Ask"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40"
       >
         <ArrowUp className="h-4 w-4" />
       </button>

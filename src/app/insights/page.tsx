@@ -101,11 +101,11 @@ export default async function CuratedLinksPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-5xl px-5 pb-24 pt-20 sm:px-6 sm:pt-24 md:pt-32">
+      <div className="mx-auto max-w-5xl px-5 pb-10 pt-6 sm:px-6 sm:pt-8">
         <FadeIn y={20} duration={0.3}>
           <PageHeader
             title="Insights"
-            description="A constantly updating collection of links I find worth keeping — articles, tools, portfolios — and Curio, the agent that answers from them."
+            description="A constantly updating collection of links I find worth keeping: articles, tools, portfolios. Curio answers from them."
             action={<LinksCountBadge total={totalLinks} />}
           />
         </FadeIn>

@@ -6,7 +6,6 @@ import Image from "next/image";
 import client from "@/app/lib/literalApiClient";
 import { GET_BOOKS_BY_STATUS } from "@/app/books/queries/getBooksByStatus";
 import { GET_PROFILE } from "@/app/books/queries/getProfile";
-import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 
@@ -148,16 +147,7 @@ function Shelf() {
 export function ReadingShelf() {
   return (
     <ApolloProvider client={client}>
-      <section className="group/section">
-        <FadeIn>
-          <SectionHeader
-            title="Reading"
-            href="/books"
-            description="Books currently on my nightstand, and the ones I just closed."
-          />
-        </FadeIn>
-        <Shelf />
-      </section>
+      <Shelf />
     </ApolloProvider>
   );
 }

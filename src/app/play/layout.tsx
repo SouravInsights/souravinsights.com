@@ -32,10 +32,14 @@ export default function PlayLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen transition-colors duration-200">
+    <div className="transition-colors duration-200">
       <PHProvider>
         <PostHogPageView />
-        <div className="play-shell pt-16 md:pt-20">{children}</div>
+        {/* No min-height here. The shell already gives the page its height, and
+            100dvh *inside* the panel overshot the tab bar's band by exactly
+            --tabbar-space, which pushed the control deck under the bar on a
+            phone. .play-root still subtracts that band from its own box. */}
+        {children}
       </PHProvider>
     </div>
   );

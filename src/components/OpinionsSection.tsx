@@ -1,7 +1,5 @@
 "use client";
 
-import { SectionHeader } from "@/components/SectionHeader";
-import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 
 const OPINIONS = [
@@ -26,14 +24,7 @@ export function OpinionsSection() {
   });
 
   return (
-    <section>
-      <FadeIn>
-        <SectionHeader
-          title="Unpopular Opinions"
-          description="Things I've felt, noticed and often keep circling back to."
-        />
-      </FadeIn>
-      <div className="flex flex-col gap-1" onClick={clear}>
+    <div className="flex flex-col gap-1" onClick={clear}>
         {OPINIONS.map((opinion, index) => {
           const isActive = active === index;
 
@@ -60,6 +51,5 @@ export function OpinionsSection() {
           );
         })}
       </div>
-    </section>
   );
 }

@@ -42,6 +42,16 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    /* Retuned from shadcn's defaults to this site's own palette, so the rail
+       reads as part of the site rather than a component dropped into it. */
+    --sidebar-background: 40 25% 99%;
+    --sidebar-foreground: 30 8% 12%;
+    --sidebar-primary: 30 8% 12%;
+    --sidebar-primary-foreground: 40 20% 98%;
+    --sidebar-accent: 40 15% 93%;
+    --sidebar-accent-foreground: 30 8% 12%;
+    --sidebar-border: 40 12% 84%;
+    --sidebar-ring: 30 8% 12%;
   }
 
   .dark {
@@ -98,6 +108,14 @@
     --chart-3: 30 70% 60%;
     --chart-4: 280 55% 65%;
     --chart-5: 340 65% 60%;
+    --sidebar-background: 216 18% 10%;
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 210 20% 92%;
+    --sidebar-primary-foreground: 216 20% 8%;
+    --sidebar-accent: 216 16% 16%;
+    --sidebar-accent-foreground: 210 18% 92%;
+    --sidebar-border: 216 14% 20%;
+    --sidebar-ring: 210 60% 70%;
   }
 }
 
@@ -108,9 +126,50 @@
   html {
     /* Paint the themed surface immediately, before any content mounts. */
     background-color: hsl(var(--background));
+    /* The scrollbar is drawn, not native — see below — so it is always present
+       and its width would otherwise shift the page between a long route and a
+       short one. Reserving it here is what makes the drawn bar invisible in the
+       layout sense. */
+    scrollbar-gutter: stable;
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /*
+    Scrollbars
+    ----------
+    Platform bars are 15–17px of grey trough, and beside a 144px rail that
+    reads as a second piece of chrome. The thumb is drawn in a 10px track and
+    inset by 2px, so the mark you see is 6px while the grab target stays 10px.
+    Its colour is the muted text tier at 30%, which stays quiet on paper and
+    quiet on dark without a second pair of tokens.
+
+    This is why the gutter is reserved above: styling the bar takes it off the
+    overlay path, so it is always on screen instead of appearing on scroll.
+  */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    background-clip: content-box;
+    border: 2px solid transparent;
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 
@@ -238,6 +297,105 @@
 
 }
 /*
+  The app shell
+  -------------
+  What the chrome occupies, in one place: a left rail from md up, a bottom tab
+  bar on phones, each zero at the other size. A screen that subtracts
+  --tabbar-space is therefore right on every breakpoint, which the old floating
+  pill never allowed — being an overlay, it forced every full-height screen to
+  hand-copy "4rem, 5rem on desktop" for it, and one of them was 2px short.
+
+  The rail carries labels only from xl; below that it is icons plus the tooltip
+  on hover. Not a taste call — measured: a labelled rail at 1024 left a blog
+  post 443px of text, narrower than the same page at 820 with an icon rail,
+  because post pages go two-column (article + table of contents) at lg and both
+  the rail and the TOC want the same width.
+
+  The chrome never hides. A rail and a tab bar are a frame, not an overlay: a
+  frame that ducks away as you scroll is a website telling you it is a website.
+*/
+:root {
+  --tabbar: 3.5rem;
+  --tabbar-space: calc(var(--tabbar) + env(safe-area-inset-bottom, 0px));
+  /*
+    The rail's width. shadcn's Sidebar reads `--sidebar-width` and
+    `--sidebar-width-icon`; the provider in AppShell points the first at
+    --rail-user (written by use-rail.ts when a reader drags it) and falls back
+    to --rail-default, so a dragged width outlives the visit and the default is
+    only a first impression.
+
+    One default, 9rem, at every size — the labelled rail, and compact on
+    purpose: the widest thing in it is one word. "Insights" in a 14px mono face
+    is ~67px, and the rail's own group and row padding plus the icon take 56px
+    more, so a labelled rail is comfortable at 144 and words still fit at 128.
+    12rem was 48px of the panel spent on nothing.
+
+    It used to shrink to the icon width below xl, and that was the bug: shadcn's
+    *state* still said expanded, so the rows stayed full width with their labels
+    clipped instead of centring, which read as a collapsed rail with the icons
+    off to the left. Below xl the rail is now collapsed on arrival instead, so
+    the box and the state always agree. See use-rail.ts.
+  */
+  --rail-default: 9rem;
+}
+/*
+  The shell's motion, in one place, because five elements move together when the
+  rail collapses and one of them out of step reads as a stutter: the rail, the
+  gap that carries the panel, the group label, and every row.
+
+  A class rather than Tailwind arbitrary values, and that is not a style choice:
+  `duration-[var(--x)]` is accepted by the source scanner and then *dropped* from
+  the build, which leaves those elements with a transition property and no
+  duration at all — the rail jumps. Verified in the emitted CSS, not assumed.
+  180ms on a strong ease-out: away from the click quickly, into rest gently.
+*/
+.shell-transition {
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (min-width: 768px) {
+  :root {
+    --tabbar: 0rem;
+  }
+}
+
+/*
+  Motion arms after the first frame
+  --------------------------------
+  The server paints the rail at its default, and that cannot depend on the
+  viewport; use-rail.ts corrects it on mount (the rail arrives collapsed below
+  xl, and a reader who left it collapsed gets it collapsed again). Both are
+  one-frame corrections, and a 180ms slide nobody asked for is worse than a
+  jump — so this attribute is absent until the rail has settled, and its
+  absence means no transitions anywhere in the shell.
+*/
+html:not([data-shell-ready]) .app-shell * {
+  transition: none;
+}
+/*
+  A drag is not a transition either. While one is in flight nothing inside the
+  shell may ease — the rail's width and the gap it leaves both animate by
+  default, and a panel that follows the pointer a beat late reads as lag. The
+  cursor is set for the whole document too, or it flickers back to an arrow the
+  moment the pointer outruns the handle.
+*/
+html[data-resizing="true"] {
+  cursor: col-resize;
+  user-select: none;
+}
+/* Unlayered, like the rest of this file, so it beats the utilities on the
+   vendor components it has to reach through. */
+html[data-resizing="true"] .app-shell * {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell * {
+    transition: none;
+  }
+}
+
+
+/*
   Shipstack screen geometry
   -------------------------
   Unlayered on purpose: @layer utilities would lose to these, and the
@@ -246,10 +404,10 @@
   fall back instead of dropping the declaration.
 */
 .play-root {
-  /* 4rem clears the floating navbar; 0 below — the control deck pads the
-     home-indicator / gesture-bar inset itself. */
-  height: calc(100vh - 4rem);
-  height: calc(100svh - 4rem);
+  /* The tab bar's band, so the well and the deck land above it; the control
+     deck pads the home-indicator / gesture-bar inset itself. */
+  height: calc(100vh - var(--tabbar-space));
+  height: calc(100svh - var(--tabbar-space));
 }
 @media (min-width: 768px) {
   .play-root {
@@ -260,42 +418,36 @@
 /*
   While a run is live, the phone belongs to the game
   --------------------------------------------------
-  TetrisGame stamps html[data-game]; the floating navbar pill fades out
-  mid-run and its reserved band is handed to the board, then everything
-  returns on pause / game over — which is also the way out. The resize
-  only ever happens behind a veil (start / pause / over), never
-  mid-play, so the well's geometry is stable under your thumbs. The
-  menu scrim can never be up at this point: it intercepts the Start tap
-  itself, so the menu is always closed when a run begins. Phones only —
-  the desktop navbar never hides and never collides with the rails.
+  TetrisGame stamps html[data-game]; the tab bar fades and its band goes back
+  to the board (zeroing --tabbar is the entire geometry change), then
+  everything returns on pause / game over — which is also the way out. The
+  resize only ever happens behind a veil (start / pause / over), never
+  mid-play, so the well's geometry is stable under your thumbs. The menu can
+  never be up at this point: the scrim intercepts the Start tap itself.
+  Phones only — on desktop the rail stays, because a shell that vanishes for a
+  game is not a shell, and the board is centred in what is left.
 */
 @media (max-width: 767px) {
-  .site-nav-mobile {
+  html[data-game="playing"] {
+    --tabbar: 0rem;
+  }
+  /* No top chrome on a phone any more, so the well pads the notch itself. */
+  .play-root {
+    padding-top: max(env(safe-area-inset-top, 0px), 8px);
+    transition: height 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .site-tabbar {
     transition:
       opacity 0.18s ease-out,
       visibility 0s linear 0s;
   }
-  .play-shell,
-  .play-root {
-    transition:
-      padding-top 0.28s cubic-bezier(0.23, 1, 0.32, 1),
-      height 0.28s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-  html[data-game="playing"] .site-nav-mobile {
+  html[data-game="playing"] .site-tabbar {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition:
       opacity 0.18s ease-out,
       visibility 0s linear 0.18s;
-  }
-  html[data-game="playing"] .play-shell {
-    padding-top: 0;
-  }
-  html[data-game="playing"] .play-root {
-    height: 100vh;
-    height: 100svh;
-    padding-top: max(env(safe-area-inset-top, 0px), 8px);
   }
 }
 
