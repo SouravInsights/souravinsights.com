@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
 import { Readability } from "@mozilla/readability";
+// Pinned to 26.x in package.json on purpose: 27+ pulls ESM-only packages into jsdom's
+// require chain, which a CommonJS require("jsdom") cannot load on Vercel's function
+// runtime — the agent's fetch_link tool reaches this module, so it 500s the chat route.
 import { JSDOM } from "jsdom";
 import { renderHtml } from "./render";
 

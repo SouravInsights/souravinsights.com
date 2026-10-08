@@ -43,6 +43,13 @@ DOM implementation — its extra weight is irrelevant in an offline pipeline. It
 with `node-html-parser`, which is a faster, lower-level parser with a different interface. That
 is why the spec's original listed stack didn't work as written.
 
+**jsdom is pinned to 26.1.0, and the pin is load-bearing.** From 27 on, jsdom's require chain pulls
+ESM-only packages (`@exodus/bytes`, through `html-encoding-sniffer` and jsdom's own `lib/api.js`),
+and a CommonJS `require("jsdom")` cannot load those on Vercel's function runtime: `ERR_REQUIRE_ESM`,
+which surfaces as a 500 on `/api/insights/chat`, because that route reaches jsdom through the shared
+reader. 26.1.0 is the last version whose whole chain is CommonJS, and over the 25 fixture pages its
+Readability output is byte-identical to 30.1.2. Upgrading past 26.x re-breaks the route.
+
 **3. Headless browser — only when needed.** Some pages build their content with JavaScript, so
 the plain fetch returns 200 with an empty body. For those we run a headless Chromium, wait for
 the page to settle (`document.fonts.ready`, then one second), and run Readability on the
@@ -172,6 +179,9 @@ unbuilt, so today **the report is the measurement**.
   caught on failure, so one bad page can't stop the run.
 - **A per-run tally** (`ok / thin / failed / skipped`, plus the passage count) prints every 10
   links — the same shape as the health sweep's summary.
-- **jsdom is heavy, and only the scripts pay for it.** Nothing in a Next route imports the
-  extractor, so its weight never reaches a request. `next.config.mjs` externalizes
-  `@sparticuz/chromium` and `puppeteer-core` for the routes that *do* render (`/api/link-preview`).
+- **jsdom is heavy, and one request now pays for it.** The agent's `fetch_link` tool reads a page
+  fresh through the same reader, so `/api/insights/chat` requires jsdom — which is why the version
+  pin above matters. That function also carries the browser: `render.ts` imports `browser.ts`, so
+  Chromium's binaries are traced into a route that never renders. Only `@sparticuz/chromium` and
+  `puppeteer-core` are listed in `serverComponentsExternalPackages` in `next.config.mjs`; jsdom is
+  external by Next's own default list, which is what makes the pin the load-bearing part.
