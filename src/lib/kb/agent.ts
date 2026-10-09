@@ -23,10 +23,10 @@ import { readPageFresh } from "./fetch-link";
  */
 
 /** Max model round-trips per question (keeps a question near a tenth of a cent). */
-const MAX_STEPS = 4;
+export const MAX_STEPS = 4;
 
 /** How many links one search hands back to the model. */
-const SEARCH_LIMIT = 6;
+export const SEARCH_LIMIT = 6;
 
 /** How many pages one question may read fresh from the web. */
 const MAX_FETCHES = 3;
@@ -60,13 +60,28 @@ export const searchKnowledge = tool({
   },
 });
 
+/**
+ * The agent's tools, in one place.
+ *
+ * A fresh `fetch_link` per call, so its three-page budget is per question rather
+ * than per process. `runAgent` and `scripts/kb-trace.ts` both read this, so what
+ * you inspect is exactly what answers a visitor — a trace over a re-created tool
+ * set would be a trace of a different agent.
+ */
+export function agentTools() {
+  return {
+    search_knowledge: searchKnowledge,
+    fetch_link: fetchLinkTool(),
+  };
+}
+
 /** Stream an answer for the given conversation. */
 export async function runAgent(messages: UIMessage[]) {
   return streamText({
     model: chatModel(),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    tools: { search_knowledge: searchKnowledge, fetch_link: fetchLinkTool() },
+    tools: agentTools(),
     stopWhen: stepCountIs(MAX_STEPS),
   });
 }

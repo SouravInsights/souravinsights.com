@@ -35,6 +35,9 @@ npx tsx scripts/kb-extract.ts                         # pending links â†’ text â
 npx tsx scripts/kb-extract.ts --status failed,thin    # re-read the rows that came back weak
 npx tsx scripts/kb-report.ts --write                  # regenerate build-report.md
 npx tsx scripts/kb-eval.ts                            # the retrieval scoreboard
+yarn inspect                                           # is the index healthy? heaviest links, what isn't indexed
+yarn inspect <url-or-part>                             # one link: status, sizes, every stored passage
+yarn trace "a question"                                # what the agent did: queries, links, scores, answer
 npx tsx scripts/kb-suggestions.ts                     # regenerate the suggestion chips
 npx tsx scripts/kb-mcp.ts                             # the MCP server on stdio (Cursor/Claude spawn it)
 npx trigger.dev@latest dev                            # run the weekly tasks locally

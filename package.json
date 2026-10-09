@@ -9,7 +9,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "inspect": "tsx scripts/kb-inspect.ts",
+    "trace": "tsx scripts/kb-trace.ts"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.133",
