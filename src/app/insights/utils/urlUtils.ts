@@ -36,6 +36,17 @@ export function sortByNewestId<T extends { id: string }>(items: T[]): T[] {
   });
 }
 
+/** Oldest first — the inverse of sortByNewestId, used to surface stale links. */
+export function sortByOldestId<T extends { id: string }>(items: T[]): T[] {
+  return [...items].sort((a, b) => {
+    try {
+      return BigInt(a.id) > BigInt(b.id) ? 1 : -1;
+    } catch {
+      return a.id.localeCompare(b.id);
+    }
+  });
+}
+
 /**
  * Drop repeated URLs, keeping the first occurrence — callers sort newest
  * first beforehand, so the freshest copy of a link wins.

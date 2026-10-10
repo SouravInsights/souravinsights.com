@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, Heart, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
@@ -12,6 +12,7 @@ import {
   normalizeUrl,
   seededShuffle,
   sortByNewestId,
+  sortByOldestId,
 } from "../utils/urlUtils";
 import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
 import { LikeButton } from "./LikeButton";
@@ -32,11 +33,17 @@ interface InsightsListProps {
 
 const ITEMS_PER_PAGE = 60;
 
+/** The hide/unhide API caps a batch at 200; "select all" can be larger. */
+const HIDE_BATCH_LIMIT = 200;
+
 const SORT_LABELS = {
   newest: "Newest",
+  oldest: "Oldest",
   liked: "Most liked",
   shuffle: "Shuffle",
 } as const;
+
+type SortMode = keyof typeof SORT_LABELS;
 
 /** Hostname only, without protocol or `www.`, to hint at the source. */
 const shortDomain = (url: string) => {
@@ -66,12 +73,17 @@ export default function InsightsList({
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
-  const [sort, setSort] = useState<"newest" | "liked" | "shuffle">("shuffle");
+  const [sort, setSort] = useState<SortMode>("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"list" | "grid">("list");
   const [adminKey, setAdminKey] = useState<string | null>(null);
   const [hiddenKeys, setHiddenKeys] = useState<Set<string>>(new Set());
+  // Clean-up (batch delete) mode. Session-only state on purpose: an admin-only
+  // triage mode that survives a reload is one more thing to desync.
+  const [cleanup, setCleanup] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [lastHidden, setLastHidden] = useState<string[] | null>(null);
   // Captured previews start server-rendered, then fill in as we warm misses.
   const [previewMap, setPreviewMap] = useState(previews);
   const warmedRef = useRef<Set<string>>(new Set());
@@ -140,6 +152,7 @@ export default function InsightsList({
   // Quality sort keeps newest-first order for ties (Array.sort is stable).
   const sortedLinks = useMemo(() => {
     if (sort === "newest") return filteredLinks;
+    if (sort === "oldest") return sortByOldestId(filteredLinks);
     if (sort === "shuffle") return seededShuffle(filteredLinks, shuffleSeed);
     return [...filteredLinks].sort(
       (a, b) => (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0)
@@ -209,7 +222,9 @@ export default function InsightsList({
   }, [view]);
 
   useEffect(() => {
-    window.localStorage.setItem("insights:sort-v2", sort);
+    // "Oldest" is an admin-only clean-up view. Never persist it, or a later
+    // normal visit would load into it.
+    if (sort !== "oldest") window.localStorage.setItem("insights:sort-v2", sort);
   }, [sort]);
 
   // Admin mode: ?admin in the URL; the key is prompted once and stored in
@@ -402,9 +417,121 @@ export default function InsightsList({
     };
   }, [view, sortedLinks, visibleItems]);
 
-  const visibleLinks = sortedLinks
-    .filter((link) => !hiddenKeys.has(normalizeUrl(link.url)))
-    .slice(0, visibleItems);
+  // Everything the current filter/search shows, minus what we've hidden this
+  // session. `visibleLinks` is just the current page of it.
+  const selectableLinks = sortedLinks.filter(
+    (link) => !hiddenKeys.has(normalizeUrl(link.url))
+  );
+  const visibleLinks = selectableLinks.slice(0, visibleItems);
+
+  // --- Clean-up (batch delete) -------------------------------------------
+  // Selection is inert: it never touches the list, so nothing reflows while I
+  // am picking. The only reflow is the single batch commit.
+
+  const toggleSelected = (url: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(url)) next.delete(url);
+      else next.add(url);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelected(new Set());
+
+  const selectAllShown = () =>
+    setSelected(new Set(selectableLinks.map((link) => link.url)));
+
+  const toggleCleanup = () => {
+    feedback.select();
+    if (!cleanup) {
+      setCleanup(true);
+      return;
+    }
+    // Leaving is the one moment the list may change. Refresh once, here — never
+    // mid-triage — so the order can't jump under a click and the header count
+    // catches up in one go.
+    setCleanup(false);
+    setSelected(new Set());
+    setLastHidden(null);
+    router.refresh();
+  };
+
+  // Split a selection into API-sized chunks and fire them together.
+  const sendHideBatch = (endpoint: string, urls: string[]) => {
+    const batches: string[][] = [];
+    for (let i = 0; i < urls.length; i += HIDE_BATCH_LIMIT) {
+      batches.push(urls.slice(i, i + HIDE_BATCH_LIMIT));
+    }
+    return Promise.all(
+      batches.map((batch) =>
+        fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: `Bearer ${adminKey}`,
+          },
+          body: JSON.stringify({ urls: batch }),
+        })
+      )
+    );
+  };
+
+  // A 401 anywhere means the stored key is wrong: drop it everywhere at once.
+  const rejectAdminKey = () => {
+    window.localStorage.removeItem("insights_admin_key");
+    setAdminKey(null);
+    setCleanup(false);
+    window.alert("Wrong admin key.");
+  };
+
+  const hideSelected = async () => {
+    if (!adminKey || selected.size === 0) return;
+    const urls = Array.from(selected);
+    const responses = await sendHideBatch("/api/v1/links/hide", urls);
+    if (responses.some((response) => response.status === 401)) {
+      rejectAdminKey();
+      return;
+    }
+    if (responses.some((response) => !response.ok)) {
+      // A batch failed part-way. Resync from the server instead of guessing
+      // which links made it — correctness beats avoiding one rare reflow.
+      feedback.warning();
+      router.refresh();
+      return;
+    }
+    // One state update for the whole batch: a single reflow, on my terms.
+    setHiddenKeys((prev) => {
+      const next = new Set(prev);
+      urls.forEach((url) => next.add(normalizeUrl(url)));
+      return next;
+    });
+    setSelected(new Set());
+    setLastHidden(urls);
+    feedback.press();
+  };
+
+  const undoHide = async () => {
+    if (!adminKey || !lastHidden) return;
+    const urls = lastHidden;
+    const responses = await sendHideBatch("/api/v1/links/unhide", urls);
+    if (responses.some((response) => response.status === 401)) {
+      rejectAdminKey();
+      return;
+    }
+    if (responses.some((response) => !response.ok)) {
+      feedback.warning();
+      router.refresh();
+      return;
+    }
+    setHiddenKeys((prev) => {
+      const next = new Set(prev);
+      urls.forEach((url) => next.delete(normalizeUrl(url)));
+      return next;
+    });
+    setLastHidden(null);
+    feedback.press();
+  };
 
   return (
     <PreviewCardProvider>
@@ -414,45 +541,69 @@ export default function InsightsList({
           tab bar at the bottom, so nothing is above it to fight for the edge
           (the floating navbar used to duck out of the way for this). */}
       <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
-        {/* View toggle — a display choice, so it stays put on the left. */}
+        {/* View toggle + clean-up. Display choices sit on the left; clean-up is
+            the admin-only door into batch delete. */}
         <div className={`${searchOpen ? "hidden sm:block" : "block"} shrink-0`}>
-          <div className="flex h-10 items-center gap-0.5 rounded-lg border border-border p-0.5 sm:h-9">
-            {[
-              { mode: "list" as const, label: "List view", Icon: ListIcon },
-              { mode: "grid" as const, label: "Grid view", Icon: LayoutGrid },
-            ].map(({ mode, label, Icon }) => {
-              const active = view === mode;
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => {
-                    feedback.select();
-                    setView(mode);
-                  }}
-                  aria-label={label}
-                  aria-pressed={active}
-                  className={`relative flex h-full aspect-square items-center justify-center rounded-[5px] transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] ${
-                    active
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="insights-view-pill"
-                      className="absolute inset-0 rounded-[5px] bg-foreground/10"
-                      transition={{
-                        type: "spring",
-                        stiffness: 520,
-                        damping: 42,
-                      }}
-                    />
-                  )}
-                  <Icon className="relative z-10 h-4 w-4" />
-                </button>
-              );
-            })}
+          <div className="flex h-10 items-center gap-2 sm:h-9">
+            <div className="flex h-full items-center gap-0.5 rounded-lg border border-border p-0.5">
+              {[
+                { mode: "list" as const, label: "List view", Icon: ListIcon },
+                { mode: "grid" as const, label: "Grid view", Icon: LayoutGrid },
+              ].map(({ mode, label, Icon }) => {
+                const active = view === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => {
+                      feedback.select();
+                      setView(mode);
+                    }}
+                    aria-label={label}
+                    aria-pressed={active}
+                    className={`relative flex h-full aspect-square items-center justify-center rounded-[5px] transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] ${
+                      active
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="insights-view-pill"
+                        className="absolute inset-0 rounded-[5px] bg-foreground/10"
+                        transition={{
+                          type: "spring",
+                          stiffness: 520,
+                          damping: 42,
+                        }}
+                      />
+                    )}
+                    <Icon className="relative z-10 h-4 w-4" />
+                  </button>
+                );
+              })}
+            </div>
+
+            {adminKey !== null && (
+              <button
+                type="button"
+                onClick={toggleCleanup}
+                aria-pressed={cleanup}
+                aria-label={cleanup ? "Done cleaning up" : "Clean up links"}
+                title={cleanup ? "Done cleaning up" : "Clean up links"}
+                className={`flex aspect-square h-full items-center justify-center rounded-lg border transition-colors ${
+                  cleanup
+                    ? "border-red-600/40 bg-red-600/10 text-red-600"
+                    : "border-border text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+                }`}
+              >
+                {cleanup ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </button>
+            )}
           </div>
         </div>
 
@@ -546,6 +697,16 @@ export default function InsightsList({
                         label: "Shuffle",
                         icon: Shuffle,
                       },
+                      // Oldest is a clean-up tool, so it only exists for admins.
+                      ...(adminKey !== null
+                        ? [
+                            {
+                              value: "oldest" as const,
+                              label: "Oldest",
+                              icon: History,
+                            },
+                          ]
+                        : []),
                     ].map((option) => (
                       <button
                         key={option.value}
@@ -634,7 +795,9 @@ export default function InsightsList({
               <span className="w-5 shrink-0" aria-hidden="true" />
               <span className="flex-1">Name</span>
               <span className="hidden w-44 shrink-0 sm:block">Site</span>
-              <span className="w-24 shrink-0 text-right">Likes</span>
+              <span className="w-24 shrink-0 text-right">
+                {cleanup ? "" : "Likes"}
+              </span>
             </div>
             <div className="rule" aria-hidden="true" />
 
@@ -658,6 +821,9 @@ export default function InsightsList({
                         }
                         isAdmin={adminKey !== null}
                         onHide={() => hideLink(link)}
+                        selectMode={cleanup}
+                        selected={selected.has(link.url)}
+                        onToggle={() => toggleSelected(link.url)}
                       />
                     </FadeIn>
                   </div>
@@ -692,6 +858,9 @@ export default function InsightsList({
                     warmUrl={previewMap[link.url] ? undefined : link.url}
                     isAdmin={adminKey !== null}
                     onHide={() => hideLink(link)}
+                    selectMode={cleanup}
+                    selected={selected.has(link.url)}
+                    onToggle={() => toggleSelected(link.url)}
                   />
                 </FadeIn>
               );
@@ -699,7 +868,7 @@ export default function InsightsList({
           </div>
         )}
 
-        {sortedLinks.length > visibleItems && (
+        {selectableLinks.length > visibleItems && (
           <div className="mt-4">
             <button
               type="button"
@@ -709,15 +878,96 @@ export default function InsightsList({
               }}
               className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-4 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
             >
-              Show {Math.min(ITEMS_PER_PAGE, sortedLinks.length - visibleItems)}{" "}
+              Show {Math.min(ITEMS_PER_PAGE, selectableLinks.length - visibleItems)}{" "}
               more
             </button>
           </div>
         )}
       </div>
 
+      {/* Clean-up rail. Sticky so it rides the viewport without entering the
+          document flow — appearing or leaving never shifts the list. Sits above
+          the phone tab bar, and at the bottom edge on desktop. */}
+      {(cleanup || lastHidden) && adminKey !== null && (
+        <div className="sticky bottom-[var(--tabbar-space)] z-30 mt-4 flex flex-col gap-2">
+          {lastHidden && (
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2 shadow-lg shadow-black/5 backdrop-blur">
+              <span className="type-caption text-muted-foreground">
+                Hidden {lastHidden.length}{" "}
+                {lastHidden.length === 1 ? "link" : "links"}.
+              </span>
+              <button
+                type="button"
+                onClick={undoHide}
+                className="inline-flex h-8 items-center rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
+              >
+                Undo
+              </button>
+            </div>
+          )}
+
+          {cleanup && (
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2.5 shadow-lg shadow-black/5 backdrop-blur">
+              <div className="flex items-center gap-3">
+                <span className="type-caption font-medium text-foreground">
+                  {selected.size} selected
+                </span>
+                <button
+                  type="button"
+                  onClick={selectAllShown}
+                  disabled={selectableLinks.length === 0}
+                  className="inline-flex h-8 items-center rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:opacity-40"
+                >
+                  All {selectableLinks.length}
+                </button>
+                <button
+                  type="button"
+                  onClick={clearSelection}
+                  disabled={selected.size === 0}
+                  className="inline-flex h-8 items-center rounded-lg px-2 type-caption font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
+                >
+                  Clear
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={hideSelected}
+                disabled={selected.size === 0}
+                aria-label={`Hide ${selected.size} selected`}
+                className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-3 type-caption font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Hide{selected.size > 0 ? ` ${selected.size}` : ""}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       </div>
     </PreviewCardProvider>
+  );
+}
+
+/** The clean-up selection mark. Purely visual — the row or card around it owns
+ *  the click, so there is one hit target and no double toggle. */
+function SelectBox({
+  selected,
+  className,
+}: {
+  selected: boolean;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`flex h-4 w-4 items-center justify-center rounded-[4px] border ${
+        selected
+          ? "border-foreground bg-foreground text-background"
+          : "border-muted-foreground/50 bg-background/60"
+      } ${className ?? ""}`}
+    >
+      {selected && <Check className="h-3 w-3" />}
+    </span>
   );
 }
 
@@ -727,13 +977,71 @@ function LinkRow({
   previewSrc,
   isAdmin,
   onHide,
+  selectMode,
+  selected,
+  onToggle,
 }: {
   link: EnrichedLink;
   href: string;
   previewSrc: string;
   isAdmin: boolean;
   onHide: () => void;
+  selectMode: boolean;
+  selected: boolean;
+  onToggle: () => void;
 }) {
+  const lead = (
+    <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
+      {selectMode ? (
+        <SelectBox selected={selected} />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={faviconFor(link.url)}
+          alt=""
+          width={16}
+          height={16}
+          loading="lazy"
+          className="h-4 w-4 object-contain"
+        />
+      )}
+    </span>
+  );
+
+  const title = (
+    <span className="min-w-0 flex-1 truncate type-body font-semibold text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+      {link.title}
+    </span>
+  );
+
+  const domain = (
+    <span className="hidden w-44 shrink-0 truncate type-body text-muted-foreground sm:block">
+      {shortDomain(link.url)}
+    </span>
+  );
+
+  // In clean-up mode the whole row is the toggle: the link, the preview and the
+  // like button stand down, so a tap can only mean "select". The trailing
+  // spacer keeps the columns aligned with the header, so selecting shifts
+  // nothing.
+  if (selectMode) {
+    return (
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={selected}
+        className={`flex w-full items-center gap-3 px-3 py-4 text-left transition-colors ${
+          selected ? "bg-foreground/[0.06]" : "hover:bg-foreground/5"
+        }`}
+      >
+        {lead}
+        {title}
+        {domain}
+        <span className="w-24 shrink-0" aria-hidden="true" />
+      </button>
+    );
+  }
+
   return (
     <PreviewCardTrigger
       payload={{ url: link.url, name: link.title, previewImage: previewSrc }}
@@ -745,25 +1053,9 @@ function LinkRow({
         rel="noopener noreferrer"
         className="flex min-w-0 flex-1 items-center gap-3"
       >
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={faviconFor(link.url)}
-            alt=""
-            width={16}
-            height={16}
-            loading="lazy"
-            className="h-4 w-4 object-contain"
-          />
-        </span>
-
-        <span className="min-w-0 flex-1 truncate type-body font-semibold text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
-          {link.title}
-        </span>
-
-        <span className="hidden w-44 shrink-0 truncate type-body text-muted-foreground sm:block">
-          {shortDomain(link.url)}
-        </span>
+        {lead}
+        {title}
+        {domain}
       </a>
 
       <div className="flex w-24 shrink-0 items-center justify-end gap-2">
@@ -793,6 +1085,9 @@ function LinkGridCard({
   warmUrl,
   isAdmin,
   onHide,
+  selectMode,
+  selected,
+  onToggle,
 }: {
   link: EnrichedLink;
   href: string;
@@ -803,7 +1098,101 @@ function LinkGridCard({
   warmUrl?: string;
   isAdmin: boolean;
   onHide: () => void;
+  selectMode: boolean;
+  selected: boolean;
+  onToggle: () => void;
 }) {
+  const media = (
+    <div className="relative aspect-[40/21] w-full overflow-hidden bg-secondary">
+      {selectMode && (
+        <span className="absolute left-2 top-2 z-10">
+          <SelectBox selected={selected} />
+        </span>
+      )}
+      {previewSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={previewSrc}
+          alt=""
+          loading="lazy"
+          onError={onPreviewError}
+          className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+        />
+      ) : isVisible && !isFailed ? (
+        <PreviewLoader />
+      ) : (
+        // Couldn't capture this one (site blocks bots / is unreachable).
+        // A quiet mark beats an empty panel.
+        <div className="flex h-full w-full items-center justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={faviconFor(link.url)}
+            alt=""
+            width={28}
+            height={28}
+            loading="lazy"
+            className="h-7 w-7 rounded object-contain opacity-40"
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  const body = (
+    <div className="p-3">
+      <div className="line-clamp-2 type-body font-medium leading-snug text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+        {link.title}
+      </div>
+    </div>
+  );
+
+  const footer = (
+    <div className="mt-auto flex items-center justify-between gap-2 border-t border-border px-3 py-2.5">
+      <span className="truncate type-caption text-faint-foreground">
+        {shortDomain(link.url)}
+      </span>
+      <div className="flex shrink-0 items-center gap-2">
+        {!selectMode && isAdmin && (
+          <button
+            type="button"
+            onClick={onHide}
+            aria-label="Hide link"
+            className="text-muted-foreground transition-colors hover:text-red-600"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
+        {!selectMode && <LikeButton linkId={link.id} />}
+      </div>
+    </div>
+  );
+
+  // Same idea as the row: the card becomes the toggle. The checkbox is absolute,
+  // so it costs no layout, and the link does not open.
+  if (selectMode) {
+    return (
+      <div
+        data-warm-url={warmUrl}
+        className={`flex h-full flex-col overflow-hidden rounded-xl border bg-background transition-colors ${
+          selected
+            ? "border-foreground ring-2 ring-foreground/50"
+            : "border-border hover:border-foreground/20"
+        }`}
+      >
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-pressed={selected}
+          className="flex w-full flex-1 flex-col text-left"
+        >
+          {media}
+          {body}
+        </button>
+        {footer}
+      </div>
+    );
+  }
+
   return (
     <div
       data-warm-url={warmUrl}
@@ -815,58 +1204,10 @@ function LinkGridCard({
         rel="noopener noreferrer"
         className="flex flex-1 flex-col"
       >
-        <div className="relative aspect-[40/21] w-full overflow-hidden bg-secondary">
-          {previewSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={previewSrc}
-              alt=""
-              loading="lazy"
-              onError={onPreviewError}
-              className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
-            />
-          ) : isVisible && !isFailed ? (
-            <PreviewLoader />
-          ) : (
-            // Couldn't capture this one (site blocks bots / is unreachable).
-            // A quiet mark beats an empty panel.
-            <div className="flex h-full w-full items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={faviconFor(link.url)}
-                alt=""
-                width={28}
-                height={28}
-                loading="lazy"
-                className="h-7 w-7 rounded object-contain opacity-40"
-              />
-            </div>
-          )}
-        </div>
-        <div className="p-3">
-          <div className="line-clamp-2 type-body font-medium leading-snug text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
-            {link.title}
-          </div>
-        </div>
+        {media}
+        {body}
       </a>
-      <div className="mt-auto flex items-center justify-between gap-2 border-t border-border px-3 py-2.5">
-        <span className="truncate type-caption text-faint-foreground">
-          {shortDomain(link.url)}
-        </span>
-        <div className="flex shrink-0 items-center gap-2">
-          {isAdmin && (
-            <button
-              type="button"
-              onClick={onHide}
-              aria-label="Hide link"
-              className="text-muted-foreground transition-colors hover:text-red-600"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-          <LikeButton linkId={link.id} />
-        </div>
-      </div>
+      {footer}
     </div>
   );
 }

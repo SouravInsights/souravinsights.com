@@ -99,10 +99,25 @@ export const searchResponseSchema = z.object({
   }),
 });
 
+/**
+ * One link (`url`) or a batch (`urls`). The batch form exists so cleaning up a
+ * whole filtered view costs one request — and one rate-limit hit — instead of
+ * one per link. Left as a plain object (not `.refine`) so `.partial()` and the
+ * OpenAPI response schemas built from it keep working.
+ */
 export const hideRequestSchema = z.object({
-  url: z.string().url().openapi({
+  url: z.string().url().optional().openapi({
     description: "Any URL variant of the link; normalized server-side",
   }),
+  urls: z
+    .array(z.string().url())
+    .min(1)
+    .max(200)
+    .optional()
+    .openapi({
+      description:
+        "Batch form: up to 200 URL variants; each normalized server-side",
+    }),
 });
 
 export const errorSchema = z

@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { hideRequestSchema } from "@/lib/links/api-schemas";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
-import { setLinkHidden } from "@/lib/links/visibility";
+import { setLinkHidden, setLinksHidden } from "@/lib/links/visibility";
 import { normalizeUrl } from "@/app/insights/utils/urlUtils";
 
 const err = (code: string, message: string, status: number) =>
@@ -23,10 +23,26 @@ export async function POST(request: NextRequest) {
 
   const parsed = hideRequestSchema.safeParse(await request.json());
   if (!parsed.success) {
-    return err("invalid_body", "Body must be { url: string }", 400);
+    return err("invalid_body", "Body must be { url } or { urls: [...] }", 400);
   }
 
-  const found = await setLinkHidden(parsed.data.url, false);
+  const { url, urls } = parsed.data;
+
+  // Batch form: the undo path after a clean-up.
+  if (urls) {
+    const count = await setLinksHidden(urls, false);
+    revalidatePath("/insights");
+    revalidatePath("/api/insights/latest");
+    return NextResponse.json({
+      data: { urls: urls.map(normalizeUrl), hidden: false, count },
+    });
+  }
+
+  if (!url) {
+    return err("invalid_body", "Body must be { url } or { urls: [...] }", 400);
+  }
+
+  const found = await setLinkHidden(url, false);
   if (!found) {
     return err("not_found", "No link matches this URL", 404);
   }
@@ -35,6 +51,6 @@ export async function POST(request: NextRequest) {
   revalidatePath("/api/insights/latest");
 
   return NextResponse.json({
-    data: { id: normalizeUrl(parsed.data.url), hidden: false },
+    data: { id: normalizeUrl(url), hidden: false },
   });
 }
