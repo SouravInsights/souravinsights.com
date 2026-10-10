@@ -19,6 +19,15 @@ Pin the version **exactly** (`0.19.5`) and upgrade deliberately — same discipl
 jsdom pin. The node bundle is CommonJS, so it drops into scripts, Trigger.dev and the route
 bundles with no ESM gymnastics.
 
+### How we consume it (the whole menu, decided once)
+
+| Path | Verdict |
+| :--- | :--- |
+| `defuddle/node` (npm, CJS, takes any Document) | **yes — the pipeline** |
+| CLI (`npx defuddle parse`) | fixtures and eyeballing only, never in the pipeline |
+| Hosted API at defuddle.md (`GET /<url>`, a paid Worker, source in `website/`) | **no** — own fetch bypasses our SSRF guard, a Worker can't render JS (per its own docs), metered third-party inside a cron, version moves under us. Fine for manual lookups in a browser. |
+| `defuddle` / `defuddle/full` (browser bundles) | no — wrong runtime |
+
 ## What defuddle does for us (verified in its source)
 
 - **Content extraction** — scoring-based, removes fewer uncertain elements than Readability.
