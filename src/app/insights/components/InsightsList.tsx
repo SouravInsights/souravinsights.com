@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
 import { DiscordChannel, LinkData } from "../utils/discordApi";
 import {
   appendUTMParams,
@@ -1026,19 +1026,37 @@ function LinkRow({
   // nothing.
   if (selectMode) {
     return (
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-pressed={selected}
-        className={`flex w-full items-center gap-3 px-3 py-4 text-left transition-colors ${
+      <div
+        className={`flex w-full items-center gap-3 px-3 py-4 transition-colors ${
           selected ? "bg-foreground/[0.06]" : "hover:bg-foreground/5"
         }`}
       >
-        {lead}
-        {title}
-        {domain}
-        <span className="w-24 shrink-0" aria-hidden="true" />
-      </button>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-pressed={selected}
+          className="flex min-w-0 flex-1 items-center gap-3 text-left"
+        >
+          {lead}
+          {title}
+          {domain}
+        </button>
+        {/* Inspecting before deleting is allowed: the row area toggles, this
+            opens. A sibling of the toggle, never nested inside it, so one click
+            can only do one thing. */}
+        <div className="flex w-24 shrink-0 items-center justify-end">
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open link in a new tab"
+            title="Open link"
+            className="relative flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-foreground/5 hover:text-foreground"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </div>
     );
   }
 
@@ -1162,7 +1180,21 @@ function LinkGridCard({
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         )}
-        {!selectMode && <LikeButton linkId={link.id} />}
+        {selectMode ? (
+          // Same rule as the row: the card toggles, this opens.
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open link in a new tab"
+            title="Open link"
+            className="relative flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-foreground/5 hover:text-foreground"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        ) : (
+          <LikeButton linkId={link.id} />
+        )}
       </div>
     </div>
   );
