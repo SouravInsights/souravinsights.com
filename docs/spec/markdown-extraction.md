@@ -1,102 +1,96 @@
 # Markdown Extraction — Spec
 
-**Status:** agreed direction. Gate before wiring: the fixture bake-off at the bottom.
+**Status:** decided. **defuddle** is the content engine for every page we read. Markdown is the
+storage format. Source analyzed at `~/Documents/Personal/scrape/defuddle` (v0.19.5).
 
-Store pages as **markdown**, not scraped plain text. Markdown is the LLM-ready format: link
-targets, headings and code fences survive, which plain text destroys. The classifier, the
-chunker and the `read-shelf` treatment all get strictly better input.
-
-Companion spec: [`classification.md`](./classification.md) (what a link *is*; this doc is how
-we *read* it).
+Companion spec: [`classification.md`](./classification.md) — what a link *is*; this doc is how
+we *read* it.
 
 ---
 
-## Why now — recorded failures of the current reader
+## The decision
 
-Measured in `docs/review/system-review.md`, not taste:
+Every page the pipeline reads goes through **defuddle** (`defuddle/node`), and we store its
+markdown. Reasons: link targets, headings and code fences survive (plain text destroys them);
+the engine is forgiving where Readability was brittle (app-style pages, flattened prose); and
+it collapses a pile of our custom code into one maintained dependency.
 
-- Readability's `textContent` **erases link targets** — a shelf page becomes dead text where
-  items, signposts and prose are indistinguishable. The listed treatment cannot work on it.
-- Readability **empties app-style pages** (the `document.body.innerText` fallback exists
-  because of this) and **flattens prose** (35 of 203 fixture passages lost every line break).
-- Hand-rolled metadata parsing reimplements a solved problem — badly (we store Discord's blurb
-  while the page's own description sits unread on 84% of pages).
+Pin the version **exactly** (`0.19.5`) and upgrade deliberately — same discipline as the
+jsdom pin. The node bundle is CommonJS, so it drops into scripts, Trigger.dev and the route
+bundles with no ESM gymnastics.
 
-## What replaces it — traced, not assumed
+## What defuddle does for us (verified in its source)
 
-Microlink's URL→markdown tool was dissected in the cloned monorepos
-(`~/Documents/Personal/scrape/{microlink,metascraper}`):
+- **Content extraction** — scoring-based, removes fewer uncertain elements than Readability.
+- **Markdown output** — `{ markdown: true }`; its own turndown build with element handlers for
+  code, headings, footnotes, math, images, callouts.
+- **Boilerplate removal** (`src/removals/`): ads/social selectors, hidden elements, low-scoring
+  blocks, small images, boilerplate *content patterns* ("read time", article cards), metadata
+  blocks. This is the `clean()` we hand-wrote, done properly.
+- **27 site extractors** (`src/extractors/`): twitter/x, github, hackernews, reddit, substack,
+  medium, wikipedia, youtube… Threads and repo pages come back as real content, not chrome.
+- **Raw-markdown passthrough** — if the page *is* a markdown document (`.md`, raw README), it
+  is detected and returned as-is.
+- **Metadata** — title, description, author, published, site, image, favicon, language,
+  `wordCount`, and `schemaOrgData` (the parsed JSON-LD). One call, no hand-parsing.
+- **No browser inside.** It works on a DOM Document; it never executes JS. Rendering stays
+  our job (below).
 
-- `microlink.markdown(url)` (`packages/core`) is an **API client**; the MCP tool forwards to
-  the same hosted endpoint. No markdown engine ships in the OSS repo.
-- The engine is **defuddle** — pinned `~0.19.4` in the metascraper monorepo
-  (`metascraper-defuddle`); that connector's README says its defuddle pass is memoized for
-  "another consumer, such as a markdown renderer" — i.e. their hosted markdown *is* defuddle
-  output serialized by its built-in turndown module.
-- **defuddle is free and local** (MIT, by Kepano; the Obsidian Web Clipper engine; written as a
-  Readability replacement): more forgiving on uncertain elements, consistent code/math/footnote
-  output, strips comments/hidden blocks/small images. Node form: `Defuddle(document, url,
-  { markdown: true })` over a jsdom document — jsdom we already carry and pin.
+## Our usage contract
 
-Fixture proof (2026-10-10): `defuddle parse eval/fixtures/blogroll-org.html --markdown` →
-382 lines of clean itemized markdown, each entry `[description](url)` — the item structure
-that plain text erases.
+```ts
+import { Defuddle } from "defuddle/node";
 
-## The division of labor
-
-```mermaid
-flowchart LR
-    A["fetch → render if empty<br/>(ours — debugged already)"] --> D["jsdom → Defuddle({markdown:true})<br/>(theirs)"]
-    A --> S["metascraper: title · description ·<br/>author · date · feed …<br/>(theirs)"]
-    S --> C["classifier"]
-    D --> C
-    C --> R["read / read-shelf:<br/>chunk the **markdown**"]
-    C --> N["noted: metascraper<br/>description only"]
+const result = await Defuddle(jsdomDocument, url, {
+  markdown: true,
+  useAsync: true,          // offline pipeline: extractors may fetch transcripts/comments
+  fetch: guardedFetch,     // all extractor HTTP goes through our one network seam
+});
+// result.content        → markdown to store
+// result.title          → backfill for Untitled links
+// result.description    → the page's own summary (today: Discord's blurb)
+// result.wordCount      → drives ok / thin
 ```
 
-- **Fetch/render ladder stays ours.** Already paid its debug tax (one browser per run, 25s cap,
-  body-text fallback). defuddle consumes its output unchanged. (Microlink's tool "took some
-  time" on 60fps.design because *their* API renders JS — the only piece we don't outsource,
-  because we already own it.)
-- **defuddle replaces Readability as the content engine.** Pin `~0.19.4` — proven against
-  their API traffic; upgrade deliberately, same discipline as the jsdom pin.
-- **metascraper becomes the metadata / declared-signals reader** (`-title`, `-description`,
-  `-author`, `-date`, `-publisher`, `-feed`). The `-feed` pack also supplies the
-  feed-autodiscovery signal the classifier wants. Measured numbers (anchor share, code share,
-  image counts) we still count ourselves — plain DOM arithmetic.
-- **raw_text becomes markdown; chunking becomes markdown-aware.** `##` headings restore
-  section structure to passages; fenced code blocks chunk as their own unit kind, apart from
-  prose (the state-or-point rule's storage half).
+- **Offline pipeline:** `useAsync: true`, with our own fetch injected so extractor API calls
+  (youtube transcript, reddit comments, x oembed) pass through the same seam.
+- **Live `fetch_link` tool:** `useAsync: false` — static-only, bounded latency, and the URL is
+  user-supplied behind the SSRF guard.
+- `includeReplies: 'extractors'` (the default) keeps twitter/reddit/HN threads — that *is* the
+  content for those links.
 
-## Skipped, with the reason recorded
+## What dies when this lands
 
-| Option | Why not |
+| Custom code today | Replaced by |
 | :--- | :--- |
-| microlink core (`packages/core` server side) | a puppeteer-core 25 service; the OSS repo ships only clients (traced) |
-| html-get / browserless | our ladder already fetches and renders |
-| Firecrawl cloud | credits → subscription inside a cron, for ~400 pages/month |
-| Firecrawl self-host | redis + workers + playwright stack — more moving parts than the pipeline it replaces |
-| Firecrawl as last rung for bot-walled pages | **optional, off by default** — revive only if the bake-off shows a gap defuddle can't close |
+| Readability + `clean()` + boilerplate trimming | defuddle removals + standardize |
+| `githubReadme` + `stripMarkdown` + the GitHub special case | github extractor + raw-markdown passthrough |
+| Hand meta-tag parsing (title/description/date) | defuddle metadata |
+| `Untitled` title backfill | `result.title` |
+| Manual word counting for ok/thin | `result.wordCount` |
+| `readArticle` internals | one thin `Defuddle` wrapper |
 
-## What it fixes, and what it doesn't
+## What stays ours, and why
 
-Fixes (from the review's flaw list): item links survive · flattened paragraphs · code fences as
-typed units · a slice of UI-chrome junk (comments/hidden/small images) · description from the
-page itself.
+| Piece | Why it survives |
+| :--- | :--- |
+| `fetchPage` + `readCapped` (~60 lines) | defuddle exposes **no fetcher** in its node entry. We need the seam anyway: SSRF guard for `fetch_link`, 5MB cap, and sharing one fetched page between defuddle and the render fallback. Small, understood. |
+| `render.ts` (headless browser) | defuddle never executes JS. Static parse comes back thin → render → defuddle again on the rendered HTML. Trigger stays word-count-based. |
+| The same-domain `/pricing` hop | policy from `insights-agent.md`, not plumbing; reimplemented as `fetchPage` + defuddle. |
+| Chunking / embedding / quality gate | downstream of extraction by definition. The chunker becomes **markdown-aware** (headings as structure, fenced code as its own unit kind) in its own follow-up change. |
+| `note-only` links (portfolio, newsletter) | still never fetched — intake title + description, defuddle not involved. |
 
-Doesn't fix: JS rendering (still our ladder) · rot/spam detection (the quality gate's job) ·
-the classifier itself upstream.
+## Downstream effects
+
+- `raw_text` becomes **markdown**; `content_hash` still applies (weekly refresh re-embeds only
+  changed pages).
+- Classifier input is markdown + defuddle metadata (per `classification.md`).
+- Re-read of existing rows through the new reader is a `--status` run, once wired.
 
 ## Runtime notes
 
-`defuddle/node` accepts any DOM `Document`; turndown rides inside; no browser dependency.
-Runs in scripts and Trigger.dev unchanged. The agent's `fetch_link` tool swaps engine through
-the same single reader — jsdom pin constraints (`26.1.0`, see `docs/kb/02-extraction.md`)
-carry over untouched.
-
-## Gate: the bake-off
-
-Over all 25 frozen fixtures (`eval/fixtures/`), defuddle markdown vs the stored Readability
-text, judged on: code blocks survive · lists keep links · boilerplate gone · article prose
-intact. If it holds, wire per-treatment and update `docs/kb/02-extraction.md` and the
-treatments table in `classification.md` in the **same change**.
+- CJS bundle, no browser dependency inside defuddle itself; jsdom stays at the pinned 26.1.0
+  as our Document source (`docs/kb/02-extraction.md` keeps the pin story).
+- `result.parseTime` is measured by the engine — log it during wiring so slow pages are visible.
+- `docs/kb/02-extraction.md` is rewritten in the same change that wires this in — the doc
+  describes the reader that exists, never one that doesn't.

@@ -86,7 +86,7 @@ per-kind extractor zoo:
 | :--- | :--- | :--- | :--- |
 | **read** | full markdown → chunk → passages | `read-page`: our ladder → defuddle → markdown | article, tool, learning, other |
 | **listed** | what the place *is* + items that state something (links survive in markdown) | `read-shelf`: our ladder → defuddle → markdown | blog, gallery, directory |
-| **noted** | title + description as one passage; never fetched | `note-only`: metascraper description | portfolio, newsletter |
+| **noted** | title + description as one passage; never fetched | `note-only`: intake title + description | portfolio, newsletter |
 
 Content engine and metadata reader are decided in
 [`markdown-extraction.md`](./markdown-extraction.md).
