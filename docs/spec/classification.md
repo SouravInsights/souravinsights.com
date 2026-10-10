@@ -6,6 +6,9 @@ The pipeline's missing stage. Today nothing asks *what kind of page is this* —
 Discord channel the link was dropped in, and treats that as the same question. It is not.
 Classification sits **after fetch, before extraction**.
 
+Companion spec: [`markdown-extraction.md`](./markdown-extraction.md) — how pages are read;
+this doc is what a link *is*.
+
 ---
 
 ## Measured facts (2026-10, 269 links — after the hidden-row purge)
@@ -81,9 +84,12 @@ per-kind extractor zoo:
 
 | Treatment | Kept | Reader | Kinds |
 | :--- | :--- | :--- | :--- |
-| **read** | full text → clean → passages | `read-page` (today's ladder, fixed) | article, tool, learning, other |
-| **listed** | what the place *is* + items that state something | `read-shelf` | blog, gallery, directory |
-| **noted** | title + description as one passage; never fetched | `note-only` | portfolio, newsletter |
+| **read** | full markdown → chunk → passages | `read-page`: our ladder → defuddle → markdown | article, tool, learning, other |
+| **listed** | what the place *is* + items that state something (links survive in markdown) | `read-shelf`: our ladder → defuddle → markdown | blog, gallery, directory |
+| **noted** | title + description as one passage; never fetched | `note-only`: metascraper description | portfolio, newsletter |
+
+Content engine and metadata reader are decided in
+[`markdown-extraction.md`](./markdown-extraction.md).
 
 The state-or-point rule lives **inside `read-shelf`**, not in classification: an item that
 states something earns a passage; a signpost or an image does not. **No crawling, ever** — the
@@ -92,7 +98,7 @@ registry spec's line stands: one page, no second hop beyond the named exceptions
 ## The model call
 
 - **Input:** url, intake title + description, the page's own `<title>`/og description, the
-  first ~1,000 words of cleaned text (rendered text when the static fetch is empty), and the
+  first ~1,000 words of cleaned markdown (rendered when the static fetch is empty), and the
   measured numbers. Never metadata alone — metadata is only what the publisher claims.
 - **Output:** `{ kind, topics[3–7], summary, confidence }` — a fixed, validated shape. The
   `summary` (one line, in the model's own words) is the audit trail for the label and is
