@@ -83,9 +83,15 @@ cannot do everything.**
    | `tool` | what it does, who it's for, pricing/free tier, open-source? | **full** (landing text powers compare questions) |
    | `learning` | what it teaches, structure/TOC if present, FAQ nuggets, price if shown; honestly thin if the page is thin | summary |
    | `portfolio` | who the person is, what they do, notable work, socials | summary |
-   | `blog` / `gallery` / `directory` | what the place is, its flavor, what browsing it yields | summary |
-   | `newsletter` | what it covers, cadence, who writes it | summary |
+   | `blog` / `gallery` / `directory` | what the place is, what kind of things it collects, what you'd get from browsing it | summary |
+   | `newsletter` | what it covers, how often it comes out, who writes it | summary |
    | `other` | whatever the page gives | **full** |
+
+**The one rule every prompt in this stage follows:** the page's own voice wins. Summaries
+keep the site's tone and phrasing — quote a line when it's good, never flatten it into
+bland AI-speak. And nothing enters a summary that isn't on the page: no guessed pricing,
+no inferred topics, no "this site could help you…". **If it's not on the page, it's not
+in the summary.**
 
 `tool = full` is the only debatable row: it exists because "which sandbox for long-running
 agents, what's cheapest" (the original spec's pain #2) needs landing text, not a blurb. The
@@ -94,7 +100,8 @@ map is one lookup — flip it if compare answers stop needing it.
 ## Categories, public
 
 `kind` is renamed **`category`**. Categories are **public-facing filters** on the insights
-page (chips / filter param) — not just pipeline metadata.
+page (chips / filter param) — not just pipeline metadata. Grouping follows too: the page
+arranges by `category`; `channel` stays only as a raw note about where a link came from.
 
 ## Schema: Discord out, link-key in
 
@@ -104,6 +111,21 @@ page (chips / filter param) — not just pipeline metadata.
   disposable; rows and Blob images are not.
 - Future own intake (drop a link on the site) becomes possible *because* nothing keys on
   Discord. Recorded as later, not now.
+
+## Why markdown lives in the database
+
+The alternatives, and why each loses:
+
+| Way | Why it loses |
+| :--- | :--- |
+| re-fetch the page when needed | slow at reader/question time, and pages rot — the health sweep already watches links die. The collection would decay with the web. |
+| store the raw HTML | 10–50× the bulk, mostly junk; the extraction cost gets paid again on every read |
+| store plain text | v1's flaw: no links, no headings, no code fences — and the reader would have nothing to render |
+| store cleaned HTML | bulkier than markdown, worse to chunk, and we'd convert to markdown anyway |
+| store markdown in Blob/files | a second store to keep in sync for ~269 text rows; the whole collection is tens of MB, which Postgres eats without noticing |
+
+Markdown sits on the row, next to its metadata: LLM-ready, renders the reader, chunks with
+structure, and one `content_hash` tells the refresh when a page changed.
 
 ## Reader mode (articles only)
 
@@ -136,6 +158,89 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 1. Render residual size after defuddle (delete `render.ts` if ~0).
 2. `fetch_link`'s future — narrows to outside-URL compares; decide from question logs.
 3. Minimal rot gate at keep-time (passage cap per link + duplicate-text share).
+
+## Details, so nobody guesses
+
+### The `links` row, v2
+
+| column | type | note |
+| :--- | :--- | :--- |
+| `url_key` | text, unique | the identity |
+| `url` | text | |
+| `title` | text | backfilled from defuddle on read |
+| `description` | text | intake text; defuddle's description joins on first read |
+| `source` | text, default `discord` | how the link arrived |
+| `channel` | text, nullable | raw intake note; nothing groups by it |
+| `markdown` | text | defuddle content |
+| `word_count` | int | from defuddle |
+| `category` | text, indexed | one of the nine |
+| `topics` | text[] | |
+| `summary` | text | model-written, in the page's own voice |
+| `keep` | text | `full` \| `summary` |
+| `read_status` | text | `pending` \| `ok` \| `thin` \| `failed` (renamed from `extract_status`) |
+| `content_hash` | text | hash of the markdown; refresh re-embeds only on change |
+| `understand_version` | smallint | prompt + model version of the last understand run |
+| `understood_at` | timestamptz | |
+| `hidden_at`, health fields, `added_at`, `created_at`, `updated_at` | as today | |
+
+`discord_id` stays as a nullable note; nothing queries by it. Likes re-key to the link or
+drop.
+
+### `link_chunks`, v2
+
+Same as v1, plus:
+
+- `unit_type` text — `summary` \| `prose` \| `code`; summary passages are first class,
+  code chunks filterable/de-prioritizable.
+- `heading` text, nullable — the section the chunk came from (`## Exit animations › Why
+  exits feel wrong`), so a passage is never anonymous.
+
+### `highlights`
+
+| column | type | note |
+| :--- | :--- | :--- |
+| `id` | identity pk | |
+| `link_id` | fk → links, cascade | |
+| `quote` | text | the highlighted words |
+| `prefix` / `suffix` | text | anchoring context, so a highlight re-finds its spot after a re-read |
+| `created_at` | timestamptz | |
+
+Index on `link_id`. Writes: admin only. Reads: public.
+
+### Query rules (performance)
+
+- **No list query ever selects `markdown`** — megabyte rows never ride a list page. The
+  column loads only on the reader route, one row, by indexed `url_key`.
+- Reader pages revalidate **on write** (rebuild, refresh, new highlight), never per visit —
+  a 10k-word article is ~100KB, one query.
+- Insights list stays cursor-paginated as today; the `category` filter uses its index.
+- Search keeps today's top-k; the per-article composer just passes a `link_id` scope.
+- Highlights per article: one small join.
+
+### The keep map (all of `keep.ts`)
+
+```ts
+const KEEP: Record<Category, "full" | "summary"> = {
+  article: "full",
+  tool: "full",
+  other: "full",
+  learning: "summary",
+  portfolio: "summary",
+  blog: "summary",
+  gallery: "summary",
+  directory: "summary",
+  newsletter: "summary",
+};
+```
+
+### Migration, one run
+
+- Rename `raw_text` → `markdown`, `extract_status` → `read_status`.
+- Add `category`, `topics`, `summary`, `keep`, `word_count`, `understand_version`,
+  `understood_at`; `link_chunks.unit_type` + `heading`; the `highlights` table; an index
+  on `category`.
+- Truncate `link_chunks`, reset every row to `pending`, rebuild the collection through the
+  new pipeline once.
 
 ## The message behind this spec (kept word for word)
 
