@@ -1,4 +1,8 @@
-import { JSDOM } from "jsdom";
+import { JSDOM, VirtualConsole } from "jsdom";
+
+// Modern CSS (color-mix, range syntax) makes jsdom's CSS parser noisy. The
+// CSS is irrelevant to extraction — read in silence.
+const silentConsole = new VirtualConsole();
 
 /**
  * read — one page's HTML becomes clean markdown + metadata, via defuddle
@@ -33,7 +37,7 @@ export async function readPage(
     // defuddle's ./node subpath is ESM-only in its exports map, and our scripts
     // transpile to CJS — a static import fails to resolve. Dynamic import works.
     const { Defuddle } = await import("defuddle/node");
-    const dom = new JSDOM(html, { url });
+    const dom = new JSDOM(html, { url, virtualConsole: silentConsole });
     const result = await Defuddle(dom.window.document, url, {
       markdown: true,
       useAsync: false,

@@ -1,5 +1,5 @@
 import "./load-env";
-import { and, isNull, ne, eq, sql } from "drizzle-orm";
+import { and, inArray, isNull, ne, eq, sql } from "drizzle-orm";
 import { db } from "../src/db";
 import { links } from "../src/db/schema";
 import { closeRenderer } from "../src/lib/kb/render";
@@ -13,6 +13,7 @@ import { buildLink, type LinkRow } from "../src/lib/kb/store";
  *   npx tsx scripts/kb-build.ts --only blogroll.org  # one link
  *   npx tsx scripts/kb-build.ts --force              # redo even finished rows
  *   npx tsx scripts/kb-build.ts --render             # render thin pages headlessly
+ *   npx tsx scripts/kb-build.ts --render --status thin,failed   # retry the weak set
  *
  * Per link: get → read → understand → embed. Stages skip themselves when
  * their columns are already set — a crash just means "run it again".
@@ -32,13 +33,20 @@ async function main() {
   const only = val("only");
   const limit = val("limit") ? Number(val("limit")) : undefined;
 
+  const statusFilter = val("status")?.split(",");
+
   const conditions = [isNull(links.hiddenAt), ne(links.health, "dead")];
   if (only) conditions.push(eq(links.urlKey, only));
-  if (!force) {
+  if (statusFilter) {
+    conditions.push(inArray(links.readStatus, statusFilter));
+  } else if (!force) {
     // Rerunnable: read runs while markdown is missing; everything downstream
     // follows from there, so that one check selects the whole unfinished list.
     conditions.push(sql`(${links.markdown} is null or ${links.category} is null)`);
   }
+
+  // A render pass on thin rows is a forced re-read; hash comparison keeps
+  // unchanged pages from re-spending model calls (see buildLink).
 
   let query = db
     .select({
@@ -71,7 +79,10 @@ async function main() {
 
   const one = async (row: LinkRow) => {
     try {
-      const outcome = await buildLink(row, { force, render });
+      const outcome = await buildLink(row, {
+        force: force || render,
+        render,
+      });
       if (outcome.read !== "skipped") tally[outcome.read]++;
       if (outcome.understood) tally.understood++;
       tally.passages += outcome.passages;

@@ -60,17 +60,35 @@ async function loadPage(page: Page, url: string): Promise<Rendered> {
 }
 
 export async function renderHtml(url: string): Promise<Rendered> {
-  const page = await (await browser()).newPage();
+  let page: Page | null = null;
   try {
+    page = await (await browser()).newPage();
     return await withTimeout(
       loadPage(page, url),
       RENDER_TIMEOUT_MS,
       "render timed out"
     );
+  } catch (error) {
+    // The browser itself can die mid-run (a page crash takes the process with
+    // it). A cached promise then hands the same corpse to every later page
+    // and the run wedges: drop it so the next call relaunches.
+    if (
+      error instanceof Error &&
+      /Target closed|Session closed|Connection closed|Protocol error/i.test(
+        error.message
+      )
+    ) {
+      shared = null;
+    }
+    throw error;
   } finally {
-    // Close the page, not the browser — the browser is reused. Closing also
-    // aborts any work still running after a timeout.
-    await page.close().catch(() => undefined);
+    // Close the page, not the browser — the browser is reused. A wedged page
+    // can make even close() block, so cleanup gets its own 5s ceiling: never
+    // let it stall a run.
+    await Promise.race([
+      page?.close().catch(() => undefined),
+      new Promise((resolve) => setTimeout(resolve, 5_000)),
+    ]);
   }
 }
 

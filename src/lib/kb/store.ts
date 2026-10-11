@@ -179,19 +179,17 @@ export async function buildLink(
     const page = await getPage(link.url);
     if (page && isHtml(page.contentType)) {
       read = await readPage(page.html, page.finalUrl);
+    }
 
-      // Static read came back thin: ask the browser (spec: render fallback).
-      if (opts.render && (read === null || read.wordCount < THIN_WORDS)) {
-        const { renderHtml } = await import("./render");
-        const rendered = await renderHtml(link.url).catch(() => null);
-        if (rendered?.html) {
-          const renderedRead = await readPage(rendered.html, link.url);
-          if (
-            renderedRead &&
-            renderedRead.wordCount > (read?.wordCount ?? 0)
-          ) {
-            read = renderedRead;
-          }
+    // Static path gave us nothing useful — thin page, error page, bot wall,
+    // no page at all. Same answer for every shape of empty: ask the browser.
+    if (opts.render && (read === null || read.wordCount < THIN_WORDS)) {
+      const { renderHtml } = await import("./render");
+      const rendered = await renderHtml(link.url).catch(() => null);
+      if (rendered?.html) {
+        const renderedRead = await readPage(rendered.html, link.url);
+        if (renderedRead && renderedRead.wordCount > (read?.wordCount ?? 0)) {
+          read = renderedRead;
         }
       }
     }
@@ -199,13 +197,25 @@ export async function buildLink(
     const saved = await saveRead(link, read);
     readStatus = saved.status;
     changed = saved.changed;
+
+    // A page no method could read stays answerable at the smallest honest
+    // level: its intake title + description as the single passage.
+    if (saved.status === "failed" && (link.title || link.description)) {
+      await savePassages(link, {
+        title: link.title || link.urlKey,
+        summary: [link.title, link.description].filter(Boolean).join("\n\n"),
+      });
+    }
     link.markdown = read?.markdown ?? null;
     link.contentHash = read ? sha256(read.markdown) : link.contentHash;
     if (read?.title && !link.title) link.title = read.title;
   }
 
   let understood = false;
-  const needsUnderstand = link.markdown && (opts.force || !link.category);
+  // A forced re-read whose markdown didn't change must not re-spend the
+  // model calls — the hash comparison is what makes a render retry cheap.
+  const needsUnderstand =
+    link.markdown && (!link.category || (opts.force && changed));
   if (needsUnderstand) {
     // Metadata comes from the row: saveRead already stored defuddle's own
     // title/description during the read stage.
@@ -227,7 +237,7 @@ export async function buildLink(
 
   let passages = 0;
   const ready = Boolean(link.category && link.summary);
-  const needsEmbed = ready && (opts.force || understood || changed);
+  const needsEmbed = ready && (understood || changed);
   if (needsEmbed) {
     const mode = EMBEDDING_MODE[link.category as Category] as EmbeddingMode;
     const units =

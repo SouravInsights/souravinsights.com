@@ -78,8 +78,11 @@ export async function understandPage(
 ): Promise<UnderstandResult> {
   const sample = sampleOf(input.markdown);
 
+  // A model call with no ceiling hold a worker forever on a stalled
+  // connection; 2 minutes is generous for a 6k-word prompt.
   const { object } = await generateObject({
     model: chatModel(),
+    abortSignal: AbortSignal.timeout(120_000),
     schema: classificationSchema,
     prompt: classifyPrompt({
       url: input.url,
@@ -99,6 +102,7 @@ export async function understandPage(
 
   const { text } = await generateText({
     model: chatModel(),
+    abortSignal: AbortSignal.timeout(120_000),
     prompt: describePrompt({
       url: input.url,
       title: input.title,

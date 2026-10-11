@@ -25,6 +25,8 @@ async function embedBatch(values: string[]): Promise<number[][]> {
       const { embeddings } = await embedMany({
         model: embeddingModel(),
         values,
+        // Bounded so a stalled connection can't idle a worker forever.
+        abortSignal: AbortSignal.timeout(60_000),
       });
       return embeddings;
     } catch (error) {
