@@ -61,6 +61,7 @@
     "clsx": "^2.1.1",
     "color": "^4.2.3",
     "date-fns": "^4.1.0",
+    "defuddle": "0.19.5",
     "discord-api-types": "^0.37.97",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.42.0",
