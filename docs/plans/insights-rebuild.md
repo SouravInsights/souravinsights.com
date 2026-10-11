@@ -54,6 +54,21 @@ your curation tool while the rest lands.
   gallery, 1 summary; andrewconner.com → article, 11 passages with real heading paths
   («Objections and FAQs»); navbar.gallery → thin + gallery + 1 summary. Categories and
   summaries read right.
+- **Phases 1–2 — done (2026-10-10, owner review pending).** Full build over the
+  collection: **197 ok · 67 thin · 4 failed** (the 4 are bot-walled/paywalled/dead-ish and
+  carry intake-description fallback passages — nothing is invisible). Chunks: **1,432**
+  (961 prose · 204 code · 267 summaries) across **269 links**. Categories: tool 82,
+  article 53, blog 44, learning 26, portfolio 23, directory 16, gallery 10, newsletter
+  10, other 1. **136 full / 129 summary.** Sample-of-16 summaries eyeball: all correct
+  tone, quoting pages, nothing invented. Hardening earned in-flight: call ceilings,
+  dead-browser reset, bounded close, changed-hash guard.
+- **Open item #1 decided by data:** `render.ts` **stays** — it recovered ~10 pages the
+  static path got nothing from (60fps.design, mattrothenberg.com, …). It fires only on
+  `--render`, so ordinary runs never pay for it.
+- **Noticed while running:** `60fps.design/storyboards` was hidden by the owner
+  mid-rebuild — the build correctly never touches hidden rows; its one leftover chunk is
+  excluded by the search join. `makingsoftware.co` is a Vercel checkpoint page to any
+  reader → thin + `other`, which is the honest answer.
 
 ## Assets reused, not rebuilt
 
