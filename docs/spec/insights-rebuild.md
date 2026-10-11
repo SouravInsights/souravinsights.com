@@ -1,6 +1,7 @@
 # Insights Rebuild — Spec
 
-**Status:** the plan. Renamed from `kb-v2.md` (scope outgrew the name: this covers the
+**Status:** the plan. Build order and proof gates: [`docs/plans/insights-rebuild.md`](../plans/insights-rebuild.md).
+Renamed from `kb-v2.md` (scope outgrew the name: this covers the
 pipeline **and** the reading/annotation surface). Everything in `docs/kb/` +
 `docs/spec/insights-agent.md` still describes the v1 build that runs today, until the
 rebuild below replaces it.
