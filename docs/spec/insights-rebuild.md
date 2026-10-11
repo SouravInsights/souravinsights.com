@@ -38,14 +38,13 @@ books we don't own; a course homepage is a cover, not the book; a portfolio's JS
 not knowledge. **Every link still gets its model-written summary vectorized** — so every
 link is answerable, chunked or not.
 
-## The pipeline, five verbs
+## The pipeline, four verbs
 
 ```mermaid
 flowchart LR
     G["get<br/>fetch → HTML"] --> R["read<br/>defuddle → markdown + metadata"]
     R --> U["understand<br/>classify → describe"]
-    U --> K["keep<br/>category → full | summary"]
-    K --> E["embed<br/>summary always · chunks if full"]
+    U --> E["embed<br/>summary always · chunks if full mode"]
 ```
 
 ```
@@ -54,9 +53,9 @@ src/lib/kb/
   render.ts      // renderPage(url): HTML. Headless; see "when rendering fires"
   read.ts        // readPage(html,url): { markdown, metadata }. The defuddle call
   understand.ts  // classify(url, sample, metadata) → describe(category, markdown, metadata)
-  keep.ts        // one lookup: category → "full" | "summary"
   chunk.ts       // chunkMarkdown(md): units (headings = structure, fences = code units)
-  embed.ts · store.ts · search.ts · agent.ts
+  embed.ts       // the category → embedding_mode map lives here; units → vectors
+  store.ts · search.ts · agent.ts
 scripts/kb-build.ts   // replaces kb-extract.ts + kb-refresh.ts
 ```
 
@@ -155,12 +154,12 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 
 ## Things nobody said out loud
 
-- **New links walk the same road.** Discord intake writes the row; the five verbs run for
+- **New links walk the same road.** Discord intake writes the row; the four verbs run for
   that one link right away, not at the next rebuild. A repost of an existing `url_key` is
   a skip.
 - **Pages change under a stable URL.** A tool pivots; a shelf becomes a blog. Rule: when
-  the refresh sees the markdown change, understand re-runs; if `category` or `keep`
-  flipped, that link's passages are rebuilt. A category describes the page as it is now,
+  the refresh sees the markdown change, understand re-runs; if `category` or
+  `embedding_mode` flipped, that link's passages are rebuilt. A category describes the page as it is now,
   not as it was saved.
 - **Dead links become the archive's best trick.** `dead` stops re-reading, but the stored
   markdown keeps the article alive in the reader forever. Storage turns rot from a loss
@@ -191,13 +190,16 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 
 ## Open, decided by building it
 
-1. Render residual size after defuddle (delete `render.ts` if ~0).
+1. **Does anything still need the headless browser once defuddle runs?** Rebuild
+   statically, count the links that come back too thin to use: near zero → delete
+   `render.ts`; a real pile → keep it as the fallback.
 2. `fetch_link`'s future — narrows to outside-URL compares; decide from question logs.
-3. Minimal rot gate at keep-time (passage cap per link + duplicate-text share).
-4. **Republishing posture — your yes required.** v1 stored text privately; the reader
-   *publishes* full articles on your domain. Proposed mitigations in the same breath:
-   prominent source link + author on every reader page and `noindex` on the route. The
-   reader is only worth it for articles, so this is a real decision, not a footnote.
+3. Minimal rot check when a link is embedded (passage cap per link, duplicate-text
+   share).
+4. **The reader puts other people's articles on your domain — needs your yes.** v1 only
+   *stored* text privately; the reader would publish full articles publicly. Mitigations
+   ready: a prominent source link + author on every reader page, and `noindex` on the
+   route. Worth a real decision, not a footnote.
 
 ## Details, so nobody guesses
 
@@ -216,11 +218,11 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 | `category` | text, indexed | one of the nine |
 | `topics` | text[] | |
 | `summary` | text | model-written, in the page's own voice |
-| `keep` | text | `full` \| `summary` |
+| `embedding_mode` | text | `full` \| `summary` — how much of the page lives in vectors |
 | `read_status` | text | `pending` \| `ok` \| `thin` \| `failed` (renamed from `extract_status`) |
 | `content_hash` | text | hash of the markdown; refresh re-embeds only on change |
-| `understand_version` | smallint | prompt + model version of the last understand run |
-| `understood_at` | timestamptz | |
+| `prompt_version` | smallint | which prompt set + model produced category, topics, summary |
+| `analyzed_at` | timestamptz | when that last ran |
 | `hidden_at`, health fields, `added_at`, `created_at`, `updated_at` | as today | |
 
 `discord_id` stays as a nullable note; nothing queries by it. Likes re-key to the link or
@@ -259,10 +261,10 @@ Index on `link_id`. Writes: admin only. Reads: public.
 - Search keeps today's top-k; the per-article composer just passes a `link_id` scope.
 - Highlights per article: one small join.
 
-### The keep map (all of `keep.ts`)
+### The embedding-mode map (lives in `embed.ts`)
 
 ```ts
-const KEEP: Record<Category, "full" | "summary"> = {
+const EMBEDDING_MODE: Record<Category, "full" | "summary"> = {
   article: "full",
   tool: "full",
   other: "full",
@@ -278,8 +280,8 @@ const KEEP: Record<Category, "full" | "summary"> = {
 ### Migration, one run
 
 - Rename `raw_text` → `markdown`, `extract_status` → `read_status`.
-- Add `category`, `topics`, `summary`, `keep`, `word_count`, `understand_version`,
-  `understood_at`; `link_chunks.unit_type` + `heading`; the `highlights` table; an index
+- Add `category`, `topics`, `summary`, `embedding_mode`, `word_count`, `prompt_version`,
+  `analyzed_at`; `link_chunks.unit_type` + `heading`; the `highlights` table; an index
   on `category`.
 - Truncate `link_chunks`, reset every row to `pending`, rebuild the collection through the
   new pipeline once.
