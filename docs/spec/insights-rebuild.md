@@ -5,7 +5,7 @@ pipeline **and** the reading/annotation surface). Everything in `docs/kb/` +
 `docs/spec/insights-agent.md` still describes the v1 build that runs today, until the
 rebuild below replaces it.
 
-**Directives (2026-10, the owner, verbatim intent — read before proposing anything):**
+**How I want this built (2026-10 — read these before proposing anything):**
 
 - One maintainer, no backwards compatibility. Anything can be deleted and rebuilt; there is
   no migration burden, only a rebuild run. **Links and their stored images (Vercel Blob)
@@ -98,8 +98,8 @@ page (chips / filter param) — not just pipeline metadata.
 
 ## Schema: Discord out, link-key in
 
-- **Identity is `url_key`.** `discord_id` demotes to nullable provenance (`source` stays;
-  a row from Discord is a fact about intake, not a key anything needs).
+- **Identity is `url_key`.** `discord_id` demotes to a nullable note (`source` stays; coming
+  from Discord is a fact about how the link arrived, not a key anything needs).
 - **Likes re-key to the link, not the snowflake** — or are dropped if simpler. Counts are
   disposable; rows and Blob images are not.
 - Future own intake (drop a link on the site) becomes possible *because* nothing keys on
@@ -136,3 +136,38 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 1. Render residual size after defuddle (delete `render.ts` if ~0).
 2. `fetch_link`'s future — narrows to outside-URL compares; decide from question logs.
 3. Minimal rot gate at keep-time (passage cap per link + duplicate-text share).
+
+## The message behind this spec (kept word for word)
+
+<details>
+<summary>2026-10-10 · keep levels, Discord out, reader mode + highlights</summary>
+
+Wait, see, almost everything in the docs is fine and agreeable but there are couple of things I would want to point out.
+
+You said learning, tool, portfolio - all such site's extracted markdown will be kept? Bdw, be keep, I don't understand where to keep exactly.. So let me know if there's any misunderstanding.
+
+Let me tell you some of my doubts or questions or maybe something I misunderstood. There's also another feature that just hit me which I'll ellaborate below that will actually be better to make the RAG better indirectly. By indirectly I mean the feature does 2 things at once. I've ellaborated this in Topic C.
+
+Topic A: (Regarding what to keep)
+- portfolios: these kind of sites are JS heavy, for example imagine I have site like mine, first of all, it might be tough to correctly extract such JS heavy sites to clean data that will be useful for the agent, but even if we solve this with say Defuddle or something else, there's no value in keeping all of those extracted metadata.. and later also have in vector.. we just need understand who's portfolio is this, who's the guy behind it, what does he do, socials maybe or something other worth keeping. This is why I told you we need a sematic understanding of the site but yeah for understanding it sematically, we prolly to extract the markdown so it can be fed to an llm? so maybe that's what you mean by keep? Also, another note, I tried my sites url: souravinsights.com with Defuddle web app, it left a lot of the sections contents that's in my home page, whereas Firecrawl and even Microlink's url to markdown gave me decent output. So maybe that's why you mentions this line: "then render in a headless browser and re-read the rendered HTML" in the "get" util?? But the rules/system that detects which sites/pages definitely need this step, should be good enough..
+
+- learning: again for such sites, let's imagine a site like: https://handbook.modular.com/ now, if we just scrape/extract this using Defuddle, it will just give us whatever there's in the hompe page which is of no value, and we can't just scrape or look for all the other pages since setting up a generic rule for such usecases might break something else.. so maybe just keep the metadata content here? if there's actually a simpler and better way than this then it's fine otherwise it should fallback to the metadata only.. Also, I have some other indie well made courses like: https://devouringdetails.com/ that aren't free, some of the have faqs so I think it's important to record such info? But obviously, no scraper can do this.. I think we can just extract whatever the single page gave us, feed to an llm with a proper prompt that can do that for us.. This also gives me an idea that we may need various kinds of system prompts for various kinds of sites/page. One universal system prompt can't do everything.. That's just a rough observation.
+
+Topic B: (Regarding the rows/columns for discord related data)
+
+First of all, the term kind, basically means categories right? So maybe it can be renamed to category? If we are going to derive categories, won' it actually make sense to have them as public facing filters? Yes, it will. And somehow, the schema needs to evolve in a way that we can drop any dependecies related to Discord data, be it id or something else. Note, I'll still use Discord channels to drop my links, just because it's easier with my mobile app but it should be used to fetch the links. Our AI system will anyway, categorize it moving forward. Maybe, we can also get rid of Discord entirely and have a way to drop my links in my site itself.. But that's for later. But our schema needs to evolve. Nothing should depend on Discord data, especially the likes. There's not a big problem if some schema changes drops the likes count, but yeah, links themselves shouldn't be lost, and also the images of each links that are in the Vercel blog.
+
+Topic C: (The new idea that I mentioned above which indirectly improves our RAG and the whole system)
+
+Since we have found that Defuddle can give us markdown contents, why not have an inline "reader" within my insights page itself that can render the markdown to a styled page? We can definitely have a reader mode. But yeah note that a reading mode only makes sense for article sites. We won't have a reading mode for anything else. By having a reader mode has few crucial benifits:
+
+1. I can highlight my fav lines, insights, prose or anything in the site. Those highlights should be permanently be stored in a db so that anyone who opens the article in the reader mode, they can see the highlighted text. Highlighting is a kind of feature that's very essential for me since I read a lot and what's better than collecting the highlights in my own site and being able to extract the highlights via my own api.
+2. Having highlights can also feed back into our RAG/agent, those highlighted sections can be used as good signals. But yeah, it will take time for me to highlight and it will be an ongoing process which will pay off incremenatlly not in a day.
+3. Being able to read within my site and highlight will also encourage me ton spend more time on the articles that I add to my collection which will also act as a maintainace layer.
+4. Having a reader mode can also have another advantage, which is to have a tiny "ask composer" at the bottom that me and people can use to ask questions related to that specific article whihc is another cool feature.
+
+But this reader mode design has toseamless, well designed, distraction free and well implemented as well. Having a reader mode means that we will somehow have to store the extracted markdown of the articles somewhere so that we don't have to call the api or so something on the fly, it should be always there, not at request time, to save money. For the highlights feature, we can use this component: https://github.com/SanyamPunia/www/tree/main/components/labs/highlight-wave
+
+That's allll.. I know it's too long so please read everything carefully, read everything that I wrote twice or thrice if necessary so that you do not miss anything that's mentioned here.. Once done, you should update the relevant spec doc accordingly, maybe, we should also rename the current spec: kb-v2.md to something better that suits our new scope
+
+</details>
