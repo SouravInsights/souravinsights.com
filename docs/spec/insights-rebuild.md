@@ -50,14 +50,16 @@ flowchart LR
 
 ```
 src/lib/kb/
-  get.ts         // getPage(url): HTML. One SSRF-guarded seam, 5MB cap, browser UA
+  categories.ts  // the nine labels, one const (the code-of-record)
+  get.ts         // getPage(url): HTML. One network seam, 5MB cap, browser UA
   render.ts      // renderPage(url): HTML. Headless; see "when rendering fires"
   read.ts        // readPage(html,url): { markdown, metadata }. The defuddle call
   understand.ts  // classify(url, sample, metadata) → describe(category, markdown, metadata)
+  prompts.ts     // every word of prompt text, reviewable at a glance (PROMPT_VERSION)
   chunk.ts       // chunkMarkdown(md): units (headings = structure, fences = code units)
   embed.ts       // the category → embedding_mode map lives here; units → vectors
-  store.ts · search.ts · agent.ts
-scripts/kb-build.ts   // replaces kb-extract.ts + kb-refresh.ts
+  store.ts       // every write + buildLink, the one orchestrator
+scripts/kb-build.ts   // replaces kb-extract.ts; kb-refresh.ts calls the same buildLink
 ```
 
 **When rendering fires:** defuddle's `wordCount` below threshold (~200) on the static pass →
@@ -74,8 +76,10 @@ cannot do everything.**
 1. **classify(url, metadata, bounded sample)** → `{ category, topics, confidence }`.
    Sample = first ~1,500 words + heading outline + link/image counts. Never a whole
    1,200-item shelf. Low confidence → `other` (the review queue).
-2. **describe(category, markdown, metadata)** → `summary`, with **one prompt per category**,
-   each tiny and in its own file. What each must squeeze from the single page:
+2. **describe(category, markdown, metadata)** → `summary`, with one short instruction
+   per category. All prompt text lives in one `prompts.ts` so it can be read and tweaked
+   at a glance (nine micro-files would scatter the thing a person edits most). What each
+   must squeeze from the single page:
 
    | category | summary must capture | vectorize |
    | :--- | :--- | :--- |

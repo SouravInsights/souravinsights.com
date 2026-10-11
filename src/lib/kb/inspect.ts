@@ -123,7 +123,7 @@ export interface LinkInspection {
     title: string;
     description: string;
     channel: string;
-    extractStatus: string;
+    readStatus: string;
     health: string;
     hidden: boolean;
     addedAt: string;
@@ -178,13 +178,13 @@ export async function inspectLink(
       title: links.title,
       description: links.description,
       channel: links.channel,
-      extractStatus: links.extractStatus,
+      readStatus: links.readStatus,
       health: links.health,
       hiddenAt: links.hiddenAt,
       addedAt: links.addedAt,
       extractedAt: links.extractedAt,
       contentHash: links.contentHash,
-      rawChars: sql<number>`coalesce(length(${links.rawText}), 0)`,
+      rawChars: sql<number>`coalesce(length(${links.markdown}), 0)`,
     })
     .from(links)
     .where(eq(links.urlKey, resolved.urlKey))
@@ -240,9 +240,7 @@ export async function inspectLink(
     warnings.push({
       level: "warn",
       message:
-        row.extractStatus === "skipped"
-          ? "Not indexed. A never-fetched channel is indexed by title + description; a skipped row with no text is invisible to search."
-          : `Not indexed (${row.extractStatus}). This link can never be retrieved.`,
+        `Not indexed (${row.readStatus}). This link can never be retrieved.`,
     });
   }
   if (stats.passages > HEAVY_CHUNKS) {
@@ -283,7 +281,7 @@ export async function inspectLink(
       title: row.title,
       description: row.description,
       channel: row.channel,
-      extractStatus: row.extractStatus,
+      readStatus: row.readStatus,
       health: row.health,
       hidden: row.hiddenAt !== null,
       addedAt: row.addedAt?.toISOString() ?? "",
@@ -315,7 +313,7 @@ export async function inspectLink(
 export interface OverviewRow {
   urlKey: string;
   channel: string;
-  extractStatus: string;
+  readStatus: string;
   passages: number;
   pctOfIndex: number;
   rawChars: number;
@@ -373,12 +371,12 @@ export async function kbOverview() {
     unindexed: unindexed.map((u: any) => ({
       urlKey: u.url_key,
       channel: u.channel,
-      extractStatus: u.extract_status,
-    })) as { urlKey: string; channel: string; extractStatus: string }[],
+      readStatus: u.read_status,
+    })) as { urlKey: string; channel: string; readStatus: string }[],
     heaviest: heaviest.map((h: any) => ({
       urlKey: h.url_key,
       channel: h.channel,
-      extractStatus: h.extract_status,
+      readStatus: h.read_status,
       passages: h.passages,
       pctOfIndex: Number(h.pct),
       rawChars: h.raw_chars,

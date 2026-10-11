@@ -1,5 +1,6 @@
 import { embedMany } from "ai";
 import { embeddingModel } from "./model";
+import type { Category } from "./categories";
 
 /**
  * Turn text into vectors via OpenRouter's embeddings endpoint.
@@ -50,3 +51,22 @@ export async function embedOne(value: string): Promise<number[]> {
   const [vector] = await embedTexts([value]);
   return vector;
 }
+
+/**
+ * How much of a page becomes vectors, by category (docs/spec/insights-rebuild.md).
+ * `full` links chunk their whole markdown; `summary` links carry only their
+ * model-written summary passage. The only map of its kind — flip a row here.
+ */
+export type EmbeddingMode = "full" | "summary";
+
+export const EMBEDDING_MODE: Record<Category, EmbeddingMode> = {
+  article: "full",
+  tool: "full",
+  other: "full",
+  learning: "summary",
+  portfolio: "summary",
+  blog: "summary",
+  gallery: "summary",
+  directory: "summary",
+  newsletter: "summary",
+};

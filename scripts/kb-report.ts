@@ -19,13 +19,10 @@ import { MAX_TOKENS } from "../src/lib/kb/chunk";
  *   npx tsx scripts/kb-report.ts --write    # (re)write docs/kb/build-report.md
  */
 
-const words = (s: string | null) =>
-  (s ?? "").trim().split(/\s+/).filter(Boolean).length;
-
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, "..", "docs", "kb", "build-report.md");
 
-const STATUSES = ["ok", "thin", "failed", "skipped", "pending"];
+const STATUSES = ["ok", "thin", "failed", "pending"];
 
 async function main() {
   const one = async (query: Promise<{ n: number }[]>) => Number((await query)[0]?.n ?? 0);
@@ -39,21 +36,21 @@ async function main() {
   );
 
   const counts = await db
-    .select({ status: links.extractStatus, n: sql<number>`count(*)::int` })
+    .select({ status: links.readStatus, n: sql<number>`count(*)::int` })
     .from(links)
-    .groupBy(links.extractStatus);
+    .groupBy(links.readStatus);
   const byStatus = new Map(counts.map((c) => [c.status, Number(c.n)]));
 
   const problem = await db
     .select({
       url: links.url,
       channel: links.channel,
-      status: links.extractStatus,
-      raw: links.rawText,
+      status: links.readStatus,
+      words: links.wordCount,
     })
     .from(links)
-    .where(inArray(links.extractStatus, ["thin", "failed"]))
-    .orderBy(links.extractStatus, links.url);
+    .where(inArray(links.readStatus, ["thin", "failed"]))
+    .orderBy(links.readStatus, links.url);
 
   // Per channel, how much of it search can actually reach. A channel with
   // links but no passages is invisible to the agent — worth seeing at a glance.
@@ -112,7 +109,7 @@ async function main() {
     "| :--- | ---: | :--- | :--- |"
   );
   for (const r of problem) {
-    L.push(`| ${r.status} | ${words(r.raw)} | ${r.channel} | ${r.url} |`);
+    L.push(`| ${r.status} | ${r.words ?? 0} | ${r.channel} | ${r.url} |`);
   }
   L.push("", `${problem.length} thin/failed links.`, "");
 

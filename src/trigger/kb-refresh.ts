@@ -1,39 +1,26 @@
 import { schedules, logger } from "@trigger.dev/sdk/v3";
-import { and, asc, inArray, isNull, ne } from "drizzle-orm";
+import { and, asc, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
 import { closeRenderer } from "@/lib/kb/render";
-import { ingestLink } from "@/lib/kb/ingest";
+import { buildLink, type LinkRow } from "@/lib/kb/store";
 import { mapWithConcurrency } from "@/lib/links/health";
 
 /**
- * Weekly re-read (docs/spec/insights-agent.md). Pages change — a tool ships a
- * new feature, an article gets rewritten — and a knowledge base that answers
- * from a 2023 snapshot is worse than one that admits ignorance.
+ * Weekly re-read. Pages change — a tool ships a new feature, an article gets
+ * rewritten — and a knowledge base that answers from an old snapshot is worse
+ * than one that admits ignorance.
  *
- * Two deliberate choices:
- *
- * **Only links we actually fetched.** A `skipped` channel (portfolios, design,
- * newsletters) gets its text from the database row, not from a page, so nothing
- * about it can go stale. It has no `content_hash` either — `extract` returns
- * early for those, by design.
- *
- * **A rotation, not a date window.** Ordering by least-recently-read and
- * capping the run means every link is re-read every few weeks and none is frozen
- * forever. A "links added in the last 90 days" filter looked reasonable until
- * the numbers were checked: it covered 79 of 500 links, so 84% of the collection
- * would never have been re-read at all — and `content_hash` would have been
- * consulted only for the newest slice. The cap is what bounds cost, not the
- * date.
- *
- * The fetch always happens — we can't know a page changed without asking it.
- * What `onlyIfChanged` skips is the embedding, which is the part that costs
- * money.
+ * A rotation, not a date window: least-recently-read first, capped per run, so
+ * every link cycles through roughly monthly. The read always happens (we can't
+ * know a page changed without asking); `buildLink` re-understands and
+ * re-embeds only when the markdown actually changed — that's the part that
+ * costs money.
  */
 
 /** Ceiling per run, so one bad week can't turn into a crawl. */
 const MAX_LINKS = 100;
-/** Same as the bulk script: 4 at a time, sharing one browser. */
+/** Four at a time, sharing one browser for renders. */
 const CONCURRENCY = 4;
 
 export const kbRefresh = schedules.task({
@@ -42,23 +29,20 @@ export const kbRefresh = schedules.task({
   // overnight are already marked `dead` and skipped here.
   cron: "0 10 * * 1",
   run: async () => {
-    const rows = await db
+    const rows: LinkRow[] = await db
       .select({
         id: links.id,
         url: links.url,
+        urlKey: links.urlKey,
         title: links.title,
         description: links.description,
-        channel: links.channel,
+        markdown: links.markdown,
         contentHash: links.contentHash,
+        category: links.category,
+        summary: links.summary,
       })
       .from(links)
-      .where(
-        and(
-          inArray(links.extractStatus, ["ok", "thin", "failed"]),
-          isNull(links.hiddenAt),
-          ne(links.health, "dead")
-        )
-      )
+      .where(and(isNull(links.hiddenAt), ne(links.health, "dead")))
       .orderBy(asc(links.extractedAt))
       .limit(MAX_LINKS);
 
@@ -72,13 +56,14 @@ export const kbRefresh = schedules.task({
     try {
       await mapWithConcurrency(rows, CONCURRENCY, async (row) => {
         try {
-          const outcome = await ingestLink(row, { onlyIfChanged: true });
+          // Force the read so the hash comparison runs; downstream stages
+          // still skip themselves when nothing changed.
+          const outcome = await buildLink(row, { force: true });
           if (outcome.changed) {
             changed++;
             passages += outcome.passages;
-            logger.info("page changed, re-embedded", {
+            logger.info("page changed, re-understood + re-embedded", {
               url: row.url,
-              status: outcome.status,
               passages: outcome.passages,
             });
           } else {
@@ -93,7 +78,6 @@ export const kbRefresh = schedules.task({
         }
       });
     } finally {
-      // The render fallback reuses one browser; release it so the run exits.
       await closeRenderer();
     }
 

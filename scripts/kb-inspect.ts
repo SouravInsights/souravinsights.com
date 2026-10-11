@@ -89,7 +89,7 @@ async function main() {
       const heavy = h.passages > HEAVY_CHUNKS;
       const line =
         `  ${num(h.passages).padStart(6)}  ${h.pctOfIndex.toFixed(1).padStart(5)}%  ` +
-        `${h.urlKey}  ${dim(`(${h.channel}, ${h.extractStatus}, ${num(h.rawChars)} chars)`)}`;
+        `${h.urlKey}  ${dim(`(${h.channel}, ${h.readStatus}, ${num(h.rawChars)} chars)`)}`;
       console.log(heavy ? red(line) : line);
     }
     console.log(
@@ -102,7 +102,7 @@ async function main() {
     if (unindexed.length) {
       rule("NOT INDEXED (invisible to search)");
       for (const u of unindexed) {
-        console.log(`  ${u.urlKey}  ${dim(`(${u.channel}, ${u.extractStatus})`)}`);
+        console.log(`  ${u.urlKey}  ${dim(`(${u.channel}, ${u.readStatus})`)}`);
       }
     }
     return;
@@ -126,7 +126,7 @@ async function main() {
   console.log(`  ${"title".padEnd(11)} ${l.title || dim("(none)")}`);
   console.log(`  ${"url".padEnd(11)} ${l.url}`);
   console.log(
-    `  ${"channel".padEnd(11)} ${l.channel}   ${dim("status")} ${l.extractStatus}   ${dim("health")} ${l.health}`
+    `  ${"channel".padEnd(11)} ${l.channel}   ${dim("status")} ${l.readStatus}   ${dim("health")} ${l.health}`
   );
   console.log(
     `  ${"added".padEnd(11)} ${l.addedAt.slice(0, 10)}   ${dim("last read")} ${

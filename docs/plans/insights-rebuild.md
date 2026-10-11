@@ -45,6 +45,16 @@ your curation tool while the rest lands.
 - **Failure is local:** any phase fails → fix that stage's assumption, re-run just that
   phase. Nothing forces forward motion.
 
+## Progress
+
+- **Phase 0 — done (2026-10-10).** Migration `0010` applied; 269 rows pending. Pipeline
+  files exist (`get/read/understand/prompts/chunk/embed/store`, `categories.ts`,
+  `scripts/kb-build.ts`); `tsc` + lint clean. Smoke on 4 known shapes behaved exactly as
+  spec'd: blogroll.org → directory, 1 summary passage (not 1,200 items); 60fps.design →
+  gallery, 1 summary; andrewconner.com → article, 11 passages with real heading paths
+  («Objections and FAQs»); navbar.gallery → thin + gallery + 1 summary. Categories and
+  summaries read right.
+
 ## Assets reused, not rebuilt
 
 `kb-inspect` / `kb-trace` (look at any link, any question) · the headless browser setup
