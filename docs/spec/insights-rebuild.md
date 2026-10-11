@@ -153,11 +153,51 @@ structure, and one `content_hash` tells the refresh when a page changed.
 always — compare prompts make do; revive only if compare answers prove the gap) ·
 per-channel strategy in `insights-agent.md` · `kind` as a word.
 
+## Things nobody said out loud
+
+- **New links walk the same road.** Discord intake writes the row; the five verbs run for
+  that one link right away, not at the next rebuild. A repost of an existing `url_key` is
+  a skip.
+- **Pages change under a stable URL.** A tool pivots; a shelf becomes a blog. Rule: when
+  the refresh sees the markdown change, understand re-runs; if `category` or `keep`
+  flipped, that link's passages are rebuilt. A category describes the page as it is now,
+  not as it was saved.
+- **Dead links become the archive's best trick.** `dead` stops re-reading, but the stored
+  markdown keeps the article alive in the reader forever. Storage turns rot from a loss
+  into a shrug.
+- **Topics need a leash.** Free-form keywords drift into synonyms (motion / animation /
+  animations). Cheap control: describe receives the topics already in use and prefers
+  them; new coinages allowed, rare. One line in the prompt, one query to build the vocab.
+- **The `other` pile has an owner.** Overrides live in a data file and always win;
+  reviewing the queue = edit the file, re-run understand for those links only. The world
+  is never re-classified to fix a handful.
+- **Highlights must survive re-reads.** Anchor = quote + prefix/suffix + occurrence
+  index. If a refresh breaks the anchor, the highlight hides (marked stale) — never
+  silently deleted.
+- **Reader route and renderer.** `/insights/[...key]` for `category=article`; reuse the
+  blog's MDX/shiki stack (bought beats built). Stored markdown is **untrusted content** —
+  render it sanitized, no raw HTML injection.
+- **Hidden stays hidden.** Hide/unhide work as today; hidden rows never enter build or
+  search — same join filter as v1.
+- **Ripples of channel → category.** Suggestion chips quota by channel; RSS and llms.txt
+  group by it; the agent's search tool takes `channel=`; cards show the intake blurb.
+  They all move to `category` — and cards can now show the **summary**, instantly better
+  than a five-year-old og description. A pass touches: suggestions script, rss/llms
+  routes, agent tool schema, `/api/v1` filters, `InsightsList`.
+- **The build pays once.** ~269 defuddle reads (free), ~269 understand calls (≈2k tokens
+  each, cents), embeddings for summaries + full-mode chunks (cents). The rebuild lands
+  **under a dollar** — followed by a `kb-eval` smoke run to prove retrieval still
+  breathes.
+
 ## Open, decided by building it
 
 1. Render residual size after defuddle (delete `render.ts` if ~0).
 2. `fetch_link`'s future — narrows to outside-URL compares; decide from question logs.
 3. Minimal rot gate at keep-time (passage cap per link + duplicate-text share).
+4. **Republishing posture — your yes required.** v1 stored text privately; the reader
+   *publishes* full articles on your domain. Proposed mitigations in the same breath:
+   prominent source link + author on every reader page and `noindex` on the route. The
+   reader is only worth it for articles, so this is a real decision, not a footnote.
 
 ## Details, so nobody guesses
 
@@ -203,6 +243,8 @@ Same as v1, plus:
 | `link_id` | fk → links, cascade | |
 | `quote` | text | the highlighted words |
 | `prefix` / `suffix` | text | anchoring context, so a highlight re-finds its spot after a re-read |
+| `occurrence` | smallint | which match of `quote` it was (quotes repeat) |
+| `stale` | boolean, default false | anchor lost on re-read → hidden, never deleted |
 | `created_at` | timestamptz | |
 
 Index on `link_id`. Writes: admin only. Reads: public.
