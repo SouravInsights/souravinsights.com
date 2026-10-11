@@ -1,0 +1,1 @@
+ALTER TABLE "highlights" ADD COLUMN "hue" smallint DEFAULT 3 NOT NULL;

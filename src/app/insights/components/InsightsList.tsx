@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
-import { DiscordChannel, LinkData } from "../utils/discordApi";
+import { DiscordChannel } from "../utils/discordApi";
+import type { InsightsLink } from "../utils/links-data";
 import {
   appendUTMParams,
   dedupeByUrl,
@@ -14,7 +15,7 @@ import {
   sortByNewestId,
   sortByOldestId,
 } from "../utils/urlUtils";
-import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
+import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "./LikeButton";
 import { FadeIn } from "@/components/FadeIn";
 import {
@@ -22,10 +23,12 @@ import {
   PreviewCardTrigger,
 } from "@/components/ui/PreviewCard";
 import { PreviewLoader } from "@/components/ui/PreviewLoader";
+import { ReaderView } from "./reader/ReaderView";
+import { prefetchArticle } from "./reader/article-query";
 
 interface InsightsListProps {
   channels: DiscordChannel[];
-  linkData: { [key: string]: LinkData[] };
+  linkData: { [key: string]: InsightsLink[] };
   previews: Record<string, string>;
   likeCounts: Record<string, number>;
   shuffleSeed: number;
@@ -57,7 +60,14 @@ const shortDomain = (url: string) => {
 const faviconFor = (url: string) =>
   `https://www.google.com/s2/favicons?domain=${shortDomain(url)}&sz=64`;
 
-type EnrichedLink = LinkData & { category?: string };
+type EnrichedLink = InsightsLink & { category?: string };
+
+/** Every href stays the source; articles additionally open the reader on click. */
+const hrefFor = (link: EnrichedLink) =>
+  appendUTMParams(link.url, {
+    utm_source: "souravinsights.com",
+    utm_medium: "curated_links",
+  });
 
 export default function InsightsList({
   channels,
@@ -67,6 +77,8 @@ export default function InsightsList({
   shuffleSeed,
 }: InsightsListProps) {
   const router = useRouter();
+  // The reader is a view of this page: which article (urlKey) is open, if any.
+  const [reading, setReading] = useState<string | null>(null);
   const [activeChannel, setActiveChannel] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -94,13 +106,16 @@ export default function InsightsList({
   const sortedChannels = useMemo(
     () =>
       channels
-        // Only surface channels we have a label/order for. Anything else
-        // (e.g. a stale cached channel list) would otherwise leak in as a raw
-        // channel name like "opportunities".
-        .filter((channel) => channel.name in CHANNEL_LABELS)
+        // Only surface categories we have a label/order for. Anything else
+        // would leak in as a raw name.
+        .filter(
+          (channel) =>
+            (CATEGORY_ORDER as string[]).includes(channel.name)
+        )
         .sort(
           (a, b) =>
-            CHANNEL_ORDER.indexOf(a.name) - CHANNEL_ORDER.indexOf(b.name)
+            (CATEGORY_ORDER as string[]).indexOf(a.name) -
+            (CATEGORY_ORDER as string[]).indexOf(b.name)
         ),
     [channels]
   );
@@ -110,7 +125,7 @@ export default function InsightsList({
       { name: "all", label: "All" },
       ...sortedChannels.map((channel) => ({
         name: channel.name,
-        label: CHANNEL_LABELS[channel.name],
+        label: categoryLabel(channel.name),
       })),
     ],
     [sortedChannels]
@@ -273,6 +288,30 @@ export default function InsightsList({
   const visibleRef = useRef<Set<string>>(new Set());
   const refreshedRef = useRef<Set<string>>(new Set());
   const feedback = useFeedback();
+
+  // Open an article in the reader overlay; Back/Escape closes it. History gets
+  // an entry so the browser's back button returns to the list exactly as left.
+  const openReader = (link: EnrichedLink) => {
+    window.history.pushState({ reader: link.urlKey }, "");
+    setReading(link.urlKey);
+  };
+
+  const closeReader = useCallback(() => {
+    if ((window.history.state as { reader?: string } | null)?.reader) {
+      window.history.back();
+    } else {
+      setReading(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onPopState = (event: PopStateEvent) => {
+      const state = event.state as { reader?: string } | null;
+      setReading(state?.reader ?? null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const loadPreview = async (
     url: string,
@@ -803,10 +842,7 @@ export default function InsightsList({
 
             <div className="flex flex-col">
               {visibleLinks.map((link, index) => {
-                const href = appendUTMParams(link.url, {
-                  utm_source: "souravinsights.com",
-                  utm_medium: "curated_links",
-                });
+                const href = hrefFor(link);
 
                 return (
                   <div key={link.id}>
@@ -815,6 +851,11 @@ export default function InsightsList({
                       <LinkRow
                         link={link}
                         href={href}
+                        onRead={
+                          link.category === "article"
+                            ? () => openReader(link)
+                            : undefined
+                        }
                         previewSrc={
                           previewMap[link.url] ??
                           `/api/link-preview?url=${encodeURIComponent(link.url)}`
@@ -837,10 +878,7 @@ export default function InsightsList({
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {visibleLinks.map((link, index) => {
-              const href = appendUTMParams(link.url, {
-                utm_source: "souravinsights.com",
-                utm_medium: "curated_links",
-              });
+              const href = hrefFor(link);
 
               return (
                 <FadeIn
@@ -851,6 +889,11 @@ export default function InsightsList({
                   <LinkGridCard
                     link={link}
                     href={href}
+                    onRead={
+                      link.category === "article"
+                        ? () => openReader(link)
+                        : undefined
+                    }
                     previewSrc={previewMap[link.url]}
                     isVisible={visibleUrls.has(link.url)}
                     isFailed={failedUrls.has(link.url)}
@@ -945,6 +988,16 @@ export default function InsightsList({
       )}
 
       </div>
+
+      <AnimatePresence>
+        {reading && (
+          <ReaderView
+            key={reading}
+            urlKey={reading}
+            onClose={closeReader}
+          />
+        )}
+      </AnimatePresence>
     </PreviewCardProvider>
   );
 }
@@ -980,6 +1033,7 @@ function LinkRow({
   selectMode,
   selected,
   onToggle,
+  onRead,
 }: {
   link: EnrichedLink;
   href: string;
@@ -989,6 +1043,7 @@ function LinkRow({
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
+  onRead?: () => void;
 }) {
   const lead = (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
@@ -1069,6 +1124,21 @@ function LinkRow({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={
+          onRead
+            ? (event) => {
+                // Left-click reads in place; middle/ctrl-click still opens the site.
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                  event.preventDefault();
+                  onRead();
+                }
+              }
+            : undefined
+        }
+        onMouseEnter={
+          // Hover warms the article, so the click opens instantly.
+          onRead ? () => prefetchArticle(link.urlKey) : undefined
+        }
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         {lead}
@@ -1106,6 +1176,7 @@ function LinkGridCard({
   selectMode,
   selected,
   onToggle,
+  onRead,
 }: {
   link: EnrichedLink;
   href: string;
@@ -1119,6 +1190,7 @@ function LinkGridCard({
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
+  onRead?: () => void;
 }) {
   const media = (
     <div className="relative aspect-[40/21] w-full overflow-hidden bg-secondary">
@@ -1234,6 +1306,19 @@ function LinkGridCard({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={
+          onRead
+            ? (event) => {
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                  event.preventDefault();
+                  onRead();
+                }
+              }
+            : undefined
+        }
+        onMouseEnter={
+          onRead ? () => prefetchArticle(link.urlKey) : undefined
+        }
         className="flex flex-1 flex-col"
       >
         {media}

@@ -34,7 +34,13 @@ export interface SearchHit {
 
 export async function search(
   query: string,
-  opts: { channel?: string; limit?: number; passagesPerLink?: number } = {}
+  opts: {
+    channel?: string;
+    limit?: number;
+    passagesPerLink?: number;
+    /** Scope the search to one link's passages (the reader's per-article ask). */
+    linkId?: number;
+  } = {}
 ): Promise<SearchHit[]> {
   const limit = opts.limit ?? DEFAULT_LINKS;
   const passagesPerLink = opts.passagesPerLink ?? DEFAULT_PASSAGES_PER_LINK;
@@ -47,6 +53,7 @@ export async function search(
 
   const conditions = [isNull(links.hiddenAt), ne(links.health, "dead")];
   if (opts.channel) conditions.push(eq(links.channel, opts.channel));
+  if (opts.linkId) conditions.push(eq(linkChunks.linkId, opts.linkId));
 
   const rows = await db
     .select({

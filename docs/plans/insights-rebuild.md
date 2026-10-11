@@ -69,6 +69,21 @@ your curation tool while the rest lands.
   mid-rebuild — the build correctly never touches hidden rows; its one leftover chunk is
   excluded by the search join. `makingsoftware.co` is a Vercel checkpoint page to any
   reader → thin + `other`, which is the honest answer.
+- **Phase 3 — done (2026-10-10).** Five hand questions across every path land top-hit:
+  pricing (boat.dev + daytona), article recall (lucumr, corners-are-relative), and the
+  two redesign proofs — navbar.gallery and blogroll.org answer from summary-only
+  passages and rank first.
+- **Phase 5 — built, review pending (2026-10-10).** `/insights` filters by category
+  (tabs replace the channel filter; cards feed on summaries). Articles open the reader
+  **as a side panel inside the page** — no route, no navigation away: panel slides in
+  from the right (full-width sheet on phones), Back/Escape/outside-click closes, the
+  list keeps its scroll; markdown served pre-baked by `GET /api/insights/article`.
+  Owner highlights: select → “Highlight” (same admin key as clean-up), green-sweep
+  wave, quote+occurrence anchoring, public to read. Scoped ask composer answers from
+  the article's passages alone (scoped agent mode; `search()` a `linkId` filter).
+  (First cut was a `/insights/[...key]` route: react-markdown isn't allowed in server
+  components, and the owner asked for an in-page view anyway — route deleted.)
+  `next build` green.
 
 ## Assets reused, not rebuilt
 

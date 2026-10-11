@@ -1,14 +1,22 @@
 import { getLinks } from "@/lib/links/queries";
-import { CHANNEL_LABELS, CHANNEL_ORDER } from "./channels";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "./categories";
 import type { DiscordChannel, LinkData } from "./discordApi";
 
-export type InsightsLink = LinkData & { addedAt: Date };
+export type InsightsLink = LinkData & {
+  addedAt: Date;
+  urlKey: string;
+  category: string;
+};
 
 /**
- * The collection, read from Postgres (Discord is intake-only since the
- * snapshot). Same shape as the old getDiscordData so page/RSS/llms-full keep
- * working unchanged: item ids stay Discord snowflakes, which keeps Redis like
- * keys and snowflake-based sorting valid.
+ * The collection, read from Postgres (Discord is intake-only). Grouped by
+ * category now — the AI's call, not the Discord channel the link happened to
+ * be dropped in. The shape keeps parity with the Discord-era grouping so the
+ * list, feeds and tabs work unchanged; ids stay Discord snowflakes for Redis
+ * like keys and snowflake-based sorting.
+ *
+ * Feeds and any surface that quotes a link get the model-written summary when
+ * one exists — it reads far better than a five-year-old og blurb.
  */
 export async function getInsightsData(): Promise<{
   channels: DiscordChannel[];
@@ -16,23 +24,27 @@ export async function getInsightsData(): Promise<{
 }> {
   const rows = await getLinks();
 
-  // Keep every labeled channel present, even when empty — parity with the
+  // Keep every labeled category present, even when empty — parity with the
   // Discord-era tab bar.
-  const channels: DiscordChannel[] = CHANNEL_ORDER.map((name) => ({
+  const channels: DiscordChannel[] = CATEGORY_ORDER.map((name) => ({
     id: name,
     name,
   }));
   const linkData: Record<string, InsightsLink[]> = Object.fromEntries(
-    CHANNEL_ORDER.map((name) => [name, [] as InsightsLink[]])
+    CATEGORY_ORDER.map((name) => [name, [] as InsightsLink[]])
   );
 
   for (const row of rows) {
-    if (!(row.channel in CHANNEL_LABELS)) continue;
-    linkData[row.channel].push({
+    const bucket = row.category && row.category in CATEGORY_LABELS
+      ? row.category
+      : "other";
+    linkData[bucket].push({
       id: row.discordId ?? row.urlKey,
+      urlKey: row.urlKey,
+      category: bucket,
       url: row.url,
       title: row.title || "Untitled",
-      description: row.description,
+      description: row.summary || row.description,
       visible: true,
       addedAt: row.addedAt,
     });

@@ -133,6 +133,8 @@ export const highlights = pgTable(
     suffix: text("suffix").notNull().default(""),
     /** Which occurrence of `quote` it was — quotes repeat. */
     occurrence: smallint("occurrence").notNull().default(0),
+    /** Palette index (highlight-wave HUES). The colour IS the mark's meaning. */
+    hue: smallint("hue").notNull().default(3),
     /** Anchor lost after a re-read: hidden, never deleted. */
     stale: boolean("stale").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true })

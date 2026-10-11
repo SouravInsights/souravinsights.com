@@ -178,9 +178,11 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 - **Highlights must survive re-reads.** Anchor = quote + prefix/suffix + occurrence
   index. If a refresh breaks the anchor, the highlight hides (marked stale) — never
   silently deleted.
-- **Reader route and renderer.** `/insights/[...key]` for `category=article`; reuse the
-  blog's MDX/shiki stack (bought beats built). Stored markdown is **untrusted content** —
-  render it sanitized, no raw HTML injection.
+- **The reader is a view, not a route.** Articles open as a side panel inside
+  `/insights` (list on the left, panel slides in; Back/Escape/outside-click closes).
+  Markdown ships via `GET /api/insights/article`, rendered with react-markdown + shiki
+  (MDX executes JavaScript — wrong tool for untrusted pages). Stored markdown is
+  **untrusted content**: sanitized, no raw HTML.
 - **Hidden stays hidden.** Hide/unhide work as today; hidden rows never enter build or
   search — same join filter as v1.
 - **Ripples of channel → category.** Suggestion chips quota by channel; RSS and llms.txt

@@ -60,6 +60,31 @@ export const searchKnowledge = tool({
   },
 });
 
+/** The reader's scoped search: this article's passages, nothing else. */
+const scopedSearchKnowledge = (linkId: number) =>
+  tool({
+    description:
+      "Search the passages of the article the reader has open. Call it for " +
+      "anything the question needs from the article.",
+    inputSchema: z.object({
+      query: z.string().describe("What to look for in this article"),
+    }),
+    execute: async ({ query }) => {
+      const hits = await search(query, { linkId, limit: SEARCH_LIMIT });
+      if (hits.length === 0) {
+        return { matches: [], note: "The article has nothing on that." };
+      }
+      return {
+        matches: hits.map((hit) => ({
+          url: hit.url,
+          title: hit.title,
+          channel: hit.channel,
+          passage: hit.passages[0]?.content ?? "",
+        })),
+      };
+    },
+  });
+
 /**
  * The agent's tools, in one place.
  *
@@ -75,13 +100,31 @@ export function agentTools() {
   };
 }
 
+export interface AgentScope {
+  linkId: number;
+  title: string;
+  url: string;
+}
+
+const scopedPrompt = (scope: AgentScope) =>
+  SYSTEM_PROMPT +
+  [
+    "",
+    "",
+    `Scoped mode: the visitor has one article open — "${scope.title}" (${scope.url}).`,
+    "Answer about THAT article only, from its passages. If the question goes", 
+    "beyond what the article covers, say so; do not roam the collection.",
+  ].join("\n");
+
 /** Stream an answer for the given conversation. */
-export async function runAgent(messages: UIMessage[]) {
+export async function runAgent(messages: UIMessage[], scope?: AgentScope) {
   return streamText({
     model: chatModel(),
-    system: SYSTEM_PROMPT,
+    system: scope ? scopedPrompt(scope) : SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    tools: agentTools(),
+    tools: scope
+      ? { search_knowledge: scopedSearchKnowledge(scope.linkId) }
+      : agentTools(),
     stopWhen: stepCountIs(MAX_STEPS),
   });
 }

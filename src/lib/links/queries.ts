@@ -14,6 +14,8 @@ export interface LinkRecord {
   url: string;
   title: string;
   description: string;
+  category: string | null;
+  summary: string | null;
   channel: string;
   addedAt: Date;
 }
@@ -32,6 +34,8 @@ export async function getLinks(opts?: {
       url: links.url,
       title: links.title,
       description: links.description,
+      category: links.category,
+      summary: links.summary,
       channel: links.channel,
       addedAt: links.addedAt,
     })

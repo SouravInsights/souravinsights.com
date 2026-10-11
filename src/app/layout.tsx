@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { AppShell } from "@/components/nav/AppShell";
 import { PHProvider } from "@/context/PostHogProvider";
+import { QueryProvider } from "@/context/QueryProvider";
 import dynamic from "next/dynamic";
 
 const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
@@ -71,14 +72,16 @@ export default function RootLayout({
           <PostHogPageView />
           <ThemeProvider>
             <SoundProvider>
-              <div className="flex min-h-dvh flex-col bg-background text-foreground transition-colors duration-200">
-                {/* The frame draws the chrome and owns the offsets (--rail,
-                    --tabbar-space); every page below only has to fill what is
-                    left, and no page reserves a band of its own any more. */}
-                <AppShell>
-                  <main className="flex-grow">{children}</main>
-                </AppShell>
-              </div>
+              <QueryProvider>
+                <div className="flex min-h-dvh flex-col bg-background text-foreground transition-colors duration-200">
+                  {/* The frame draws the chrome and owns the offsets (--rail,
+                      --tabbar-space); every page below only has to fill what is
+                      left, and no page reserves a band of its own any more. */}
+                  <AppShell>
+                    <main className="flex-grow">{children}</main>
+                  </AppShell>
+                </div>
+              </QueryProvider>
             </SoundProvider>
             <SpeedInsights />
             <Analytics />
