@@ -6,6 +6,7 @@ export type InsightsLink = LinkData & {
   addedAt: Date;
   urlKey: string;
   category: string;
+  topics: string[];
 };
 
 /**
@@ -42,6 +43,7 @@ export async function getInsightsData(): Promise<{
       id: row.discordId ?? row.urlKey,
       urlKey: row.urlKey,
       category: bucket,
+      topics: row.topics ?? [],
       url: row.url,
       title: row.title || "Untitled",
       description: row.summary || row.description,

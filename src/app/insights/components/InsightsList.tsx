@@ -85,6 +85,10 @@ export default function InsightsList({
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const [topicsOpen, setTopicsOpen] = useState(false);
+  const [topicQuery, setTopicQuery] = useState("");
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const topicsMenuRef = useRef<HTMLDivElement>(null);
   const [sort, setSort] = useState<SortMode>("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -134,6 +138,46 @@ export default function InsightsList({
   const activeFilterLabel =
     filters.find((filter) => filter.name === activeChannel)?.label ?? "All";
 
+  /**
+   * The topic universe, counted across the whole visible list (not the
+   * filtered view) so counts stay stable while you narrow. 643 topics exist;
+   * 393 appear once. The picker shows the head (3+ links) and a search reaches
+   * the long tail without ever putting it on screen unasked.
+   */
+  const topicCounts = useMemo(() => {
+    // Counted inside the active category, so a count always matches what
+    // picking that topic will actually show you.
+    const scope =
+      activeChannel === "all"
+        ? sortedChannels.flatMap((channel) => linkData[channel.name] ?? [])
+        : linkData[activeChannel] ?? [];
+    const counts = new Map<string, number>();
+    for (const link of scope) {
+      for (const topic of link.topics ?? []) {
+        counts.set(topic, (counts.get(topic) ?? 0) + 1);
+      }
+    }
+    return counts;
+  }, [activeChannel, sortedChannels, linkData]);
+
+  const topicOptions = useMemo(() => {
+    const all = Array.from(topicCounts.entries()).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
+    const query = topicQuery.trim().toLowerCase();
+    if (query) return all.filter(([topic]) => topic.includes(query)).slice(0, 60);
+    return all.filter(([, count]) => count >= 3).slice(0, 40);
+  }, [topicCounts, topicQuery]);
+
+  const toggleTopic = (topic: string) => {
+    feedback.select();
+    setSelectedTopics((current) =>
+      current.includes(topic)
+        ? current.filter((t) => t !== topic)
+        : [...current, topic]
+    );
+  };
+
   // Every link in the active view, newest first.
   const links = useMemo<EnrichedLink[]>(() => {
     const source: EnrichedLink[] =
@@ -155,14 +199,25 @@ export default function InsightsList({
   }, [activeChannel, sortedChannels, linkData]);
 
   const filteredLinks = useMemo(() => {
+    let result = links;
+
+    // Topics read as "either of these" — narrowing with AND dead-ends fast on
+    // topics this small; category and search stay strict.
+    if (selectedTopics.length > 0) {
+      result = result.filter((link) =>
+        selectedTopics.some((topic) => (link.topics ?? []).includes(topic))
+      );
+    }
+
     const query = searchTerm.trim().toLowerCase();
-    if (!query) return links;
-    return links.filter(
+    if (!query) return result;
+    return result.filter(
       (link) =>
         link.title.toLowerCase().includes(query) ||
-        link.url.toLowerCase().includes(query)
+        link.url.toLowerCase().includes(query) ||
+        (link.topics ?? []).some((topic) => topic.includes(query))
     );
-  }, [links, searchTerm]);
+  }, [links, searchTerm, selectedTopics]);
 
   // Quality sort keeps newest-first order for ties (Array.sort is stable).
   const sortedLinks = useMemo(() => {
@@ -215,6 +270,25 @@ export default function InsightsList({
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [sortMenuOpen]);
+
+  // And the topics picker.
+  useEffect(() => {
+    if (!topicsOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!topicsMenuRef.current?.contains(event.target as Node)) {
+        setTopicsOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setTopicsOpen(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [topicsOpen]);
 
   // Remember the chosen view and sort across visits.
   useEffect(() => {
@@ -701,6 +775,97 @@ export default function InsightsList({
                 )}
               </div>
 
+              {/* Topics — a picker, not a cloud: the head is listed, the long
+                  tail is a search away. Either-of semantics. */}
+              <div ref={topicsMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setTopicsOpen((open) => !open)}
+                  aria-haspopup="dialog"
+                  aria-expanded={topicsOpen}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
+                >
+                  Topics
+                  {selectedTopics.length > 0 && (
+                    <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
+                      {selectedTopics.length}
+                    </span>
+                  )}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
+                      topicsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {topicsOpen && (
+                  <div className="absolute right-0 top-full z-30 mt-1 w-72 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5">
+                    <div className="p-1">
+                      <input
+                        type="text"
+                        value={topicQuery}
+                        onChange={(event) => setTopicQuery(event.target.value)}
+                        placeholder="Find a topic…"
+                        spellCheck={false}
+                        aria-label="Find a topic"
+                        className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
+                      />
+                    </div>
+                    <div className="max-h-72 overflow-y-auto">
+                      {topicOptions.length === 0 ? (
+                        <p className="px-3 py-2 type-caption text-muted-foreground">
+                          No topics match “{topicQuery}”.
+                        </p>
+                      ) : (
+                        topicOptions.map(([topic, count]) => {
+                          const active = selectedTopics.includes(topic);
+                          return (
+                            <button
+                              key={topic}
+                              type="button"
+                              role="option"
+                              aria-selected={active}
+                              onClick={() => toggleTopic(topic)}
+                              className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors ${
+                                active
+                                  ? "bg-foreground/[0.06] text-foreground"
+                                  : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                              }`}
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                <span
+                                  className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] border ${
+                                    active
+                                      ? "border-foreground bg-foreground text-background"
+                                      : "border-muted-foreground/40"
+                                  }`}
+                                >
+                                  {active && <Check className="h-2.5 w-2.5" />}
+                                </span>
+                                <span className="truncate">{topic}</span>
+                              </span>
+                              <span className="shrink-0 tabular-nums text-faint-foreground">
+                                {count}
+                              </span>
+                            </button>
+                          );
+                        })
+                      )}
+                    </div>
+                    {selectedTopics.length > 0 && (
+                      <div className="mt-1 border-t border-border p-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTopics([])}
+                          className="w-full rounded-[3px] px-3 py-1.5 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
+                        >
+                          Clear topics
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Sort — recency, quality, or a shuffle */}
               <div ref={sortMenuRef} className="relative">
                 <button
@@ -822,11 +987,45 @@ export default function InsightsList({
         />
       </div>
 
+      {/* Active topics: only exist when a filter is on — chips as a receipt. */}
+      {selectedTopics.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 px-3">
+          {selectedTopics.map((topic) => (
+            <button
+              key={topic}
+              type="button"
+              onClick={() => toggleTopic(topic)}
+              className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
+              aria-label={`Remove topic ${topic}`}
+            >
+              {topic}
+              <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setSelectedTopics([])}
+            className="type-caption text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Links */}
       <div className="mt-6">
         {visibleLinks.length === 0 ? (
           <p className="px-3 py-10 text-center type-caption">
-            No links match “{searchTerm}”.
+            Nothing matches these filters.
+            {selectedTopics.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setSelectedTopics([])}
+                className="ml-2 font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Clear topics
+              </button>
+            )}
           </p>
         ) : view === "list" ? (
           <>

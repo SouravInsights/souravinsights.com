@@ -16,6 +16,7 @@ export interface LinkRecord {
   description: string;
   category: string | null;
   summary: string | null;
+  topics: string[] | null;
   channel: string;
   addedAt: Date;
 }
@@ -36,6 +37,7 @@ export async function getLinks(opts?: {
       description: links.description,
       category: links.category,
       summary: links.summary,
+      topics: links.topics,
       channel: links.channel,
       addedAt: links.addedAt,
     })
