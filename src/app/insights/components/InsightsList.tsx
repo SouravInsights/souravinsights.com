@@ -9,6 +9,7 @@ import { DiscordChannel } from "../utils/discordApi";
 import type { InsightsLink } from "../utils/links-data";
 import {
   appendUTMParams,
+  cleanShareUrl,
   dedupeByUrl,
   normalizeUrl,
   seededShuffle,
@@ -17,6 +18,7 @@ import {
 } from "../utils/urlUtils";
 import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "./LikeButton";
+import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
 import {
   PreviewCardProvider,
@@ -1201,6 +1203,27 @@ export default function InsightsList({
   );
 }
 
+/**
+ * Copy the link, tracking stripped. Hover-revealed on desktop; always on for
+ * touch, where there is no hover to reveal it. The clipboard itself is the
+ * shared CopyButton — one implementation for docs and the collection.
+ */
+const COPY_VISIBILITY =
+  "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100";
+
+function CopyLinkButton({ url }: { url: string }) {
+  const feedback = useFeedback();
+  return (
+    <CopyButton
+      iconOnly
+      value={cleanShareUrl(url)}
+      label="clean link"
+      className={COPY_VISIBILITY}
+      onCopied={feedback.press}
+    />
+  );
+}
+
 /** The clean-up selection mark. Purely visual — the row or card around it owns
  *  the click, so there is one hit target and no double toggle. */
 function SelectBox({
@@ -1345,7 +1368,8 @@ function LinkRow({
         {domain}
       </a>
 
-      <div className="flex w-24 shrink-0 items-center justify-end gap-2">
+      <div className="flex w-24 shrink-0 items-center justify-end gap-1.5">
+        <CopyLinkButton url={link.url} />
         {isAdmin && (
           <button
             type="button"
@@ -1464,7 +1488,10 @@ function LinkGridCard({
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         ) : (
-          <LikeButton linkId={link.id} />
+          <span className="flex items-center gap-1">
+            <CopyLinkButton url={link.url} />
+            <LikeButton linkId={link.id} />
+          </span>
         )}
       </div>
     </div>

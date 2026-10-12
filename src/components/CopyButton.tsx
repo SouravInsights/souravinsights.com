@@ -15,7 +15,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * button never claims a stale state, and a blocked clipboard stays silent
  * rather than lying about having copied.
  */
-export function CopyButton({ value, label }: { value: string; label: string }) {
+export function CopyButton({
+  value,
+  label,
+  iconOnly = false,
+  className,
+  onCopied,
+}: {
+  value: string;
+  label: string;
+  /** Icon alone — for tight surfaces like a list row. */
+  iconOnly?: boolean;
+  /** Extra classes; the caller owns visibility and tone when iconOnly. */
+  className?: string;
+  /** Fires after a successful copy (haptics, sounds). */
+  onCopied?: () => void;
+}) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -30,14 +45,38 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
+      onCopied?.();
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => setCopied(false), 1600);
     } catch {
       // Insecure origin, or the permission was refused. Say nothing.
     }
-  }, [value]);
+  }, [value, onCopied]);
 
   const Icon = copied ? Check : Copy;
+
+  if (iconOnly) {
+    return (
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          void copy();
+        }}
+        aria-label={copied ? `${label} copied` : `Copy ${label}`}
+        title={copied ? "Copied" : `Copy ${label}`}
+        className={`flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-opacity hover:text-foreground ${className ?? ""}`}
+      >
+        <Icon
+          aria-hidden="true"
+          className={`h-3.5 w-3.5 ${copied ? "text-green-600" : ""}`}
+        />
+        <span aria-live="polite" className="sr-only">
+          {copied ? `${label} copied to clipboard` : ""}
+        </span>
+      </button>
+    );
+  }
 
   return (
     <button
