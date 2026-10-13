@@ -138,7 +138,7 @@ async function main() {
 
     for (const q of result.scored) {
       console.log(
-        `\n  ${cyan(`"${q.query}"`)}${q.channel ? dim(`  channel=${q.channel}`) : ""}`
+        `\n  ${cyan(`"${q.query}"`)}${q.category ? dim(`  category=${q.category}`) : ""}`
       );
       for (const h of q.handedOver) {
         const band = h.score >= 0.45 ? green : h.score >= 0.35 ? yellow : red;

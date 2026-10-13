@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { CATEGORIES } from "./categories";
 import { search } from "./search";
 
 /**
@@ -39,10 +39,13 @@ export function createCollectionServer(): McpServer {
         "that matched, so anything quoted can be attributed.",
       inputSchema: {
         query: z.string().describe("What to look for, in plain words"),
-        channel: z
-          .enum(CHANNEL_ORDER as [string, ...string[]])
+        category: z
+          .enum(CATEGORIES)
           .optional()
-          .describe("Restrict the search to one channel"),
+          .describe(
+            "Restrict the search to one kind of saved link — people to " +
+              "follow, tools for a job, publications, galleries, courses"
+          ),
         limit: z
           .number()
           .int()
@@ -52,9 +55,9 @@ export function createCollectionServer(): McpServer {
           .describe(`How many links to return (default ${DEFAULT_LIMIT})`),
       },
     },
-    async ({ query, channel, limit }) => {
+    async ({ query, category, limit }) => {
       const hits = await search(query, {
-        channel,
+        category,
         limit: limit ?? DEFAULT_LIMIT,
       });
 

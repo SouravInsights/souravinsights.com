@@ -687,7 +687,13 @@ async function main() {
     passers,
     VERIFY_CONCURRENCY,
     async (verdict) => {
-      const hits = await search(verdict.question, { limit: 3, passagesPerLink: 2 });
+      // A browse chip is judged against its own kind: "galleries for X" must
+      // be answered by galleries, not by whatever happens to rank high.
+      const hits = await search(verdict.question, {
+        limit: 3,
+        passagesPerLink: 2,
+        category: verdict.themeCategories?.[0],
+      });
       const evidence = hits
         .map(
           (hit) =>

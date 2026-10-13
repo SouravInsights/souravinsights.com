@@ -417,7 +417,7 @@ export interface TraceStep {
 
 export interface ScoredQuery {
   query: string;
-  channel?: string;
+  category?: string;
   /** The links the tool actually returned — `limit` of them. */
   handedOver: {
     rank: number;
@@ -535,20 +535,20 @@ export async function traceQuestion(
     for (const step of result.steps) {
       for (const call of step.toolCalls) {
         if (call.toolName !== "search_knowledge") continue;
-        const input = call.input as { query?: string; channel?: string };
+        const input = call.input as { query?: string; category?: string };
         if (!input?.query) continue;
-        const key = `${input.query}|${input.channel ?? ""}`;
+        const key = `${input.query}|${input.category ?? ""}`;
         if (seen.has(key)) continue;
         seen.add(key);
 
         const wide = await search(input.query, {
-          channel: input.channel,
+          category: input.category,
           limit: 25,
         });
 
         scored.push({
           query: input.query,
-          channel: input.channel,
+          category: input.category,
           handedOver: wide.slice(0, limit).map((h, i) => ({
             rank: i + 1,
             score: h.score,

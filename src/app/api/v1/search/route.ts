@@ -50,10 +50,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { q, channel, limit } = parsed.data;
+  const { q, category, limit } = parsed.data;
 
   try {
-    const hits = await search(q, { channel, limit });
+    const hits = await search(q, { category, limit });
 
     if (hits.length === 0) {
       return NextResponse.json(

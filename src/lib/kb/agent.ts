@@ -6,7 +6,7 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { CATEGORIES } from "./categories";
 import { chatModel } from "./model";
 import { SYSTEM_PROMPT } from "./prompt";
 import { search } from "./search";
@@ -39,13 +39,17 @@ export const searchKnowledge = tool({
     "if the first results miss.",
   inputSchema: z.object({
     query: z.string().describe("What to look for, in plain words"),
-    channel: z
-      .enum(CHANNEL_ORDER as [string, ...string[]])
+    category: z
+      .enum(CATEGORIES)
       .optional()
-      .describe("Restrict the search to one channel"),
+      .describe(
+        "Restrict the search to one kind of saved link. Use it when the " +
+          "question is about a kind — people to follow, tools for a job, " +
+          "publications, galleries, courses."
+      ),
   }),
-  execute: async ({ query, channel }) => {
-    const hits = await search(query, { channel, limit: SEARCH_LIMIT });
+  execute: async ({ query, category }) => {
+    const hits = await search(query, { category, limit: SEARCH_LIMIT });
     if (hits.length === 0) {
       return { matches: [], note: "No saved links matched that query." };
     }

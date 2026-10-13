@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { CATEGORIES } from "@/lib/kb/categories";
 
 extendZodWithOpenApi(z);
 
@@ -69,10 +70,15 @@ export const searchQuerySchema = z.object({
       "pages' contents, not their titles.",
     example: "a tool to check colour contrast",
   }),
-  channel: channelEnum.optional().openapi({
-    description: "Restrict the search to one channel",
-    example: "tools",
-  }),
+  category: z
+    .enum(CATEGORIES as unknown as [string, ...string[]])
+    .optional()
+    .openapi({
+      description:
+        "Restrict the search to one kind of saved link — useful when the " +
+        "question is about a kind (people to follow, tools for a job)",
+      example: "tool",
+    }),
   limit: z.coerce.number().int().min(1).max(20).default(8).openapi({
     description: "Results to return (max 20)",
     example: 8,
