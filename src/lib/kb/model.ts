@@ -22,12 +22,12 @@ export const CHAT_MODEL_ID = "openai/gpt-4o-mini";
 
 /**
  * The pipeline model (classify + describe). Split from CHAT_MODEL_ID: the
- * agent wants latency and tool-calling cost, the pipeline wants judgement —
- * and the bake-off (docs/review/categorization-feedback.md §8) picked
- * gemini-2.5-flash: only model to clear the >=95% golden bar, at ~$0.20 per
- * full-collection classify.
+ * agent wants latency and tool-calling cost, the pipeline wants judgement.
+ * Current pick by golden-set score: deepseek-v4.1-flash (91.4% golden at
+ * prompt v5, $0.04 per full-collection run — the bake-off table lives in
+ * docs/review/categorization-feedback.md §8).
  */
-export const PIPELINE_MODEL_ID = "google/gemini-2.5-flash";
+export const PIPELINE_MODEL_ID = "deepseek/deepseek-v4.1-flash";
 
 /**
  * Used by one offline script, `scripts/kb-suggestions.ts`, which writes the Ask

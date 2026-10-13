@@ -17,7 +17,7 @@ import { CATEGORY_PROMPT_LIST, type Category } from "./categories";
  * (v1 seeded "pricing" as an example topic; the leash was never wired).
  */
 
-export const PROMPT_VERSION = 5;
+export const PROMPT_VERSION = 6;
 
 /**
  * The one rule every prompt follows (docs/spec/insights-rebuild.md): the page's
@@ -28,7 +28,7 @@ export const VOICE_RULE = `Rules you must follow:
 - Write nothing that isn't on the page: no guessed pricing, no inferred topics, no "this site could help you…". If it's not on the page, it's not in the summary.
 - Two sentences, at most three. Plain.`;
 
-/** What classify answers: what IS this page. Not what it's about — its topics. */
+/** What classify answers: what IS this page. Its subjects come later, in describe. */
 export const classifyPrompt = (input: {
   url: string;
   title: string;
@@ -36,7 +36,6 @@ export const classifyPrompt = (input: {
   site: string;
   sample: string;
   stats: string;
-  knownTopics: string[];
 }) => `You are labeling one saved web page for a personal curated-links collection.
 
 The decisive rule, before all definitions: judge the page, not the place it
@@ -73,14 +72,7 @@ Site name: ${input.site || "(none)"}
 ${input.stats}
 
 Heading outline:
-${input.sample}
-
-Also give 3-7 topic keywords naming the page's SUBJECTS (short lowercase words:
-motion, typography, agents, sqlite…). A topic is a subject, never a shape or an
-attribute: no category words (article, blog, tool, people, learning,
-inspiration, directory, publication), no meta-words (resources, coding,
-website, pricing).
-${input.knownTopics.length ? `Reuse these where they fit: ${input.knownTopics.join(", ")}.` : ""}`;
+${input.sample}`;
 
 /** What describe answers, per category: squeeze the single page for summary. */
 export const DESCRIBE_PROMPTS: Record<Category, string> = {
@@ -108,6 +100,8 @@ export const describePrompt = (input: {
   category: Category;
   instruction: string;
   markdown: string;
+  /** Topics already in use across the collection — the vocabulary leash. */
+  knownTopics: string[];
 }) => `Summarize this page in the site's own voice.
 
 It is a "${input.category}". ${input.instruction}
@@ -122,4 +116,10 @@ ${input.published ? `Published: ${input.published}` : ""}
 Markdown of the page:
 """
 ${input.markdown}
-"""`;
+"""
+
+Then name the page's subjects: 2-6 short lowercase keywords (motion, typography, sqlite, agents).
+- A keyword is a subject someone could follow. Specific beats general: sqlite, not databases.
+- It must be able to appear on other pages too — no one-off curiosities.
+- Never a category word (article, blog, tool, people…), an umbrella word (software, coding, writing, resources), or a billing word (pricing).
+${input.knownTopics.length ? `Reuse the vocabulary already in use where it fits: ${input.knownTopics.join(", ")}.` : ""}`;

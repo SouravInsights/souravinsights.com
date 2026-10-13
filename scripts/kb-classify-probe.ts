@@ -7,15 +7,17 @@ import { db } from "../src/db";
 import { links } from "../src/db/schema";
 import { modelById } from "../src/lib/kb/model";
 import { resolveCategory } from "../src/lib/kb/categories";
+import { buildLeash } from "../src/lib/kb/topics";
 import { PROMPT_VERSION } from "../src/lib/kb/prompts";
-import { classifyPage } from "../src/lib/kb/understand";
+import { classifyPage, describePage } from "../src/lib/kb/understand";
 
 /**
  * kb-classify-probe — score the taxonomy + prompt + model against the owner's
  * frozen review, without touching anything.
  *
  *   npx tsx scripts/kb-classify-probe.ts                       # openai/gpt-4o-mini
- *   npx tsx scripts/kb-classify-probe.ts --model anthropic/claude-haiku-4.5
+ *   npx tsx scripts/kb-classify-probe.ts --model deepseek/deepseek-v4.1-flash
+ *   npx tsx scripts/kb-classify-probe.ts --model X --with-describe  # + summary & topics
  *   npx tsx scripts/kb-classify-probe.ts --golden-only          # scored set only
  *   npx tsx scripts/kb-classify-probe.ts --limit 20             # smoke run
  *
@@ -50,6 +52,7 @@ type GoldenEntry = {
 async function main() {
   const modelId = (flag("model") as string) ?? "openai/gpt-4o-mini";
   const goldenOnly = Boolean(flag("golden-only"));
+  const withDescribe = Boolean(flag("with-describe"));
   const limit = flag("limit") ? Number(flag("limit")) : undefined;
 
   const golden = JSON.parse(readFileSync(GOLDEN_PATH, "utf8")) as {
@@ -77,13 +80,13 @@ async function main() {
     )
     .orderBy(links.id);
 
-  const topicRows = (await db.execute(sql`
-    select distinct unnest(topics) as topic from links
-    where hidden_at is null and topics is not null
-  `)) as unknown as { rows?: { topic: string }[] } | { topic: string }[];
-  const knownTopics = (Array.isArray(topicRows) ? topicRows : topicRows.rows ?? [])
-    .map((r) => r.topic)
-    .sort();
+  // The leash, built through the same policy production uses (topics.ts) —
+  // the probe must measure what ships.
+  const topicRows = await db
+    .select({ topics: links.topics })
+    .from(links)
+    .where(isNull(links.hiddenAt));
+  const knownTopics = buildLeash(topicRows.map((r) => r.topics));
 
   // scored rows = golden ∪ holdout, each with its truth source recorded.
   const seen = new Set<string>();
@@ -136,9 +139,11 @@ async function main() {
     predicted: string;
     confidence: string;
     topics: string[];
+    summary: string | null;
     ok: boolean;
     boundary: boolean;
   }[] = [];
+  let summaries = 0;
   let done = 0;
   let failed = 0;
 
@@ -155,13 +160,35 @@ async function main() {
       // The production rule: low confidence files the link for review.
       const predicted =
         object.confidence === "low" ? "other" : object.category;
+
+      // --with-describe adds the second call: summary + topics, exactly as
+      // production's understand would write them.
+      let summary: string | null = null;
+      let topics: string[] = [];
+      if (withDescribe) {
+        const described = await describePage(model, {
+          url: row.urlKey,
+          title: row.title,
+          description: row.description,
+          author: "",
+          published: "",
+          markdown: row.markdown,
+          knownTopics,
+          category: predicted,
+        });
+        summary = described.summary;
+        topics = described.topics;
+        summaries++;
+      }
+
       results.push({
         urlKey: row.urlKey,
         source: row.source,
         truth: row.truth,
         predicted,
         confidence: object.confidence,
-        topics: object.topics.map((t) => t.toLowerCase().trim()).slice(0, 7),
+        topics,
+        summary,
         ok: predicted === row.truth,
         boundary: false,
       });
@@ -174,6 +201,7 @@ async function main() {
         predicted: `ERROR: ${error instanceof Error ? error.message.slice(0, 80) : error}`,
         confidence: "-",
         topics: [],
+        summary: null,
         ok: false,
         boundary: false,
       });
@@ -251,12 +279,14 @@ async function main() {
           predicted: r.predicted,
           confidence: r.confidence,
           topics: r.topics,
+          ...(r.summary ? { summary: r.summary } : {}),
         })),
       },
       null,
       2
     )
   );
+  if (withDescribe) console.log(`summaries written: ${summaries}`);
   console.log(`\nfull result: ${dumpPath}`);
 }
 

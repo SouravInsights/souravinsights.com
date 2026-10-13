@@ -1,5 +1,6 @@
 import "./load-env";
 import { and, inArray, isNull, ne, eq, sql } from "drizzle-orm";
+import { buildLeash } from "../src/lib/kb/topics";
 import { db } from "../src/db";
 import { links } from "../src/db/schema";
 import { closeRenderer } from "../src/lib/kb/render";
@@ -64,15 +65,14 @@ async function main() {
     .where(and(...conditions))
     .orderBy(links.id);
 
-  // The topic vocabulary leash: collect once per run, hand to classify so
-  // new coinages stay rare (docs/review/categorization-feedback.md, RC7).
-  const topicRows = (await db.execute(sql`
-    select distinct unnest(topics) as topic from links
-    where hidden_at is null and topics is not null
-  `)) as unknown as { rows?: { topic: string }[] } | { topic: string }[];
-  const knownTopics = (Array.isArray(topicRows) ? topicRows : topicRows.rows ?? [])
-    .map((r) => r.topic)
-    .sort();
+  // The topic vocabulary leash: built from the collection's existing
+  // topics through the same write-time policy that stores them, so the
+  // model is only ever asked to reuse clean words (see topics.ts).
+  const topicRows = await db
+    .select({ topics: links.topics })
+    .from(links)
+    .where(isNull(links.hiddenAt));
+  const knownTopics = buildLeash(topicRows.map((r) => r.topics));
   console.log(`topic vocabulary: ${knownTopics.length} known topics`);
 
   const rows: LinkRow[] = await (limit ? query.limit(limit) : query);

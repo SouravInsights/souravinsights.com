@@ -3,6 +3,7 @@ import type { LanguageModel } from "ai";
 import { z } from "zod";
 import { pipelineModel } from "./model";
 import { CATEGORIES, type Category } from "./categories";
+import { applyTopicPolicy } from "./topics";
 import {
   PROMPT_VERSION,
   DESCRIBE_PROMPTS,
@@ -13,14 +14,21 @@ import {
 /**
  * understand — two model calls per link, two different jobs:
  *
- *   classify  what IS this page   → category + topics + confidence
- *   describe  squeeze the page    → a summary in the page's own voice
+ *   classify  what IS this page   → category + confidence
+ *   describe  squeeze the page    → summary in the page's voice + its topics
  *
- * The model never sees a whole giant shelf: classify gets a bounded sample
- * (opening words + heading outline + counts), describe gets a word-capped
- * markdown body. Low confidence lands in `other` — the review queue.
+ * Topics live in describe, not classify: describe reads up to 6,000 words of
+ * the page while classify only skims the first 1,500, and subjects are
+ * easier to see in more text. Classify staying single-purpose also removes
+ * the schema failures a chatty topic list used to cause.
  *
- * All prompt text lives in prompts.ts. Bump PROMPT_VERSION on any prompt edit.
+ * Evidence is bounded on purpose: classify gets the opening + heading
+ * outline + counts (never a whole 1,200-item shelf); describe gets a
+ * word-capped body. A low-confidence answer is an answer too: the link
+ * lands in `other`, the review queue, instead of being guessed.
+ *
+ * Topics pass through the policy in topics.ts before anything is stored.
+ * All prompt text lives in prompts.ts — bump PROMPT_VERSION on any edit.
  */
 
 export { PROMPT_VERSION };
@@ -29,19 +37,27 @@ const MAX_SAMPLE_WORDS = 1500;
 const MAX_HEADINGS = 30;
 const MAX_DESCRIBE_WORDS = 6000;
 
+const classificationSchema = z.object({
+  category: z.enum(CATEGORIES),
+  confidence: z.enum(["high", "medium", "low"]),
+});
+
+const describeSchema = z.object({
+  summary: z.string(),
+  // No .max() here: the policy caps. A hard cap in the parse envelope turns
+  // a chatty model into a whole-batch error class (learned with haiku-4.5).
+  topics: z.array(z.string()),
+});
+
 export interface ClassifyResult {
   category: Category;
-  topics: string[];
   confidence: "high" | "medium" | "low";
 }
 
-export const classificationSchema = z.object({
-  category: z.enum(CATEGORIES),
-  // No .max() here: an over-long list is capped at write time. A hard cap in
-  // the parse envelope turns a chatty model into a whole-batch error class.
-  topics: z.array(z.string()),
-  confidence: z.enum(["high", "medium", "low"]),
-});
+export interface DescribeResult {
+  summary: string;
+  topics: string[];
+}
 
 export interface UnderstandInput {
   url: string;
@@ -83,8 +99,8 @@ const cap = (markdown: string) =>
   markdown.split(/\s+/).filter(Boolean).slice(0, MAX_DESCRIBE_WORDS).join(" ");
 
 /**
- * classify — the shared half of understand: the probe (bake-off) and the
- * production build both call this, so what gets measured is what ships.
+ * classify — shared by the probe (the bake-off) and the production build,
+ * so what gets measured is what ships.
  */
 export async function classifyPage(
   model: LanguageModel,
@@ -92,10 +108,10 @@ export async function classifyPage(
 ): Promise<ClassifyResult> {
   const sample = sampleOf(input.markdown);
 
-  // A model call with no ceiling holds a worker forever on a stalled
-  // connection; 2 minutes is generous for a 6k-word prompt.
-  // generateText + Output.object: works across providers, unlike
-  // generateObject's json-schema mode (OpenRouter rejects it for Anthropic).
+  // The timeout exists so a stalled connection can't idle a worker forever;
+  // 2 minutes is generous for a 6k-word prompt. generateText + Output.object
+  // works across providers, unlike generateObject's json-schema mode
+  // (OpenRouter rejects it for Anthropic models).
   const { output } = await generateText({
     model,
     abortSignal: AbortSignal.timeout(120_000),
@@ -107,39 +123,56 @@ export async function classifyPage(
       site: input.site,
       sample: `${sample.outline}\n\nOpening:\n${sample.opening}`,
       stats: sample.stats,
-      knownTopics: input.knownTopics,
     }),
   });
   if (!output) throw new Error("classify produced no structured output");
   return output;
 }
 
-export async function understandPage(
-  input: UnderstandInput
-): Promise<UnderstandResult> {
-  const object = await classifyPage(pipelineModel(), input);
-
-  // Low confidence is an answer too: it files the link for human review.
-  const category: Category =
-    object.confidence === "low" ? "other" : object.category;
-
-  const { text } = await generateText({
-    model: pipelineModel(),
+/**
+ * describe — summary + topics in one call, on the largest view of the page
+ * we give any model. The model proposes topics; the policy decides them.
+ */
+export async function describePage(
+  model: LanguageModel,
+  input: Omit<UnderstandInput, "site"> & { category: Category }
+): Promise<DescribeResult> {
+  const { output } = await generateText({
+    model,
     abortSignal: AbortSignal.timeout(120_000),
+    output: Output.object({ schema: describeSchema }),
     prompt: describePrompt({
       url: input.url,
       title: input.title,
       author: input.author,
       published: input.published,
-      category,
-      instruction: DESCRIBE_PROMPTS[category],
+      category: input.category,
+      instruction: DESCRIBE_PROMPTS[input.category],
       markdown: cap(input.markdown),
+      knownTopics: input.knownTopics,
     }),
   });
-
+  if (!output) throw new Error("describe produced no structured output");
   return {
-    category,
-    topics: object.topics.map((t) => t.toLowerCase().trim()).slice(0, 7),
-    summary: text.trim(),
+    summary: output.summary.trim(),
+    topics: applyTopicPolicy(output.topics),
   };
+}
+
+export async function understandPage(
+  input: UnderstandInput
+): Promise<UnderstandResult> {
+  const { category: rawCategory, confidence } = await classifyPage(
+    pipelineModel(),
+    input
+  );
+
+  const category: Category = confidence === "low" ? "other" : rawCategory;
+
+  const { summary, topics } = await describePage(pipelineModel(), {
+    ...input,
+    category,
+  });
+
+  return { category, topics, summary };
 }
