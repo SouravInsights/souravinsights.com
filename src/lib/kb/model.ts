@@ -21,6 +21,15 @@ export const EMBEDDING_MODEL_ID = "openai/text-embedding-3-small";
 export const CHAT_MODEL_ID = "openai/gpt-4o-mini";
 
 /**
+ * The pipeline model (classify + describe). Split from CHAT_MODEL_ID: the
+ * agent wants latency and tool-calling cost, the pipeline wants judgement —
+ * and the bake-off (docs/review/categorization-feedback.md §8) picked
+ * gemini-2.5-flash: only model to clear the >=95% golden bar, at ~$0.20 per
+ * full-collection classify.
+ */
+export const PIPELINE_MODEL_ID = "google/gemini-2.5-flash";
+
+/**
  * Used by one offline script, `scripts/kb-suggestions.ts`, which writes the Ask
  * panel's suggestion chips. It is deliberately not the chat model: a chip is the
  * only copy here with no retrieval to hide behind, and gpt-4o-mini writes topics
@@ -47,6 +56,12 @@ export const embeddingModel = () =>
 
 /** The chat model, for the agent that writes answers. */
 export const chatModel = () => client()(CHAT_MODEL_ID);
+
+/** The pipeline model, for understand (classify + describe). */
+export const pipelineModel = () => client()(PIPELINE_MODEL_ID);
+
+/** Any chat model by id — the classify probe's bake-off dial. */
+export const modelById = (id: string) => client()(id);
 
 /** The copy model, for the offline script that writes the suggestion chips. */
 export const suggestionModel = () => client()(SUGGESTION_MODEL_ID);

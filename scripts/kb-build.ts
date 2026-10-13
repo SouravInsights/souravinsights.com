@@ -64,6 +64,17 @@ async function main() {
     .where(and(...conditions))
     .orderBy(links.id);
 
+  // The topic vocabulary leash: collect once per run, hand to classify so
+  // new coinages stay rare (docs/review/categorization-feedback.md, RC7).
+  const topicRows = (await db.execute(sql`
+    select distinct unnest(topics) as topic from links
+    where hidden_at is null and topics is not null
+  `)) as unknown as { rows?: { topic: string }[] } | { topic: string }[];
+  const knownTopics = (Array.isArray(topicRows) ? topicRows : topicRows.rows ?? [])
+    .map((r) => r.topic)
+    .sort();
+  console.log(`topic vocabulary: ${knownTopics.length} known topics`);
+
   const rows: LinkRow[] = await (limit ? query.limit(limit) : query);
   console.log(
     `${rows.length} links to build${force ? " (forced)" : ""}` +
@@ -82,6 +93,7 @@ async function main() {
       const outcome = await buildLink(row, {
         force: force || render,
         render,
+        knownTopics,
       });
       if (outcome.read !== "skipped") tally[outcome.read]++;
       if (outcome.understood) tally.understood++;

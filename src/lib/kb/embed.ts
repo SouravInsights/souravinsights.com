@@ -66,9 +66,8 @@ export const EMBEDDING_MODE: Record<Category, EmbeddingMode> = {
   tool: "full",
   other: "full",
   learning: "summary",
-  portfolio: "summary",
-  blog: "summary",
-  gallery: "summary",
+  people: "summary",
+  publication: "summary",
+  inspiration: "summary",
   directory: "summary",
-  newsletter: "summary",
 };

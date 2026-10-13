@@ -1,6 +1,7 @@
-import { generateObject, generateText } from "ai";
+import { generateText, Output } from "ai";
+import type { LanguageModel } from "ai";
 import { z } from "zod";
-import { chatModel } from "./model";
+import { pipelineModel } from "./model";
 import { CATEGORIES, type Category } from "./categories";
 import {
   PROMPT_VERSION,
@@ -28,9 +29,17 @@ const MAX_SAMPLE_WORDS = 1500;
 const MAX_HEADINGS = 30;
 const MAX_DESCRIBE_WORDS = 6000;
 
-const classificationSchema = z.object({
+export interface ClassifyResult {
+  category: Category;
+  topics: string[];
+  confidence: "high" | "medium" | "low";
+}
+
+export const classificationSchema = z.object({
   category: z.enum(CATEGORIES),
-  topics: z.array(z.string()).max(7),
+  // No .max() here: an over-long list is capped at write time. A hard cap in
+  // the parse envelope turns a chatty model into a whole-batch error class.
+  topics: z.array(z.string()),
   confidence: z.enum(["high", "medium", "low"]),
 });
 
@@ -73,17 +82,24 @@ function sampleOf(markdown: string) {
 const cap = (markdown: string) =>
   markdown.split(/\s+/).filter(Boolean).slice(0, MAX_DESCRIBE_WORDS).join(" ");
 
-export async function understandPage(
-  input: UnderstandInput
-): Promise<UnderstandResult> {
+/**
+ * classify — the shared half of understand: the probe (bake-off) and the
+ * production build both call this, so what gets measured is what ships.
+ */
+export async function classifyPage(
+  model: LanguageModel,
+  input: Omit<UnderstandInput, "author" | "published">
+): Promise<ClassifyResult> {
   const sample = sampleOf(input.markdown);
 
-  // A model call with no ceiling hold a worker forever on a stalled
+  // A model call with no ceiling holds a worker forever on a stalled
   // connection; 2 minutes is generous for a 6k-word prompt.
-  const { object } = await generateObject({
-    model: chatModel(),
+  // generateText + Output.object: works across providers, unlike
+  // generateObject's json-schema mode (OpenRouter rejects it for Anthropic).
+  const { output } = await generateText({
+    model,
     abortSignal: AbortSignal.timeout(120_000),
-    schema: classificationSchema,
+    output: Output.object({ schema: classificationSchema }),
     prompt: classifyPrompt({
       url: input.url,
       title: input.title,
@@ -92,16 +108,23 @@ export async function understandPage(
       sample: `${sample.outline}\n\nOpening:\n${sample.opening}`,
       stats: sample.stats,
       knownTopics: input.knownTopics,
-      categories: CATEGORIES,
     }),
   });
+  if (!output) throw new Error("classify produced no structured output");
+  return output;
+}
+
+export async function understandPage(
+  input: UnderstandInput
+): Promise<UnderstandResult> {
+  const object = await classifyPage(pipelineModel(), input);
 
   // Low confidence is an answer too: it files the link for human review.
   const category: Category =
     object.confidence === "low" ? "other" : object.category;
 
   const { text } = await generateText({
-    model: chatModel(),
+    model: pipelineModel(),
     abortSignal: AbortSignal.timeout(120_000),
     prompt: describePrompt({
       url: input.url,
@@ -116,7 +139,7 @@ export async function understandPage(
 
   return {
     category,
-    topics: object.topics.map((t) => t.toLowerCase().trim()),
+    topics: object.topics.map((t) => t.toLowerCase().trim()).slice(0, 7),
     summary: text.trim(),
   };
 }

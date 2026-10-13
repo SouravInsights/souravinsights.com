@@ -1,5 +1,6 @@
 import { getLinks } from "@/lib/links/queries";
-import { CATEGORY_LABELS, CATEGORY_ORDER } from "./categories";
+import { resolveCategory } from "@/lib/kb/categories";
+import { CATEGORY_ORDER } from "./categories";
 import type { DiscordChannel, LinkData } from "./discordApi";
 
 export type InsightsLink = LinkData & {
@@ -36,9 +37,9 @@ export async function getInsightsData(): Promise<{
   );
 
   for (const row of rows) {
-    const bucket = row.category && row.category in CATEGORY_LABELS
-      ? row.category
-      : "other";
+    // A row classified before taxonomy v2 ("blog", "portfolio"…) lands in
+    // its v2 home; NULL / unknown stays "other" until the reclassify pass.
+    const bucket = resolveCategory(row.category) ?? "other";
     linkData[bucket].push({
       id: row.discordId ?? row.urlKey,
       urlKey: row.urlKey,

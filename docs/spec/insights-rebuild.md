@@ -1,5 +1,13 @@
 # Insights Rebuild — Spec
 
+**Taxonomy v2 (2026-10-13):** the categories named below (`blog`, `portfolio`,
+`gallery`, `newsletter`) are superseded — v2 is article, publication, people,
+inspiration, tool, product, learning, directory, other, decided in
+[`docs/review/categorization-feedback.md`](../review/categorization-feedback.md)
+§7 and live in `src/lib/kb/categories.ts`. The mechanics below (four verbs,
+stored markdown, embedding modes, reader, highlights) still stand; the
+reclassify + rename ripples land per that doc's §8.
+
 **Status:** the plan. Build order and proof gates: [`docs/plans/insights-rebuild.md`](../plans/insights-rebuild.md).
 Renamed from `kb-v2.md` (scope outgrew the name: this covers the
 pipeline **and** the reading/annotation surface). Everything in `docs/kb/` +
