@@ -23,6 +23,12 @@ const file =
   );
 console.log(`checking ${file}\n`);
 
+/**
+ * --assert mode: exit 1 when any measurable disease is present, so a
+ * probe run can be machine-checked without eyeballing.
+ */
+const ASSERT = process.argv.includes("--assert");
+
 const data = JSON.parse(readFileSync(file, "utf8")) as {
   links: { urlKey: string; truth: string; predicted: string; topics: string[] }[];
 };
@@ -95,3 +101,19 @@ const counts = perLink.map((l) => l.topics.length);
 const hist = new Map<number, number>();
 for (const c of counts) hist.set(c, (hist.get(c) ?? 0) + 1);
 console.log("\ntopics-per-link: " + Array.from(hist.entries()).sort().map(([k, n]) => `${k}×${n}`).join("  "));
+
+if (ASSERT) {
+  const diseases = [
+    ["normalization dupes", dupes.length],
+    ["odd tokens", odd.length],
+    ["category-word leaks", leak],
+    ["within-link redundancy", redundant],
+  ] as const;
+  const failed = diseases.filter(([, n]) => n > 0);
+  console.log(
+    failed.length
+      ? `\nASSERT FAILED: ${failed.map(([n, c]) => `${n} (${c})`).join(", ")}`
+      : "\nASSERT PASSED: no normalization dupes, odd tokens, leaks or redundancy"
+  );
+  if (failed.length) process.exit(1);
+}

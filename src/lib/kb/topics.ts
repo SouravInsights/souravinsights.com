@@ -50,6 +50,8 @@ const BANNED_TOPICS = new Set([
 const MAX_TOPICS = 7; // never store more than this, no matter what the model says
 const MAX_TOPIC_WORDS = 4; // a topic is 1-4 words…
 const MAX_TOPIC_CHARS = 30; // …anything longer is a pasted sentence, not a subject
+/** A topic starts with a letter or a digit — ":geolocation" is a typo fragment, not a subject. */
+const TOPIC_START = /^[a-z0-9]/;
 
 /** Tidy one topic: "Open Source " and "open  source" become "open source". */
 const tidyTopic = (topic: string) =>
@@ -107,7 +109,9 @@ export function cleanTopics(
     .map((t) => winningSpellings[t] ?? t)
     .filter(
       (t) =>
-        t.length <= MAX_TOPIC_CHARS && t.split(" ").length <= MAX_TOPIC_WORDS
+        TOPIC_START.test(t) &&
+        t.length <= MAX_TOPIC_CHARS &&
+        t.split(" ").length <= MAX_TOPIC_WORDS
     )
     .filter((t) => !BANNED_TOPICS.has(t));
 
@@ -155,6 +159,46 @@ function pickMostUsedSpelling(
   )[0];
 }
 
+/** Every word joins the first cluster its letters prove it matches, else starts one. */
+function clusterByLetters(spellings: string[]): string[][] {
+  const clusters: string[][] = [];
+  for (const spelling of spellings) {
+    const home = clusters.find((c) => c.some((m) => sameWordByLetters(m, spelling)));
+    if (home) home.push(spelling);
+    else clusters.push([spelling]);
+  }
+  return clusters;
+}
+
+/** Clusters -> { variant: winningSpelling }; the count picks every winner. */
+function spellingsWinners(
+  clusters: string[][],
+  counts: Map<string, number>
+): Record<string, string> {
+  const winners: Record<string, string> = {};
+  for (const cluster of clusters) {
+    if (cluster.length < 2) continue;
+    const winner = pickMostUsedSpelling(cluster, counts);
+    for (const variant of cluster) {
+      if (variant !== winner) winners[variant] = winner;
+    }
+  }
+  return winners;
+}
+
+/**
+ * buildLetterCanonical — winners from letters alone, no model, no cost.
+ * The build's settle pass uses it to merge letter-proven variants a run
+ * coined mid-flight ("data-visualization" on one page, "data visualization"
+ * on the next) — pairs the vocabulary map can't know before the run exists.
+ */
+export function buildLetterCanonical(
+  rowsTopics: (string[] | null)[]
+): Record<string, string> {
+  const counts = countTopicSpellings(rowsTopics);
+  return spellingsWinners(clusterByLetters(Array.from(counts.keys())), counts);
+}
+
 /**
  * buildTopicVocabulary — what the prompt hands the model to reuse, plus the
  * winning spelling of every known variant.
@@ -189,14 +233,8 @@ export async function buildTopicVocabulary(
   const counts = countTopicSpellings(rowsTopics);
   const all = Array.from(counts.keys());
 
-  // Round 1, letters: every word joins the first cluster its letters prove
-  // it matches, else starts its own.
-  const clusters: string[][] = [];
-  for (const spelling of all) {
-    const home = clusters.find((c) => c.some((m) => sameWordByLetters(m, spelling)));
-    if (home) home.push(spelling);
-    else clusters.push([spelling]);
-  }
+  // Round 1, letters.
+  const clusters = clusterByLetters(all);
 
   // Round 2, meaning. Skipped on small vocabularies: a handful of words
   // holds no synonym structure, and a degenerate list makes the model
@@ -240,14 +278,7 @@ export async function buildTopicVocabulary(
     }
   }
 
-  const winningSpellings: Record<string, string> = {};
-  for (const cluster of clusters) {
-    if (cluster.length < 2) continue;
-    const winner = pickMostUsedSpelling(cluster, counts);
-    for (const variant of cluster) {
-      if (variant !== winner) winningSpellings[variant] = winner;
-    }
-  }
+  const winningSpellings = spellingsWinners(clusters, counts);
 
   const joinedCounts = new Map<string, number>();
   for (const topics of rowsTopics) {
@@ -257,7 +288,7 @@ export async function buildTopicVocabulary(
   }
   const vocabulary = Array.from(joinedCounts.entries())
     .filter(([, n]: [string, number]) => n >= 2)
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .slice(0, limit)
     .map(([t, n]) => `${t} (${n})`);
 

@@ -1,6 +1,10 @@
 import "./load-env";
 import { and, inArray, isNull, ne, eq, sql } from "drizzle-orm";
-import { buildTopicVocabulary } from "../src/lib/kb/topics";
+import {
+  buildLetterCanonical,
+  buildTopicVocabulary,
+  cleanTopics,
+} from "../src/lib/kb/topics";
 import { pipelineModel } from "../src/lib/kb/model";
 import { db } from "../src/db";
 import { links } from "../src/db/schema";
@@ -129,6 +133,26 @@ async function main() {
   } finally {
     await closeRenderer().catch(() => undefined);
   }
+
+  // The settle pass: a run coins new topics mid-flight; merge the
+  // letter-proven variants ("data-visualization" vs "data visualization")
+  // that the run's own vocabulary map couldn't know beforehand. Topics
+  // aren't embedded, so rewrites here cost no re-embedding.
+  const fresh = await db
+    .select({ id: links.id, topics: links.topics })
+    .from(links)
+    .where(isNull(links.hiddenAt));
+  const settled = buildLetterCanonical(fresh.map((r) => r.topics));
+  let settledRows = 0;
+  for (const row of fresh) {
+    if (!row.topics?.length) continue;
+    const next = cleanTopics(row.topics, settled);
+    if (JSON.stringify(next) !== JSON.stringify(row.topics)) {
+      await db.update(links).set({ topics: next }).where(eq(links.id, row.id));
+      settledRows++;
+    }
+  }
+  if (settledRows) console.log(`settled spellings on ${settledRows} rows`);
 
   console.log(`\ndone → ok ${tally.ok} · thin ${tally.thin} · failed ${tally.failed}`);
   console.log(`understood ${tally.understood} · passages ${tally.passages} · errors ${tally.errors}`);
