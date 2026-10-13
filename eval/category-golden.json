@@ -64,7 +64,7 @@
     { "urlKey": "makeitanimated.dev", "expected": "learning", "today": "learning", "note": "owner verdict after the v2 probe: courses are never products" },
     { "urlKey": "faster.dev", "expected": "learning", "today": "learning", "note": "owner verdict after the v2 probe" },
     { "urlKey": "trails.pieterma.es/books", "expected": "directory", "today": "directory", "note": "a person's list of other people's books — same precedent as the Notion vault, never inspiration" },
-    { "urlKey": "whirrls.com", "expected": "inspiration", "today": "inspiration", "note": "a growing collection of decorative illustrations; you go to look — purpose beats billing" },
+    { "urlKey": "whirrls.com", "expected": "inspiration", "today": "inspiration", "note": "owner declined to re-rule (2026-10-13): stays inspiration; models keep voting tool (assets-you-use) — a permanent medium-confidence boundary" },
     { "urlKey": "mobbin.com", "expected": "inspiration", "today": "inspiration", "note": "owner: belongs in inspiration even with a paid plan; title itself says 'design inspiration'" },
     { "urlKey": "sujankhadgi.com", "expected": "people", "today": "portfolio", "note": "JS-heavy portfolio the static read starved; tests the thin-evidence path (render repair in step 7)" },
 

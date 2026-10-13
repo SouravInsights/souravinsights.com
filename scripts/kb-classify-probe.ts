@@ -260,7 +260,7 @@ async function main() {
     "..",
     "eval",
     "probe-runs",
-    `${modelId.replace(/[/:]/g, "-")}-v${PROMPT_VERSION}.json`
+    `${modelId.replace(/[/:]/g, "-")}-v${PROMPT_VERSION}${withDescribe ? "-full" : ""}.json`
   );
   writeFileSync(
     dumpPath,
