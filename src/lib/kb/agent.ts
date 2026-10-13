@@ -22,8 +22,15 @@ import { readPageFresh } from "./fetch-link";
  * surface a link the search didn't return.
  */
 
-/** Max model round-trips per question (keeps a question near a tenth of a cent). */
-export const MAX_STEPS = 4;
+/**
+ * Max model round-trips per question.
+ *
+ * Was 4, which assumed one or two searches. Measured on "which sandboxes exist
+ * for running agent code": the model made ten searches in four steps and hit
+ * the cap before writing a word — the visitor got an empty answer. Eight
+ * leaves room for a search per facet and the answer itself.
+ */
+export const MAX_STEPS = 8;
 
 /** How many links one search hands back to the model. */
 export const SEARCH_LIMIT = 6;
@@ -39,6 +46,16 @@ export const searchKnowledge = tool({
     "if the first results miss.",
   inputSchema: z.object({
     query: z.string().describe("What to look for, in plain words"),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(12)
+      .optional()
+      .describe(
+        "How many links to return (default 6). Ask for more when the question " +
+          "wants a set — every tool for a job, every person worth following."
+      ),
     category: z
       .enum(CATEGORIES)
       .optional()
@@ -48,8 +65,11 @@ export const searchKnowledge = tool({
           "publications, galleries, courses."
       ),
   }),
-  execute: async ({ query, category }) => {
-    const hits = await search(query, { category, limit: SEARCH_LIMIT });
+  execute: async ({ query, category, limit }) => {
+    const hits = await search(query, {
+      category,
+      limit: limit ?? SEARCH_LIMIT,
+    });
     if (hits.length === 0) {
       return { matches: [], note: "No saved links matched that query." };
     }

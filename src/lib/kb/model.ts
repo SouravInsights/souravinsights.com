@@ -18,7 +18,17 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
  */
 
 export const EMBEDDING_MODEL_ID = "openai/text-embedding-3-small";
-export const CHAT_MODEL_ID = "openai/gpt-4o-mini";
+/**
+ * The agent's model. Moved off gpt-4o-mini after measuring both on the same
+ * questions: mini answered "which sandboxes exist for running agent code" in
+ * one search and six one-line blurbs, deepseek searched per facet and answered
+ * with features, prices and the differences. On "who should I follow for
+ * design engineering" deepseek named six people with their actual work,
+ * adjacent names, where to find more, and what the collection lacks — 662
+ * words against mini's silence. Slower (20-30s on search-heavy questions) and
+ * worth it; answers stream, so the wait is visible.
+ */
+export const CHAT_MODEL_ID = "deepseek/deepseek-v4.1-flash";
 
 /**
  * The pipeline model (classify + describe). Split from CHAT_MODEL_ID: the
