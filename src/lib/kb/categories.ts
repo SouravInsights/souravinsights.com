@@ -22,6 +22,10 @@
  *    publication; aggregating other people's posts (votes, feeds, link
  *    lists) is a directory.
  *
+ * Every row in the database carries one of these labels — the reclassify pass
+ * of 2026-10-13 rewrote the collection, so there is no v1 vocabulary left to
+ * translate and no compatibility layer to carry.
+ *
  * History: v1's nine labels mixed page-types ("article" = what a page IS)
  * with place-types ("blog" = what a place IS), and posts got labelled by
  * their container — 80% of the blog bucket was wrong. A "product" split was
@@ -107,20 +111,3 @@ export const CATEGORY_BLURBS: Record<Category, string> = Object.fromEntries(
 export const isCategory = (value: string): value is Category =>
   (CATEGORIES as readonly string[]).includes(value);
 
-/**
- * Rows classified under taxonomy v1 carry these labels. Map at read time so
- * old rows display sanely until the reclassify pass rewrites them.
- */
-export const LEGACY_CATEGORY: Record<string, Category> = {
-  blog: "publication",
-  newsletter: "publication",
-  portfolio: "people",
-  gallery: "inspiration",
-};
-
-/** Resolve any stored label — v1 or v2 — to a v2 category, or null. */
-export const resolveCategory = (value: string | null): Category | null => {
-  if (!value) return null;
-  if (isCategory(value)) return value;
-  return LEGACY_CATEGORY[value] ?? null;
-};

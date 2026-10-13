@@ -6,7 +6,7 @@ import { isNull, isNotNull, and, ne, sql } from "drizzle-orm";
 import { db } from "../src/db";
 import { links } from "../src/db/schema";
 import { modelById } from "../src/lib/kb/model";
-import { resolveCategory } from "../src/lib/kb/categories";
+import { isCategory } from "../src/lib/kb/categories";
 import { buildTopicVocabulary } from "../src/lib/kb/topics";
 import { PROMPT_VERSION } from "../src/lib/kb/prompts";
 import { classifyPage, describePage } from "../src/lib/kb/understand";
@@ -106,7 +106,8 @@ async function main() {
 
   for (const row of rows) {
     const g = expectedByKey.get(row.urlKey);
-    const truth = g?.expected ?? resolveCategory(row.category) ?? null;
+    const truth =
+      g?.expected ?? (row.category && isCategory(row.category) ? row.category : null);
     if (!truth) continue;
     seen.add(row.urlKey);
     scored.push({

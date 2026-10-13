@@ -1,5 +1,5 @@
 import { getLinks } from "@/lib/links/queries";
-import { resolveCategory } from "@/lib/kb/categories";
+import { isCategory } from "@/lib/kb/categories";
 import { CATEGORY_ORDER } from "./categories";
 import type { LinkData } from "./discordApi";
 
@@ -43,11 +43,10 @@ export async function getInsightsData(): Promise<{
   );
 
   for (const row of rows) {
-    // A row classified before taxonomy v2 ("blog", "portfolio"…) lands in its
-    // v2 home. A row with NO category was never readable (a canvas app, a page
-    // behind a bot wall) — it has no summary or passages worth showing, so it
-    // stays off the public collection rather than posing as "Other".
-    const bucket = resolveCategory(row.category);
+    // A row with no category was never readable (a canvas app, a page behind a
+    // bot wall) — it has no summary or passages worth showing, so it stays off
+    // the public collection rather than posing as "Other".
+    const bucket = row.category && isCategory(row.category) ? row.category : null;
     if (!bucket) continue;
     linkData[bucket].push({
       id: row.discordId ?? row.urlKey,

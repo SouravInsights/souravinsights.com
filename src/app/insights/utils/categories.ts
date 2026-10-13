@@ -1,7 +1,7 @@
 import {
   CATEGORIES,
   CATEGORY_BLURBS,
-  resolveCategory,
+  isCategory,
   type Category,
 } from "@/lib/kb/categories";
 
@@ -21,8 +21,6 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 
 export const CATEGORY_ORDER: Category[] = [...CATEGORIES];
 
-/** Label for any stored value — v1 labels resolve to their v2 home. */
-export const categoryLabel = (category: string | null) => {
-  const resolved = resolveCategory(category);
-  return resolved ? CATEGORY_LABELS[resolved] : "Other";
-};
+/** Label for a stored category; anything unread stays "Other". */
+export const categoryLabel = (category: string | null) =>
+  category && isCategory(category) ? CATEGORY_LABELS[category] : "Other";
