@@ -1,0 +1,4119 @@
+{
+  "model": "deepseek/deepseek-v4.1-flash",
+  "ranAt": "2026-10-13T15:47:22.489Z",
+  "agreement": {
+    "golden": "91.4",
+    "holdout": "91.3"
+  },
+  "links": [
+    {
+      "urlKey": "brandur.org/small-sharp-tools",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "unix",
+        "microservices",
+        "architecture",
+        "complexity",
+        "software design",
+        "philosophy"
+      ]
+    },
+    {
+      "urlKey": "tripwire.sh/dither-kit",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "charts",
+        "dither",
+        "components",
+        "react",
+        "svg",
+        "canvas",
+        "registry"
+      ]
+    },
+    {
+      "urlKey": "brandur.org/minimalism",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "minimalism",
+        "simplicity",
+        "engineering",
+        "infrastructure",
+        "production",
+        "complexity",
+        "ephemeralization"
+      ]
+    },
+    {
+      "urlKey": "celld.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "cloudflare",
+        "durable objects",
+        "self-hosting",
+        "sqlite",
+        "distributed systems",
+        "open source",
+        "serverless"
+      ]
+    },
+    {
+      "urlKey": "subframe.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "canvas",
+        "agents",
+        "claude code",
+        "react",
+        "browser",
+        "mcp"
+      ]
+    },
+    {
+      "urlKey": "koboyo.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "canvas",
+        "drawing",
+        "diagrams",
+        "sketching",
+        "notes",
+        "svg",
+        "icons"
+      ]
+    },
+    {
+      "urlKey": "tripwire.sh",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "open-source",
+        "github",
+        "firewall",
+        "automation",
+        "workflows",
+        "security",
+        "moderation"
+      ]
+    },
+    {
+      "urlKey": "corne.rs",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "javascript",
+        "squircles",
+        "css",
+        "react",
+        "svelte",
+        "ui",
+        "shapes"
+      ]
+    },
+    {
+      "urlKey": "boat.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "sandboxes",
+        "agents",
+        "ai agents",
+        "cli",
+        "virtual machines",
+        "api",
+        "sdk"
+      ]
+    },
+    {
+      "urlKey": "gkogan.co/increase-reply-rates",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "email",
+        "reply rates",
+        "a/b testing",
+        "onboarding",
+        "copywriting",
+        "user engagement",
+        "saas"
+      ]
+    },
+    {
+      "urlKey": "motherduck.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "duckdb",
+        "data warehouse",
+        "serverless",
+        "analytics",
+        "sql",
+        "agents",
+        "cloud"
+      ]
+    },
+    {
+      "urlKey": "gkogan.co/say-something-people-want",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "positioning",
+        "startups",
+        "marketing",
+        "advice",
+        "entrepreneurship",
+        "copywriting"
+      ]
+    },
+    {
+      "urlKey": "kimaki.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "discord",
+        "ai agents",
+        "cli",
+        "orchestration",
+        "claude code",
+        "automation"
+      ]
+    },
+    {
+      "urlKey": "knap.md",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "markdown",
+        "templates",
+        "cli",
+        "data",
+        "obsidian",
+        "api",
+        "automation"
+      ]
+    },
+    {
+      "urlKey": "sunilpai.dev/posts/the-senior-engineer-death-spiral",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "burnout",
+        "imposter syndrome",
+        "career",
+        "engineering",
+        "teamwork",
+        "self-improvement",
+        "mentorship"
+      ]
+    },
+    {
+      "urlKey": "http.dev",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "http",
+        "https",
+        "protocol",
+        "networking",
+        "caching",
+        "security"
+      ]
+    },
+    {
+      "urlKey": "scrit.to",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "animation",
+        "javascript",
+        "typography",
+        "react",
+        "svelte",
+        "library",
+        "frontend"
+      ]
+    },
+    {
+      "urlKey": "thorstenball.com/blog/2026/09/19/what-i-believe-about-the-future-of-software-development",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "agents",
+        "software development",
+        "future",
+        "programming",
+        "careers",
+        "llm"
+      ]
+    },
+    {
+      "urlKey": "seangoedecke.com/grit-your-teeth-and-ship-it",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "shipping",
+        "programming",
+        "writing",
+        "software development",
+        "taste",
+        "creativity"
+      ]
+    },
+    {
+      "urlKey": "jan.ai",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "llm",
+        "open source",
+        "local",
+        "chatgpt",
+        "models",
+        "app"
+      ]
+    },
+    {
+      "urlKey": "lalitm.com/post/find-problems-staff-engineer",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "engineering",
+        "career",
+        "leadership",
+        "problems",
+        "product",
+        "mentorship"
+      ]
+    },
+    {
+      "urlKey": "wellmade.fyi",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "branding",
+        "motion",
+        "typography",
+        "graphics",
+        "creative",
+        "craft"
+      ]
+    },
+    {
+      "urlKey": "larsfaye.com/articles/ai-coding-will-prevent-expertise",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "coding",
+        "expertise",
+        "learning",
+        "llm",
+        "friction",
+        "skills"
+      ]
+    },
+    {
+      "urlKey": "equals.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "analytics",
+        "spreadsheet",
+        "warehouse",
+        "dashboard",
+        "data"
+      ]
+    },
+    {
+      "urlKey": "highlighte.rs",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "highlighting",
+        "library",
+        "react",
+        "vue",
+        "svelte",
+        "javascript",
+        "web"
+      ]
+    },
+    {
+      "urlKey": "cactuscompute.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "llm",
+        "inference",
+        "local",
+        "mobile",
+        "devices"
+      ]
+    },
+    {
+      "urlKey": "hilos.sh",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "chat",
+        "agents",
+        "ai agents",
+        "collaboration",
+        "git",
+        "workspace",
+        "teams"
+      ]
+    },
+    {
+      "urlKey": "modem.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "product",
+        "customer feedback",
+        "agents",
+        "mcp",
+        "saas",
+        "integrations",
+        "engineering"
+      ]
+    },
+    {
+      "urlKey": "atatapp.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "macos",
+        "agents",
+        "claude code",
+        "cli",
+        "productivity",
+        "typing"
+      ]
+    },
+    {
+      "urlKey": "lucumr.pocoo.org/2025/11/21/agents-are-hard",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "llm",
+        "caching",
+        "context",
+        "reinforcement",
+        "software development"
+      ]
+    },
+    {
+      "urlKey": "models.dev",
+      "source": "golden",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "llm",
+        "language models",
+        "models",
+        "pricing",
+        "database",
+        "specifications"
+      ]
+    },
+    {
+      "urlKey": "pgbot.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "postgres",
+        "postgresql",
+        "database",
+        "mcp",
+        "ai agents",
+        "cli",
+        "observability"
+      ]
+    },
+    {
+      "urlKey": "theconversation.com/babies-born-under-sugar-rationing-grew-into-adults-with-lower-cancer-risk-289873",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "sugar",
+        "cancer",
+        "nutrition",
+        "ageing",
+        "diet",
+        "health",
+        "research"
+      ]
+    },
+    {
+      "urlKey": "okara.ai",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "agents",
+        "marketing",
+        "seo",
+        "automation",
+        "content",
+        "saas"
+      ]
+    },
+    {
+      "urlKey": "delta.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "collaboration",
+        "version control",
+        "git",
+        "code review",
+        "devtools",
+        "context"
+      ]
+    },
+    {
+      "urlKey": "wondering.app",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "spaced repetition",
+        "gamification",
+        "habits",
+        "lessons",
+        "self-paced",
+        "ai",
+        "education"
+      ]
+    },
+    {
+      "urlKey": "nautil.us",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "science",
+        "astronomy",
+        "paleontology",
+        "biology",
+        "history",
+        "culture"
+      ]
+    },
+    {
+      "urlKey": "learn-inference.com",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "inference",
+        "generative ai",
+        "llm",
+        "engineering",
+        "performance",
+        "interactive"
+      ]
+    },
+    {
+      "urlKey": "perf.reviews/profile-guide",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "performance",
+        "devtools",
+        "browser",
+        "javascript",
+        "debugging",
+        "bottleneck"
+      ]
+    },
+    {
+      "urlKey": "maggieappleton.com/essays",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "essays",
+        "writing",
+        "ai",
+        "anthropology",
+        "illustration",
+        "gardening"
+      ]
+    },
+    {
+      "urlKey": "treg.to",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "mcp",
+        "agents",
+        "seo",
+        "api",
+        "automation",
+        "scraping",
+        "ai agents"
+      ]
+    },
+    {
+      "urlKey": "handbook.modular.com",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "llm",
+        "inference",
+        "optimization",
+        "gpu",
+        "deployment",
+        "performance",
+        "reference"
+      ]
+    },
+    {
+      "urlKey": "hamvocke.com/blog/task-runners",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "task runners",
+        "makefile",
+        "bash script",
+        "cli",
+        "automation",
+        "tooling"
+      ]
+    },
+    {
+      "urlKey": "howqueryengineswork.com",
+      "source": "golden",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "acknowledgements",
+        "book",
+        "query engines",
+        "datafusion",
+        "apache arrow",
+        "open source",
+        "contributors"
+      ]
+    },
+    {
+      "urlKey": "walkinglabs.github.io/learn-harness-engineering",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "agents",
+        "llm",
+        "harness",
+        "verification",
+        "claude code",
+        "software development"
+      ]
+    },
+    {
+      "urlKey": "hatchet.run",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "orchestration",
+        "workflows",
+        "background tasks",
+        "task runners",
+        "open source",
+        "self-hosting",
+        "ai agents"
+      ]
+    },
+    {
+      "urlKey": "artificialanalysis.ai",
+      "source": "golden",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "benchmarking",
+        "models",
+        "providers",
+        "analysis",
+        "performance"
+      ]
+    },
+    {
+      "urlKey": "mitchellh.com/writing/building-block-economy",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "building blocks",
+        "software development",
+        "open source",
+        "agents",
+        "ai",
+        "commercialization"
+      ]
+    },
+    {
+      "urlKey": "gustavofior.com/books",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "books",
+        "reading",
+        "literature",
+        "philosophy",
+        "business",
+        "self-improvement"
+      ]
+    },
+    {
+      "urlKey": "blog.exe.dev/devtools-must-be-open-source",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "open source",
+        "devtools",
+        "agents",
+        "personalization",
+        "software",
+        "customization"
+      ]
+    },
+    {
+      "urlKey": "mamuso.dev",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "photography",
+        "typography",
+        "side projects",
+        "web design",
+        "notes"
+      ]
+    },
+    {
+      "urlKey": "bg-layers.vercel.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "css",
+        "backgrounds",
+        "visualization",
+        "gradients",
+        "web design",
+        "frontend",
+        "editing"
+      ]
+    },
+    {
+      "urlKey": "glaze.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "macos",
+        "agents",
+        "apps",
+        "app store",
+        "teams",
+        "local",
+        "claude"
+      ]
+    },
+    {
+      "urlKey": "thinkingmachines.ai/blog/the-future-worth-building-is-human",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "human",
+        "knowledge",
+        "judgment",
+        "intelligence",
+        "collaboration",
+        "future"
+      ]
+    },
+    {
+      "urlKey": "alexharri.com",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "typescript",
+        "webgl",
+        "shaders",
+        "3d",
+        "graphics",
+        "software development"
+      ]
+    },
+    {
+      "urlKey": "ankursethi.com/blog/prevent-cognitive-debt-by-manually-retyping-llm-generated-code",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "llm",
+        "ai",
+        "code review",
+        "cognition",
+        "software development",
+        "workflow",
+        "typing"
+      ]
+    },
+    {
+      "urlKey": "shedsgns.me/radius",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "css",
+        "border-radius",
+        "rounded corners",
+        "squircles",
+        "nested elements",
+        "ui",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "wise.readwise.io",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "books",
+        "reading",
+        "highlights",
+        "kindle",
+        "curation",
+        "newsletter",
+        "wisereads"
+      ]
+    },
+    {
+      "urlKey": "feather.computer",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "email",
+        "inbox",
+        "productivity",
+        "ai",
+        "automation",
+        "app"
+      ]
+    },
+    {
+      "urlKey": "addyosmani.com/blog/loop-engineering",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "ai agents",
+        "automation",
+        "workflows",
+        "orchestration",
+        "loop",
+        "claude code"
+      ]
+    },
+    {
+      "urlKey": "vayo.me/bookmarks/cltpx1nq70001jw1tc90e4ht6",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "engineering",
+        "ai",
+        "gradients",
+        "typography",
+        "startups"
+      ]
+    },
+    {
+      "urlKey": "dark.ronacher.eu/2026/7/21/never-enough",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "silicon valley",
+        "ai",
+        "comparison",
+        "culture",
+        "psychology",
+        "burnout",
+        "technology"
+      ]
+    },
+    {
+      "urlKey": "learntocloud.guide",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "cloud",
+        "curriculum",
+        "devops",
+        "linux",
+        "networking",
+        "self-paced",
+        "education"
+      ]
+    },
+    {
+      "urlKey": "pullfrog.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "github",
+        "ai",
+        "automation",
+        "ci/cd",
+        "mcp",
+        "workflows"
+      ]
+    },
+    {
+      "urlKey": "devouringdetails.com/resources/react-handbook",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "article",
+      "confidence": "medium",
+      "topics": [
+        "react",
+        "props",
+        "components",
+        "composability",
+        "typescript",
+        "frontend"
+      ]
+    },
+    {
+      "urlKey": "heydesigner.com",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "ux",
+        "css",
+        "typography",
+        "ai",
+        "web design",
+        "ui"
+      ]
+    },
+    {
+      "urlKey": "shapeofthesystem.com/posts/2026/02/03/bounded-cognition",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "cognition",
+        "memory",
+        "human error",
+        "engineering",
+        "llm",
+        "attention",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "bubbles.town",
+      "source": "golden",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "blogging",
+        "blogs",
+        "community",
+        "curation",
+        "ranking"
+      ]
+    },
+    {
+      "urlKey": "ja.mt",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "article",
+      "confidence": "medium",
+      "topics": [
+        "squircles",
+        "border-radius",
+        "css",
+        "chrome extension",
+        "open source",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "spottedinprod.com",
+      "source": "golden",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "ios",
+        "ui",
+        "interaction",
+        "apps",
+        "design",
+        "animation",
+        "mobile"
+      ]
+    },
+    {
+      "urlKey": "cold-takes.com",
+      "source": "golden",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "medium",
+      "topics": [
+        "ai",
+        "ethics",
+        "future",
+        "forecasting",
+        "rationality",
+        "writing"
+      ]
+    },
+    {
+      "urlKey": "thecreativeindependent.com",
+      "source": "golden",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "creativity",
+        "art",
+        "interviews",
+        "writing",
+        "advice",
+        "music",
+        "careers"
+      ]
+    },
+    {
+      "urlKey": "whirrls.com",
+      "source": "golden",
+      "truth": "inspiration",
+      "predicted": "tool",
+      "confidence": "medium",
+      "topics": [
+        "illustration",
+        "illustrations",
+        "svg",
+        "graphics",
+        "visuals",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "justinjackson.ca/articles",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "entrepreneurship",
+        "saas",
+        "startups",
+        "marketing",
+        "podcasting",
+        "software development"
+      ]
+    },
+    {
+      "urlKey": "effect-mq.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "effect",
+        "typescript",
+        "background tasks",
+        "postgres",
+        "library",
+        "durability"
+      ]
+    },
+    {
+      "urlKey": "iii.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "composability",
+        "orchestration",
+        "observability",
+        "api",
+        "registry"
+      ]
+    },
+    {
+      "urlKey": "jakub.kr/writing/details-that-make-interfaces-feel-better",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "interfaces",
+        "ui",
+        "animation",
+        "css",
+        "typography",
+        "design",
+        "details"
+      ]
+    },
+    {
+      "urlKey": "lesswrong.com/posts/sh4cfddjrdgrn3p2o/a-reading-list-for-generalists",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "directory",
+      "confidence": "medium",
+      "topics": [
+        "generalists",
+        "reading",
+        "career",
+        "advice",
+        "strategy",
+        "rationality"
+      ]
+    },
+    {
+      "urlKey": "performance.dev/how-is-linear-so-fast-a-technical-breakdown",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "performance",
+        "performance optimization",
+        "react",
+        "local-first",
+        "sync",
+        "database",
+        "frontend"
+      ]
+    },
+    {
+      "urlKey": "blogroll.org",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "blogs",
+        "blogging",
+        "independent",
+        "curation",
+        "personal",
+        "web"
+      ]
+    },
+    {
+      "urlKey": "library.guide",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "design systems",
+        "design tokens",
+        "components",
+        "mcp",
+        "agents",
+        "figma",
+        "typography"
+      ]
+    },
+    {
+      "urlKey": "pudding.cool",
+      "source": "golden",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "data",
+        "visualization",
+        "visual",
+        "culture",
+        "society",
+        "stories",
+        "narrative"
+      ]
+    },
+    {
+      "urlKey": "montage.tools",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "video",
+        "images",
+        "editing",
+        "motion",
+        "animation",
+        "export"
+      ]
+    },
+    {
+      "urlKey": "before.click",
+      "source": "golden",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "app store",
+        "screenshots",
+        "design",
+        "ios",
+        "onboarding",
+        "ui",
+        "icons"
+      ]
+    },
+    {
+      "urlKey": "invisibledetails.com",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "interfaces",
+        "ui",
+        "course",
+        "animation",
+        "details",
+        "craft"
+      ]
+    },
+    {
+      "urlKey": "rene.wang/essay/make-what-your-build-last",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "simplicity",
+        "maintenance",
+        "durability",
+        "craft",
+        "shipping",
+        "quality"
+      ]
+    },
+    {
+      "urlKey": "diana.lu",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "portfolio",
+        "interaction design",
+        "product design",
+        "motion",
+        "typography",
+        "ai",
+        "app design"
+      ]
+    },
+    {
+      "urlKey": "github.com/brijr/iris",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "cli",
+        "screenshots",
+        "mcp",
+        "agents",
+        "browser",
+        "automation",
+        "chrome"
+      ]
+    },
+    {
+      "urlKey": "yangshuntay.com/blog/work-on-the-right-product",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "career",
+        "engineering",
+        "frontend",
+        "backend",
+        "product",
+        "complexity",
+        "specialization"
+      ]
+    },
+    {
+      "urlKey": "anthonyhobday.com/blog/20260410",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "quality",
+        "software",
+        "design",
+        "interfaces",
+        "aesthetics",
+        "craft"
+      ]
+    },
+    {
+      "urlKey": "aave.com/design/building-glass-for-the-web",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "svg",
+        "webgl",
+        "css",
+        "design",
+        "frontend",
+        "shaders",
+        "interfaces"
+      ]
+    },
+    {
+      "urlKey": "degreeless.design",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "ux",
+        "design",
+        "career",
+        "books",
+        "research",
+        "ui",
+        "typography"
+      ]
+    },
+    {
+      "urlKey": "are.na/editorial",
+      "source": "golden",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "essays",
+        "interviews",
+        "writing",
+        "community",
+        "art",
+        "curation"
+      ]
+    },
+    {
+      "urlKey": "userinterface.wiki/laws-of-ux",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ux",
+        "interface",
+        "psychology",
+        "design",
+        "usability",
+        "laws"
+      ]
+    },
+    {
+      "urlKey": "designengineer.tools",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "tools",
+        "design",
+        "frontend",
+        "3d",
+        "animation",
+        "ui",
+        "webgl"
+      ]
+    },
+    {
+      "urlKey": "pudding.cool/2026/06/mow",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "lawn",
+        "algorithms",
+        "paths",
+        "visualization",
+        "game",
+        "decision-making"
+      ]
+    },
+    {
+      "urlKey": "siteofsites.co/?p=1",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "web design",
+        "design",
+        "showcase",
+        "websites",
+        "curation",
+        "visual"
+      ]
+    },
+    {
+      "urlKey": "boristane.com/blog/slop-creep-enshittification-of-software",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "codebase",
+        "architecture",
+        "planning",
+        "software development",
+        "engineering",
+        "ai"
+      ]
+    },
+    {
+      "urlKey": "flows.sh",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "onboarding",
+        "adoption",
+        "surveys",
+        "user engagement",
+        "saas",
+        "components",
+        "analytics"
+      ]
+    },
+    {
+      "urlKey": "faces.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "slides",
+        "presentation",
+        "ai",
+        "interactive",
+        "web",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "humanlayer.dev/blog/writing-a-good-claude-md",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "claude code",
+        "agents",
+        "llm",
+        "context",
+        "instructions",
+        "codebase",
+        "documentation"
+      ]
+    },
+    {
+      "urlKey": "desengs.com",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "engineering",
+        "ui",
+        "frontend",
+        "components",
+        "animation",
+        "ai"
+      ]
+    },
+    {
+      "urlKey": "bellkiosk.website/blog/reasons-to-website.html",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "websites",
+        "blogging",
+        "writing",
+        "internet",
+        "creativity",
+        "personal"
+      ]
+    },
+    {
+      "urlKey": "emilkowal.ski/ui/train-your-judgement",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "animation",
+        "motion",
+        "ui",
+        "design",
+        "judgment",
+        "easing",
+        "interactions"
+      ]
+    },
+    {
+      "urlKey": "traces.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "cli",
+        "collaboration",
+        "teams",
+        "sharing",
+        "analytics",
+        "ai agents"
+      ]
+    },
+    {
+      "urlKey": "detail.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "bugs",
+        "codebase",
+        "debugging",
+        "agents",
+        "security",
+        "automation"
+      ]
+    },
+    {
+      "urlKey": "jakub.kr",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "engineering",
+        "interfaces",
+        "animation",
+        "colors"
+      ]
+    },
+    {
+      "urlKey": "metaphorsound.com/bts/interface-craft",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "sound",
+        "audio",
+        "interaction",
+        "onboarding",
+        "animation",
+        "ui",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "browserbase.com/blog/ai-browser-prompt-injection-containment-security",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "prompt injection",
+        "security",
+        "agents",
+        "browser",
+        "containment",
+        "isolation",
+        "virtual machines"
+      ]
+    },
+    {
+      "urlKey": "slim.sh",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "cli",
+        "https",
+        "ssl",
+        "local",
+        "devtools",
+        "tunnels",
+        "developer"
+      ]
+    },
+    {
+      "urlKey": "articless-web.vercel.app",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "typography",
+        "interfaces",
+        "creativity",
+        "ai",
+        "writing",
+        "aesthetics"
+      ]
+    },
+    {
+      "urlKey": "marijanapav.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "branding",
+        "illustration",
+        "typography",
+        "workspace",
+        "side projects",
+        "drawing"
+      ]
+    },
+    {
+      "urlKey": "replay.software/echo",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ssh",
+        "mosh",
+        "ios",
+        "terminal",
+        "ai agents",
+        "themes",
+        "keyboard"
+      ]
+    },
+    {
+      "urlKey": "xlii.space/eng/i-hate-github-actions-with-passion",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "github actions",
+        "ci/cd",
+        "build",
+        "makefile",
+        "devops",
+        "frustration"
+      ]
+    },
+    {
+      "urlKey": "michaelnotebook.com/dci/index.html",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "creative",
+        "identity",
+        "writing",
+        "science",
+        "creativity",
+        "expertise",
+        "communities"
+      ]
+    },
+    {
+      "urlKey": "brandbird.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "screenshots",
+        "social media",
+        "graphics",
+        "mockups",
+        "design",
+        "branding",
+        "3d"
+      ]
+    },
+    {
+      "urlKey": "journal.stuffwithstuff.com/2026/01/24/the-value-of-things",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "generative ai",
+        "value",
+        "meaning",
+        "craft",
+        "productivity",
+        "philosophy"
+      ]
+    },
+    {
+      "urlKey": "blog.maximeheckel.com/posts/shades-of-halftone",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "halftone",
+        "glsl",
+        "shaders",
+        "graphics",
+        "animation",
+        "webgl"
+      ]
+    },
+    {
+      "urlKey": "shud.in/thoughts/build-bulletproof-react-components",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "react",
+        "components",
+        "hydration",
+        "server rendering",
+        "next.js",
+        "composition",
+        "performance"
+      ]
+    },
+    {
+      "urlKey": "lawsofsoftwareengineering.com",
+      "source": "golden",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "laws",
+        "principles",
+        "software engineering",
+        "architecture",
+        "teams",
+        "systems"
+      ]
+    },
+    {
+      "urlKey": "nsmastery.com/protocols",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "nervous system",
+        "stress management",
+        "mental health",
+        "emotions",
+        "sleep",
+        "wellness"
+      ]
+    },
+    {
+      "urlKey": "seangoedecke.com/ai-agents-and-code-review",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai agents",
+        "code review",
+        "agents",
+        "software development",
+        "engineering",
+        "llm",
+        "copilot"
+      ]
+    },
+    {
+      "urlKey": "erikjohannes.no/posts/20260130-outsourcing-thinking/index.html",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "llm",
+        "ai",
+        "cognition",
+        "thinking",
+        "writing",
+        "communication",
+        "language models"
+      ]
+    },
+    {
+      "urlKey": "joshcollinsworth.com/blog/easing-curves",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "css",
+        "animation",
+        "easing",
+        "cubic-bezier",
+        "transitions",
+        "ui",
+        "web design"
+      ]
+    },
+    {
+      "urlKey": "bazza.dev",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "interfaces",
+        "ui",
+        "web design",
+        "design engineering",
+        "frontend"
+      ]
+    },
+    {
+      "urlKey": "agentation.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "annotations",
+        "feedback",
+        "mcp",
+        "debugging",
+        "css",
+        "react"
+      ]
+    },
+    {
+      "urlKey": "github.com/dmmulroy/better-result",
+      "source": "golden",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "typescript",
+        "error handling",
+        "functional programming",
+        "library",
+        "composition",
+        "api"
+      ]
+    },
+    {
+      "urlKey": "jm.sv/before-and-after",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "github",
+        "pull request",
+        "screenshots",
+        "video",
+        "capture",
+        "preview"
+      ]
+    },
+    {
+      "urlKey": "justpostgres.tech",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "postgres",
+        "postgresql",
+        "sql",
+        "database",
+        "tutorials",
+        "book"
+      ]
+    },
+    {
+      "urlKey": "smudge.ai/blog/ratelimit-algorithms",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "rate limiting",
+        "algorithms",
+        "api",
+        "visualization",
+        "backend",
+        "redis",
+        "distributed systems"
+      ]
+    },
+    {
+      "urlKey": "github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "copilot",
+        "ai",
+        "documentation",
+        "markdown",
+        "github",
+        "instructions"
+      ]
+    },
+    {
+      "urlKey": "planetscale.com/blog/database-transactions",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "database transactions",
+        "isolation",
+        "postgres",
+        "mysql",
+        "sql",
+        "databases",
+        "concurrency"
+      ]
+    },
+    {
+      "urlKey": "ciechanow.ski/mechanical-watch",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "mechanical",
+        "watch",
+        "gears",
+        "escapement",
+        "engineering",
+        "animation"
+      ]
+    },
+    {
+      "urlKey": "pool.day",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "screenshot",
+        "capture",
+        "organization",
+        "app",
+        "ios",
+        "notes",
+        "search"
+      ]
+    },
+    {
+      "urlKey": "makeitanimated.dev",
+      "source": "golden",
+      "truth": "learning",
+      "predicted": "inspiration",
+      "confidence": "medium",
+      "topics": [
+        "reactnative",
+        "animations",
+        "motion",
+        "components",
+        "ui",
+        "mobile"
+      ]
+    },
+    {
+      "urlKey": "daytona.io",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "sandbox",
+        "agents",
+        "infrastructure",
+        "ai agents",
+        "runtime",
+        "isolation",
+        "developer tools"
+      ]
+    },
+    {
+      "urlKey": "useforma.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "canvas",
+        "macos",
+        "notes",
+        "tasks",
+        "productivity",
+        "app",
+        "drawing"
+      ]
+    },
+    {
+      "urlKey": "atlas9.dev/blog/soft-delete.html",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "soft delete",
+        "postgresql",
+        "archiving",
+        "database",
+        "triggers",
+        "wal",
+        "change data capture"
+      ]
+    },
+    {
+      "urlKey": "imperavi.com/books/user-interface-typography",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "typography",
+        "ui",
+        "design",
+        "accessibility",
+        "microcopy",
+        "hierarchy",
+        "interface"
+      ]
+    },
+    {
+      "urlKey": "patterns.dev",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "javascript",
+        "react",
+        "vue",
+        "patterns",
+        "performance",
+        "next.js",
+        "frontend"
+      ]
+    },
+    {
+      "urlKey": "linear.app/now/output-isn-t-design",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "ai",
+        "philosophy",
+        "process",
+        "thinking",
+        "craft"
+      ]
+    },
+    {
+      "urlKey": "buttondown.com/blog/how-we-migrated-our-database-to-planetscale",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "migration",
+        "planetscale",
+        "postgres",
+        "database",
+        "performance",
+        "infrastructure",
+        "postgresql"
+      ]
+    },
+    {
+      "urlKey": "effect.institute",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "effect",
+        "typescript",
+        "functional programming",
+        "interactive",
+        "tutorial",
+        "self-paced"
+      ]
+    },
+    {
+      "urlKey": "letta.com/blog/benchmarking-ai-agent-memory",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "memory",
+        "benchmarking",
+        "filesystems",
+        "llm",
+        "evaluation"
+      ]
+    },
+    {
+      "urlKey": "detail.design",
+      "source": "golden",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "details",
+        "ui",
+        "interaction",
+        "microcopy",
+        "motion",
+        "accessibility"
+      ]
+    },
+    {
+      "urlKey": "mariozechner.at/posts/2026-03-25-thoughts-on-slowing-the-fuck-down",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "ai agents",
+        "code quality",
+        "complexity",
+        "software development",
+        "codebase",
+        "engineering"
+      ]
+    },
+    {
+      "urlKey": "rauno.me/craft/novelty",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "novelty",
+        "interaction",
+        "animation",
+        "motion",
+        "design",
+        "ui"
+      ]
+    },
+    {
+      "urlKey": "newsletter.systemdesignclassroom.com",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "system design",
+        "distributed systems",
+        "software engineering",
+        "architecture",
+        "backend",
+        "ai agents"
+      ]
+    },
+    {
+      "urlKey": "appstacks.club/paper",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "shaders",
+        "motion",
+        "browser",
+        "performance",
+        "react",
+        "prototyping"
+      ]
+    },
+    {
+      "urlKey": "barvian.me/react-exit-animations",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "react",
+        "animations",
+        "suspense",
+        "components",
+        "frontend",
+        "transitions"
+      ]
+    },
+    {
+      "urlKey": "boringavatars.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "avatar",
+        "avatars",
+        "svg",
+        "react",
+        "library",
+        "open source",
+        "javascript"
+      ]
+    },
+    {
+      "urlKey": "onedayyoullfindyourself.com",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "advice",
+        "book",
+        "city",
+        "life",
+        "self-improvement"
+      ]
+    },
+    {
+      "urlKey": "polymathinvestor.com/p/how-to-research-anything",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "research",
+        "reading",
+        "notes",
+        "habits",
+        "knowledge",
+        "methodology",
+        "synthesis"
+      ]
+    },
+    {
+      "urlKey": "justfuckinguseeffect.dev",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "effect",
+        "typescript",
+        "error handling",
+        "functional programming",
+        "asynchronous",
+        "ai agents",
+        "observability"
+      ]
+    },
+    {
+      "urlKey": "typex.rocks",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "typing",
+        "keyboard",
+        "10-finger-system",
+        "education",
+        "practice"
+      ]
+    },
+    {
+      "urlKey": "userinterface.wiki",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "publication",
+      "confidence": "medium",
+      "topics": [
+        "ui",
+        "animation",
+        "motion",
+        "interfaces",
+        "css",
+        "sound",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "cosmos.so",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "inspiration",
+        "curation",
+        "colors",
+        "collection",
+        "collaboration",
+        "search",
+        "ai"
+      ]
+    },
+    {
+      "urlKey": "buildwithfern.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "api",
+        "sdk",
+        "documentation",
+        "cli",
+        "openapi",
+        "agents",
+        "developer"
+      ]
+    },
+    {
+      "urlKey": "paulgraham.com/taste.html",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "taste",
+        "design",
+        "aesthetics",
+        "beauty",
+        "simplicity",
+        "craft"
+      ]
+    },
+    {
+      "urlKey": "factory.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "medium",
+      "topics": [
+        "agents",
+        "ai agents",
+        "software development",
+        "automation",
+        "deployment",
+        "devtools"
+      ]
+    },
+    {
+      "urlKey": "consumerapp.studio",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "learning",
+      "confidence": "medium",
+      "topics": [
+        "product",
+        "ux",
+        "onboarding",
+        "retention",
+        "gamification",
+        "conversion",
+        "tactics"
+      ]
+    },
+    {
+      "urlKey": "floguo.com/notes/design-engineering",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "design engineering",
+        "interfaces",
+        "frontend",
+        "prototyping",
+        "agents",
+        "css"
+      ]
+    },
+    {
+      "urlKey": "entire.io",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "git",
+        "github",
+        "cli",
+        "agents",
+        "developer",
+        "platform",
+        "open source"
+      ]
+    },
+    {
+      "urlKey": "unavatar.io",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "api",
+        "avatars",
+        "providers",
+        "dashboard",
+        "open source",
+        "images"
+      ]
+    },
+    {
+      "urlKey": "sujankhadgi.com",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "other",
+      "confidence": "low",
+      "topics": [
+        "portfolio",
+        "design",
+        "product",
+        "ui",
+        "ux"
+      ]
+    },
+    {
+      "urlKey": "ilanbigio.com/blog/lyft-bikes.html",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "reverse engineering",
+        "lyft",
+        "bikes",
+        "ios",
+        "ssl",
+        "api",
+        "hacking"
+      ]
+    },
+    {
+      "urlKey": "buttondown.com/hillelwayne/archive/some-fun-software-facts",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "software",
+        "facts",
+        "programming",
+        "algorithms",
+        "history",
+        "bugs",
+        "spreadsheets"
+      ]
+    },
+    {
+      "urlKey": "svgl.app",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "svg",
+        "logos",
+        "icons",
+        "branding",
+        "vector",
+        "design",
+        "open source"
+      ]
+    },
+    {
+      "urlKey": "martinalderson.com/posts/two-kinds-of-ai-users-are-emerging",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "ai agents",
+        "enterprise",
+        "productivity",
+        "copilot",
+        "claude code",
+        "adoption"
+      ]
+    },
+    {
+      "urlKey": "samwho.dev",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "personal",
+        "visualization",
+        "interactive",
+        "software",
+        "essays",
+        "programming",
+        "algorithms"
+      ]
+    },
+    {
+      "urlKey": "databaseschool.com",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "databases",
+        "sqlite",
+        "postgres",
+        "mysql",
+        "sql",
+        "video",
+        "course"
+      ]
+    },
+    {
+      "urlKey": "devouringdetails.com",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "interaction",
+        "motion",
+        "animation",
+        "design",
+        "react",
+        "components",
+        "ui"
+      ]
+    },
+    {
+      "urlKey": "recent.design/?ref=godly",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "web design",
+        "ui",
+        "aesthetics",
+        "animation",
+        "typography"
+      ]
+    },
+    {
+      "urlKey": "animations.dev",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "animation",
+        "motion",
+        "css",
+        "framer motion",
+        "easing",
+        "ui"
+      ]
+    },
+    {
+      "urlKey": "gitbutler.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "git",
+        "version control",
+        "cli",
+        "ai agents",
+        "developer",
+        "workflow"
+      ]
+    },
+    {
+      "urlKey": "bitsxpages.com/p/frameworks-for-understanding-databases",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "databases",
+        "data systems",
+        "performance",
+        "availability",
+        "durability",
+        "indexes",
+        "distributed systems"
+      ]
+    },
+    {
+      "urlKey": "andrewconner.com/the-option-method",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "option method",
+        "happiness",
+        "unhappiness",
+        "beliefs",
+        "emotions",
+        "psychology"
+      ]
+    },
+    {
+      "urlKey": "context7.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "llm",
+        "documentation",
+        "mcp",
+        "ai agents",
+        "libraries",
+        "developer"
+      ]
+    },
+    {
+      "urlKey": "glenn.me",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "branding",
+        "product",
+        "engineering",
+        "icons",
+        "creative direction"
+      ]
+    },
+    {
+      "urlKey": "theatlantic.com/technology/2026/01/claude-code-ai-hype/685617",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "claude code",
+        "ai agents",
+        "automation",
+        "ai",
+        "silicon valley",
+        "productivity",
+        "agents"
+      ]
+    },
+    {
+      "urlKey": "smithery.ai",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "mcp",
+        "agents",
+        "ai",
+        "tools",
+        "api",
+        "search"
+      ]
+    },
+    {
+      "urlKey": "letters.stevejobsarchive.com",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "medium",
+      "topics": [
+        "letters",
+        "advice",
+        "creativity",
+        "craft",
+        "mentorship",
+        "career"
+      ]
+    },
+    {
+      "urlKey": "edvins.io",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "frontend",
+        "react",
+        "typescript",
+        "side projects",
+        "game",
+        "writing"
+      ]
+    },
+    {
+      "urlKey": "eatonphil.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "distributed systems",
+        "databases",
+        "software development",
+        "programming",
+        "postgres",
+        "books",
+        "writing"
+      ]
+    },
+    {
+      "urlKey": "largeapps.dev/case-studies/advanced",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "react",
+        "next.js",
+        "performance",
+        "optimization",
+        "server rendering",
+        "user experience",
+        "caching"
+      ]
+    },
+    {
+      "urlKey": "motion.zajno.com",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "animation",
+        "motion",
+        "easing",
+        "ui",
+        "ux",
+        "interface",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "lucumr.pocoo.org/2026/2/13/the-final-bottleneck",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "bottleneck",
+        "review",
+        "pull request",
+        "engineering",
+        "accountability",
+        "open source"
+      ]
+    },
+    {
+      "urlKey": "tolans.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "app",
+        "wellbeing",
+        "mental health",
+        "emotional processing",
+        "startup"
+      ]
+    },
+    {
+      "urlKey": "julianpaul.me",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "portfolio",
+        "startups",
+        "product",
+        "design",
+        "music",
+        "saas",
+        "ux"
+      ]
+    },
+    {
+      "urlKey": "pika.style",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "screenshots",
+        "mockups",
+        "templates",
+        "browser",
+        "images",
+        "social media"
+      ]
+    },
+    {
+      "urlKey": "devouringdetails.com/resources/behind-scenes",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "interaction",
+        "branding",
+        "icons",
+        "prototyping",
+        "video",
+        "next.js"
+      ]
+    },
+    {
+      "urlKey": "lethain.com/notes-on-the-crux",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "strategy",
+        "books",
+        "leadership",
+        "engineering",
+        "management",
+        "notes"
+      ]
+    },
+    {
+      "urlKey": "brianlovin.com/writing/give-your-agent-a-laboratory",
+      "source": "golden",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "ai agents",
+        "claude code",
+        "mcp",
+        "workflows",
+        "feedback",
+        "benchmarking"
+      ]
+    },
+    {
+      "urlKey": "plkv.works",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "product design",
+        "branding",
+        "ai",
+        "typography",
+        "design systems"
+      ]
+    },
+    {
+      "urlKey": "trails.pieterma.es",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "medium",
+      "topics": [
+        "books",
+        "trails",
+        "reading",
+        "knowledge",
+        "ideas"
+      ]
+    },
+    {
+      "urlKey": "cap.so",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "screen",
+        "video",
+        "screenshots",
+        "editing",
+        "open-source",
+        "macos",
+        "cli"
+      ]
+    },
+    {
+      "urlKey": "userinterface.wiki/generating-sounds-with-ai",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "audio",
+        "ai",
+        "sound",
+        "cursor",
+        "web audio api",
+        "ui"
+      ]
+    },
+    {
+      "urlKey": "sublime.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "knowledge",
+        "notes",
+        "capture",
+        "search",
+        "curation",
+        "ideas",
+        "productivity"
+      ]
+    },
+    {
+      "urlKey": "midlife.engineering",
+      "source": "golden",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "sound",
+        "music",
+        "calm",
+        "mental health",
+        "wellness",
+        "audio"
+      ]
+    },
+    {
+      "urlKey": "ebb.cool",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "focus",
+        "productivity",
+        "macos",
+        "tracking",
+        "habits",
+        "app"
+      ]
+    },
+    {
+      "urlKey": "val.town",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "automation",
+        "deployment",
+        "serverless",
+        "typescript",
+        "web apps"
+      ]
+    },
+    {
+      "urlKey": "trails.pieterma.es/books",
+      "source": "golden",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "books",
+        "reading",
+        "highlights",
+        "trails",
+        "notes",
+        "knowledge"
+      ]
+    },
+    {
+      "urlKey": "dash0.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "observability",
+        "opentelemetry",
+        "telemetry",
+        "monitoring",
+        "ai agents",
+        "cloud"
+      ]
+    },
+    {
+      "urlKey": "v2space.net",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "design",
+        "shaders",
+        "interfaces",
+        "web",
+        "engineering"
+      ]
+    },
+    {
+      "urlKey": "cra.mr/mcp-skills-and-agents",
+      "source": "holdout",
+      "truth": "article",
+      "predicted": "article",
+      "confidence": "high",
+      "topics": [
+        "mcp",
+        "skills",
+        "agents",
+        "ai agents",
+        "protocol",
+        "claude code"
+      ]
+    },
+    {
+      "urlKey": "mobbin.com",
+      "source": "golden",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "ui",
+        "ux",
+        "screenshots",
+        "design",
+        "mobile",
+        "web apps",
+        "research"
+      ]
+    },
+    {
+      "urlKey": "landings.dev",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "landing pages",
+        "web design",
+        "design",
+        "examples",
+        "ui",
+        "marketing",
+        "showcase"
+      ]
+    },
+    {
+      "urlKey": "butter.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "medium",
+      "topics": [
+        "agents",
+        "sandbox",
+        "runtime",
+        "ai",
+        "isolation",
+        "security"
+      ]
+    },
+    {
+      "urlKey": "humanlayer.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "ai agents",
+        "ide",
+        "collaboration",
+        "workflow",
+        "developer",
+        "cloud"
+      ]
+    },
+    {
+      "urlKey": "trychroma.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "vector",
+        "search",
+        "database",
+        "open source",
+        "infrastructure",
+        "ai"
+      ]
+    },
+    {
+      "urlKey": "ryanmulligan.dev",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "css",
+        "front-end",
+        "codepen",
+        "animation",
+        "web development",
+        "music"
+      ]
+    },
+    {
+      "urlKey": "mediabunny.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "javascript",
+        "typescript",
+        "video",
+        "audio",
+        "media",
+        "browser",
+        "library"
+      ]
+    },
+    {
+      "urlKey": "faster.dev",
+      "source": "golden",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "agents",
+        "workflows",
+        "claude",
+        "courses",
+        "software development",
+        "productivity"
+      ]
+    },
+    {
+      "urlKey": "sherlockproject.xyz",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "username",
+        "social media",
+        "security",
+        "cli",
+        "open-source",
+        "search",
+        "osint"
+      ]
+    },
+    {
+      "urlKey": "emilkowal.ski",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "ui",
+        "animation",
+        "motion",
+        "taste",
+        "interface",
+        "engineering"
+      ]
+    },
+    {
+      "urlKey": "geolocation.microlink.io",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "geolocation",
+        "ip",
+        "api",
+        "location",
+        "http"
+      ]
+    },
+    {
+      "urlKey": "adammaj.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "philosophy",
+        "neuroscience",
+        "startups",
+        "creativity",
+        "writing",
+        "reading",
+        "education"
+      ]
+    },
+    {
+      "urlKey": "sst.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "medium",
+      "topics": [
+        "serverless",
+        "typescript",
+        "deployment",
+        "cloud",
+        "infrastructure",
+        "next.js",
+        "framework"
+      ]
+    },
+    {
+      "urlKey": "poolside.ai",
+      "source": "golden",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "medium",
+      "topics": [
+        "ai",
+        "llm",
+        "foundation models",
+        "agents",
+        "open source",
+        "research",
+        "inference"
+      ]
+    },
+    {
+      "urlKey": "footer.design",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "medium",
+      "topics": [
+        "footer",
+        "web design",
+        "ui",
+        "design",
+        "typography",
+        "aesthetics"
+      ]
+    },
+    {
+      "urlKey": "lesswrong.com",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "medium",
+      "topics": [
+        "rationality",
+        "ai",
+        "safety",
+        "governance",
+        "community",
+        "policy"
+      ]
+    },
+    {
+      "urlKey": "udara.io",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "writing",
+        "ai",
+        "science",
+        "design",
+        "engineering",
+        "biology",
+        "ideas"
+      ]
+    },
+    {
+      "urlKey": "guzey.com",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "writing",
+        "ai",
+        "science",
+        "productivity",
+        "advice",
+        "philosophy"
+      ]
+    },
+    {
+      "urlKey": "microlink.io",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "api",
+        "scraping",
+        "screenshot",
+        "metadata",
+        "markdown",
+        "automation",
+        "agents"
+      ]
+    },
+    {
+      "urlKey": "hw.glich.co",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "system design",
+        "software engineering",
+        "distributed systems",
+        "ai agents",
+        "cloud infrastructure",
+        "web development"
+      ]
+    },
+    {
+      "urlKey": "conductor.build",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "other",
+      "confidence": "low",
+      "topics": [
+        "agents",
+        "ai agents",
+        "mac",
+        "sandbox",
+        "cloud",
+        "orchestration"
+      ]
+    },
+    {
+      "urlKey": "stopa.io",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "essays",
+        "writing",
+        "programming",
+        "startup",
+        "philosophy",
+        "clojure",
+        "functional programming"
+      ]
+    },
+    {
+      "urlKey": "trychannel3.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "agents",
+        "shopping",
+        "products",
+        "api",
+        "ai",
+        "infrastructure",
+        "search"
+      ]
+    },
+    {
+      "urlKey": "craftofui.dev",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "ui",
+        "interfaces",
+        "design",
+        "animation",
+        "motion",
+        "prototyping",
+        "css"
+      ]
+    },
+    {
+      "urlKey": "seangoedecke.com",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "ai",
+        "engineering",
+        "software",
+        "writing",
+        "tech",
+        "ethics"
+      ]
+    },
+    {
+      "urlKey": "sidebar.io/domain/blog.jim-nielsen.com",
+      "source": "golden",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "medium",
+      "topics": [
+        "design",
+        "web development",
+        "css",
+        "javascript",
+        "interfaces",
+        "generative ai"
+      ]
+    },
+    {
+      "urlKey": "kernel.sh",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "browser",
+        "agents",
+        "automation",
+        "infrastructure",
+        "ai agents",
+        "scraping",
+        "browsers"
+      ]
+    },
+    {
+      "urlKey": "unkey.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "api",
+        "rate limiting",
+        "observability",
+        "api security",
+        "deployment",
+        "infrastructure"
+      ]
+    },
+    {
+      "urlKey": "computer.rip",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "history",
+        "computers",
+        "telecommunications",
+        "aviation",
+        "internet",
+        "technology",
+        "network"
+      ]
+    },
+    {
+      "urlKey": "lucide-animated.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "icons",
+        "animation",
+        "svg",
+        "react",
+        "motion",
+        "open-source",
+        "ui"
+      ]
+    },
+    {
+      "urlKey": "betterdev.link",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "newsletter",
+        "programming",
+        "developer",
+        "tools",
+        "self-hosted",
+        "postgres"
+      ]
+    },
+    {
+      "urlKey": "directory.llmstxt.cloud",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "llms.txt",
+        "llm",
+        "ai",
+        "documentation",
+        "websites",
+        "curation"
+      ]
+    },
+    {
+      "urlKey": "paulstamatiou.com",
+      "source": "golden",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "code",
+        "startups",
+        "photography",
+        "travel",
+        "workspace"
+      ]
+    },
+    {
+      "urlKey": "mastra.ai/mcp-registry-registry",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "mcp",
+        "registry",
+        "servers",
+        "agents",
+        "ai",
+        "directory"
+      ]
+    },
+    {
+      "urlKey": "60fps.design",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "animation",
+        "ui",
+        "ux",
+        "interaction",
+        "motion",
+        "mobile",
+        "apps"
+      ]
+    },
+    {
+      "urlKey": "metascraper.js.org",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "metadata",
+        "scraping",
+        "open graph",
+        "javascript",
+        "seo",
+        "api"
+      ]
+    },
+    {
+      "urlKey": "makingsoftware.co",
+      "source": "golden",
+      "truth": "learning",
+      "predicted": "other",
+      "confidence": "low",
+      "topics": [
+        "software",
+        "design",
+        "software development",
+        "engineering",
+        "reference"
+      ]
+    },
+    {
+      "urlKey": "nickbytes.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "engineering",
+        "products",
+        "startups",
+        "reading",
+        "curation"
+      ]
+    },
+    {
+      "urlKey": "nivedhanirmal.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "portfolio",
+        "design",
+        "branding",
+        "web design",
+        "studio"
+      ]
+    },
+    {
+      "urlKey": "theblueprint.dev",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "system design",
+        "distributed systems",
+        "data structures",
+        "algorithms",
+        "interview",
+        "docker",
+        "scaling"
+      ]
+    },
+    {
+      "urlKey": "elissamartial.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "medium",
+      "topics": [
+        "personal",
+        "mail",
+        "newsletter",
+        "creativity"
+      ]
+    },
+    {
+      "urlKey": "dicebear.com",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "avatar",
+        "avatars",
+        "api",
+        "open-source",
+        "svg",
+        "library",
+        "illustration"
+      ]
+    },
+    {
+      "urlKey": "blogscroll.com",
+      "source": "holdout",
+      "truth": "directory",
+      "predicted": "directory",
+      "confidence": "high",
+      "topics": [
+        "blogs",
+        "personal",
+        "blogging",
+        "github",
+        "rss",
+        "curation",
+        "open source"
+      ]
+    },
+    {
+      "urlKey": "fs.blog/newsletter",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "newsletter",
+        "insights",
+        "ideas",
+        "business",
+        "life",
+        "reading",
+        "decision-making"
+      ]
+    },
+    {
+      "urlKey": "floriankiem.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "engineering",
+        "portfolio",
+        "web design",
+        "product design",
+        "ai"
+      ]
+    },
+    {
+      "urlKey": "wattenberger.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "visualization",
+        "interfaces",
+        "ai",
+        "data",
+        "design",
+        "writing"
+      ]
+    },
+    {
+      "urlKey": "knock.app",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "messaging",
+        "infrastructure",
+        "api",
+        "developers",
+        "saas",
+        "platform",
+        "user engagement"
+      ]
+    },
+    {
+      "urlKey": "minitap.io",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "sequencer",
+        "music",
+        "chrome extension",
+        "audio",
+        "open source",
+        "web"
+      ]
+    },
+    {
+      "urlKey": "programmingdigest.net/?utm_source=twitter&utm_medium=cpc&utm_campaign=default_202209&twclid=2-4esldqj3n7d5l87xl4yghpmjk",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "publication",
+      "confidence": "high",
+      "topics": [
+        "newsletter",
+        "programming",
+        "curation",
+        "software",
+        "engineering",
+        "email"
+      ]
+    },
+    {
+      "urlKey": "flaviocopes.com/access",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "books",
+        "courses",
+        "javascript",
+        "react",
+        "newsletter",
+        "programming",
+        "handbook"
+      ]
+    },
+    {
+      "urlKey": "pampam.city",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "maps",
+        "ai",
+        "travel",
+        "templates",
+        "visualization",
+        "geolocation",
+        "interactive"
+      ]
+    },
+    {
+      "urlKey": "operating-system-in-1000-lines.vercel.app/en",
+      "source": "holdout",
+      "truth": "learning",
+      "predicted": "learning",
+      "confidence": "high",
+      "topics": [
+        "operating system",
+        "c language",
+        "debugging",
+        "book",
+        "filesystems",
+        "memory"
+      ]
+    },
+    {
+      "urlKey": "ryanis.cool/cosmos",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "keyboard",
+        "3d",
+        "cad",
+        "typing",
+        "mechanical",
+        "customization",
+        "open source"
+      ]
+    },
+    {
+      "urlKey": "gomakethings.com/articles",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "people",
+      "confidence": "medium",
+      "topics": [
+        "frontend",
+        "css",
+        "javascript",
+        "punk",
+        "gardening",
+        "web development"
+      ]
+    },
+    {
+      "urlKey": "dispatched.dev",
+      "source": "holdout",
+      "truth": "tool",
+      "predicted": "tool",
+      "confidence": "high",
+      "topics": [
+        "background tasks",
+        "serverless",
+        "api",
+        "asynchronous",
+        "jobs",
+        "webhooks",
+        "saas"
+      ]
+    },
+    {
+      "urlKey": "navbar.gallery",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "navbar",
+        "navigation",
+        "web design",
+        "ui",
+        "ux",
+        "interface",
+        "design"
+      ]
+    },
+    {
+      "urlKey": "mattrothenberg.com",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "design",
+        "front-end",
+        "design systems",
+        "web development",
+        "prototyping",
+        "ui",
+        "freelance"
+      ]
+    },
+    {
+      "urlKey": "workspaces.xyz",
+      "source": "holdout",
+      "truth": "inspiration",
+      "predicted": "inspiration",
+      "confidence": "high",
+      "topics": [
+        "workspace",
+        "design",
+        "setup",
+        "interviews",
+        "gear",
+        "desk"
+      ]
+    },
+    {
+      "urlKey": "jzhao.xyz",
+      "source": "holdout",
+      "truth": "people",
+      "predicted": "people",
+      "confidence": "high",
+      "topics": [
+        "hypertext",
+        "agency",
+        "agents",
+        "community",
+        "internet",
+        "gardening",
+        "writing"
+      ]
+    },
+    {
+      "urlKey": "sandromaglione.com/newsletter",
+      "source": "holdout",
+      "truth": "publication",
+      "predicted": "people",
+      "confidence": "medium",
+      "topics": [
+        "typescript",
+        "ai",
+        "game development",
+        "software development",
+        "newsletter"
+      ]
+    }
+  ]
+}

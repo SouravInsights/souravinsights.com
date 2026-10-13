@@ -1,0 +1,72 @@
+probe · model deepseek/deepseek-v4.1-flash · 265 links (58 golden, 207 holdout) · vocabulary 643 topics
+skipped (no markdown / not in collection): 3
+  · michael.fm (expected people)
+  · shapes.tools (expected tool)
+  · newincreative.notion.site/the-vault-nguyen-s-design-resource-stash-dd710673638a4c16a571574ff72d05f9 (expected directory)
+  25/265 · agreement 96.0%
+  50/265 · agreement 92.0%
+  75/265 · agreement 89.3%
+  100/265 · agreement 90.0%
+  125/265 · agreement 91.2%
+  150/265 · agreement 91.3%
+  175/265 · agreement 89.1%
+  200/265 · agreement 90.5%
+  225/265 · agreement 91.6%
+  250/265 · agreement 91.6%
+  265/265 · agreement 91.3%
+
+== RESULT ==
+golden   91.4%  (53/58)
+holdout  91.3%  (189/207)
+overall  91.3%  (242/265) · 0 errors
+confidence: high 235 · medium 27 · low 3
+
+== MISMATCHES (23) ==
+  [golden] ja.mt
+      expected people · predicted article (medium)
+  [golden] whirrls.com
+      expected inspiration · predicted tool (medium)
+  [golden] makeitanimated.dev
+      expected learning · predicted inspiration (medium)
+  [golden] sujankhadgi.com
+      expected people · predicted other (low)
+  [golden] makingsoftware.co
+      expected learning · predicted other (low)
+  [holdout] http.dev
+      expected article · predicted learning (high)
+  [holdout] nautil.us
+      expected article · predicted publication (high)
+  [holdout] perf.reviews/profile-guide
+      expected learning · predicted article (high)
+  [holdout] gustavofior.com/books
+      expected people · predicted directory (high)
+  [holdout] devouringdetails.com/resources/react-handbook
+      expected learning · predicted article (medium)
+  [holdout] heydesigner.com
+      expected directory · predicted publication (high)
+  [holdout] lesswrong.com/posts/sh4cfddjrdgrn3p2o/a-reading-list-for-generalists
+      expected article · predicted directory (medium)
+  [holdout] degreeless.design
+      expected learning · predicted directory (high)
+  [holdout] articless-web.vercel.app
+      expected publication · predicted people (high)
+  [holdout] appstacks.club/paper
+      expected tool · predicted article (high)
+  [holdout] onedayyoullfindyourself.com
+      expected publication · predicted learning (medium)
+  [holdout] userinterface.wiki
+      expected learning · predicted publication (medium)
+  [holdout] consumerapp.studio
+      expected tool · predicted learning (medium)
+  [holdout] buttondown.com/hillelwayne/archive/some-fun-software-facts
+      expected publication · predicted article (high)
+  [holdout] svgl.app
+      expected directory · predicted tool (high)
+  [holdout] conductor.build
+      expected tool · predicted other (low)
+  [holdout] gomakethings.com/articles
+      expected publication · predicted people (medium)
+  [holdout] sandromaglione.com/newsletter
+      expected publication · predicted people (medium)
+
+full result: /Users/souravinsights/Documents/Personal/souravinsights.com/eval/probe-runs/deepseek-deepseek-v4.1-flash-v5.json

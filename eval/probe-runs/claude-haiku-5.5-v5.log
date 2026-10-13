@@ -1,0 +1,108 @@
+probe · model anthropic/claude-haiku-5.5 · 265 links (58 golden, 207 holdout) · vocabulary 643 topics
+skipped (no markdown / not in collection): 3
+  · michael.fm (expected people)
+  · shapes.tools (expected tool)
+  · newincreative.notion.site/the-vault-nguyen-s-design-resource-stash-dd710673638a4c16a571574ff72d05f9 (expected directory)
+  25/265 · agreement 88.0%
+  50/265 · agreement 88.0%
+  75/265 · agreement 85.3%
+  100/265 · agreement 86.0%
+  125/265 · agreement 88.0%
+  150/265 · agreement 83.3%
+  175/265 · agreement 84.0%
+  200/265 · agreement 84.0%
+  225/265 · agreement 84.0%
+  250/265 · agreement 83.6%
+  265/265 · agreement 84.5%
+
+== RESULT ==
+golden   86.2%  (50/58)
+holdout  84.1%  (174/207)
+overall  84.5%  (224/265) · 0 errors
+confidence: high 179 · medium 72 · low 14
+
+== MISMATCHES (41) ==
+  [golden] ja.mt
+      expected people · predicted article (medium)
+  [golden] whirrls.com
+      expected inspiration · predicted tool (medium)
+  [golden] cold-takes.com
+      expected publication · predicted people (medium)
+  [golden] makeitanimated.dev
+      expected learning · predicted tool (medium)
+  [golden] sujankhadgi.com
+      expected people · predicted other (low)
+  [golden] makingsoftware.co
+      expected learning · predicted other (low)
+  [golden] mobbin.com
+      expected inspiration · predicted tool (medium)
+  [golden] sidebar.io/domain/blog.jim-nielsen.com
+      expected directory · predicted people (medium)
+  [holdout] http.dev
+      expected article · predicted learning (medium)
+  [holdout] corne.rs
+      expected tool · predicted other (low)
+  [holdout] wondering.app
+      expected learning · predicted tool (medium)
+  [holdout] nautil.us
+      expected article · predicted publication (high)
+  [holdout] perf.reviews/profile-guide
+      expected learning · predicted article (high)
+  [holdout] gustavofior.com/books
+      expected people · predicted directory (high)
+  [holdout] articless-web.vercel.app
+      expected publication · predicted people (high)
+  [holdout] lesswrong.com/posts/sh4cfddjrdgrn3p2o/a-reading-list-for-generalists
+      expected article · predicted directory (medium)
+  [holdout] devouringdetails.com/resources/react-handbook
+      expected learning · predicted article (medium)
+  [holdout] montage.tools
+      expected tool · predicted other (low)
+  [holdout] degreeless.design
+      expected learning · predicted directory (medium)
+  [holdout] nsmastery.com/protocols
+      expected learning · predicted other (low)
+  [holdout] jm.sv/before-and-after
+      expected tool · predicted other (low)
+  [holdout] justpostgres.tech
+      expected learning · predicted people (high)
+  [holdout] consumerapp.studio
+      expected tool · predicted learning (medium)
+  [holdout] bg-layers.vercel.app
+      expected tool · predicted other (low)
+  [holdout] motion.zajno.com
+      expected learning · predicted article (medium)
+  [holdout] appstacks.club/paper
+      expected tool · predicted article (medium)
+  [holdout] userinterface.wiki
+      expected learning · predicted publication (medium)
+  [holdout] heydesigner.com
+      expected directory · predicted publication (high)
+  [holdout] conductor.build
+      expected tool · predicted other (low)
+  [holdout] factory.com
+      expected tool · predicted other (low)
+  [holdout] buttondown.com/hillelwayne/archive/some-fun-software-facts
+      expected publication · predicted article (high)
+  [holdout] onedayyoullfindyourself.com
+      expected publication · predicted other (low)
+  [holdout] cosmos.so
+      expected tool · predicted other (low)
+  [holdout] betterdev.link
+      expected publication · predicted directory (high)
+  [holdout] svgl.app
+      expected directory · predicted tool (medium)
+  [holdout] butter.dev
+      expected tool · predicted other (low)
+  [holdout] sst.dev
+      expected tool · predicted other (low)
+  [holdout] lesswrong.com
+      expected publication · predicted directory (medium)
+  [holdout] elissamartial.com
+      expected people · predicted other (low)
+  [holdout] sandromaglione.com/newsletter
+      expected publication · predicted people (medium)
+  [holdout] gomakethings.com/articles
+      expected publication · predicted people (high)
+
+full result: /Users/souravinsights/Documents/Personal/souravinsights.com/eval/probe-runs/anthropic-claude-haiku-5.5-v5.json
