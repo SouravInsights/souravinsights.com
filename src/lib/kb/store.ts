@@ -150,8 +150,10 @@ export interface BuildOptions {
   force?: boolean;
   /** Render thin pages headlessly and re-read (needs the shared browser). */
   render?: boolean;
-  /** Topics already in use — passed to classify as the vocabulary leash. */
+  /** Topics already in use — passed to describe as the vocabulary leash. */
   knownTopics?: string[];
+  /** Winning spellings learned by buildTopicVocabulary — the topic policy's map. */
+  winningSpellings?: Record<string, string>;
 }
 
 export interface BuildOutcome {
@@ -228,6 +230,7 @@ export async function buildLink(
       published: read?.published ?? "",
       markdown: link.markdown!,
       knownTopics: opts.knownTopics ?? [],
+      winningSpellings: opts.winningSpellings ?? {},
     });
     await saveUnderstand(link, result);
     link.category = result.category;

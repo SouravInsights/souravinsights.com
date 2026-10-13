@@ -1,6 +1,7 @@
 import "./load-env";
 import { and, inArray, isNull, ne, eq, sql } from "drizzle-orm";
-import { buildLeash } from "../src/lib/kb/topics";
+import { buildTopicVocabulary } from "../src/lib/kb/topics";
+import { pipelineModel } from "../src/lib/kb/model";
 import { db } from "../src/db";
 import { links } from "../src/db/schema";
 import { closeRenderer } from "../src/lib/kb/render";
@@ -72,7 +73,11 @@ async function main() {
     .select({ topics: links.topics })
     .from(links)
     .where(isNull(links.hiddenAt));
-  const knownTopics = buildLeash(topicRows.map((r) => r.topics));
+  const { vocabulary: knownTopics, winningSpellings } =
+    await buildTopicVocabulary(
+      topicRows.map((r) => r.topics),
+      pipelineModel()
+    );
   console.log(`topic vocabulary: ${knownTopics.length} known topics`);
 
   const rows: LinkRow[] = await (limit ? query.limit(limit) : query);
@@ -94,6 +99,7 @@ async function main() {
         force: force || render,
         render,
         knownTopics,
+        winningSpellings,
       });
       if (outcome.read !== "skipped") tally[outcome.read]++;
       if (outcome.understood) tally.understood++;

@@ -7,7 +7,7 @@ import { db } from "../src/db";
 import { links } from "../src/db/schema";
 import { modelById } from "../src/lib/kb/model";
 import { resolveCategory } from "../src/lib/kb/categories";
-import { buildLeash } from "../src/lib/kb/topics";
+import { buildTopicVocabulary } from "../src/lib/kb/topics";
 import { PROMPT_VERSION } from "../src/lib/kb/prompts";
 import { classifyPage, describePage } from "../src/lib/kb/understand";
 
@@ -86,7 +86,11 @@ async function main() {
     .select({ topics: links.topics })
     .from(links)
     .where(isNull(links.hiddenAt));
-  const knownTopics = buildLeash(topicRows.map((r) => r.topics));
+  const { vocabulary: knownTopics, winningSpellings } =
+    await buildTopicVocabulary(
+      topicRows.map((r) => r.topics),
+      modelById(modelId)
+    );
 
   // scored rows = golden ∪ holdout, each with its truth source recorded.
   const seen = new Set<string>();
@@ -174,6 +178,7 @@ async function main() {
           published: "",
           markdown: row.markdown,
           knownTopics,
+          winningSpellings,
           category: predicted,
         });
         summary = described.summary;

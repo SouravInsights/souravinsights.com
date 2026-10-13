@@ -3,7 +3,7 @@ import type { LanguageModel } from "ai";
 import { z } from "zod";
 import { pipelineModel } from "./model";
 import { CATEGORIES, type Category } from "./categories";
-import { applyTopicPolicy } from "./topics";
+import { cleanTopics } from "./topics";
 import {
   PROMPT_VERSION,
   DESCRIBE_PROMPTS,
@@ -69,6 +69,8 @@ export interface UnderstandInput {
   markdown: string;
   /** Topics already in use across the collection — the vocabulary leash. */
   knownTopics: string[];
+  /** Winning spellings learned from the collection (buildTopicVocabulary). */
+  winningSpellings?: Record<string, string>;
 }
 
 export interface UnderstandResult {
@@ -155,7 +157,7 @@ export async function describePage(
   if (!output) throw new Error("describe produced no structured output");
   return {
     summary: output.summary.trim(),
-    topics: applyTopicPolicy(output.topics),
+    topics: cleanTopics(output.topics, input.winningSpellings ?? {}),
   };
 }
 
