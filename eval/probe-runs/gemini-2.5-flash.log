@@ -1,0 +1,137 @@
+probe · model google/gemini-2.5-flash · 265 links (51 golden, 214 holdout) · vocabulary 643 topics
+skipped (no markdown / not in collection): 3
+  · michael.fm (expected people)
+  · shapes.tools (expected tool)
+  · newincreative.notion.site/the-vault-nguyen-s-design-resource-stash-dd710673638a4c16a571574ff72d05f9 (expected directory)
+  25/265 · agreement 96.0%
+  50/265 · agreement 94.0%
+  75/265 · agreement 90.7%
+  100/265 · agreement 91.0%
+  125/265 · agreement 92.0%
+  150/265 · agreement 92.0%
+  175/265 · agreement 90.9%
+  200/265 · agreement 91.0%
+  225/265 · agreement 92.0%
+  250/265 · agreement 92.0%
+  265/265 · agreement 91.3%
+
+== RESULT ==
+golden   96.1%  (49/51)
+holdout  85.9%  (128/149) · 65 tool/product boundary (excluded)
+overall  91.3%  (242/265) · 0 errors
+
+== TOOL/PRODUCT BOUNDARY (65) — owner's call in the diff ==
+  · koboyo.com (high)
+  · subframe.com (high)
+  · tripwire.sh (high)
+  · celld.dev (high)
+  · motherduck.com (high)
+  · boat.dev (high)
+  · kimaki.dev (high)
+  · atatapp.com (high)
+  · jan.ai (high)
+  · cactuscompute.com (high)
+  · okara.ai (high)
+  · hilos.sh (high)
+  · modem.dev (high)
+  · pgbot.dev (high)
+  · equals.com (high)
+  · delta.dev (high)
+  · treg.to (high)
+  · hatchet.run (high)
+  · feather.computer (high)
+  · pullfrog.com (high)
+  · brandbird.app (high)
+  · montage.tools (high)
+  · glaze.app (high)
+  · flows.sh (high)
+  · iii.dev (high)
+  · library.guide (high)
+  · faces.app (high)
+  · traces.com (high)
+  · detail.dev (high)
+  · useforma.app (high)
+  · replay.software/echo (high)
+  · consumerapp.studio (high)
+  · pool.day (high)
+  · entire.io (high)
+  · agentation.com (high)
+  · conductor.build (high)
+  · trychroma.com (high)
+  · trychannel3.com (high)
+  · daytona.io (high)
+  · kernel.sh (high)
+  · geolocation.microlink.io (high)
+  · ebb.cool (high)
+  · context7.com (high)
+  · factory.com (high)
+  · cosmos.so (high)
+  · humanlayer.dev (high)
+  · butter.dev (high)
+  · dicebear.com (high)
+  · unavatar.io (high)
+  · unkey.com (high)
+  · microlink.io (high)
+  · buildwithfern.com (high)
+  · gitbutler.com (high)
+  · sublime.app (high)
+  · dash0.com (high)
+  · pampam.city (high)
+  · smithery.ai (high)
+  · pika.style (high)
+  · sst.dev (high)
+  · ryanis.cool/cosmos (high)
+  · tolans.com (high)
+  · val.town (high)
+  · knock.app (high)
+  · dispatched.dev (high)
+  · cap.so (high)
+confidence: high 263 · low 2
+
+== MISMATCHES (23) ==
+  [golden] makingsoftware.co
+      expected learning · predicted other (low)
+  [golden] sidebar.io/domain/blog.jim-nielsen.com
+      expected publication · predicted directory (high)
+  [holdout] http.dev
+      expected article · predicted learning (high)
+  [holdout] wondering.app
+      expected learning · predicted product (high)
+  [holdout] perf.reviews/profile-guide
+      expected learning · predicted article (high)
+  [holdout] models.dev
+      expected directory · predicted product (high)
+  [holdout] nautil.us
+      expected article · predicted publication (high)
+  [holdout] articless-web.vercel.app
+      expected publication · predicted people (high)
+  [holdout] whirrls.com
+      expected inspiration · predicted product (high)
+  [holdout] devouringdetails.com/resources/react-handbook
+      expected learning · predicted article (high)
+  [holdout] degreeless.design
+      expected learning · predicted directory (high)
+  [holdout] makeitanimated.dev
+      expected learning · predicted product (high)
+  [holdout] typex.rocks
+      expected learning · predicted tool (high)
+  [holdout] buttondown.com/hillelwayne/archive/some-fun-software-facts
+      expected publication · predicted article (high)
+  [holdout] faster.dev
+      expected learning · predicted product (high)
+  [holdout] trails.pieterma.es/books
+      expected directory · predicted inspiration (high)
+  [holdout] sujankhadgi.com
+      expected people · predicted other (low)
+  [holdout] appstacks.club/paper
+      expected tool · predicted article (high)
+  [holdout] justfuckinguseeffect.dev
+      expected article · predicted tool (high)
+  [holdout] onedayyoullfindyourself.com
+      expected publication · predicted learning (high)
+  [holdout] flaviocopes.com/access
+      expected learning · predicted people (high)
+  [holdout] gomakethings.com/articles
+      expected publication · predicted people (high)
+  [holdout] mobbin.com
+      expected inspiration · predicted product (high)

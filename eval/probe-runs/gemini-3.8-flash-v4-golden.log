@@ -1,0 +1,32 @@
+probe · model google/gemini-3.8-flash · 58 links (58 golden, 0 holdout) · vocabulary 643 topics
+skipped (no markdown / not in collection): 3
+  · michael.fm (expected people)
+  · shapes.tools (expected tool)
+  · newincreative.notion.site/the-vault-nguyen-s-design-resource-stash-dd710673638a4c16a571574ff72d05f9 (expected directory)
+  25/58 · agreement 84.0%
+  50/58 · agreement 88.0%
+  58/58 · agreement 86.2%
+
+== RESULT ==
+golden   86.2%  (50/58)
+holdout  —%  (0/0)
+overall  86.2%  (50/58) · 0 errors
+confidence: high 55 · medium 1 · low 2
+
+== MISMATCHES (8) ==
+  [golden] ja.mt
+      expected people · predicted article (high)
+  [golden] whirrls.com
+      expected inspiration · predicted tool (high)
+  [golden] bubbles.town
+      expected publication · predicted directory (high)
+  [golden] cold-takes.com
+      expected publication · predicted people (high)
+  [golden] makeitanimated.dev
+      expected learning · predicted tool (high)
+  [golden] makingsoftware.co
+      expected learning · predicted other (low)
+  [golden] sidebar.io/domain/blog.jim-nielsen.com
+      expected publication · predicted directory (high)
+  [golden] sujankhadgi.com
+      expected people · predicted other (low)
