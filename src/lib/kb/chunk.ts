@@ -103,6 +103,39 @@ function blocksOf(markdown: string): Block[] {
   return blocks;
 }
 
+/**
+ * Split one giant paragraph into sentence-sized windows.
+ *
+ * Why this exists: `blocksOf` splits prose on headings and blank lines — a
+ * page with one 20,000-token paragraph (a JS dump, a wall of text with no
+ * blank lines) arrives as ONE block, and without this the whole thing would
+ * be embedded as one passage. The embeddings API caps input at 8,192 tokens,
+ * so that page failed with "maximum input length" and lost all its passages
+ * (seen live on val.town and models.dev).
+ */
+function windowProse(text: string): string[] {
+  if (tokensOf(text) <= MAX_TOKENS) return [text];
+
+  // Word windows: simple on purpose — each buffer fills to the budget, then
+  // starts fresh. Sentence-aware splitting would read nicer and carry two
+  // levels of cleverness; the passages are only for retrieval, so words win.
+  const pieces: string[] = [];
+  let buffer: string[] = [];
+  let bufferTokens = 0;
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    const wordTokens = tokensOf(word);
+    if (bufferTokens + wordTokens > MAX_TOKENS && buffer.length) {
+      pieces.push(buffer.join(" "));
+      buffer = [];
+      bufferTokens = 0;
+    }
+    buffer.push(word);
+    bufferTokens += wordTokens;
+  }
+  if (buffer.length) pieces.push(buffer.join(" "));
+  return pieces;
+}
+
 /** Split a code wall into line windows with a small overlap. */
 function windowCode(text: string): string[] {
   if (tokensOf(text) <= CODE_MAX_TOKENS) return [text];
@@ -193,6 +226,23 @@ export function chunkMarkdown(
     }
 
     const blockTokens = tokensOf(block.text);
+
+    // A paragraph bigger than the budget can never join a run — window it on
+    // its own so no passage ever exceeds what the embeddings API accepts.
+    if (blockTokens > MAX_TOKENS) {
+      flushRun();
+      for (const piece of windowProse(block.text)) {
+        units.push({
+          content: piece,
+          unitType: "prose",
+          heading: block.heading,
+          tokenCount: tokensOf(piece),
+          embeddingText: `${prefix(block.heading)}: ${piece}`,
+        });
+      }
+      continue;
+    }
+
     if (runTokens + blockTokens > MAX_TOKENS && run.length) flushRun();
 
     if (carry.length) {

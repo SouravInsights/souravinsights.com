@@ -1,8 +1,38 @@
 # Link categorization: what went wrong, why, and the fix plan
 
-**Status:** taxonomy frozen in code — `src/lib/kb/categories.ts`
-(`CATEGORY_DEFS`) is the single source of truth; the classify prompt
-generates its list from it. Golden set: 61 verdicts
+**Status: the reclassify has run.** `kb-build --stale` re-decided all
+235 readable rows from stored markdown with prompt v6 (no refetches):
+**234 understood · 97 category flips · 1,583 passages rebuilt · 2 errors,
+both fixed** (see below). Live database vs golden set: **96.6% (56/58)**
+— the bar. Two known misses remain: `ja.mt` (thin author-named homepage,
+says article) and `whirrls.com` (the boundary the owner declined to rule).
+The old 133k-words-unsearchable problem is gone: the remaining 79,734
+unchunked words sit in place-type homepages (publications/people), which
+are summary-mode by design.
+
+## Reclassify results (2026-10-13)
+
+Category movement, biggest first: 25 blog→article · 19 portfolio→people ·
+8 blog→people · 6 gallery→inspiration · 5 newsletter→publication ·
+5 blog→publication · 3 learning→article · 3 directory→inspiration ·
+48 more in smaller groups (full table in the run log). New distribution:
+tool 85 · article 74 · people 34 · learning 27 · publication 16 ·
+directory 15 · inspiration 12 · other 2 · unreadable 3.
+
+**Two live bugs the run exposed, both fixed:**
+1. A prose block bigger than the chunk budget was never split, so
+   `val.town` and `models.dev` produced a >8,192-token embedding input and
+   the API rejected it. `chunk.ts` now windows oversized paragraphs
+   (`windowProse`), verified live on both pages (13 and 197 passages).
+2. Because `savePassages` embeds before it deletes, those two failures
+   left OLD passages in place — stale summaries in search. Both rows were
+   re-understood and re-embedded by hand (`promptVersion = null` then
+   `--stale --only`), and the finished run has no rows with zero passages.
+
+The 3 unreadable rows stay unclassified by design (JS/canvas pages with
+no extractable text): `shapes.tools`, `michael.fm`, the Notion vault.
+
+**Golden set:** 61 verdicts
 including the bubbles/sidebar re-rulings. Prompt v5 written (identity
 rule). Exam order flipped by owner-confirmed logic: **step-7 render
 repairs run before the final exam** so the five unread pages score for
