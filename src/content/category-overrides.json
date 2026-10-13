@@ -16,7 +16,7 @@
     "collection drifts. This way the correction is reviewable in git and permanent.",
     "",
     "The plan is an admin page in the app that edits these same corrections in the",
-    "database — open a link, pick a category, done, no file and no command. Until",
+    "database: open a link, pick a category, done, no file and no command. Until",
     "that exists, this file is the switchboard."
   ]
 }
