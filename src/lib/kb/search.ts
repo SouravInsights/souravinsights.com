@@ -25,6 +25,7 @@ export interface SearchHit {
   urlKey: string;
   url: string;
   title: string;
+  category: string | null;
   channel: string;
   /** 1 − cosine distance. Higher is more relevant. */
   score: number;
@@ -61,6 +62,7 @@ export async function search(
       urlKey: links.urlKey,
       url: links.url,
       title: links.title,
+      category: links.category,
       channel: links.channel,
       content: linkChunks.content,
       chunkIndex: linkChunks.chunkIndex,
@@ -84,6 +86,7 @@ export async function search(
           urlKey: row.urlKey,
           url: row.url,
           title: row.title || row.url,
+          category: row.category,
           channel: row.channel,
           score: 1 - d,
           passages: [],
