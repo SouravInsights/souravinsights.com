@@ -10,9 +10,8 @@ reclassify + rename ripples land per that doc's §8.
 
 **Status:** the plan. Build order and proof gates: [`docs/plans/insights-rebuild.md`](../plans/insights-rebuild.md).
 Renamed from `kb-v2.md` (scope outgrew the name: this covers the
-pipeline **and** the reading/annotation surface). Everything in `docs/kb/` +
-`docs/spec/insights-agent.md` still describes the v1 build that runs today, until the
-rebuild below replaces it.
+pipeline **and** the reading/annotation surface). The v1 pipeline docs (`docs/kb/`) are gone with the pipeline they described — this
+spec and `../review/categorization-feedback.md` are the record.
 
 **How I want this built (2026-10 — read these before proposing anything):**
 

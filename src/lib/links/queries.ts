@@ -22,10 +22,11 @@ export interface LinkRecord {
 }
 
 export async function getLinks(opts?: {
-  channel?: string;
+  /** The public filter axis. `channel` stays on the row as an intake note. */
+  category?: string;
 }): Promise<LinkRecord[]> {
   const conditions = [isNull(links.hiddenAt), ne(links.health, "dead")];
-  if (opts?.channel) conditions.push(eq(links.channel, opts.channel));
+  if (opts?.category) conditions.push(eq(links.category, opts.category));
 
   const rows = await db
     .select({

@@ -1,4 +1,4 @@
-import { CHANNEL_LABELS, CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { CATEGORY_ORDER, CATEGORY_LABELS } from "@/app/insights/utils/categories";
 import { getInsightsData } from "@/app/insights/utils/links-data";
 import { dedupeByUrl, sortByNewestId } from "@/app/insights/utils/urlUtils";
 
@@ -16,7 +16,7 @@ const BASE_URL =
 export async function GET() {
   const { linkData } = await getInsightsData();
 
-  const sections = CHANNEL_ORDER.map((name) => {
+  const sections = CATEGORY_ORDER.map((name) => {
     const links = dedupeByUrl(sortByNewestId(linkData[name] || [])).filter(
       (link) => link.url
     );
@@ -32,7 +32,7 @@ export async function GET() {
       })
       .join("\n");
 
-    return `## ${CHANNEL_LABELS[name]}\n\n${items}`;
+    return `## ${CATEGORY_LABELS[name]}\n\n${items}`;
   })
     .filter(Boolean)
     .join("\n\n");

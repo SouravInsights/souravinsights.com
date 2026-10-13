@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
             url: hit.url,
             title: hit.title,
             description: extra?.description ?? "",
-            channel: hit.channel,
+            category: hit.category,
             added_at: (extra?.addedAt ?? new Date()).toISOString(),
             score: Number(hit.score.toFixed(4)),
             passage: hit.passages[0]?.content ?? "",

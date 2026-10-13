@@ -1,4 +1,4 @@
-import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
+import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { getInsightsData } from "../utils/links-data";
 import { dedupeByUrl, sortByNewestId } from "../utils/urlUtils";
 
@@ -23,18 +23,13 @@ function escapeXml(value: string): string {
 }
 
 export async function GET() {
-  const { channels, linkData } = await getInsightsData();
+  const { linkData } = await getInsightsData();
 
-  const categoryById = new Map<string, string>();
-  for (const name of CHANNEL_ORDER) {
-    for (const link of linkData[name] || []) {
-      categoryById.set(link.id, CHANNEL_LABELS[name]);
-    }
-  }
-
+  // Iterated by category: the feed used to walk the retired channel names and
+  // emitted nothing once the collection moved to categories.
   const links = dedupeByUrl(
     sortByNewestId(
-      channels.flatMap((channel) => linkData[channel.name] || [])
+      CATEGORY_ORDER.flatMap((name) => linkData[name] ?? [])
     )
   )
     .filter((link) => link.url)
@@ -42,7 +37,7 @@ export async function GET() {
 
   const items = links
     .map((link) => {
-      const category = categoryById.get(link.id);
+      const category = categoryLabel(link.category);
       const description = [category, link.description]
         .filter(Boolean)
         .join(" — ");

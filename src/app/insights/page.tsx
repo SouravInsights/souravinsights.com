@@ -38,7 +38,7 @@ const linkClass =
   "font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40";
 
 export default async function CuratedLinksPage() {
-  const { channels, linkData } = await getInsightsData();
+  const { groups, linkData } = await getInsightsData();
 
   // Chips come from the collection itself (scripts/kb-suggestions.ts), not
   // from a hand-written list that drifts into title-echoes.
@@ -63,10 +63,10 @@ export default async function CuratedLinksPage() {
     likeCounts[id] = Number(count) || 0;
   }
 
-  // Grand total across every channel, de-duplicated, so the header can show
+  // Grand total across every category, de-duplicated, so the header can show
   // how much is in the collection without any per-view noise.
   const totalLinks = dedupeByUrl(
-    sortByNewestId(channels.flatMap((channel) => linkData[channel.name] || []))
+    sortByNewestId(groups.flatMap((group) => linkData[group.name] || []))
   ).length;
 
   // A new shuffle every five minutes, handed down so the server and client
@@ -86,10 +86,10 @@ export default async function CuratedLinksPage() {
     },
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: channels.map((channel, index) => ({
+      itemListElement: groups.map((group, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        name: channel.name,
+        name: group.name,
       })),
     },
   };
@@ -140,7 +140,7 @@ export default async function CuratedLinksPage() {
         <div className="mt-16">
           <SectionHeader title="Browse the collection" />
           <InsightsList
-            channels={channels}
+            groups={groups}
             linkData={linkData}
             previews={previews}
             likeCounts={likeCounts}

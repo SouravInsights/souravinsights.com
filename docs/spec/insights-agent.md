@@ -101,7 +101,7 @@ Reliability rules, applied everywhere:
 | :--- | :--- | :--- | :--- |
 | LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary — a third id there (`suggestionModel()`) serves the offline chip script, which runs by hand. 1536 dims matches the existing `vector(1536)` column — no schema change. Chat model pinned to `openai/gpt-4o-mini` in `model.ts` (tool-calling-capable). |
 | Vector + text store | **Neon Postgres + pgvector** (existing DB) | $0 — free tier (0.5GB); 5K chunks ≈ 35MB | One service, plain SQL, Drizzle already in the repo. Changed from my earlier Upstash Vector pick: chunks are relational (chunk → link → channel), and one dependency beats two free ones. pgvector is also the standard thing worth learning. |
-| Extraction | `fetch` + `@mozilla/readability` over **jsdom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. jsdom is external by Next's own default list, and **pinned to 26.1.0**: 27+ requires ESM-only packages that a CommonJS `require("jsdom")` cannot load on Vercel's runtime, and `/api/insights/chat` does require it (see `docs/kb/02-extraction.md`). |
+| Extraction | `fetch` + `@mozilla/readability` over **jsdom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. jsdom is external by Next's own default list, and **pinned to 26.1.0**: 27+ requires ESM-only packages that a CommonJS `require("jsdom")` cannot load on Vercel's runtime, and `/api/insights/chat` does require it (extraction is defuddle now — `src/lib/kb/read.ts`). |
 | Scheduling | Trigger.dev | $0 free tier | The sync task already detects + persists new links; extraction hooks in right after insert. |
 | Auth-ish for public APIs | Upstash Redis ratelimits + visitor cookie pattern (already used by likes) | $0 | Public agent without accounts. |
 
@@ -144,7 +144,7 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 
 "Compare sandbox services in the collection." Agent retrieves candidates, then can **fetch a page fresh** (`fetch_link` tool, 24h Redis cache, max 3 per question) when stored chunks aren't enough — e.g. a pricing detail. Returns a small table + a recommendation with tradeoffs. Choosing tools is a weekly pain; this is where the agent earns trust.
 
-**Status: built.** `fetch_link` is a second tool on the same agent (`src/lib/kb/fetch-link.ts`), with the 24h cache and the 3-per-question cap, and the panel renders its pages as citations next to the searched passages — otherwise a comparison would cite nothing. It is also the **only SSRF surface in the project**: the URL comes from a model that has just read untrusted page text. Guarded on every hop; see `docs/kb/05-failure-modes.md` for the one gap that is known and accepted.
+**Status: built.** `fetch_link` is a second tool on the same agent (`src/lib/kb/fetch-link.ts`), with the 24h cache and the 3-per-question cap, and the panel renders its pages as citations next to the searched passages — otherwise a comparison would cite nothing. It is also the **only SSRF surface in the project**: the URL comes from a model that has just read untrusted page text. Guarded on every hop; the one known gap (DNS rebinding) is documented in the tool itself.
 
 ### Next, and last in this spec: MCP
 
@@ -173,7 +173,7 @@ Two of the three things originally written here as "Later" were imagined futures
 4. **Extraction QA loop**: read the extracts by eye, fix the extractor, repeat. Weak extractor = weak KB, so this is the real product work.
 5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog records every question (`insights_asked`) and every citation click (`insights_citation_clicked`), which is the signal that says whether answers are actually used.
 
-**Extraction check: built.** `scripts/kb-fixtures.ts` froze 25 real pages into `eval/fixtures/`, and `kb-eval.ts` now reads each of them offline with the real reader — 25/25 at the moment. **Still not built:** the automated answer-grounding check (check 3 in `docs/kb/04-evals.md`).
+**Extraction check: built.** `scripts/kb-fixtures.ts` froze 25 real pages into `eval/fixtures/`, and `kb-eval.ts` now reads each of them offline with the real reader — 25/25 at the moment. **Still not built:** the automated answer-grounding check (check 3 is still open).
 
 ---
 
@@ -181,7 +181,7 @@ Two of the three things originally written here as "Later" were imagined futures
 
 Where the build disagreed with this spec, or the spec was silent and I chose. Brief on purpose — the reasoning is the point.
 
-- **Extractor — three refinements.** The ladder worked, but the bulk run had pages marked `failed` that render fine one at a time. One Chromium per *run* instead of per page; a hard 25s cap per page, because a single URL hung a whole run; and a fall back to `document.body.innerText` when Readability finds under 50 words — it throws away the text on app-style pages. In `docs/kb/02-extraction.md`.
+- **Extractor — three refinements.** The ladder worked, but the bulk run had pages marked `failed` that render fine one at a time. One Chromium per *run* instead of per page; a hard 25s cap per page, because a single URL hung a whole run; and a fall back to `document.body.innerText` when Readability finds under 50 words — it throws away the text on app-style pages. That ladder lives in `render.ts` + `read.ts` now.
 - **Description-only channels are indexed.** The spec's "description-level only" governed *fetching*, was silent on *indexing*, and the build read it as "don't index". That left 138 links (portfolios, design, newsletters) invisible to the agent. Now title + description is stored as one passage. No fetch added.
 - **Chunks embed with a title/channel header.** The spec said "embedding text = chunk content". A bare passage like "it also handles soft deletes well" is unfindable without the title beside it.
 - **`--status` flag on kb-extract.** The spec had no way to re-read rows that came back weak. It was needed the moment the extractor improved.
@@ -203,7 +203,6 @@ Where the build disagreed with this spec, or the spec was silent and I chose. Br
 ```
 src/lib/kb/
   model.ts        // the one file that names the models
-  extract.ts      // the fallback ladder (see docs/kb/02-extraction.md)
   render.ts       // shared Chromium + a hard 25s cap per page
   ingest.ts       // read → chunk → embed → store; the script and the refresh share it
   chunk.ts        // ~500 tok, 15% overlap, paragraph-aware
@@ -239,7 +238,7 @@ src/trigger/kb-refresh.ts     // weekly re-read; least-recently-read first, capp
 
 scripts/snapshot-links.ts   // Discord → links registry (DONE)
 scripts/kb-extract.ts       // extract → chunk → embed; --status re-reads weak rows
-scripts/kb-report.ts        // writes docs/kb/build-report.md
+scripts/kb-report.ts        // writes docs/build-report.md
 scripts/kb-eval.ts          // the retrieval scoreboard
 scripts/kb-suggestions.ts   // derive the chips, then verify them against the index
 scripts/kb-fixtures.ts      // build the extraction fixtures from real pages

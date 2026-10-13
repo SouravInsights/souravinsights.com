@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
-import { DiscordChannel } from "../utils/discordApi";
+import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsLink } from "../utils/links-data";
 import {
   appendUTMParams,
@@ -29,7 +29,7 @@ import { ReaderView } from "./reader/ReaderView";
 import { prefetchArticle } from "./reader/article-query";
 
 interface InsightsListProps {
-  channels: DiscordChannel[];
+  groups: InsightsGroup[];
   linkData: { [key: string]: InsightsLink[] };
   previews: Record<string, string>;
   likeCounts: Record<string, number>;
@@ -72,7 +72,7 @@ const hrefFor = (link: EnrichedLink) =>
   });
 
 export default function InsightsList({
-  channels,
+  groups,
   linkData,
   previews,
   likeCounts,
@@ -81,7 +81,7 @@ export default function InsightsList({
   const router = useRouter();
   // The reader is a view of this page: which article (urlKey) is open, if any.
   const [reading, setReading] = useState<string | null>(null);
-  const [activeChannel, setActiveChannel] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
@@ -109,36 +109,36 @@ export default function InsightsList({
   const runningRef = useRef(0);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const sortedChannels = useMemo(
+  const sortedGroups = useMemo(
     () =>
-      channels
+      groups
         // Only surface categories we have a label/order for. Anything else
         // would leak in as a raw name.
         .filter(
-          (channel) =>
-            (CATEGORY_ORDER as string[]).includes(channel.name)
+          (group) =>
+            (CATEGORY_ORDER as string[]).includes(group.name)
         )
         .sort(
           (a, b) =>
             (CATEGORY_ORDER as string[]).indexOf(a.name) -
             (CATEGORY_ORDER as string[]).indexOf(b.name)
         ),
-    [channels]
+    [groups]
   );
 
   const filters = useMemo(
     () => [
       { name: "all", label: "All" },
-      ...sortedChannels.map((channel) => ({
-        name: channel.name,
-        label: categoryLabel(channel.name),
+      ...sortedGroups.map((group) => ({
+        name: group.name,
+        label: categoryLabel(group.name),
       })),
     ],
-    [sortedChannels]
+    [sortedGroups]
   );
 
   const activeFilterLabel =
-    filters.find((filter) => filter.name === activeChannel)?.label ?? "All";
+    filters.find((filter) => filter.name === activeCategory)?.label ?? "All";
 
   /**
    * The topic universe, counted across the whole visible list (not the
@@ -150,9 +150,9 @@ export default function InsightsList({
     // Counted inside the active category, so a count always matches what
     // picking that topic will actually show you.
     const scope =
-      activeChannel === "all"
-        ? sortedChannels.flatMap((channel) => linkData[channel.name] ?? [])
-        : linkData[activeChannel] ?? [];
+      activeCategory === "all"
+        ? sortedGroups.flatMap((group) => linkData[group.name] ?? [])
+        : linkData[activeCategory] ?? [];
     const counts = new Map<string, number>();
     for (const link of scope) {
       for (const topic of link.topics ?? []) {
@@ -160,7 +160,7 @@ export default function InsightsList({
       }
     }
     return counts;
-  }, [activeChannel, sortedChannels, linkData]);
+  }, [activeCategory, sortedGroups, linkData]);
 
   const topicOptions = useMemo(() => {
     const all = Array.from(topicCounts.entries()).sort(
@@ -183,22 +183,22 @@ export default function InsightsList({
   // Every link in the active view, newest first.
   const links = useMemo<EnrichedLink[]>(() => {
     const source: EnrichedLink[] =
-      activeChannel === "all"
-        ? sortedChannels.flatMap((channel) =>
-            (linkData[channel.name] || []).map((link) => ({
+      activeCategory === "all"
+        ? sortedGroups.flatMap((group) =>
+            (linkData[group.name] || []).map((link) => ({
               ...link,
-              category: channel.name,
+              category: group.name,
             }))
           )
-        : (linkData[activeChannel] || []).map((link) => ({
+        : (linkData[activeCategory] || []).map((link) => ({
             ...link,
-            category: activeChannel,
+            category: activeCategory,
           }));
 
     // Newest first, then collapse the same URL posted to more than one
-    // channel so a link never appears twice in a view.
+    // category so a link never appears twice in a view.
     return dedupeByUrl(sortByNewestId(source));
-  }, [activeChannel, sortedChannels, linkData]);
+  }, [activeCategory, sortedGroups, linkData]);
 
   const filteredLinks = useMemo(() => {
     let result = links;
@@ -233,7 +233,7 @@ export default function InsightsList({
 
   useEffect(() => {
     setVisibleItems(ITEMS_PER_PAGE);
-  }, [activeChannel, searchTerm, sort, view]);
+  }, [activeCategory, searchTerm, sort, view]);
 
   // Close the category menu on outside click or Escape.
   useEffect(() => {
@@ -755,20 +755,20 @@ export default function InsightsList({
                         key={filter.name}
                         type="button"
                         role="option"
-                        aria-selected={activeChannel === filter.name}
+                        aria-selected={activeCategory === filter.name}
                         onClick={() => {
                           feedback.select();
-                          setActiveChannel(filter.name);
+                          setActiveCategory(filter.name);
                           setFilterMenuOpen(false);
                         }}
                         className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-left type-caption transition-colors ${
-                          activeChannel === filter.name
+                          activeCategory === filter.name
                             ? "bg-foreground/[0.06] text-foreground"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
                         }`}
                       >
                         {filter.label}
-                        {activeChannel === filter.name && (
+                        {activeCategory === filter.name && (
                           <Check className="h-3.5 w-3.5 shrink-0" />
                         )}
                       </button>

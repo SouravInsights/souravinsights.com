@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
   }
 
   const rows = await db
-    .select({ channel: links.channel, count: count() })
+    .select({ category: links.category, count: count() })
     .from(links)
     .where(and(isNull(links.hiddenAt), ne(links.health, "dead")))
-    .groupBy(links.channel)
-    .orderBy(links.channel);
+    .groupBy(links.category)
+    .orderBy(links.category);
 
   return NextResponse.json(
     { data: rows },

@@ -85,7 +85,7 @@ export interface CitationSuggestion {
   urlKey: string;
   url: string;
   title: string;
-  channel: string;
+  category: string | null;
   /** The passage from the saved page that matched. */
   passage: string;
   /** The line in your draft this speaks to. */
@@ -134,7 +134,7 @@ export async function findCitations(draft: string): Promise<DeskResult> {
         urlKey: hit.urlKey,
         url: hit.url,
         title: hit.title,
-        channel: hit.channel,
+        category: hit.category,
         passage,
         claim: claims[i],
         why: "",
@@ -172,7 +172,7 @@ export async function findCitations(draft: string): Promise<DeskResult> {
       candidates
         .map(
           (c) =>
-            `- urlKey: ${c.urlKey}\n  title: ${c.title}\n  channel: ${c.channel}\n  fragment: ${c.passage}`
+            `- urlKey: ${c.urlKey}\n  title: ${c.title}\n  category: ${c.category}\n  fragment: ${c.passage}`
         )
         .join("\n\n") +
       `\n\nFor each fragment that supports, illustrates or argues with a specific ` +

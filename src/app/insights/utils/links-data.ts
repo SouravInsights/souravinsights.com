@@ -1,7 +1,13 @@
 import { getLinks } from "@/lib/links/queries";
 import { resolveCategory } from "@/lib/kb/categories";
 import { CATEGORY_ORDER } from "./categories";
-import type { DiscordChannel, LinkData } from "./discordApi";
+import type { LinkData } from "./discordApi";
+
+/** One filter group on the page — a category, with the label the UI shows. */
+export interface InsightsGroup {
+  id: string;
+  name: string;
+}
 
 export type InsightsLink = LinkData & {
   addedAt: Date;
@@ -21,14 +27,14 @@ export type InsightsLink = LinkData & {
  * one exists — it reads far better than a five-year-old og blurb.
  */
 export async function getInsightsData(): Promise<{
-  channels: DiscordChannel[];
+  groups: InsightsGroup[];
   linkData: Record<string, InsightsLink[]>;
 }> {
   const rows = await getLinks();
 
   // Keep every labeled category present, even when empty — parity with the
   // Discord-era tab bar.
-  const channels: DiscordChannel[] = CATEGORY_ORDER.map((name) => ({
+  const groups: InsightsGroup[] = CATEGORY_ORDER.map((name) => ({
     id: name,
     name,
   }));
@@ -37,9 +43,12 @@ export async function getInsightsData(): Promise<{
   );
 
   for (const row of rows) {
-    // A row classified before taxonomy v2 ("blog", "portfolio"…) lands in
-    // its v2 home; NULL / unknown stays "other" until the reclassify pass.
-    const bucket = resolveCategory(row.category) ?? "other";
+    // A row classified before taxonomy v2 ("blog", "portfolio"…) lands in its
+    // v2 home. A row with NO category was never readable (a canvas app, a page
+    // behind a bot wall) — it has no summary or passages worth showing, so it
+    // stays off the public collection rather than posing as "Other".
+    const bucket = resolveCategory(row.category);
+    if (!bucket) continue;
     linkData[bucket].push({
       id: row.discordId ?? row.urlKey,
       urlKey: row.urlKey,
@@ -53,5 +62,5 @@ export async function getInsightsData(): Promise<{
     });
   }
 
-  return { channels, linkData };
+  return { groups, linkData };
 }
