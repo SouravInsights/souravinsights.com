@@ -1,8 +1,11 @@
 import {
   CATEGORIES,
+  CATEGORY_BLURBS,
   resolveCategory,
   type Category,
 } from "@/lib/kb/categories";
+
+export { CATEGORY_BLURBS };
 
 /** Human labels for the categories, shared by the page, feeds and API docs. */
 export const CATEGORY_LABELS: Record<Category, string> = {

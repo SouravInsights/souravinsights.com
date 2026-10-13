@@ -42,28 +42,67 @@ export const CATEGORIES = [
 
 export type Category = (typeof CATEGORIES)[number];
 
-/** The canonical wording of each category — what the classify prompt speaks. */
-export const CATEGORY_DEFS: Record<Category, string> = {
-  article:
-    "one piece of writing: an essay, post, guide or case study, wherever it lives",
-  publication:
-    "an editorial outlet that publishes many pieces: a magazine, journal, or curated newsletter",
-  people:
-    "one person's own site: homepage, about page, or the index of their own writing and work. A personal homepage is people even when short, or when it mostly lists the person's latest posts. A single piece of their writing is an article, never people.",
-  tool: "what remains that you use directly: library, CLI, app, SaaS, a company's product, a data platform you query. Free or paid is irrelevant. Use tool only when the visit is to get or work with the thing itself — if the visit is to look or to learn, those categories win even when the thing is paid, a SaaS, or an app.",
-  learning:
-    "structured teaching: a course, book, curriculum, or reference, including paid indie courses. A course's landing or sales page is still learning — judge the material it represents. One piece of writing that teaches is an article.",
-  inspiration:
-    "a showcase to look at: design galleries, collections of sites, screens, illustrations, workspaces. A paid showcase is still inspiration.",
-  directory:
-    "a list whose value is pointing elsewhere: blogrolls, link collections, a person's stash of books or resources. A database, registry or dataset you query is a tool, not a directory — its value is the data, not the links out.",
-  other: "you cannot place it confidently",
+/**
+ * The canonical wording of each category, in the two voices that speak it:
+ * `prompt` is what the classify model hears (second person, with its
+ * tie-breaks); `blurb` is what a visitor reads behind the "i" button.
+ */
+export interface CategoryDef {
+  prompt: string;
+  blurb: string;
+}
+
+export const CATEGORY_DEFS: Record<Category, CategoryDef> = {
+  article: {
+    prompt:
+      "one piece of writing: an essay, post, guide or case study, wherever it lives",
+    blurb: "One piece of writing: an essay, post, or guide.",
+  },
+  publication: {
+    prompt:
+      "an editorial outlet that publishes many pieces: a magazine, journal, or curated newsletter",
+    blurb: "Magazines, journals, and curated letters that keep publishing.",
+  },
+  people: {
+    prompt:
+      "one person's own site: homepage, about page, or the index of their own writing and work. A personal homepage is people even when short, or when it mostly lists the person's latest posts. A single piece of their writing is an article, never people.",
+    blurb: "Someone's own site: their homepage, work, and writing.",
+  },
+  tool: {
+    prompt:
+      "what remains that you use directly: library, CLI, app, SaaS, a company's product, a data platform you query. Free or paid is irrelevant. Use tool only when the visit is to get or work with the thing itself — if the visit is to look or to learn, those categories win even when the thing is paid, a SaaS, or an app.",
+    blurb: "Things you use, from small libraries to big SaaS.",
+  },
+  learning: {
+    prompt:
+      "structured teaching: a course, book, curriculum, or reference, including paid indie courses. A course's landing or sales page is still learning — judge the material it represents. One piece of writing that teaches is an article.",
+    blurb: "Courses, books, and tutorials.",
+  },
+  inspiration: {
+    prompt:
+      "a showcase to look at: design galleries, collections of sites, screens, illustrations, workspaces. A paid showcase is still inspiration.",
+    blurb: "Where you go for inspiration: design galleries, collections of sites and screens.",
+  },
+  directory: {
+    prompt:
+      "a list whose value is pointing elsewhere: blogrolls, link collections, a person's stash of books or resources. A database, registry or dataset you query is a tool, not a directory — its value is the data, not the links out.",
+    blurb: "Lists of places to go: blogrolls, resources, link stashes.",
+  },
+  other: {
+    prompt: "you cannot place it confidently",
+    blurb: "None of the above, or not enough evidence to tell.",
+  },
 };
 
 /** The list the classify prompt speaks, generated from CATEGORY_DEFS. */
 export const CATEGORY_PROMPT_LIST = CATEGORIES.map(
-  (c) => `- ${c} — ${CATEGORY_DEFS[c]}`
+  (c) => `- ${c} — ${CATEGORY_DEFS[c].prompt}`
 ).join("\n");
+
+/** What the "i" button shows, generated from CATEGORY_DEFS. */
+export const CATEGORY_BLURBS: Record<Category, string> = Object.fromEntries(
+  CATEGORIES.map((c) => [c, CATEGORY_DEFS[c].blurb])
+) as Record<Category, string>;
 
 export const isCategory = (value: string): value is Category =>
   (CATEGORIES as readonly string[]).includes(value);
