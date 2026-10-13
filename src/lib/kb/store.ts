@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { links, linkChunks } from "@/db/schema";
 import type { Category } from "./categories";
@@ -9,6 +9,7 @@ import { EMBEDDING_MODE, embedTexts, type EmbeddingMode } from "./embed";
 import { understandPage, PROMPT_VERSION } from "./understand";
 import { getPage, isHtml } from "./get";
 import { readPage } from "./read";
+import { buildLetterCanonical, cleanTopics } from "./topics";
 
 /**
  * store — every write the pipeline makes, plus buildLink, the one orchestrator.
@@ -34,6 +35,8 @@ export interface LinkRow {
   contentHash: string | null;
   category: string | null;
   summary: string | null;
+  /** Which prompt produced category/topics/summary; null = never understood. */
+  promptVersion?: number | null;
 }
 
 /** Write the read stage's outcome. Returns the status and whether text changed. */
@@ -216,8 +219,16 @@ export async function buildLink(
   let understood = false;
   // A forced re-read whose markdown didn't change must not re-spend the
   // model calls — the hash comparison is what makes a render retry cheap.
+  // (Re-understanding everything WITHOUT refetching is kb-reclassify's job;
+  // it reuses reunderstand() below, not a flag here.)
+  // A row understood by an older PROMPT_VERSION is stale: decide it again.
+  // That check is the whole reclassify mechanism — the version on the row is
+  // the only memory it needs, and no flag or refetch is involved.
   const needsUnderstand =
-    link.markdown && (!link.category || (opts.force && changed));
+    link.markdown &&
+    (!link.category ||
+      link.promptVersion !== PROMPT_VERSION ||
+      (opts.force && changed));
   if (needsUnderstand) {
     // Metadata comes from the row: saveRead already stored defuddle's own
     // title/description during the read stage.
@@ -255,4 +266,30 @@ export async function buildLink(
   }
 
   return { read: readStatus, understood, passages, changed };
+}
+
+/**
+ * settleSpellings — after a run, merge letter-proven topic variants across
+ * rows ("data-visualization" here, "data visualization" there) that the
+ * run's vocabulary map couldn't know before the run existed. Deterministic,
+ * no model, and topics aren't embedded — so rewrites here never re-embed.
+ * Returns how many rows changed.
+ */
+export async function settleSpellings(): Promise<number> {
+  const rows = await db
+    .select({ id: links.id, topics: links.topics })
+    .from(links)
+    .where(isNull(links.hiddenAt));
+  const winners = buildLetterCanonical(rows.map((r) => r.topics));
+
+  let changedRows = 0;
+  for (const row of rows) {
+    if (!row.topics?.length) continue;
+    const next = cleanTopics(row.topics, winners);
+    if (JSON.stringify(next) !== JSON.stringify(row.topics)) {
+      await db.update(links).set({ topics: next }).where(eq(links.id, row.id));
+      changedRows++;
+    }
+  }
+  return changedRows;
 }

@@ -1,15 +1,12 @@
 import "./load-env";
-import { and, inArray, isNull, ne, eq, sql } from "drizzle-orm";
-import {
-  buildLetterCanonical,
-  buildTopicVocabulary,
-  cleanTopics,
-} from "../src/lib/kb/topics";
-import { pipelineModel } from "../src/lib/kb/model";
+import { and, eq, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm";
 import { db } from "../src/db";
 import { links } from "../src/db/schema";
+import { pipelineModel } from "../src/lib/kb/model";
+import { PROMPT_VERSION } from "../src/lib/kb/prompts";
 import { closeRenderer } from "../src/lib/kb/render";
-import { buildLink, type LinkRow } from "../src/lib/kb/store";
+import { buildLink, settleSpellings, type LinkRow } from "../src/lib/kb/store";
+import { buildTopicVocabulary } from "../src/lib/kb/topics";
 
 /**
  * kb-build — the v2 pipeline over rows (docs/plans/insights-rebuild.md).
@@ -17,9 +14,12 @@ import { buildLink, type LinkRow } from "../src/lib/kb/store";
  *   npx tsx scripts/kb-build.ts                      # every link needing work
  *   npx tsx scripts/kb-build.ts --limit 10           # a sample first
  *   npx tsx scripts/kb-build.ts --only blogroll.org  # one link
- *   npx tsx scripts/kb-build.ts --force              # redo even finished rows
+ *   npx tsx scripts/kb-build.ts --force              # redo even finished rows (refetches!)
  *   npx tsx scripts/kb-build.ts --render             # render thin pages headlessly
  *   npx tsx scripts/kb-build.ts --render --status thin,failed   # retry the weak set
+ *
+ *   npx tsx scripts/kb-build.ts --stale   # redo every row an older prompt
+ *                                         # version understood (the reclassify)
  *
  * Per link: get → read → understand → embed. Stages skip themselves when
  * their columns are already set — a crash just means "run it again".
@@ -36,6 +36,7 @@ const CONCURRENCY = 4;
 async function main() {
   const force = has("force");
   const render = has("render");
+  const stale = has("stale");
   const only = val("only");
   const limit = val("limit") ? Number(val("limit")) : undefined;
 
@@ -43,7 +44,14 @@ async function main() {
 
   const conditions = [isNull(links.hiddenAt), ne(links.health, "dead")];
   if (only) conditions.push(eq(links.urlKey, only));
-  if (statusFilter) {
+  if (stale) {
+    // The reclassify: rows an older prompt version understood. They all have
+    // markdown, so nothing is fetched — the new prompt passes over old text.
+    conditions.push(isNotNull(links.markdown));
+    conditions.push(
+      sql`(${links.promptVersion} is null or ${links.promptVersion} <> ${PROMPT_VERSION})`
+    );
+  } else if (statusFilter) {
     conditions.push(inArray(links.readStatus, statusFilter));
   } else if (!force) {
     // Rerunnable: read runs while markdown is missing; everything downstream
@@ -65,6 +73,7 @@ async function main() {
       contentHash: links.contentHash,
       category: links.category,
       summary: links.summary,
+      promptVersion: links.promptVersion,
     })
     .from(links)
     .where(and(...conditions))
@@ -87,17 +96,16 @@ async function main() {
   const rows: LinkRow[] = await (limit ? query.limit(limit) : query);
   console.log(
     `${rows.length} links to build${force ? " (forced)" : ""}` +
+      `${stale ? ` · STALE (prompt < v${PROMPT_VERSION})` : ""}` +
       `${render ? " · render fallback on" : ""}`
   );
-  if (!rows.length) {
-    console.log("nothing to do.");
-    return;
-  }
 
   const tally = { ok: 0, thin: 0, failed: 0, understood: 0, passages: 0, errors: 0 };
+  const flips: string[] = [];
   let done = 0;
 
   const one = async (row: LinkRow) => {
+    const before = row.category;
     try {
       const outcome = await buildLink(row, {
         force: force || render,
@@ -105,6 +113,11 @@ async function main() {
         knownTopics,
         winningSpellings,
       });
+      // In a stale pass every flip is a line of the review table.
+      if (stale && outcome.understood && before !== row.category) {
+        flips.push(row.urlKey);
+        console.log(`  ⟳ ${before ?? "(none)"} → ${row.category}   ${row.urlKey}`);
+      }
       if (outcome.read !== "skipped") tally[outcome.read]++;
       if (outcome.understood) tally.understood++;
       tally.passages += outcome.passages;
@@ -134,28 +147,12 @@ async function main() {
     await closeRenderer().catch(() => undefined);
   }
 
-  // The settle pass: a run coins new topics mid-flight; merge the
-  // letter-proven variants ("data-visualization" vs "data visualization")
-  // that the run's own vocabulary map couldn't know beforehand. Topics
-  // aren't embedded, so rewrites here cost no re-embedding.
-  const fresh = await db
-    .select({ id: links.id, topics: links.topics })
-    .from(links)
-    .where(isNull(links.hiddenAt));
-  const settled = buildLetterCanonical(fresh.map((r) => r.topics));
-  let settledRows = 0;
-  for (const row of fresh) {
-    if (!row.topics?.length) continue;
-    const next = cleanTopics(row.topics, settled);
-    if (JSON.stringify(next) !== JSON.stringify(row.topics)) {
-      await db.update(links).set({ topics: next }).where(eq(links.id, row.id));
-      settledRows++;
-    }
-  }
+  const settledRows = await settleSpellings();
   if (settledRows) console.log(`settled spellings on ${settledRows} rows`);
 
   console.log(`\ndone → ok ${tally.ok} · thin ${tally.thin} · failed ${tally.failed}`);
   console.log(`understood ${tally.understood} · passages ${tally.passages} · errors ${tally.errors}`);
+  if (stale) console.log(`category flips: ${flips.length} (each listed above)`);
 }
 
 main().catch((error) => {
