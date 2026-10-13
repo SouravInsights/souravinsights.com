@@ -8,6 +8,13 @@ inspiration, tool, product, learning, directory, other, decided in
 stored markdown, embedding modes, reader, highlights) still stand; the
 reclassify + rename ripples land per that doc's §8.
 
+**Open, small:** rows that were never readable (a canvas app, a bot wall) simply stay
+off the public collection — `scripts/kb-report.ts` is the review queue that lists them as
+thin/failed. An in-app review surface is not built and is not needed while there are four.
+The agent's answer quality is judged by hand through `scripts/kb-ask.ts`; an automated
+answer-grounding check is still open (the chip pipeline has a substance check, answers
+do not).
+
 **Status:** the plan. Build order and proof gates: [`docs/plans/insights-rebuild.md`](../plans/insights-rebuild.md).
 Renamed from `kb-v2.md` (scope outgrew the name: this covers the
 pipeline **and** the reading/annotation surface). The v1 pipeline docs (`docs/kb/`) are gone with the pipeline they described — this
@@ -179,9 +186,12 @@ per-channel strategy in `insights-agent.md` · `kind` as a word.
 - **Topics need a leash.** Free-form keywords drift into synonyms (motion / animation /
   animations). Cheap control: describe receives the topics already in use and prefers
   them; new coinages allowed, rare. One line in the prompt, one query to build the vocab.
-- **The `other` pile has an owner.** Overrides live in a data file and always win;
-  reviewing the queue = edit the file, re-run understand for those links only. The world
-  is never re-classified to fix a handful.
+- **The `other` pile has an owner.** Built 2026-10-14: overrides live in
+  `src/content/category-overrides.json` and always win at write time (the probe ignores
+  the file, because it measures the model). Fixing one link = edit the file, then
+  `kb-build --stale --only <urlKey>`. The world is never re-classified to fix a handful.
+  **Next step, when the list grows past a handful:** an admin page that edits the same
+  correction against the row, so it stops being a file and a command.
 - **Highlights must survive re-reads.** Anchor = quote + prefix/suffix + occurrence
   index. If a refresh breaks the anchor, the highlight hides (marked stale) — never
   silently deleted.

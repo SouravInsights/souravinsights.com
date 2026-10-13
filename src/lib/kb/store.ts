@@ -10,6 +10,7 @@ import { understandPage, PROMPT_VERSION } from "./understand";
 import { getPage, isHtml } from "./get";
 import { readPage } from "./read";
 import { buildLetterCanonical, cleanTopics } from "./topics";
+import categoryOverrides from "@/content/category-overrides.json";
 
 /**
  * store — every write the pipeline makes, plus buildLink, the one orchestrator.
@@ -243,7 +244,20 @@ export async function buildLink(
       knownTopics: opts.knownTopics ?? [],
       winningSpellings: opts.winningSpellings ?? {},
     });
-    await saveUnderstand(link, result);
+
+    // The owner's overrides always win (docs/spec/insights-rebuild.md):
+    // src/content/category-overrides.json maps a url_key to whatever should be
+    // true of it — see the _readme in that file. Fixing one link is an edit
+    // plus `kb-build --stale --only <key>`, never a re-review of the
+    // collection. The probe deliberately ignores this file: it measures the
+    // model, and an override would flatter the score.
+    const override = (
+      categoryOverrides as Record<
+        string,
+        { category?: Category; topics?: string[]; summary?: string }
+      >
+    )[link.urlKey];
+    await saveUnderstand(link, override ? { ...result, ...override } : result);
     link.category = result.category;
     link.summary = result.summary;
     understood = true;

@@ -173,7 +173,7 @@ Two of the three things originally written here as "Later" were imagined futures
 4. **Extraction QA loop**: read the extracts by eye, fix the extractor, repeat. Weak extractor = weak KB, so this is the real product work.
 5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog records every question (`insights_asked`) and every citation click (`insights_citation_clicked`), which is the signal that says whether answers are actually used.
 
-**Extraction check: built.** `scripts/kb-fixtures.ts` froze 25 real pages into `eval/fixtures/`, and `kb-eval.ts` now reads each of them offline with the real reader — 25/25 at the moment. **Still not built:** the automated answer-grounding check (check 3 is still open).
+**Extraction check: retired.** The fixture harness and its 25 frozen pages were removed with the v1 eval machinery. Extraction is now defuddle, and the checks that matter are the ones that ship: `kb-classify-probe.ts` (categories against the golden set, stored markdown, ~$0.04), `kb-topics-test.ts` (13 gates, offline), `kb-topics-health.ts --assert` (diseases in a run), `kb-ask.ts` (any question through the real agent), and `eval/test-questions.json` (125 questions for a deployment). **Still not built:** an automated answer-grounding check — answers are judged by hand today.
 
 ---
 
