@@ -1,0 +1,161 @@
+probe · model deepseek/deepseek-v4.1-flash · 265 links (58 golden, 207 holdout) · vocabulary 150 topics
+skipped (no markdown / not in collection): 3
+  · michael.fm (expected people)
+  · shapes.tools (expected tool)
+  · newincreative.notion.site/the-vault-nguyen-s-design-resource-stash-dd710673638a4c16a571574ff72d05f9 (expected directory)
+  25/265 · agreement 96.0%
+  50/265 · agreement 92.0%
+  75/265 · agreement 89.3%
+  100/265 · agreement 83.0%
+  125/265 · agreement 76.0%
+  150/265 · agreement 72.7%
+  175/265 · agreement 68.0%
+  200/265 · agreement 70.0%
+  225/265 · agreement 72.9%
+  250/265 · agreement 74.4%
+  265/265 · agreement 74.7%
+
+== RESULT ==
+golden   81.0%  (47/58)
+holdout  72.9%  (151/207)
+overall  74.7%  (198/265) · 48 errors
+confidence: high 195 · low 5 · medium 17 · - 48
+
+== MISMATCHES (67) ==
+  [golden] ja.mt
+      expected people · predicted article (high)
+  [golden] whirrls.com
+      expected inspiration · predicted tool (medium)
+  [golden] justinjackson.ca/articles
+      expected people · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [golden] boristane.com/blog/slop-creep-enshittification-of-software
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [golden] faster.dev
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [golden] makeitanimated.dev
+      expected learning · predicted tool (medium)
+  [golden] joshcollinsworth.com/blog/easing-curves
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [golden] brianlovin.com/writing/give-your-agent-a-laboratory
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [golden] trails.pieterma.es/books
+      expected directory · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [golden] makingsoftware.co
+      expected learning · predicted other (low)
+  [golden] sujankhadgi.com
+      expected people · predicted other (low)
+  [holdout] http.dev
+      expected article · predicted learning (high)
+  [holdout] walkinglabs.github.io/learn-harness-engineering
+      expected learning · predicted other (low)
+  [holdout] nautil.us
+      expected article · predicted publication (high)
+  [holdout] perf.reviews/profile-guide
+      expected learning · predicted article (high)
+  [holdout] articless-web.vercel.app
+      expected publication · predicted people (medium)
+  [holdout] gustavofior.com/books
+      expected people · predicted directory (high)
+  [holdout] imperavi.com/books/user-interface-typography
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] linear.app/now/output-isn-t-design
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] mariozechner.at/posts/2026-03-25-thoughts-on-slowing-the-fuck-down
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] devouringdetails.com/resources/react-handbook
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] siteofsites.co/?p=1
+      expected inspiration · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] michaelnotebook.com/dci/index.html
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] jakub.kr/writing/details-that-make-interfaces-feel-better
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] library.guide
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] letters.stevejobsarchive.com
+      expected publication · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] jakub.kr
+      expected people · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] degreeless.design
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] detail.dev
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] lethain.com/notes-on-the-crux
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] userinterface.wiki/generating-sounds-with-ai
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] cra.mr/mcp-skills-and-agents
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] typex.rocks
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] journal.stuffwithstuff.com/2026/01/24/the-value-of-things
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] diana.lu
+      expected people · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] martinalderson.com/posts/two-kinds-of-ai-users-are-emerging
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] jm.sv/before-and-after
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] desengs.com
+      expected directory · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] metaphorsound.com/bts/interface-craft
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] motion.zajno.com
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] metascraper.js.org
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] barvian.me/react-exit-animations
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] nivedhanirmal.com
+      expected people · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] consumerapp.studio
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] ebb.cool
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] shud.in/thoughts/build-bulletproof-react-components
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] buttondown.com/hillelwayne/archive/some-fun-software-facts
+      expected publication · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] bitsxpages.com/p/frameworks-for-understanding-databases
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] theatlantic.com/technology/2026/01/claude-code-ai-hype/685617
+      expected article · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] databaseschool.com
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] trails.pieterma.es
+      expected directory · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] butter.dev
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] wattenberger.com
+      expected people · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] newsletter.systemdesignclassroom.com
+      expected publication · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] trychroma.com
+      expected tool · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] appstacks.club/paper
+      expected tool · predicted article (high)
+  [holdout] justfuckinguseeffect.dev
+      expected article · predicted tool (high)
+  [holdout] hw.glich.co
+      expected publication · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] lesswrong.com
+      expected publication · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] craftofui.dev
+      expected learning · predicted ERROR: This request would exceed your available credits given your current in-flight re (-)
+  [holdout] invisibledetails.com
+      expected learning · predicted ERROR: The operation was aborted due to timeout (-)
+  [holdout] userinterface.wiki
+      expected learning · predicted publication (high)
+  [holdout] gomakethings.com/articles
+      expected publication · predicted people (high)
+  [holdout] sandromaglione.com/newsletter
+      expected publication · predicted people (medium)
+  [holdout] onedayyoullfindyourself.com
+      expected publication · predicted other (low)
+  [holdout] sst.dev
+      expected tool · predicted other (low)
+  [holdout] svgl.app
+      expected directory · predicted tool (medium)
+summaries written: 217
+
+full result: /Users/souravinsights/Documents/Personal/souravinsights.com/eval/probe-runs/deepseek-deepseek-v4.1-flash-v6.json
