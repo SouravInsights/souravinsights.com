@@ -35,8 +35,25 @@ export function ArticleBody({
   const containerRef = useRef<HTMLDivElement>(null);
   const [adminKey, setAdminKey] = useState<string | null>(null);
 
+  /**
+   * The palette is the owner's tool, so it only appears with the admin key —
+   * and the key was only ever asked for on /insights?admin, in the list. Open
+   * an article on a phone that never saw that URL and selecting text did
+   * nothing at all: no prompt, no palette, no explanation. Now the reader
+   * honours ?admin too, so the device in your hand can unlock itself.
+   */
   useEffect(() => {
-    setAdminKey(window.localStorage.getItem("insights_admin_key"));
+    const stored = window.localStorage.getItem("insights_admin_key");
+    if (stored) {
+      setAdminKey(stored);
+      return;
+    }
+    if (!new URLSearchParams(window.location.search).has("admin")) return;
+    const key = window.prompt("Admin key (stored in this browser only)");
+    if (key) {
+      window.localStorage.setItem("insights_admin_key", key);
+      setAdminKey(key);
+    }
   }, []);
 
   const onCreate = useCallback(

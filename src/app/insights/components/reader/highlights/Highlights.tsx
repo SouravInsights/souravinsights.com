@@ -636,7 +636,7 @@ export function Highlights({
             animate={{ opacity: 1, scale: 1, transition: ENTER }}
             exit={{ opacity: 0, scale: 0.98, transition: LEAVE }}
             onPointerDown={(e) => e.preventDefault()}
-            className="group absolute z-20 flex select-none items-stretch gap-3 rounded-xl border border-border bg-background p-3"
+            className="group absolute z-20 flex select-none items-stretch gap-3 rounded-xl border border-border bg-background p-3 max-sm:gap-2 max-sm:p-2.5"
             style={{ boxShadow: LIFT }}
           >
             <span
@@ -645,7 +645,7 @@ export function Highlights({
               style={{ left: "var(--ax, 50%)" }}
             />
 
-            <fieldset className="m-0 grid min-w-0 grid-cols-3 content-start gap-4 border-0 p-0">
+            <fieldset className="m-0 grid min-w-0 grid-cols-3 content-start gap-4 border-0 p-0 max-sm:gap-1.5">
               <legend className="sr-only">Highlight colour</legend>
               {HUES.map((hue, i) => (
                 <button
@@ -656,7 +656,7 @@ export function Highlights({
                   aria-pressed={current?.hue === i}
                   onClick={() => pick(i)}
                   style={{ backgroundColor: hue.swatch, "--hue": hue.swatch } as CSSProperties}
-                  className="relative size-6 cursor-pointer rounded-full outline-2 outline-transparent outline-offset-2 transition-[outline-color] duration-150 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] aria-pressed:outline-(--hue) focus-visible:outline-(--hue)"
+                  className="relative size-6 cursor-pointer rounded-full outline-2 outline-transparent outline-offset-2 transition-[outline-color] duration-150 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] aria-pressed:outline-(--hue) focus-visible:outline-(--hue) max-sm:size-9"
                 >
                   <span
                     aria-hidden="true"
@@ -670,7 +670,7 @@ export function Highlights({
                 title="Remove highlight"
                 disabled={!current}
                 onClick={remove}
-                className="flex size-6 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+                className="flex size-6 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent max-sm:size-9"
               >
                 <Eraser aria-hidden="true" className="size-3.5" />
               </button>
