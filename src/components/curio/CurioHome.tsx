@@ -51,23 +51,15 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
     useCurioChat();
   const [chips, setChips] = useState(suggestions);
   /**
-   * Sharing.
-   *
-   * Nothing is stored until this is pressed: a conversation is private by
-   * default because it does not exist anywhere. Pressing once creates the
-   * snapshot and copies its link; pressing again reuses the same link, so a
-   * session shared twice does not become two pages.
+   * Sharing. Anyone can do this, so the only thing that needs care is not
+   * making a second page out of the same conversation: pressing once creates the
+   * snapshot and copies its link, pressing again hands the same link back.
    */
   const [shareState, setShareState] = useState<
     "idle" | "working" | "copied" | "failed"
   >("idle");
   const [shareFailure, setShareFailure] = useState("");
-  const [admin, setAdmin] = useState(false);
   const sharedRef = useRef<{ id: string; count: number } | null>(null);
-
-  useEffect(() => {
-    setAdmin(window.localStorage.getItem("insights_admin_key") !== null);
-  }, []);
 
   useEffect(() => {
     if (shareState !== "copied" && shareState !== "failed") return;
@@ -88,8 +80,6 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
 
   const share = async () => {
     if (shareState === "working") return;
-    const key = window.localStorage.getItem("insights_admin_key");
-    if (!key) return;
 
     // The same conversation, already shared: just hand the link back.
     if (sharedRef.current?.count === messages.length) {
@@ -101,10 +91,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
     try {
       const response = await fetch("/api/curio/share", {
         method: "POST",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${key}`,
-        },
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ messages }),
       });
       if (!response.ok) {
@@ -196,10 +183,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                           Copy transcript
                         </button>
 
-                        {/* Owner only: a shared link is a public page, so making
-                            one is a decision, not a convenience. */}
-                        {admin && (
-                          <button
+                        <button
                             type="button"
                             onClick={share}
                             disabled={shareState === "working"}
@@ -221,7 +205,6 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                                   ? "Try again"
                                   : "Share conversation"}
                           </button>
-                        )}
                       </PopoverContent>
                     </Popover>
                   ) : null
@@ -312,10 +295,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                           Copy transcript
                         </button>
 
-                        {/* Owner only: a shared link is a public page, so making
-                            one is a decision, not a convenience. */}
-                        {admin && (
-                          <button
+                        <button
                             type="button"
                             onClick={share}
                             disabled={shareState === "working"}
@@ -337,7 +317,6 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                                   ? "Try again"
                                   : "Share conversation"}
                           </button>
-                        )}
                       </PopoverContent>
                     </Popover>
                   ) : null

@@ -31,6 +31,17 @@ export const chatDailyLimiter = new Ratelimit({
   prefix: "rl:chat-day",
 });
 
+/**
+ * Sharing a conversation: anyone may do it, and each one writes a public row.
+ * Six per ten minutes from one address is far more than a person needs and far
+ * less than a script wants.
+ */
+export const shareLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(6, "10 m"),
+  prefix: "rl:share",
+});
+
 export function clientIp(headers: Headers): string {
   return (
     headers.get("x-forwarded-for")?.split(",")[0].trim() ??
