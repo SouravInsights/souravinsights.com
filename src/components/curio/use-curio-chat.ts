@@ -122,7 +122,7 @@ export function citationsOf(parts: { type: string; state?: string; output?: unkn
 export function useCurioChat() {
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error, stop, regenerate } = useChat({
     transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
   });
 
@@ -149,5 +149,5 @@ export function useCurioChat() {
     setInput("");
   };
 
-  return { messages, busy, error, phase, input, setInput, submit };
+  return { messages, busy, error, phase, input, setInput, submit, stop, regenerate };
 }

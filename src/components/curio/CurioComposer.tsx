@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { ArrowUp, Square } from "lucide-react";
+import React, { useEffect, useRef } from "react";
 
 /**
  * The composer for the full page.
@@ -18,11 +18,15 @@ export function CurioComposer({
   value,
   onChange,
   onSubmit,
+  onStop,
   busy,
 }: {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
+  /** Stop the answer that is streaming. Every chat has this, for the answer
+   *  that is going the wrong way. */
+  onStop?: () => void;
   busy: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -39,6 +43,9 @@ export function CurioComposer({
   const send = () => {
     if (busy || !value.trim()) return;
     onSubmit(value);
+    // Keep the keyboard up: a chat is a run of questions, and having to tap the
+    // box again between each one is the thing that makes a phone chat feel slow.
+    textareaRef.current?.focus();
   };
 
   return (
@@ -57,6 +64,9 @@ export function CurioComposer({
         ref={textareaRef}
         value={value}
         rows={1}
+        // React's types have not caught up with enterkeyhint; the DOM does, and
+        // it is what turns a phone keyboard's Enter key into "send".
+        {...({ enterkeyhint: "send" } as unknown as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
         spellCheck={false}
         aria-label="Ask Curio"
         placeholder="Ask about anything I've saved…"
@@ -72,14 +82,25 @@ export function CurioComposer({
         }}
         className="max-h-40 min-h-9 min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-base leading-relaxed outline-none placeholder:text-faint-foreground sm:text-sm"
       />
-      <button
-        type="submit"
-        disabled={busy || !value.trim()}
-        aria-label="Ask"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40"
-      >
-        <ArrowUp className="h-4 w-4" />
-      </button>
+      {busy && onStop ? (
+        <button
+          type="button"
+          onClick={onStop}
+          aria-label="Stop"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+        >
+          <Square className="h-3.5 w-3.5 fill-current" />
+        </button>
+      ) : (
+        <button
+          type="submit"
+          disabled={busy || !value.trim()}
+          aria-label="Ask"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40"
+        >
+          <ArrowUp className="h-4 w-4" />
+        </button>
+      )}
     </form>
   );
 }

@@ -37,7 +37,8 @@ const noteLinkClass =
  * something else, so it stays small and that page keeps its own scroll.
  */
 export function CurioHome({ suggestions }: { suggestions: string[] }) {
-  const { messages, busy, error, phase, input, setInput, submit } = useCurioChat();
+  const { messages, busy, error, phase, input, setInput, submit, stop, regenerate } =
+    useCurioChat();
   const [chips, setChips] = useState(suggestions);
 
   // Shuffle once per visit so the same chips aren't always first, and on mount
@@ -65,6 +66,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
             <Conversation>
               <ConversationContent className="gap-6 p-0 py-4">
                 <CurioTranscript
+                  onRetry={regenerate}
                   messages={messages}
                   phase={phase}
                   error={error}
@@ -77,6 +79,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
             {/* Docked, and clear of the home indicator on a phone. */}
             <div className="shrink-0 pt-2 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
               <CurioComposer
+                onStop={stop}
                 value={input}
                 onChange={setInput}
                 onSubmit={submit}
@@ -130,6 +133,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                 action, and the space is what says so. */}
             <div className="mt-4">
               <CurioComposer
+                onStop={stop}
                 value={input}
                 onChange={setInput}
                 onSubmit={submit}

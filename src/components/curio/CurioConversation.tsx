@@ -1,10 +1,14 @@
 "use client";
 
 import type { UIMessage } from "ai";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Copy, Loader2 } from "lucide-react";
 import posthog from "posthog-js";
+import { useStickToBottomContext } from "use-stick-to-bottom";
 import {
   Message,
+  MessageAction,
+  MessageActions,
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
@@ -28,14 +32,40 @@ export function CurioTranscript({
   messages,
   phase,
   error,
+  onRetry,
   phaseMark = false,
 }: {
   messages: UIMessage[];
   phase: string | null;
   error: Error | undefined;
+  /** Ask once more. A failed answer is a retry, not a dead end. */
+  onRetry?: () => void;
   /** Show Curio in the waiting row instead of a spinner. */
   phaseMark?: boolean;
 }) {
+  /**
+   * Follow the answer as it arrives.
+   *
+   * StickToBottom already follows content that grows, but a streaming answer
+   * also changes the row *around* it: the waiting row disappears, sources
+   * appear, the block grows a line at a time. Asking explicitly, only while the
+   * reader is already at the bottom, keeps the tail of the answer on screen
+   * without ever fighting someone who scrolled up to read.
+   */
+  const { isAtBottom, scrollToBottom } = useStickToBottomContext();
+  const newestAnswer = messages.filter((m) => m.role === "assistant").at(-1);
+  const answerLength = newestAnswer
+    ? newestAnswer.parts
+        .filter((part) => part.type === "text")
+        .map((part) => (part as { text: string }).text)
+        .join("").length
+    : 0;
+
+  useEffect(() => {
+    if (!isAtBottom) return;
+    scrollToBottom();
+  }, [answerLength, phase, isAtBottom, scrollToBottom]);
+
   return (
     <>
       {messages.map((message) => {
@@ -53,8 +83,11 @@ export function CurioTranscript({
               {message.role === "assistant" ? (
                 <>
                   {text && <MessageResponse>{text}</MessageResponse>}
-                  {citations.length > 0 && (
-                    <Sources defaultOpen>
+                  {/* Only once there is an answer to read. Rendering this while
+                      the answer is still empty put a sources panel on screen
+                      before the thing it was sourcing. */}
+                  {text && citations.length > 0 && (
+                    <Sources>
                       <SourcesTrigger count={citations.length} />
                       <SourcesContent>
                         {citations.map((citation, index) => (
@@ -75,6 +108,7 @@ export function CurioTranscript({
                       </SourcesContent>
                     </Sources>
                   )}
+                  {text && <CopyAnswer text={text} />}
                 </>
               ) : (
                 text
@@ -100,11 +134,55 @@ export function CurioTranscript({
       )}
 
       {error && (
-        <p className="type-caption text-red-600">
-          Something went wrong — try again in a moment.
+        <p className="flex flex-wrap items-center gap-2 type-caption text-red-600">
+          Something went wrong.
+          {onRetry && (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="rounded-md border border-red-600/40 px-2 py-0.5 font-medium transition-colors hover:bg-red-600/10"
+            >
+              Try again
+            </button>
+          )}
         </p>
       )}
     </>
+  );
+}
+
+/**
+ * Copy the answer. The one action every chat has, and the one I use most: an
+ * answer worth quoting is an answer worth pasting somewhere else.
+ */
+function CopyAnswer({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  return (
+    <MessageActions className="opacity-60 transition-opacity hover:opacity-100">
+      <MessageAction
+        label={copied ? "Copied" : "Copy answer"}
+        tooltip={copied ? "Copied" : "Copy"}
+        onClick={() => {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => setCopied(true))
+            .catch(() => undefined);
+        }}
+      >
+        {copied ? (
+          <Check className="h-3.5 w-3.5" />
+        ) : (
+          <Copy className="h-3.5 w-3.5" />
+        )}
+      </MessageAction>
+    </MessageActions>
   );
 }
 

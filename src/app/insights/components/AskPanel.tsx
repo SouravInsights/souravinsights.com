@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, ArrowUpRight } from "lucide-react";
+import { ArrowUp, Square, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -36,7 +36,8 @@ interface AskPanelProps {
 }
 
 export function AskPanel({ suggestions }: AskPanelProps) {
-  const { messages, busy, error, phase, input, setInput, submit } = useCurioChat();
+  const { messages, busy, error, phase, input, setInput, submit, stop, regenerate } =
+    useCurioChat();
   const [chips, setChips] = useState(suggestions);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -82,7 +83,12 @@ export function AskPanel({ suggestions }: AskPanelProps) {
         <ConversationContent className="gap-5 p-4">
           {messages.length === 0 && <CurioIntro size={64} />}
 
-          <CurioTranscript messages={messages} phase={phase} error={error} />
+          <CurioTranscript
+            onRetry={regenerate}
+            messages={messages}
+            phase={phase}
+            error={error}
+          />
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -135,14 +141,25 @@ export function AskPanel({ suggestions }: AskPanelProps) {
           aria-label="Ask about the collection"
           className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-transparent px-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:h-9 sm:text-sm"
         />
-        <button
-          type="submit"
-          disabled={busy || !input.trim()}
-          aria-label="Ask"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40 sm:h-9 sm:w-9"
-        >
-          <ArrowUp className="h-4 w-4" />
-        </button>
+        {busy ? (
+          <button
+            type="button"
+            onClick={stop}
+            aria-label="Stop"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 sm:h-9 sm:w-9"
+          >
+            <Square className="h-3.5 w-3.5 fill-current" />
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={busy || !input.trim()}
+            aria-label="Ask"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40 sm:h-9 sm:w-9"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        )}
       </form>
     </section>
   );
