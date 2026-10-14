@@ -32,10 +32,25 @@ export async function POST(request: NextRequest) {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return err("invalid_body", "Body must be { messages }", 400);
 
-  const saved = await saveConversation(parsed.data.messages as UIMessage[]);
-  return NextResponse.json({
-    data: { id: saved.id, title: saved.title, url: `/curio/${saved.id}` },
-  });
+  try {
+    const saved = await saveConversation(parsed.data.messages as UIMessage[]);
+    return NextResponse.json({
+      data: { id: saved.id, title: saved.title, url: `/curio/${saved.id}` },
+    });
+  } catch (error) {
+    // Say what failed instead of handing the browser a bare 500: this exact
+    // case, the table not existing yet, looked like a mystery on the client.
+    console.error("curio share failed", error);
+    return NextResponse.json(
+      {
+        error: {
+          code: "storage_unavailable",
+          message: "Sharing is not available right now.",
+        },
+      },
+      { status: 503 }
+    );
+  }
 }
 
 export async function GET(request: NextRequest) {

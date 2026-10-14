@@ -20,10 +20,14 @@ export function CurioComposer({
   onSubmit,
   onStop,
   busy,
+  leading,
 }: {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
+  /** Session actions, tucked at the head of the box instead of floating loose
+   *  above it: this row is where a chat keeps its controls. */
+  leading?: React.ReactNode;
   /** Stop the answer that is streaming. Every chat has this, for the answer
    *  that is going the wrong way. */
   onStop?: () => void;
@@ -56,6 +60,7 @@ export function CurioComposer({
       }}
       className="flex items-end gap-2 rounded-lg border border-border bg-card p-2 transition-colors focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30"
     >
+      {leading}
       {/* `min-h-9` matches the send button's height, so an empty box is exactly as
           tall as the button and both centre on the same line. Without it the
           single-line textarea comes out ~1px shorter, `items-end` bottom-aligns

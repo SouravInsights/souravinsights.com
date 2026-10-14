@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Copy, Link2 } from "lucide-react";
+import { Check, Copy, Link2, MoreHorizontal } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Conversation,
   ConversationContent,
@@ -56,6 +61,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
   const [shareState, setShareState] = useState<
     "idle" | "working" | "copied" | "failed"
   >("idle");
+  const [shareFailure, setShareFailure] = useState("");
   const [admin, setAdmin] = useState(false);
   const sharedRef = useRef<{ id: string; count: number } | null>(null);
 
@@ -74,7 +80,8 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
     try {
       await navigator.clipboard.writeText(url);
       setShareState("copied");
-    } catch {
+    } catch (error) {
+      setShareFailure(error instanceof Error ? error.message : "Request failed");
       setShareState("failed");
     }
   };
@@ -101,13 +108,20 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
         body: JSON.stringify({ messages }),
       });
       if (!response.ok) {
+        // Keep the reason on the button rather than swallowing it: a 503 here
+        // has meant the storage was not ready, which is worth being able to see.
+        const detail = (await response.json().catch(() => null)) as
+          | { error?: { message?: string } }
+          | null;
+        setShareFailure(detail?.error?.message ?? `Request failed (${response.status})`);
         setShareState("failed");
         return;
       }
       const { data } = (await response.json()) as { data: { id: string } };
       sharedRef.current = { id: data.id, count: messages.length };
       await copyLink(`${window.location.origin}/curio/${data.id}`);
-    } catch {
+    } catch (error) {
+      setShareFailure(error instanceof Error ? error.message : "Request failed");
       setShareState("failed");
     }
   };
@@ -149,45 +163,69 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
 
             {/* Docked, and clear of the home indicator on a phone. */}
             <div className="shrink-0 pt-2 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
-              {/* The session's own actions, above the box: the answer you are
-                  about to type is not the thing you want to copy. */}
-              {messages.length > 0 && !busy && (
-                <div className="flex items-center justify-end gap-1 pb-1">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      navigator.clipboard
-                        .writeText(transcriptAsMarkdown(messages))
-                        .catch(() => undefined)
-                    }
-                    className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                    Copy transcript
-                  </button>
-
-                  {/* Owner only: a shared link is a public page, so making one
-                      is a decision, not a convenience. */}
-                  {admin && (
-                    <button
-                      type="button"
-                      onClick={share}
-                      disabled={shareState === "working"}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
-                    >
-                      <Link2 className="h-3.5 w-3.5" />
-                      {shareState === "working"
-                        ? "Creating link…"
-                        : shareState === "copied"
-                          ? "Link copied"
-                          : shareState === "failed"
-                            ? "Try again"
-                            : "Share"}
-                    </button>
-                  )}
-                </div>
-              )}
               <CurioComposer
+                leading={
+                  messages.length > 0 && !busy ? (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label="Conversation actions"
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        side="top"
+                        align="start"
+                        sideOffset={8}
+                        collisionPadding={12}
+                        className="w-56 p-1"
+                      >
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigator.clipboard
+                              .writeText(transcriptAsMarkdown(messages))
+                              .catch(() => undefined)
+                          }
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                          Copy transcript
+                        </button>
+
+                        {/* Owner only: a shared link is a public page, so making
+                            one is a decision, not a convenience. */}
+                        {admin && (
+                          <button
+                            type="button"
+                            onClick={share}
+                            disabled={shareState === "working"}
+                            title={
+                              shareState === "failed" ? shareFailure : undefined
+                            }
+                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
+                          >
+                            {shareState === "copied" ? (
+                              <Check className="h-3.5 w-3.5" />
+                            ) : (
+                              <Link2 className="h-3.5 w-3.5" />
+                            )}
+                            {shareState === "working"
+                              ? "Creating link…"
+                              : shareState === "copied"
+                                ? "Link copied"
+                                : shareState === "failed"
+                                  ? "Try again"
+                                  : "Share conversation"}
+                          </button>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  ) : null
+                }
                 onStop={stop}
                 value={input}
                 onChange={setInput}
@@ -242,6 +280,68 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                 action, and the space is what says so. */}
             <div className="mt-4">
               <CurioComposer
+                leading={
+                  messages.length > 0 && !busy ? (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label="Conversation actions"
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        side="top"
+                        align="start"
+                        sideOffset={8}
+                        collisionPadding={12}
+                        className="w-56 p-1"
+                      >
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigator.clipboard
+                              .writeText(transcriptAsMarkdown(messages))
+                              .catch(() => undefined)
+                          }
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                          Copy transcript
+                        </button>
+
+                        {/* Owner only: a shared link is a public page, so making
+                            one is a decision, not a convenience. */}
+                        {admin && (
+                          <button
+                            type="button"
+                            onClick={share}
+                            disabled={shareState === "working"}
+                            title={
+                              shareState === "failed" ? shareFailure : undefined
+                            }
+                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
+                          >
+                            {shareState === "copied" ? (
+                              <Check className="h-3.5 w-3.5" />
+                            ) : (
+                              <Link2 className="h-3.5 w-3.5" />
+                            )}
+                            {shareState === "working"
+                              ? "Creating link…"
+                              : shareState === "copied"
+                                ? "Link copied"
+                                : shareState === "failed"
+                                  ? "Try again"
+                                  : "Share conversation"}
+                          </button>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  ) : null
+                }
                 onStop={stop}
                 value={input}
                 onChange={setInput}

@@ -108,7 +108,7 @@ export function CurioTranscript({
                     </Sources>
                   )}
                   {text && (
-                    <div className="-ml-2 mt-1">
+                    <div className="mt-1 flex justify-end">
                       <CopyButton
                         label="Copy"
                         text={answerAsMarkdown(
