@@ -35,13 +35,64 @@ const titleOf = (messages: UIMessage[]): string => {
   return text.length > 90 ? `${text.slice(0, 89)}…` : text;
 };
 
+/** A question or an answer, trimmed to what a reader actually sees. */
+const MAX_TEXT = 8000;
+
+/**
+ * Keep the shape, drop the bulk.
+ *
+ * A raw tool output carries every retrieved passage, several times the size of
+ * the answer that used it. The page renders the answer text and one short line
+ * per source, so that is what gets stored: the same page, a fraction of the row.
+ */
+function trimForStorage(messages: UIMessage[]): UIMessage[] {
+  return messages.slice(-40).map((message) => {
+    const parts: UIMessage["parts"] = [];
+
+    for (const part of message.parts) {
+      const tool = part as { type: string; output?: unknown };
+
+      if (tool.type === "text") {
+        parts.push({
+          ...part,
+          text: (part as { text: string }).text.slice(0, MAX_TEXT),
+        } as UIMessage["parts"][number]);
+        continue;
+      }
+
+      if (!tool.type.startsWith("tool-") || !tool.output) continue;
+
+      const output = tool.output as {
+        matches?: { url?: string; title?: string }[];
+        url?: string;
+        title?: string;
+      };
+
+      parts.push({
+        ...part,
+        output: Array.isArray(output.matches)
+          ? {
+              matches: output.matches.map((match) => ({
+                url: match.url,
+                title: match.title,
+              })),
+            }
+          : { url: output.url, title: output.title },
+      } as unknown as UIMessage["parts"][number]);
+    }
+
+    return { ...message, parts };
+  });
+}
+
 export async function saveConversation(
   messages: UIMessage[]
 ): Promise<SharedConversation> {
   const id = randomUUID().replace(/-/g, "").slice(0, 12);
+  const trimmed = trimForStorage(messages);
   const [row] = await db
     .insert(conversations)
-    .values({ id, title: titleOf(messages), messages })
+    .values({ id, title: titleOf(trimmed), messages: trimmed })
     .returning();
   return row as SharedConversation;
 }

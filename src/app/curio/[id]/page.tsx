@@ -68,6 +68,7 @@ export default async function SharedConversationPage({
 
   return (
     <CurioShared
+      id={conversation.id}
       title={conversation.title}
       createdAt={conversation.createdAt}
       messages={await withVerifiedSources(conversation.messages)}

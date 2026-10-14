@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { Check, Copy, Link2, MoreHorizontal } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Copy, Link2, MoreHorizontal, Plus } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -21,6 +21,8 @@ import {
 } from "./CurioConversation";
 import { SuggestionRows } from "./SuggestionRows";
 import { shuffled, useCurioChat } from "./use-curio-chat";
+import { readSession, writeSession } from "@/lib/curio/session";
+import posthog from "posthog-js";
 
 /**
  * The quiet link, borrowed from the "Open full page" link in the insights panel:
@@ -47,8 +49,18 @@ const noteLinkClass =
  * something else, so it stays small and that page keeps its own scroll.
  */
 export function CurioHome({ suggestions }: { suggestions: string[] }) {
-  const { messages, busy, error, phase, input, setInput, submit, stop, regenerate } =
-    useCurioChat();
+  const {
+    messages,
+    busy,
+    error,
+    phase,
+    input,
+    setInput,
+    submit,
+    stop,
+    regenerate,
+    newConversation,
+  } = useCurioChat();
   const [chips, setChips] = useState(suggestions);
   /**
    * Sharing. Anyone can do this, so the only thing that needs care is not
@@ -59,7 +71,6 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
     "idle" | "working" | "copied" | "failed"
   >("idle");
   const [shareFailure, setShareFailure] = useState("");
-  const sharedRef = useRef<{ id: string; count: number } | null>(null);
 
   useEffect(() => {
     if (shareState !== "copied" && shareState !== "failed") return;
@@ -81,9 +92,12 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
   const share = async () => {
     if (shareState === "working") return;
 
-    // The same conversation, already shared: just hand the link back.
-    if (sharedRef.current?.count === messages.length) {
-      await copyLink(`${window.location.origin}/curio/${sharedRef.current.id}`);
+    // The same conversation, already shared: hand the same link back. Read from
+    // the tab's session rather than memory, so a refresh does not produce a
+    // second page for the same thing.
+    const stored = readSession();
+    if (stored?.shareId && stored.shareCount === messages.length) {
+      await copyLink(`${window.location.origin}/curio/${stored.shareId}`);
       return;
     }
 
@@ -105,7 +119,12 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
         return;
       }
       const { data } = (await response.json()) as { data: { id: string } };
-      sharedRef.current = { id: data.id, count: messages.length };
+      writeSession({
+        messages,
+        shareId: data.id,
+        shareCount: messages.length,
+      });
+      posthog.capture("curio_shared", { messages: messages.length });
       await copyLink(`${window.location.origin}/curio/${data.id}`);
     } catch (error) {
       setShareFailure(error instanceof Error ? error.message : "Request failed");
@@ -170,6 +189,15 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                         collisionPadding={12}
                         className="w-56 p-1"
                       >
+                        <button
+                          type="button"
+                          onClick={newConversation}
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          New conversation
+                        </button>
+
                         <button
                           type="button"
                           onClick={() =>
@@ -282,6 +310,15 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                         collisionPadding={12}
                         className="w-56 p-1"
                       >
+                        <button
+                          type="button"
+                          onClick={newConversation}
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          New conversation
+                        </button>
+
                         <button
                           type="button"
                           onClick={() =>

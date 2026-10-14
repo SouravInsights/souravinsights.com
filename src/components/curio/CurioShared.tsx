@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import posthog from "posthog-js";
 import type { UIMessage } from "ai";
 import { MessageResponse } from "@/components/ai-elements/message";
 import { Button } from "@/components/ui/button";
@@ -20,14 +22,24 @@ import { dateLabel, domainOf, turnsOf, type Source } from "@/lib/curio/turns";
  * uses, and a copy button that copies markdown so a quote keeps its sources.
  */
 export function CurioShared({
+  id,
   title,
   createdAt,
   messages,
 }: {
+  id: string;
   title: string;
   createdAt: string | Date;
   messages: UIMessage[];
 }) {
+  /**
+   * Someone opened a shared link. This is the only feedback a posted
+   * conversation gives: whether the thing shared on socials was actually read.
+   */
+  useEffect(() => {
+    posthog.capture("curio_shared_opened", { id, turns: turnsOf(messages).length });
+  }, [id, messages]);
+
   const turns = turnsOf(messages);
   const question = (title || turns[0]?.question || "").trim();
 

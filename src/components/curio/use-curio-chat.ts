@@ -14,7 +14,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import posthog from "posthog-js";
-import { useState } from "react";
+import { clearSession, readSession, writeSession } from "@/lib/curio/session";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface Match {
   url: string;
@@ -122,9 +123,42 @@ export function citationsOf(parts: { type: string; state?: string; output?: unkn
 export function useCurioChat() {
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status, error, stop, regenerate } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
-  });
+  const { messages, setMessages, sendMessage, status, error, stop, regenerate } =
+    useChat({
+      transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
+    });
+
+  /**
+   * The tab's copy.
+   *
+   * Restored once on mount, and written on every change after that. `restored`
+   * guards the first write: without it the empty initial state would overwrite
+   * the stored conversation before it had a chance to be read back.
+   */
+  const restored = useRef(false);
+
+  useEffect(() => {
+    if (restored.current) return;
+    restored.current = true;
+    const stored = readSession();
+    if (stored?.messages.length) setMessages(stored.messages);
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (!restored.current) return;
+    const stored = readSession();
+    writeSession({
+      messages,
+      shareId: stored?.shareId,
+      shareCount: stored?.shareCount,
+    });
+  }, [messages]);
+
+  /** Start over, and forget the tab's copy with it. */
+  const newConversation = useCallback(() => {
+    setMessages([]);
+    clearSession();
+  }, [setMessages]);
 
   const busy = status === "submitted" || status === "streaming";
 
@@ -149,5 +183,16 @@ export function useCurioChat() {
     setInput("");
   };
 
-  return { messages, busy, error, phase, input, setInput, submit, stop, regenerate };
+  return {
+    messages,
+    busy,
+    error,
+    phase,
+    input,
+    setInput,
+    submit,
+    stop,
+    regenerate,
+    newConversation,
+  };
 }
