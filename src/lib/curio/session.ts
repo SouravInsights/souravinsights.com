@@ -18,6 +18,12 @@ export interface CurioSession {
   shareId?: string;
   /** How long the conversation was when that link was made. */
   shareCount?: number;
+  /**
+   * The shared conversation this one was continued from, if it was. Lets a
+   * shared page carry on in the reader's tab without touching the snapshot it
+   * came from.
+   */
+  seedId?: string;
 }
 
 export function readSession(): CurioSession | null {
@@ -49,4 +55,50 @@ export function clearSession(): void {
   } catch {
     // Same reasoning as above.
   }
+}
+
+/**
+ * The links this browser has made.
+ *
+ * A visitor has no account, so "your past conversations" can only mean what
+ * their own browser remembers. The session above is per tab; this list is per
+ * device, because a link you made yesterday is still yours today. It holds ids
+ * and titles, never content: opening one reads it from the server.
+ */
+const SHARES_KEY = "curio:shares";
+const MAX_SHARES = 20;
+
+export interface RememberedShare {
+  id: string;
+  title: string;
+  createdAt: string;
+}
+
+export function readShares(): RememberedShare[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(SHARES_KEY);
+    const parsed = raw ? (JSON.parse(raw) as RememberedShare[]) : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((share) => Boolean(share?.id)).slice(0, MAX_SHARES)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Put a link at the top of the list, newest first, without duplicates. */
+export function rememberShare(share: RememberedShare): RememberedShare[] {
+  const next = [
+    share,
+    ...readShares().filter((existing) => existing.id !== share.id),
+  ].slice(0, MAX_SHARES);
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(SHARES_KEY, JSON.stringify(next));
+    } catch {
+      // Same reasoning as the session: a blocked store is not worth breaking.
+    }
+  }
+  return next;
 }

@@ -48,7 +48,9 @@ export async function generateMetadata({
       title: question,
       description,
       type: "article",
+      siteName: "Curio",
       url: `https://www.souravinsights.com/curio/${conversation.id}`,
+      publishedTime: new Date(conversation.createdAt).toISOString(),
     },
     twitter: {
       card: "summary_large_image",

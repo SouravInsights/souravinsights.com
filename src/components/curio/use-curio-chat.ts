@@ -13,6 +13,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
+import type { UIMessage } from "ai";
 import posthog from "posthog-js";
 import { clearSession, readSession, writeSession } from "@/lib/curio/session";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -120,7 +121,9 @@ export function citationsOf(parts: { type: string; state?: string; output?: unkn
   return out;
 }
 
-export function useCurioChat() {
+export function useCurioChat(
+  seed?: { id: string; messages: UIMessage[] }
+) {
   const [input, setInput] = useState("");
 
   const { messages, setMessages, sendMessage, status, error, stop, regenerate } =
@@ -141,8 +144,17 @@ export function useCurioChat() {
     if (restored.current) return;
     restored.current = true;
     const stored = readSession();
+
+    // A shared conversation seeds the tab, but only once per snapshot: the same
+    // page reopened keeps whatever the reader has added to it since.
+    if (seed && stored?.seedId !== seed.id) {
+      setMessages(seed.messages);
+      writeSession({ messages: seed.messages, seedId: seed.id });
+      return;
+    }
+
     if (stored?.messages.length) setMessages(stored.messages);
-  }, [setMessages]);
+  }, [seed, setMessages]);
 
   useEffect(() => {
     if (!restored.current) return;
@@ -151,6 +163,7 @@ export function useCurioChat() {
       messages,
       shareId: stored?.shareId,
       shareCount: stored?.shareCount,
+      seedId: stored?.seedId,
     });
   }, [messages]);
 

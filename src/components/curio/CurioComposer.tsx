@@ -21,10 +21,20 @@ export function CurioComposer({
   onStop,
   busy,
   leading,
+  compact = false,
+  placeholder = "Ask about anything I've saved…",
 }: {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
+  /**
+   * A smaller box for a document page. The chat's composer is the main control
+   * on its screen; on a shared conversation it is one line at the end of a
+   * thread, and a chunky box there reads as the page's subject rather than its
+   * footnote.
+   */
+  compact?: boolean;
+  placeholder?: string;
   /** Session actions, tucked at the head of the box instead of floating loose
    *  above it: this row is where a chat keeps its controls. */
   leading?: React.ReactNode;
@@ -58,7 +68,9 @@ export function CurioComposer({
         event.preventDefault();
         send();
       }}
-      className="flex items-end gap-2 rounded-lg border border-border bg-card p-2 transition-colors focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30"
+      className={`flex items-end rounded-lg border border-border bg-card transition-colors focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30 ${
+        compact ? "gap-1.5 p-1.5" : "gap-2 p-2"
+      }`}
     >
       {leading}
       {/* `min-h-9` matches the send button's height, so an empty box is exactly as
@@ -75,7 +87,7 @@ export function CurioComposer({
         {...({ enterkeyhint: "send" } as unknown as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
         spellCheck={false}
         aria-label="Ask Curio"
-        placeholder="Ask about anything I've saved…"
+        placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
           // Enter sends, Shift+Enter is a newline. While an answer is streaming
@@ -86,25 +98,31 @@ export function CurioComposer({
             send();
           }
         }}
-        className="max-h-40 min-h-9 min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-base leading-relaxed outline-none placeholder:text-faint-foreground sm:text-sm"
+        className={`max-h-40 min-w-0 flex-1 resize-none bg-transparent leading-relaxed outline-none placeholder:text-faint-foreground sm:text-sm ${
+          compact ? "min-h-8 px-1.5 py-1 text-[15px]" : "min-h-9 px-2 py-1.5 text-base"
+        }`}
       />
       {busy && onStop ? (
         <button
           type="button"
           onClick={onStop}
           aria-label="Stop"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+          className={`flex shrink-0 items-center justify-center border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 ${
+            compact ? "h-8 w-8 rounded-md" : "h-9 w-9 rounded-lg"
+          }`}
         >
-          <Square className="h-3.5 w-3.5 fill-current" />
+          <Square className={compact ? "h-3 w-3 fill-current" : "h-3.5 w-3.5 fill-current"} />
         </button>
       ) : (
         <button
           type="submit"
           disabled={busy || !value.trim()}
           aria-label="Ask"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40"
+          className={`flex shrink-0 items-center justify-center border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40 ${
+            compact ? "h-8 w-8 rounded-md" : "h-9 w-9 rounded-lg"
+          }`}
         >
-          <ArrowUp className="h-4 w-4" />
+          <ArrowUp className={compact ? "h-3.5 w-3.5" : "h-4 w-4"} />
         </button>
       )}
     </form>

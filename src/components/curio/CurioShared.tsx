@@ -1,25 +1,38 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
-import posthog from "posthog-js";
 import type { UIMessage } from "ai";
-import { MessageResponse } from "@/components/ai-elements/message";
-import { Button } from "@/components/ui/button";
+import posthog from "posthog-js";
+import { Check, Link2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import rehypeHighlight from "rehype-highlight";
 import { CopyButton, answerAsMarkdown } from "./CopyButton";
+import { Curio } from "./Curio";
+import { CurioBadge } from "./CurioBadge";
+import { CurioComposer } from "./CurioComposer";
+import { useCurioChat } from "./use-curio-chat";
+import { useShareConversation } from "./use-share";
 import { dateLabel, domainOf, turnsOf, type Source } from "@/lib/curio/turns";
 
 /**
- * A shared conversation, as a document.
+ * A shared conversation.
  *
- * Deliberately not the chat. A chat is a place where something is happening: a
- * box to type in, a stream arriving, a scroll that follows you. A shared answer
- * is a thing to read, and a reader wants the question, the answer, and the
- * pages it came from, in that order and without a moving part.
+ * The snapshot is the artifact: it is read from the database, so it keeps
+ * working after the collection underneath it has changed, and the link never
+ * mutates under whoever holds it.
  *
- * The layout follows the article reader, because it is the same job on the same
- * site: one column, a readable measure, the type scale the rest of the site
- * uses, and a copy button that copies markdown so a quote keeps its sources.
+ * It is also continuable, which is the difference between a dead page and a
+ * thread: the tab is seeded with the snapshot, and questions asked from here are
+ * added to the reader's own copy in this browser. Nothing is written back to the
+ * shared page: a link several people hold cannot be edited by one of them. If a
+ * reader wants their version to be a link too, Share makes a new snapshot.
+ *
+ * The answers render with the reader's markdown stack rather than the chat's:
+ * this is a document, and the chat's renderer loads a syntax highlighter at draw
+ * time, which a server-rendered page cannot do.
  */
 export function CurioShared({
   id,
@@ -30,29 +43,66 @@ export function CurioShared({
   id: string;
   title: string;
   createdAt: string | Date;
+  /** The snapshot, as stored when it was shared. */
   messages: UIMessage[];
 }) {
-  /**
-   * Someone opened a shared link. This is the only feedback a posted
-   * conversation gives: whether the thing shared on socials was actually read.
-   */
-  useEffect(() => {
-    posthog.capture("curio_shared_opened", { id, turns: turnsOf(messages).length });
-  }, [id, messages]);
+  const chat = useCurioChat({ id, messages });
+  const { share, copy, shareState, alreadyShared } = useShareConversation(
+    chat.messages
+  );
 
-  const turns = turnsOf(messages);
+  // The snapshot renders on the server; the live copy takes over once the tab has
+  // been seeded. Without this the server would send an empty page and the
+  // conversation would only appear after hydration, which reads as a page that
+  // lost its own content.
+  const seededTurns = turnsOf(messages);
+  const liveTurns = turnsOf(chat.messages);
+  const turns = liveTurns.length >= seededTurns.length ? liveTurns : seededTurns;
   const question = (title || turns[0]?.question || "").trim();
+  const continued = chat.messages.length > messages.length;
+
+  useEffect(() => {
+    posthog.capture("curio_shared_opened", { id, turns: turns.length });
+    // Once per snapshot opened, not per turn.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const shareLabel =
+    shareState === "working"
+      ? "Creating link…"
+      : shareState === "copied"
+        ? "Link copied"
+        : shareState === "failed"
+          ? "Try again"
+          : alreadyShared
+            ? "Copy link"
+            : "Share this conversation";
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 pb-[max(env(safe-area-inset-bottom),2.5rem)] pt-10 sm:px-8 sm:pt-16">
-      <header className="border-b border-border pb-6">
-        <p className="type-label">
-          Curio{createdAt ? ` · shared ${dateLabel(createdAt)}` : ""}
-        </p>
-        <h1 className="type-title mt-3">
-          {question || "A question for Curio"}
-        </h1>
+    // `--tabbar-space` is zeroed here because this route has no tab bar: the
+    // badge's own offset is measured from a band that no longer exists.
+    <div
+      style={{ ["--tabbar-space" as string]: "0px" }}
+      className="mx-auto w-full max-w-2xl px-5 pb-[max(env(safe-area-inset-bottom),6rem)] pt-10 sm:px-8 sm:pt-16"
+    >
+      {/* The header names the thing before the question: the mark, the word,
+          and when it was shared. No separator characters doing the work that
+          spacing should do. */}
+      <header className="flex items-center justify-between gap-4 border-b border-border pb-5">
+        <span className="flex items-center gap-2">
+          <Curio size={26} />
+          <span className="type-label">Curio</span>
+        </span>
+        {createdAt ? (
+          <span className="type-caption text-faint-foreground">
+            Shared {dateLabel(createdAt)}
+          </span>
+        ) : null}
       </header>
+
+      <h1 className="type-display mt-8 max-w-[34rem] text-balance">
+        {question || "A question for Curio"}
+      </h1>
 
       {turns.length === 0 ? (
         <p className="type-body mt-8 text-muted-foreground">
@@ -65,14 +115,16 @@ export function CurioShared({
               key={`${index}-${turn.question}`}
               className="border-b border-border/60 py-7 last:border-b-0"
             >
-              {/* The first question is the page's heading; later ones sit above
-                  their own answer, so a reader always knows what is being
-                  answered without scrolling back. */}
               {index > 0 && <h2 className="type-heading">{turn.question}</h2>}
 
               {turn.answer ? (
                 <div className="type-body mt-3 prose prose-green max-w-none prose-headings:font-semibold prose-a:text-green-700 prose-p:text-gray-700 dark:prose-invert dark:prose-a:text-green-500 dark:prose-p:text-muted-foreground prose-blockquote:border-green-500 prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50">
-                  <MessageResponse>{turn.answer}</MessageResponse>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeHighlight]}
+                  >
+                    {turn.answer}
+                  </ReactMarkdown>
                 </div>
               ) : (
                 <p className="type-caption mt-3 text-faint-foreground">
@@ -96,16 +148,56 @@ export function CurioShared({
         </ol>
       )}
 
-      <footer className="mt-12 rounded-xl border border-border bg-card p-5">
-        <p className="type-heading">Ask your own question</p>
-        <p className="type-caption mt-1">
-          Curio answers from a curated collection of saved links, and cites the
-          pages it used and nothing else.
+      {chat.error && (
+        <p className="mt-6 flex flex-wrap items-center gap-2 type-caption text-red-600">
+          Something went wrong.
+          <button
+            type="button"
+            onClick={() => chat.regenerate()}
+            className="rounded-md border border-red-600/40 px-2 py-0.5 font-medium transition-colors hover:bg-red-600/10"
+          >
+            Try again
+          </button>
         </p>
-        <Button asChild className="mt-4">
-          <Link href="/curio">Open Curio</Link>
-        </Button>
-      </footer>
+      )}
+
+      {/* Continuing: the snapshot stays as it was, the reader's copy grows.
+          A compact box and one quiet action, because this is the footnote to a
+          document, not the subject of an app screen. */}
+      <section className="mt-10">
+        <CurioComposer
+          compact
+          placeholder="Continue this conversation…"
+          value={chat.input}
+          onChange={chat.setInput}
+          onSubmit={chat.submit}
+          onStop={chat.stop}
+          busy={chat.busy}
+        />
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+          <p className="type-caption text-faint-foreground">
+            {chat.phase ??
+              (continued
+                ? "Your questions stay in this browser."
+                : "Your questions stay in this browser; this link keeps the thread as it was shared.")}
+          </p>
+          <button
+            type="button"
+            onClick={share}
+            disabled={shareState === "working"}
+            className="inline-flex items-center gap-1.5 type-caption text-muted-foreground transition-colors hover:text-foreground disabled:opacity-60"
+          >
+            {shareState === "copied" ? (
+              <Check className="h-3.5 w-3.5" />
+            ) : (
+              <Link2 className="h-3.5 w-3.5" />
+            )}
+            {shareLabel}
+          </button>
+        </div>
+      </section>
+
+      <CurioBadge />
     </div>
   );
 }

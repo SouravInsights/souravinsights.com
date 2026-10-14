@@ -21,8 +21,7 @@ import {
 } from "./CurioConversation";
 import { SuggestionRows } from "./SuggestionRows";
 import { shuffled, useCurioChat } from "./use-curio-chat";
-import { readSession, writeSession } from "@/lib/curio/session";
-import posthog from "posthog-js";
+import { useShareConversation } from "./use-share";
 
 /**
  * The quiet link, borrowed from the "Open full page" link in the insights panel:
@@ -62,75 +61,8 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
     newConversation,
   } = useCurioChat();
   const [chips, setChips] = useState(suggestions);
-  /**
-   * Sharing. Anyone can do this, so the only thing that needs care is not
-   * making a second page out of the same conversation: pressing once creates the
-   * snapshot and copies its link, pressing again hands the same link back.
-   */
-  const [shareState, setShareState] = useState<
-    "idle" | "working" | "copied" | "failed"
-  >("idle");
-  const [shareFailure, setShareFailure] = useState("");
-
-  useEffect(() => {
-    if (shareState !== "copied" && shareState !== "failed") return;
-    const timer = window.setTimeout(() => setShareState("idle"), 2200);
-    return () => window.clearTimeout(timer);
-  }, [shareState]);
-
-  /** Put a link on the clipboard, and say so for a moment. */
-  const copyLink = async (url: string) => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setShareState("copied");
-    } catch (error) {
-      setShareFailure(error instanceof Error ? error.message : "Request failed");
-      setShareState("failed");
-    }
-  };
-
-  const share = async () => {
-    if (shareState === "working") return;
-
-    // The same conversation, already shared: hand the same link back. Read from
-    // the tab's session rather than memory, so a refresh does not produce a
-    // second page for the same thing.
-    const stored = readSession();
-    if (stored?.shareId && stored.shareCount === messages.length) {
-      await copyLink(`${window.location.origin}/curio/${stored.shareId}`);
-      return;
-    }
-
-    setShareState("working");
-    try {
-      const response = await fetch("/api/curio/share", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ messages }),
-      });
-      if (!response.ok) {
-        // Keep the reason on the button rather than swallowing it: a 503 here
-        // has meant the storage was not ready, which is worth being able to see.
-        const detail = (await response.json().catch(() => null)) as
-          | { error?: { message?: string } }
-          | null;
-        setShareFailure(detail?.error?.message ?? `Request failed (${response.status})`);
-        setShareState("failed");
-        return;
-      }
-      const { data } = (await response.json()) as { data: { id: string } };
-      writeSession({
-        messages,
-        shareId: data.id,
-        shareCount: messages.length,
-      });
-      posthog.capture("curio_shared", { messages: messages.length });
-      await copyLink(`${window.location.origin}/curio/${data.id}`);
-    } catch (error) {
-      setShareFailure(error instanceof Error ? error.message : "Request failed");
-      setShareState("failed");
-    }
-  };
+  const { share, copy, shareState, shareFailure, shares, alreadyShared } =
+    useShareConversation(messages);
 
   // Shuffle once per visit so the same chips aren't always first, and on mount
   // rather than during render so server and client agree on the first paint.
@@ -231,8 +163,46 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                                 ? "Link copied"
                                 : shareState === "failed"
                                   ? "Try again"
-                                  : "Share conversation"}
+                                  : alreadyShared
+                                    ? "Copy link"
+                                    : "Share conversation"}
                           </button>
+
+                        {/* The links this browser made, so they can be found
+                            again without an account and without a listing on
+                            the server. */}
+                        {shares.length > 0 && (
+                          <>
+                            <div className="my-1 h-px bg-border" />
+                            <p className="px-3 pb-0.5 pt-1.5 type-label">
+                              Your links
+                            </p>
+                            {shares.slice(0, 5).map((share) => (
+                              <div
+                                key={share.id}
+                                className="flex items-center gap-1"
+                              >
+                                <Link
+                                  href={`/curio/${share.id}`}
+                                  target="_blank"
+                                  className="min-w-0 flex-1 truncate rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                >
+                                  {share.title || "A shared conversation"}
+                                </Link>
+                                <button
+                                  type="button"
+                                  aria-label={`Copy link to ${share.title}`}
+                                  onClick={() =>
+                                    copy(`${window.location.origin}/curio/${share.id}`)
+                                  }
+                                  className="mr-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                >
+                                  <Link2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </>
+                        )}
                       </PopoverContent>
                     </Popover>
                   ) : null
@@ -352,8 +322,46 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                                 ? "Link copied"
                                 : shareState === "failed"
                                   ? "Try again"
-                                  : "Share conversation"}
+                                  : alreadyShared
+                                    ? "Copy link"
+                                    : "Share conversation"}
                           </button>
+
+                        {/* The links this browser made, so they can be found
+                            again without an account and without a listing on
+                            the server. */}
+                        {shares.length > 0 && (
+                          <>
+                            <div className="my-1 h-px bg-border" />
+                            <p className="px-3 pb-0.5 pt-1.5 type-label">
+                              Your links
+                            </p>
+                            {shares.slice(0, 5).map((share) => (
+                              <div
+                                key={share.id}
+                                className="flex items-center gap-1"
+                              >
+                                <Link
+                                  href={`/curio/${share.id}`}
+                                  target="_blank"
+                                  className="min-w-0 flex-1 truncate rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                >
+                                  {share.title || "A shared conversation"}
+                                </Link>
+                                <button
+                                  type="button"
+                                  aria-label={`Copy link to ${share.title}`}
+                                  onClick={() =>
+                                    copy(`${window.location.origin}/curio/${share.id}`)
+                                  }
+                                  className="mr-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                                >
+                                  <Link2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </>
+                        )}
                       </PopoverContent>
                     </Popover>
                   ) : null

@@ -130,6 +130,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const press = () => feedback.press();
 
+  /**
+   * A shared conversation is a public document, not a screen of the app.
+   *
+   * It gets none of the chrome: no rail, no tab bar, no roaming cat. Someone
+   * following a link from a timeline is visiting a page, and the navigation of
+   * somebody else's site around it is noise. `/curio` itself keeps the shell,
+   * since that is the app screen for asking.
+   */
+  const isSharedConversation =
+    pathname !== "/curio" && Boolean(pathname?.startsWith("/curio/"));
+
+  if (isSharedConversation) return <>{children}</>;
+
   return (
     <>
       {/* The shell is shadcn's Sidebar. It owns open/collapsed — the cookie, ⌘B,
