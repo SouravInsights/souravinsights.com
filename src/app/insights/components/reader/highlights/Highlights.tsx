@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { createPortal } from "react-dom";
 import { Eraser } from "lucide-react";
 import {
   useCallback,
@@ -45,6 +46,24 @@ const LIFT = [
 const GAP = 12;
 const EDGE = 8;
 
+/**
+ * The selection's box in VIEWPORT coordinates.
+ *
+ * The palette used container coordinates, which is fine on a desktop page and
+ * wrong inside a scrolling panel: a selection near the top of the article put
+ * the palette above the visible area, where nobody can see it or tap it. In
+ * viewport space the palette can be clamped to what is actually on screen.
+ */
+const viewportBounds = (rects: DOMRect[]): { x: number; top: number; bottom: number } | null => {
+  const live = rects.filter((r) => r.width > 0 && r.height > 0);
+  if (!live.length) return null;
+  const left = Math.min(...live.map((r) => r.left));
+  const right = Math.max(...live.map((r) => r.right));
+  const top = Math.min(...live.map((r) => r.top));
+  const bottom = Math.max(...live.map((r) => r.bottom));
+  return { x: (left + right) / 2, top, bottom };
+};
+
 interface Anchor {
   x: number;
   top: number;
@@ -88,22 +107,6 @@ interface Props {
   onDelete: (rowId: number) => void;
 }
 
-function bounds(rects: DOMRect[], stage: DOMRect): Anchor | null {
-  let l = Number.POSITIVE_INFINITY;
-  let r = Number.NEGATIVE_INFINITY;
-  let t = Number.POSITIVE_INFINITY;
-  let b = Number.NEGATIVE_INFINITY;
-  for (const rect of rects) {
-    if (rect.width < 1) continue;
-    l = Math.min(l, rect.left);
-    r = Math.max(r, rect.right);
-    t = Math.min(t, rect.top);
-    b = Math.max(b, rect.bottom);
-  }
-  if (!Number.isFinite(l)) return null;
-  return { x: (l + r) / 2 - stage.left, top: t - stage.top, bottom: b - stage.top };
-}
-
 /** characters of text in `root` before a DOM position */
 function offsetIn(root: Node, node: Node, offset: number): number {
   const range = document.createRange();
@@ -132,6 +135,8 @@ export function Highlights({
   const [wave, setWave] = useState<WaveRequest | null>(null);
   const [dark, setDark] = useState(false);
   const [said, setSaid] = useState("");
+  /** A selection exists right now: the tap target is offered. */
+  const [hasSelection, setHasSelection] = useState(false);
 
   const nextId = useRef(1);
   const played = useRef(0);
@@ -375,51 +380,62 @@ export function Highlights({
     );
     if (same) return { kind: "edit", id: same.id, viaKey: false };
 
-    const anchor = bounds(
-      Array.from(range.getClientRects()),
-      container.getBoundingClientRect()
-    );
+    const anchor = viewportBounds(Array.from(range.getClientRects()));
     if (!anchor) return null;
     return { kind: "new", para, start, end, anchor };
   }, [containerRef]);
 
-  /* The same pointup/selectionchange pairing as the original. */
+  /**
+   * Opening the palette.
+   *
+   * The first version waited for a pointerup before reading the selection, and
+   * ignored selectionchange while the pointer was down. That works with a mouse
+   * and fails on Android: selecting text there is a long press followed by
+   * dragging the handles, and the handles fire no pointerup, so the flag never
+   * came back up and the palette never opened. selectionchange is the only
+   * signal that always arrives, so it is the one this listens to.
+   */
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !admin) return;
-    let pressing = false;
     let timer = 0;
 
     const check = () => {
       const next = read();
+      setHasSelection(next !== null);
       if (next) setOpen(next);
+      else if (live.current.open?.kind === "new") setOpen(null);
+    };
+    const changed = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(check, 120);
     };
     const down = (e: PointerEvent) => {
       const t = e.target as Element;
       if (pop.current?.contains(t)) return;
+      if (
+        t.closest("[data-highlight-affordance]") ||
+        container.contains(t)
+      ) {
+        return;
+      }
       if (live.current.open) setOpen(null);
-      pressing = container.contains(t);
+      setHasSelection(false);
     };
-    const up = () => {
-      if (!pressing) return;
-      pressing = false;
-      window.clearTimeout(timer);
-      timer = window.setTimeout(check, 0);
-    };
-    const changed = () => {
-      if (pressing) return;
-      window.clearTimeout(timer);
-      timer = window.setTimeout(check, 180);
+    const scrolled = () => {
+      // A fixed palette over moving text is a lie: close it and let the
+      // selection be re-read when the page settles.
+      if (live.current.open?.kind === "new") setOpen(null);
     };
 
-    document.addEventListener("pointerdown", down, true);
-    window.addEventListener("pointerup", up);
     document.addEventListener("selectionchange", changed);
+    document.addEventListener("pointerdown", down, true);
+    window.addEventListener("scroll", scrolled, true);
     return () => {
       window.clearTimeout(timer);
-      document.removeEventListener("pointerdown", down, true);
-      window.removeEventListener("pointerup", up);
       document.removeEventListener("selectionchange", changed);
+      document.removeEventListener("pointerdown", down, true);
+      window.removeEventListener("scroll", scrolled, true);
     };
   }, [admin, containerRef, read]);
 
@@ -444,27 +460,43 @@ export function Highlights({
     return () => window.removeEventListener("keydown", key);
   }, [open, close]);
 
-  // Palette positioning, written to the node (needs the palette's own size).
+  /**
+   * Palette positioning, written to the node because it needs the palette's own
+   * size. Everything here is in viewport space and clamped: on a phone the
+   * selection can sit anywhere, including right under the notch or under the
+   * bottom bar, and the palette has to land somewhere a thumb can reach.
+   */
   useLayoutEffect(() => {
     const el = pop.current;
     const container = containerRef.current;
     if (!open || !el || !container) return;
-    const box = container.getBoundingClientRect();
 
-    let at: Anchor | null = null;
+    let at: { x: number; top: number; bottom: number } | null = null;
     if (open.kind === "new") at = open.anchor;
     else {
       const mark = container.querySelector<HTMLElement>(`[data-hl="${open.id}"]`);
-      if (mark) at = bounds(Array.from(mark.getClientRects()), box);
+      if (mark) at = viewportBounds(Array.from(mark.getClientRects()));
     }
     if (!at) return;
 
     const w = el.offsetWidth;
     const h = el.offsetHeight;
-    const above = at.top - GAP - h >= EDGE;
-    const top = above ? at.top - GAP - h : at.bottom + GAP;
-    const left = Math.min(Math.max(at.x - w / 2, EDGE), Math.max(box.width - w - EDGE, EDGE));
-    const ax = Math.min(Math.max(at.x - left, 16), w - 16);
+    const viewportH = window.innerHeight;
+    const viewportW = window.innerWidth;
+
+    const roomAbove = at.top - GAP - h >= EDGE;
+    const roomBelow = at.bottom + GAP + h <= viewportH - EDGE;
+    const above = roomAbove || !roomBelow;
+
+    const top = Math.min(
+      Math.max(above ? at.top - GAP - h : at.bottom + GAP, EDGE),
+      Math.max(viewportH - h - EDGE, EDGE)
+    );
+    const left = Math.min(
+      Math.max(at.x - w / 2, EDGE),
+      Math.max(viewportW - w - EDGE, EDGE)
+    );
+    const ax = Math.min(Math.max(at.x - left, 16), Math.max(w - 16, 16));
 
     el.style.left = `${left}px`;
     el.style.top = `${top}px`;
@@ -624,11 +656,29 @@ export function Highlights({
 
   return (
     <>
+      {/* The guaranteed path. Touch selection is a long press and two drag
+          handles; some of that fires no events a page can hear. This offers a
+          real button whenever text is selected, so highlighting never depends
+          on a gesture reaching us. */}
+      {admin && hasSelection && !open && (
+        <button
+          type="button"
+          data-highlight-affordance
+          onPointerDown={(e) => e.preventDefault()}
+          onClick={() => {
+            const next = read();
+            if (next) setOpen(next);
+          }}
+          className="fixed bottom-[calc(var(--tabbar-space)+0.75rem)] left-1/2 z-[55] -translate-x-1/2 rounded-full border border-border bg-background px-4 py-2 type-caption font-medium shadow-lg"
+        >
+          Highlight
+        </button>
+      )}
       <style>{`
         .reader-kern-off { font-kerning: none; font-variant-ligatures: none; }
       `}</style>
       <AnimatePresence>
-        {open && (
+        {open && createPortal(
           <motion.div
             ref={pop}
             key="palette"
@@ -636,7 +686,7 @@ export function Highlights({
             animate={{ opacity: 1, scale: 1, transition: ENTER }}
             exit={{ opacity: 0, scale: 0.98, transition: LEAVE }}
             onPointerDown={(e) => e.preventDefault()}
-            className="group absolute z-20 flex select-none items-stretch gap-3 rounded-xl border border-border bg-background p-3 max-sm:gap-2 max-sm:p-2.5"
+            className="group fixed z-[60] flex select-none items-stretch gap-3 rounded-xl border border-border bg-background p-3 shadow-lg max-sm:gap-2 max-sm:p-2.5"
             style={{ boxShadow: LIFT }}
           >
             <span
@@ -714,7 +764,8 @@ export function Highlights({
                 </ul>
               )}
             </div>
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </AnimatePresence>
 

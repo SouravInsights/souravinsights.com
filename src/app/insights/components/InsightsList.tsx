@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
+import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, SlidersHorizontal, Tag, Trash2, X } from "lucide-react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsLink } from "../utils/links-data";
 import {
@@ -734,9 +734,11 @@ export default function InsightsList({
                   onClick={() => setFilterMenuOpen((open) => !open)}
                   aria-haspopup="listbox"
                   aria-expanded={filterMenuOpen}
+                  aria-label={`Filter: ${activeFilterLabel}`}
                   className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
                 >
-                  <span className="max-w-[7rem] truncate">
+                  <SlidersHorizontal className="h-4 w-4 shrink-0 sm:hidden" />
+                  <span className="hidden max-w-[7rem] truncate sm:inline">
                     {activeFilterLabel}
                   </span>
                   <ChevronDown
@@ -748,7 +750,7 @@ export default function InsightsList({
                 {filterMenuOpen && (
                   <div
                     role="listbox"
-                    className="absolute right-0 top-full z-30 mt-1 max-h-80 w-52 overflow-y-auto rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
+                    className="absolute right-0 top-full z-30 mt-1 max-h-[min(80svh,26rem)] w-auto min-w-[8rem] max-w-[min(72vw,13rem)] overflow-y-auto overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5"
                   >
                     {filters.map((filter) => (
                       <button
@@ -761,7 +763,7 @@ export default function InsightsList({
                           setActiveCategory(filter.name);
                           setFilterMenuOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-left type-caption transition-colors ${
+                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
                           activeCategory === filter.name
                             ? "bg-foreground/[0.06] text-foreground"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
@@ -785,9 +787,11 @@ export default function InsightsList({
                   onClick={() => setTopicsOpen((open) => !open)}
                   aria-haspopup="dialog"
                   aria-expanded={topicsOpen}
+                  aria-label="Filter by topic"
                   className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
                 >
-                  Topics
+                  <Tag className="h-4 w-4 shrink-0 sm:hidden" />
+                  <span className="hidden sm:inline">Topics</span>
                   {selectedTopics.length > 0 && (
                     <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
                       {selectedTopics.length}
@@ -800,19 +804,19 @@ export default function InsightsList({
                   />
                 </button>
                 {topicsOpen && (
-                  <div className="absolute right-0 top-full z-30 mt-1 w-72 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5">
+                  <div className="absolute right-0 top-full z-30 mt-1 flex max-h-[min(55svh,18rem)] w-[min(72vw,11.5rem)] flex-col overflow-hidden overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5">
                     <div className="p-1">
                       <input
                         type="text"
                         value={topicQuery}
                         onChange={(event) => setTopicQuery(event.target.value)}
-                        placeholder="Find a topic…"
+                        placeholder="Find a topic"
                         spellCheck={false}
                         aria-label="Find a topic"
                         className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
                       />
                     </div>
-                    <div className="max-h-72 overflow-y-auto">
+                    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
                       {topicOptions.length === 0 ? (
                         <p className="px-3 py-2 type-caption text-muted-foreground">
                           No topics match “{topicQuery}”.
@@ -827,7 +831,7 @@ export default function InsightsList({
                               role="option"
                               aria-selected={active}
                               onClick={() => toggleTopic(topic)}
-                              className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors ${
+                              className={`flex w-full items-center justify-between gap-1.5 rounded-[3px] px-2 py-1.5 text-left type-caption transition-colors ${
                                 active
                                   ? "bg-foreground/[0.06] text-foreground"
                                   : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
@@ -924,7 +928,7 @@ export default function InsightsList({
                           setSort(option.value);
                           setSortMenuOpen(false);
                         }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-left type-caption transition-colors ${
+                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
                           sort === option.value
                             ? "bg-foreground/[0.06] text-foreground"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
