@@ -5,6 +5,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   pgTable,
   smallint,
   text,
@@ -142,4 +143,28 @@ export const highlights = pgTable(
       .defaultNow(),
   },
   (table) => [index("highlights_link_id_idx").on(table.linkId)]
+);
+
+/**
+ * Shared chat sessions. A conversation is stored whole — the role, the text and
+ * the links each answer used — because a link that renders the same answer
+ * months later is the point: the collection changes underneath it, but the
+ * answer someone shared should not.
+ *
+ * Read-only and public by id; ids are random, so a session is only reachable by
+ * whoever holds the link. Nothing here is indexed for search.
+ */
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: text("id").primaryKey(),
+    /** The first question, for a title. */
+    title: text("title").notNull().default(""),
+    /** UIMessage[] — parts, not prose, so citations survive the round trip. */
+    messages: jsonb("messages").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("conversations_created_at_idx").on(table.createdAt)]
 );

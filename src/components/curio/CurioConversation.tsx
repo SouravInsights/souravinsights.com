@@ -2,9 +2,10 @@
 
 import type { UIMessage } from "ai";
 import { useEffect, useState } from "react";
-import { Check, Copy, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import posthog from "posthog-js";
 import { useStickToBottomContext } from "use-stick-to-bottom";
+import { CopyButton, answerAsMarkdown } from "./CopyButton";
 import {
   Message,
   MessageContent,
@@ -107,21 +108,18 @@ export function CurioTranscript({
                     </Sources>
                   )}
                   {text && (
-                    <CopyAnswer
-                      text={[
-                        text,
-                        ...(citations.length
-                          ? [
-                              "",
-                              "Sources:",
-                              ...citations.map(
-                                (citation) =>
-                                  `- [${citation.title || citation.url}](${citation.url})`
-                              ),
-                            ]
-                          : []),
-                      ].join("\n")}
-                    />
+                    <div className="-ml-2 mt-1">
+                      <CopyButton
+                        label="Copy"
+                        text={answerAsMarkdown(
+                          text,
+                          citations.map((citation) => ({
+                            title: citation.title,
+                            url: citation.url,
+                          }))
+                        )}
+                      />
+                    </div>
                   )}
                 </>
               ) : (
@@ -162,47 +160,6 @@ export function CurioTranscript({
         </p>
       )}
     </>
-  );
-}
-
-/**
- * Copy the answer, sources included.
- *
- * A ghost icon here was invisible in practice, and a phone has no hover to
- * reveal it, so this is a labelled button the same size as every other control
- * on the screen. The copy is markdown with the links the answer used, because a
- * pasted answer with its sources is worth more than a wall of prose.
- */
-function CopyAnswer({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!copied) return;
-    const timer = window.setTimeout(() => setCopied(false), 1600);
-    return () => window.clearTimeout(timer);
-  }, [copied]);
-
-  return (
-    <div className="mt-1 flex items-center gap-1">
-      <button
-        type="button"
-        onClick={() => {
-          navigator.clipboard
-            .writeText(text)
-            .then(() => setCopied(true))
-            .catch(() => undefined);
-        }}
-        className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-        aria-label={copied ? "Copied" : "Copy answer"}
-      >
-        {copied ? (
-          <Check className="h-3.5 w-3.5" />
-        ) : (
-          <Copy className="h-3.5 w-3.5" />
-        )}
-        {copied ? "Copied" : "Copy"}
-      </button>
-    </div>
   );
 }
 

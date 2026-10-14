@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Copy } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Copy, Link2 } from "lucide-react";
 import {
   Conversation,
   ConversationContent,
@@ -45,6 +45,72 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
   const { messages, busy, error, phase, input, setInput, submit, stop, regenerate } =
     useCurioChat();
   const [chips, setChips] = useState(suggestions);
+  /**
+   * Sharing.
+   *
+   * Nothing is stored until this is pressed: a conversation is private by
+   * default because it does not exist anywhere. Pressing once creates the
+   * snapshot and copies its link; pressing again reuses the same link, so a
+   * session shared twice does not become two pages.
+   */
+  const [shareState, setShareState] = useState<
+    "idle" | "working" | "copied" | "failed"
+  >("idle");
+  const [admin, setAdmin] = useState(false);
+  const sharedRef = useRef<{ id: string; count: number } | null>(null);
+
+  useEffect(() => {
+    setAdmin(window.localStorage.getItem("insights_admin_key") !== null);
+  }, []);
+
+  useEffect(() => {
+    if (shareState !== "copied" && shareState !== "failed") return;
+    const timer = window.setTimeout(() => setShareState("idle"), 2200);
+    return () => window.clearTimeout(timer);
+  }, [shareState]);
+
+  /** Put a link on the clipboard, and say so for a moment. */
+  const copyLink = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareState("copied");
+    } catch {
+      setShareState("failed");
+    }
+  };
+
+  const share = async () => {
+    if (shareState === "working") return;
+    const key = window.localStorage.getItem("insights_admin_key");
+    if (!key) return;
+
+    // The same conversation, already shared: just hand the link back.
+    if (sharedRef.current?.count === messages.length) {
+      await copyLink(`${window.location.origin}/curio/${sharedRef.current.id}`);
+      return;
+    }
+
+    setShareState("working");
+    try {
+      const response = await fetch("/api/curio/share", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({ messages }),
+      });
+      if (!response.ok) {
+        setShareState("failed");
+        return;
+      }
+      const { data } = (await response.json()) as { data: { id: string } };
+      sharedRef.current = { id: data.id, count: messages.length };
+      await copyLink(`${window.location.origin}/curio/${data.id}`);
+    } catch {
+      setShareState("failed");
+    }
+  };
 
   // Shuffle once per visit so the same chips aren't always first, and on mount
   // rather than during render so server and client agree on the first paint.
@@ -86,7 +152,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
               {/* The session's own actions, above the box: the answer you are
                   about to type is not the thing you want to copy. */}
               {messages.length > 0 && !busy && (
-                <div className="flex items-center justify-end pb-1">
+                <div className="flex items-center justify-end gap-1 pb-1">
                   <button
                     type="button"
                     onClick={() =>
@@ -99,6 +165,26 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                     <Copy className="h-3.5 w-3.5" />
                     Copy transcript
                   </button>
+
+                  {/* Owner only: a shared link is a public page, so making one
+                      is a decision, not a convenience. */}
+                  {admin && (
+                    <button
+                      type="button"
+                      onClick={share}
+                      disabled={shareState === "working"}
+                      className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
+                    >
+                      <Link2 className="h-3.5 w-3.5" />
+                      {shareState === "working"
+                        ? "Creating link…"
+                        : shareState === "copied"
+                          ? "Link copied"
+                          : shareState === "failed"
+                            ? "Try again"
+                            : "Share"}
+                    </button>
+                  )}
                 </div>
               )}
               <CurioComposer
