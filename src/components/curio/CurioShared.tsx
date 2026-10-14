@@ -11,6 +11,7 @@ import rehypeSanitize from "rehype-sanitize";
 import rehypeHighlight from "rehype-highlight";
 import { CopyButton, answerAsMarkdown } from "./CopyButton";
 import { Curio } from "./Curio";
+import { CurioWordmark } from "./CurioWordmark";
 import { CurioBadge } from "./CurioBadge";
 import { CurioComposer } from "./CurioComposer";
 import { useCurioChat } from "./use-curio-chat";
@@ -91,7 +92,7 @@ export function CurioShared({
       <header className="flex items-center justify-between gap-4 border-b border-border pb-5">
         <span className="flex items-center gap-2">
           <Curio size={26} />
-          <span className="type-label">Curio</span>
+          <CurioWordmark size="lg" />
         </span>
         {createdAt ? (
           <span className="type-caption text-faint-foreground">

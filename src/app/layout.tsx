@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { SoundProvider } from "@/context/SoundContext";
@@ -15,6 +15,19 @@ const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
 });
 
 const inter = Inter({ subsets: ["latin"] });
+
+/**
+ * Inter's own display cut, for the one wordmark on the site.
+ *
+ * A wordmark set in the same cut as the body text reads as a bold heading; Inter
+ * Tight is narrower and denser, which is what makes a name read as a mark. It is
+ * the same superfamily, so it still looks like this site rather than a borrowed
+ * logo. Exposed as a variable because only CurioWordmark uses it.
+ */
+const interTight = Inter_Tight({
+  subsets: ["latin"],
+  variable: "--font-wordmark",
+});
 
 const DESCRIPTION = `And this is my tiny home on the internet, a place to tell my own stories, share what 
     I’m excited about, what I’m thinking and what I’m currently upto.  I believe, a personal 
@@ -67,7 +80,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${inter.className} ${interTight.variable} antialiased`}>
         <PHProvider>
           <PostHogPageView />
           <ThemeProvider>

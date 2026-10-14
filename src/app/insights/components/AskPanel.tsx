@@ -10,6 +10,7 @@ import {
 } from "@/components/ai-elements/conversation";
 import { Suggestion } from "@/components/ai-elements/suggestion";
 import { Curio } from "@/components/curio/Curio";
+import { CurioWordmark } from "@/components/curio/CurioWordmark";
 import { CurioIntro, CurioTranscript } from "@/components/curio/CurioConversation";
 import { useChipDrift } from "@/components/curio/use-chip-drift";
 import { shuffled, useCurioChat } from "@/components/curio/use-curio-chat";
@@ -66,7 +67,10 @@ export function AskPanel({ suggestions }: AskPanelProps) {
           still runs here — it is this mark's reason to exist. */}
       <header className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border px-4 py-3">
         <Curio size={30} busy={busy} still />
-        <h2 className="type-body font-medium text-foreground">Curio</h2>
+        {/* The name is the wordmark, not a heading that happens to spell it. */}
+        <h2 className="flex items-center">
+          <CurioWordmark size="md" />
+        </h2>
         <span className="type-caption text-faint-foreground">
           answers come only from saved links
         </span>
