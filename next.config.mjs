@@ -76,6 +76,13 @@ const nextConfig = {
   },
 
   experimental: {
+    // The App Router keeps a visited route's RSC payload in the client router
+    // cache. Its dynamic default is 30s, so a link revisited after half a minute
+    // pays the full server render again. The collection itself is revalidated at
+    // 300s, so matching that window keeps repeat navigation instant without
+    // serving anything older than the page already promises.
+    // https://nextjs.org/docs/app/api-reference/next-config-js/staleTimes
+    staleTimes: { dynamic: 300 },
     // Chromium + puppeteer must stay outside the server bundle and their
     // binary must be traced into the /api/link-preview function on Vercel.
     //

@@ -1,5 +1,7 @@
 // src/hooks/usePostViews.ts
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { apiJson } from "@/lib/query/api";
 
 interface UsePostViewsProps {
   slug: string;
@@ -12,52 +14,39 @@ interface UsePostViewsReturn {
   isError: boolean;
 }
 
+/**
+ * Records one view per slug and returns the running total.
+ *
+ * A view is a write, so it goes out exactly once per mount through a mutation
+ * rather than being cached as state. `isLoading` stays true from mount until the
+ * server answers, so the caller keeps its placeholder while the count is unknown.
+ * https://tanstack.com/query/v5/docs/framework/react/guides/mutations
+ */
 export function usePostViews({
   slug,
   initialViews = 0,
 }: UsePostViewsProps): UsePostViewsReturn {
-  const [views, setViews] = useState<number>(initialViews);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
-  const [hasRecorded, setHasRecorded] = useState<boolean>(false);
+  const posted = useRef<string | null>(null);
 
-  // Record a view when the component mounts
+  const mutation = useMutation({
+    mutationFn: () =>
+      apiJson<{ views: number }>("/api/blog/views", {
+        method: "POST",
+        body: JSON.stringify({ slug }),
+      }),
+  });
+
   useEffect(() => {
-    const recordView = async () => {
-      if (!slug || hasRecorded) return;
-
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/blog/views", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ slug }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to record view");
-        }
-
-        const data = await response.json();
-        setViews(data.views);
-        setHasRecorded(true);
-        setIsError(false);
-      } catch (error) {
-        console.error("Error recording view:", error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    recordView();
-  }, [slug, hasRecorded]);
+    if (!slug || posted.current === slug) return;
+    posted.current = slug;
+    mutation.mutate();
+    // One view per slug per mount; `mutate` is stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   return {
-    views,
-    isLoading,
-    isError,
+    views: mutation.data?.views ?? initialViews,
+    isLoading: mutation.isIdle || mutation.isPending,
+    isError: mutation.isError,
   };
 }

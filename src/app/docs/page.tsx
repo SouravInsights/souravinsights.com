@@ -197,10 +197,13 @@ function K({ children }: { children: React.ReactNode }) {
 }
 
 export default async function DocsPage() {
-  const links = await getLinks();
-  const [passages] = await db
-    .select({ total: sql<number>`count(*)::int` })
-    .from(linkChunks);
+  // Two independent reads — the link count and the passage count — go out
+  // together instead of one after the other.
+  // https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-and-sequential-data-fetching
+  const [links, [passages]] = await Promise.all([
+    getLinks(),
+    db.select({ total: sql<number>`count(*)::int` }).from(linkChunks),
+  ]);
 
   const linkCount = links.length.toLocaleString("en-US");
   const passageCount = (passages?.total ?? 0).toLocaleString("en-US");

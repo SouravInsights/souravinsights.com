@@ -17,6 +17,39 @@ export type InsightsLink = LinkData & {
 };
 
 /**
+ * The fields the client list actually renders.
+ *
+ * Every prop a server component passes to a client component is serialized into
+ * the page, so sending a field the client never reads is pure page weight. The
+ * list shows a title and a URL, never a summary or a date — so those stay on the
+ * server. Vercel's guide calls this rule `server-serialization`.
+ * https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#passing-props-from-server-to-client-components
+ */
+export type InsightsClientLink = Pick<
+  InsightsLink,
+  "id" | "urlKey" | "category" | "topics" | "url" | "title"
+>;
+
+/** Keep only the fields above, so a link's summary never reaches the browser. */
+export function toClientLinks(
+  linkData: Record<string, InsightsLink[]>
+): Record<string, InsightsClientLink[]> {
+  return Object.fromEntries(
+    Object.entries(linkData).map(([category, links]) => [
+      category,
+      links.map(({ id, urlKey, category: linkCategory, topics, url, title }) => ({
+        id,
+        urlKey,
+        category: linkCategory,
+        topics,
+        url,
+        title,
+      })),
+    ])
+  );
+}
+
+/**
  * The collection, read from Postgres (Discord is intake-only). Grouped by
  * category now — the AI's call, not the Discord channel the link happened to
  * be dropped in. The shape keeps parity with the Discord-era grouping so the

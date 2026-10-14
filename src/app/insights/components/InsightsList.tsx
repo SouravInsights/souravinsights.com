@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, SlidersHorizontal, Tag, Trash2, X } from "lucide-react";
 import type { InsightsGroup } from "../utils/links-data";
-import type { InsightsLink } from "../utils/links-data";
+import type { InsightsClientLink } from "../utils/links-data";
 import {
   appendUTMParams,
   cleanShareUrl,
@@ -30,7 +30,7 @@ import { prefetchArticle } from "./reader/article-query";
 
 interface InsightsListProps {
   groups: InsightsGroup[];
-  linkData: { [key: string]: InsightsLink[] };
+  linkData: { [key: string]: InsightsClientLink[] };
   previews: Record<string, string>;
   likeCounts: Record<string, number>;
   shuffleSeed: number;
@@ -62,7 +62,7 @@ const shortDomain = (url: string) => {
 const faviconFor = (url: string) =>
   `https://www.google.com/s2/favicons?domain=${shortDomain(url)}&sz=64`;
 
-type EnrichedLink = InsightsLink & { category?: string };
+type EnrichedLink = InsightsClientLink;
 
 /** Every href stays the source; articles additionally open the reader on click. */
 const hrefFor = (link: EnrichedLink) =>

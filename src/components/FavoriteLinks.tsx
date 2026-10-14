@@ -5,6 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 import { emphasisClass } from "@/lib/emphasis";
+import { apiJson } from "@/lib/query/api";
+import { qk } from "@/lib/query/keys";
 
 interface FavoriteLink {
   id: string;
@@ -29,13 +31,14 @@ export function FavoriteLinks() {
   // TanStack Query, like the reader: the endpoint already sends cache headers,
   // so the client keeps the same five-minute freshness without a second layer.
   const { data, isPending } = useQuery({
-    queryKey: ["insights", "latest"],
+    queryKey: qk.insights.latest(),
     queryFn: async (): Promise<FavoriteLink[]> => {
-      const response = await fetch("/api/insights/latest");
-      const payload = await response.json();
+      const payload = await apiJson<{
+        success: boolean;
+        links: FavoriteLink[];
+      }>("/api/insights/latest");
       return payload.success ? payload.links : [];
     },
-    staleTime: 5 * 60 * 1000,
   });
 
   const favorites = (data ?? []).slice(0, 6);

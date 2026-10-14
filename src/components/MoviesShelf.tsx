@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { HTMLAttributes } from "react";
 import Image from "next/image";
 import { Film } from "lucide-react";
 import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
+import { apiJson } from "@/lib/query/api";
+import { qk } from "@/lib/query/keys";
 
 const MAX_MOVIES = 8;
 
@@ -62,29 +64,17 @@ function MovieRow({
 }
 
 function Shelf() {
-  const [movies, setMovies] = useState<MoviePreview[]>([]);
-  const [loading, setLoading] = useState(true);
   const { isDimmed, getItemProps } = useSpotlight();
 
-  useEffect(() => {
-    async function fetchMovies() {
-      try {
-        const response = await fetch("/api/movies");
-        const data = await response.json();
-        if (data.movies) {
-          setMovies(data.movies.slice(0, MAX_MOVIES));
-        }
-      } catch (error) {
-        console.error("Error fetching movies preview:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // TanStack Query holds the movies, so visiting this page again reuses the
+  // cached result instead of refetching. `isPending` is the first load only.
+  const { data, isPending } = useQuery({
+    queryKey: qk.movies(),
+    queryFn: () => apiJson<{ movies?: MoviePreview[] }>("/api/movies"),
+  });
+  const movies = (data?.movies ?? []).slice(0, MAX_MOVIES);
 
-    fetchMovies();
-  }, []);
-
-  if (loading) {
+  if (isPending) {
     return (
       <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:gap-x-6 sm:gap-y-4">
         {[...Array(6)].map((_, index) => (

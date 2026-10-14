@@ -6,9 +6,12 @@
  * `getArticle` dedupes; `prefetchArticle` warms on hover so the click feels
  * instant; `updateArticleMarks` is how highlight writes stay in the cache
  * without a refetch.
+ * https://tanstack.com/query/v5/docs/framework/react/guides/prefetching
  */
 
 import { queryClient } from "@/context/QueryProvider";
+import { apiJson } from "@/lib/query/api";
+import { qk } from "@/lib/query/keys";
 import type { StoredHighlight } from "./ArticleBody";
 
 export interface ArticlePayload {
@@ -22,14 +25,12 @@ export interface ArticlePayload {
   marks: StoredHighlight[];
 }
 
-export const articleKey = (urlKey: string) => ["article", urlKey] as const;
+export const articleKey = (urlKey: string) => qk.article(urlKey);
 
 async function fetchArticle(urlKey: string): Promise<ArticlePayload> {
-  const res = await fetch(
+  const json = await apiJson<{ data: ArticlePayload }>(
     `/api/insights/article?urlKey=${encodeURIComponent(urlKey)}`
   );
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json = (await res.json()) as { data: ArticlePayload };
   return json.data;
 }
 

@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import InsightsList from "@/app/insights/components/InsightsList";
 import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
-import { getInsightsData } from "./utils/links-data";
+import { getInsightsData, toClientLinks } from "./utils/links-data";
 import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
@@ -38,7 +38,14 @@ const linkClass =
   "font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40";
 
 export default async function CuratedLinksPage() {
-  const { groups, linkData } = await getInsightsData();
+  // The collection and the like totals are independent, so they go out together
+  // rather than one after the other — the page then waits for the slowest read,
+  // not the sum of them.
+  // https://nextjs.org/docs/app/building-your-application/data-fetching/patterns#parallel-and-sequential-data-fetching
+  const [{ groups, linkData }, rawLikes] = await Promise.all([
+    getInsightsData(),
+    redis.hgetall<Record<string, number>>("insights:likes"),
+  ]);
 
   // Chips come from the collection itself (scripts/kb-suggestions.ts), not
   // from a hand-written list that drifts into title-echoes.
@@ -55,9 +62,6 @@ export default async function CuratedLinksPage() {
 
   // Like totals for the whole collection, so the list can sort by quality
   // without a request per link.
-  const rawLikes = await redis.hgetall<Record<string, number>>(
-    "insights:likes"
-  );
   const likeCounts: Record<string, number> = {};
   for (const [id, count] of Object.entries(rawLikes ?? {})) {
     likeCounts[id] = Number(count) || 0;
@@ -139,9 +143,12 @@ export default async function CuratedLinksPage() {
             one, and the panel's edge touches the list's toolbar. */}
         <div className="mt-16">
           <SectionHeader title="Browse the collection" />
+          {/* Only the fields the list renders are sent to the client (see
+              `toClientLinks`); a link's summary stays on the server. Everything
+              passed here is serialized into the page, so size is the point. */}
           <InsightsList
             groups={groups}
-            linkData={linkData}
+            linkData={toClientLinks(linkData)}
             previews={previews}
             likeCounts={likeCounts}
             shuffleSeed={shuffleSeed}

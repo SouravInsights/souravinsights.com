@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { apiJson } from "@/lib/query/api";
+import { qk } from "@/lib/query/keys";
 
 export interface LikeState {
   totalLikes: number;
@@ -29,9 +36,11 @@ export interface UseLikesResult extends LikeState {
  * The single source of truth for "liking" anywhere on the site: posts and
  * curated links both read and write through this hook.
  *
- * A like is applied optimistically and then reconciled with the server, so the
- * heart responds instantly while the count stays authoritative. Only the server
- * can reject a like (e.g. the per-visitor cap), and a rejection rolls back.
+ * A like is applied optimistically to the query cache and then reconciled with
+ * the server, so the heart responds instantly while the count stays
+ * authoritative. Only the server can reject a like (e.g. the per-visitor cap),
+ * and a rejection rolls back.
+ * https://tanstack.com/query/v5/docs/framework/react/guides/optimistic-updates
  */
 export function useLikes({
   id,
@@ -41,77 +50,61 @@ export function useLikes({
   initialTotalLikes = 0,
   initialUserLikes = 0,
 }: UseLikesOptions): UseLikesResult {
-  const [totalLikes, setTotalLikes] = useState<number>(initialTotalLikes);
-  const [userLikes, setUserLikes] = useState<number>(initialUserLikes);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const key = qk.likes(endpoint, id);
 
-  useEffect(() => {
-    if (!id) return;
-    let cancelled = false;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: key,
+    enabled: Boolean(id),
+    queryFn: () =>
+      apiJson<LikeState>(`${endpoint}?${param}=${encodeURIComponent(id)}`),
+  });
 
-    const fetchLikes = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${endpoint}?${param}=${encodeURIComponent(id)}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch likes");
+  // The server-rendered counts stand in until the first read lands.
+  const totalLikes = data?.totalLikes ?? initialTotalLikes;
+  const userLikes = data?.userLikes ?? initialUserLikes;
 
-        const data: LikeState = await response.json();
-        if (cancelled) return;
-
-        setTotalLikes(data.totalLikes);
-        setUserLikes(data.userLikes);
-        setIsError(false);
-      } catch (error) {
-        if (!cancelled) setIsError(true);
-        console.error("Error fetching likes:", error);
-      } finally {
-        if (!cancelled) setIsLoading(false);
+  const mutation = useMutation({
+    mutationFn: () =>
+      apiJson<LikeState>(endpoint, {
+        method: "POST",
+        body: JSON.stringify({ [param]: id }),
+      }),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<LikeState>(key);
+      queryClient.setQueryData<LikeState>(key, (current) => {
+        const base = current ?? { totalLikes, userLikes };
+        return {
+          totalLikes: base.totalLikes + 1,
+          userLikes: base.userLikes + 1,
+        };
+      });
+      return { previous };
+    },
+    onError: (_error, _variables, context) => {
+      // Roll back — the server is authoritative.
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(key, context.previous);
       }
-    };
-
-    fetchLikes();
-    return () => {
-      cancelled = true;
-    };
-  }, [id, endpoint, param]);
+    },
+    onSuccess: (next) => queryClient.setQueryData(key, next),
+  });
 
   const addLike = useCallback(async () => {
     if (userLikes >= max) return;
-
-    // Optimistic: respond immediately, reconcile with the server after.
-    const previous: LikeState = { totalLikes, userLikes };
-    setTotalLikes((value) => value + 1);
-    setUserLikes((value) => value + 1);
-
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [param]: id }),
-      });
-      if (!response.ok) throw new Error("Failed to add like");
-
-      const data: LikeState = await response.json();
-      setTotalLikes(data.totalLikes);
-      setUserLikes(data.userLikes);
-      setIsError(false);
-    } catch (error) {
-      // Roll back — the server is authoritative.
-      setTotalLikes(previous.totalLikes);
-      setUserLikes(previous.userLikes);
-      setIsError(true);
-      console.error("Error adding like:", error);
+      await mutation.mutateAsync();
+    } catch {
+      // onError already rolled the optimistic update back.
     }
-  }, [endpoint, param, id, max, totalLikes, userLikes]);
+  }, [userLikes, max, mutation]);
 
   return {
     totalLikes,
     userLikes,
     isLoading,
-    isError,
+    isError: isError || mutation.isError,
     isMaxed: userLikes >= max,
     addLike,
   };

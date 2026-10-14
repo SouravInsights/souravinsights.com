@@ -61,18 +61,28 @@ export async function getPreviewMap(
 
   const map: Record<string, string> = {};
 
-  // Upstash mget is happiest in modest batches.
+  // Upstash mget is happiest in modest batches, and the batches are independent
+  // — fire them together instead of paying the round trip for each in turn.
   const CHUNK = 100;
+  const batches: string[][] = [];
   for (let i = 0; i < unique.length; i += CHUNK) {
-    const batch = unique.slice(i, i + CHUNK);
-    const values = (await redis.mget(
-      ...batch.map((url) => previewKey(url, variant))
-    )) as (string | null)[];
+    batches.push(unique.slice(i, i + CHUNK));
+  }
+
+  const results = await Promise.all(
+    batches.map(
+      (batch) =>
+        redis.mget(...batch.map((url) => previewKey(url, variant))) as Promise<
+          (string | null)[]
+        >
+    )
+  );
+  batches.forEach((batch, batchIndex) => {
     batch.forEach((url, index) => {
-      const value = values?.[index];
+      const value = results[batchIndex]?.[index];
       if (value) map[url] = value;
     });
-  }
+  });
 
   return map;
 }

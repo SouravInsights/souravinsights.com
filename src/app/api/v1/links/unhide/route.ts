@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { hideRequestSchema } from "@/lib/links/api-schemas";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     const count = await setLinksHidden(urls, false);
     revalidatePath("/insights");
     revalidatePath("/api/insights/latest");
+    revalidateTag("links");
     return NextResponse.json({
       data: { urls: urls.map(normalizeUrl), hidden: false, count },
     });
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
 
   revalidatePath("/insights");
   revalidatePath("/api/insights/latest");
+  revalidateTag("links");
 
   return NextResponse.json({
     data: { id: normalizeUrl(url), hidden: false },
