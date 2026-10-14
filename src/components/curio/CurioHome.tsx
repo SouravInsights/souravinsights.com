@@ -2,13 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Copy } from "lucide-react";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import { CurioComposer } from "./CurioComposer";
-import { CurioIntro, CurioTranscript } from "./CurioConversation";
+import {
+  CurioIntro,
+  CurioTranscript,
+  transcriptAsMarkdown,
+} from "./CurioConversation";
 import { SuggestionRows } from "./SuggestionRows";
 import { shuffled, useCurioChat } from "./use-curio-chat";
 
@@ -78,6 +83,24 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
 
             {/* Docked, and clear of the home indicator on a phone. */}
             <div className="shrink-0 pt-2 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+              {/* The session's own actions, above the box: the answer you are
+                  about to type is not the thing you want to copy. */}
+              {messages.length > 0 && !busy && (
+                <div className="flex items-center justify-end pb-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(transcriptAsMarkdown(messages))
+                        .catch(() => undefined)
+                    }
+                    className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                    Copy transcript
+                  </button>
+                </div>
+              )}
               <CurioComposer
                 onStop={stop}
                 value={input}

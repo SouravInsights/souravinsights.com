@@ -7,8 +7,6 @@ import posthog from "posthog-js";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import {
   Message,
-  MessageAction,
-  MessageActions,
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
@@ -108,7 +106,23 @@ export function CurioTranscript({
                       </SourcesContent>
                     </Sources>
                   )}
-                  {text && <CopyAnswer text={text} />}
+                  {text && (
+                    <CopyAnswer
+                      text={[
+                        text,
+                        ...(citations.length
+                          ? [
+                              "",
+                              "Sources:",
+                              ...citations.map(
+                                (citation) =>
+                                  `- [${citation.title || citation.url}](${citation.url})`
+                              ),
+                            ]
+                          : []),
+                      ].join("\n")}
+                    />
+                  )}
                 </>
               ) : (
                 text
@@ -152,8 +166,12 @@ export function CurioTranscript({
 }
 
 /**
- * Copy the answer. The one action every chat has, and the one I use most: an
- * answer worth quoting is an answer worth pasting somewhere else.
+ * Copy the answer, sources included.
+ *
+ * A ghost icon here was invisible in practice, and a phone has no hover to
+ * reveal it, so this is a labelled button the same size as every other control
+ * on the screen. The copy is markdown with the links the answer used, because a
+ * pasted answer with its sources is worth more than a wall of prose.
  */
 function CopyAnswer({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -165,25 +183,49 @@ function CopyAnswer({ text }: { text: string }) {
   }, [copied]);
 
   return (
-    <MessageActions className="opacity-60 transition-opacity hover:opacity-100">
-      <MessageAction
-        label={copied ? "Copied" : "Copy answer"}
-        tooltip={copied ? "Copied" : "Copy"}
+    <div className="mt-1 flex items-center gap-1">
+      <button
+        type="button"
         onClick={() => {
           navigator.clipboard
             .writeText(text)
             .then(() => setCopied(true))
             .catch(() => undefined);
         }}
+        className="inline-flex h-8 items-center gap-1.5 rounded-md px-2 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+        aria-label={copied ? "Copied" : "Copy answer"}
       >
         {copied ? (
           <Check className="h-3.5 w-3.5" />
         ) : (
           <Copy className="h-3.5 w-3.5" />
         )}
-      </MessageAction>
-    </MessageActions>
+        {copied ? "Copied" : "Copy"}
+      </button>
+    </div>
   );
+}
+
+/** The whole conversation as markdown, for pasting into a note or a chat. */
+export function transcriptAsMarkdown(messages: UIMessage[]): string {
+  return messages
+    .map((message) => {
+      const text = message.parts
+        .filter((part) => part.type === "text")
+        .map((part) => (part as { text: string }).text)
+        .join("");
+      const citations = citationsOf(
+        message.parts as { type: string; output?: unknown }[]
+      );
+      const heading = message.role === "user" ? "**You**" : "**Curio**";
+      const sources = citations.length
+        ? `\n\nSources:\n${citations
+            .map((citation) => `- [${citation.title || citation.url}](${citation.url})`)
+            .join("\n")}`
+        : "";
+      return `${heading}\n\n${text}${sources}`;
+    })
+    .join("\n\n---\n\n");
 }
 
 /**
