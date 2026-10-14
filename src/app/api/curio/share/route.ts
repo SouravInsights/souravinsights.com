@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { clientIp, shareLimiter } from "@/lib/links/ratelimit";
+import {
+  clientIp,
+  shareDailyLimiter,
+  shareLimiter,
+} from "@/lib/links/ratelimit";
 import { getConversation, saveConversation } from "@/lib/curio/conversations";
 import type { UIMessage } from "ai";
 
@@ -23,8 +27,12 @@ const err = (code: string, message: string, status: number) =>
   NextResponse.json({ error: { code, message } }, { status });
 
 export async function POST(request: NextRequest) {
-  const rate = await shareLimiter.limit(`share:${clientIp(request.headers)}`);
-  if (!rate.success) {
+  const who = clientIp(request.headers);
+  const [burst, day] = await Promise.all([
+    shareLimiter.limit(`share:${who}`),
+    shareDailyLimiter.limit(`share-day:${who}`),
+  ]);
+  if (!burst.success || !day.success) {
     return err("rate_limited", "Too many conversations shared just now", 429);
   }
 

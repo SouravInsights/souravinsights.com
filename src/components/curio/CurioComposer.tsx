@@ -69,6 +69,7 @@ export function CurioComposer({
         ref={textareaRef}
         value={value}
         rows={1}
+        maxLength={2000}
         // React's types have not caught up with enterkeyhint; the DOM does, and
         // it is what turns a phone keyboard's Enter key into "send".
         {...({ enterkeyhint: "send" } as unknown as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}

@@ -11,6 +11,10 @@ import { chatModel } from "./model";
 import { SYSTEM_PROMPT } from "./prompt";
 import { search } from "./search";
 import { readPageFresh } from "./fetch-link";
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "@/db";
+import { links } from "@/db/schema";
+import { normalizeUrl } from "@/app/insights/utils/urlUtils";
 
 /**
  * The agent. One tool, a capped number of steps, and the model pinned in
@@ -140,8 +144,17 @@ const scopedPrompt = (scope: AgentScope) =>
     "beyond what the article covers, say so; do not roam the collection.",
   ].join("\n");
 
+export interface AgentHooks {
+  /** Called once the answer is done, with the tokens the whole question cost. */
+  onFinish?: (totalTokens: number) => void;
+}
+
 /** Stream an answer for the given conversation. */
-export async function runAgent(messages: UIMessage[], scope?: AgentScope) {
+export async function runAgent(
+  messages: UIMessage[],
+  scope?: AgentScope,
+  hooks: AgentHooks = {}
+) {
   return streamText({
     model: chatModel(),
     system: scope ? scopedPrompt(scope) : SYSTEM_PROMPT,
@@ -150,6 +163,17 @@ export async function runAgent(messages: UIMessage[], scope?: AgentScope) {
       ? { search_knowledge: scopedSearchKnowledge(scope.linkId) }
       : agentTools(),
     stopWhen: stepCountIs(MAX_STEPS),
+    onFinish: (event) => {
+      // The number that matters for the daily budget. Field names have moved
+      // between SDK versions, so both are read before giving up on zero.
+      const usage = event as {
+        totalUsage?: { totalTokens?: number };
+        usage?: { totalTokens?: number };
+      };
+      hooks.onFinish?.(
+        usage.totalUsage?.totalTokens ?? usage.usage?.totalTokens ?? 0
+      );
+    },
   });
 }
 
@@ -183,6 +207,24 @@ export function fetchLinkTool() {
           error: `Already read ${MAX_FETCHES} pages for this question — answer from those.`,
         };
       }
+
+      // Only pages this collection holds. The tool exists to re-read a saved
+      // link for today's numbers; without this check any visitor could point it
+      // at any address, which turns Curio into a stranger's fetch proxy.
+      const [saved] = await db
+        .select({ id: links.id })
+        .from(links)
+        .where(
+          and(eq(links.urlKey, normalizeUrl(url)), isNull(links.hiddenAt))
+        )
+        .limit(1);
+      if (!saved) {
+        return {
+          error:
+            "That page is not in the collection, so I cannot read it. Answer from the saved passages instead.",
+        };
+      }
+
       used++;
 
       try {

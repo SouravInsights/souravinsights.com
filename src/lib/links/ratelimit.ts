@@ -17,7 +17,8 @@ export const adminLimiter = new Ratelimit({
 
 /**
  * Public agent: a model call is not a GET. Two limits — 8 questions/minute to
- * stop bursts, and 60/day so one visitor can't drain the OpenRouter balance.
+ * stop bursts, and 30/day, because a personal collection has nobody who needs
+ * more than thirty answers in a day and a script wants thousands.
  */
 export const chatLimiter = new Ratelimit({
   redis,
@@ -27,7 +28,7 @@ export const chatLimiter = new Ratelimit({
 
 export const chatDailyLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(60, "1 d"),
+  limiter: Ratelimit.slidingWindow(30, "1 d"),
   prefix: "rl:chat-day",
 });
 
@@ -40,6 +41,13 @@ export const shareLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(6, "10 m"),
   prefix: "rl:share",
+});
+
+/** Shared pages are rows: six per ten minutes, ten a day, per address. */
+export const shareDailyLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "1 d"),
+  prefix: "rl:share-day",
 });
 
 export function clientIp(headers: Headers): string {
