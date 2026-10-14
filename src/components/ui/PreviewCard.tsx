@@ -128,7 +128,7 @@ function getServerSnapshotTouchDevice() {
   return false; // assume non-touch on the server
 }
 
-function useIsTouchDevice() {
+export function useIsTouchDevice() {
   return useSyncExternalStore(
     subscribeTouchDevice,
     getSnapshotTouchDevice,

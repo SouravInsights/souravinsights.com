@@ -14,9 +14,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // `scroll` is the tall capture the hover preview pans through; anything
+    // else is the original viewport crop.
+    const variant =
+      request.nextUrl.searchParams.get("variant") === "scroll"
+        ? "scroll"
+        : "viewport";
+
     // Cached links resolve instantly; misses capture once and are stored.
     const refresh = request.nextUrl.searchParams.get("refresh") === "1";
-    const preview = await generatePreview(target, { refresh });
+    const preview = await generatePreview(target, { refresh, variant });
 
     // The grid warms previews and needs the stored URL back, so it asks for
     // JSON; the image itself can use the redirect directly.

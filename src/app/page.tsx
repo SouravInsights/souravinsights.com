@@ -15,6 +15,10 @@ import { OpinionsSection } from "@/components/OpinionsSection";
 import { EssayHighlights } from "@/components/EssayHighlights";
 import { featuredProjects } from "@/app/projects/projects-data";
 import {
+  ScrollPreviewProvider,
+  ScrollPreviewTrigger,
+} from "@/components/ui/ScrollPreview";
+import {
   Figma,
   Obsidian,
   Spotify,
@@ -47,6 +51,12 @@ const companies = [
     logo: "https://pbs.twimg.com/profile_images/2090749736764497920/jUEcfiH8_400x400.jpg",
     website: "https://rabbithole.gg",
   },
+];
+
+/** The home-page links that get the hover scroll-through. Fixed and small. */
+const previewUrls = [
+  ...companies.map((company) => company.website),
+  ...featuredProjects.map((project) => project.url),
 ];
 
 const myToolkit = {
@@ -329,32 +339,43 @@ export default function Home() {
           </FadeIn>
         </div>
 
+        <ScrollPreviewProvider urls={previewUrls}>
         <Panel
           title="Companies"
           className="lg:col-span-4"
           bodyClassName="flex flex-wrap content-start gap-x-6 gap-y-4"
         >
           {companies.map((company, index) => (
-            <motion.a
+            <ScrollPreviewTrigger
               key={company.name}
-              href={company.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
+              url={company.website}
+              name={company.name}
             >
-              <div className="relative h-6 w-6 shrink-0">
-                <Image
-                  src={company.logo}
-                  alt={`${company.name} logo`}
-                  fill
-                  className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
-                />
-              </div>
-              <span className="type-body text-foreground">{company.name}</span>
-            </motion.a>
+              <motion.a
+                href={company.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.3,
+                  delay: Math.min(index, 12) * 0.03,
+                }}
+              >
+                <div className="relative h-6 w-6 shrink-0">
+                  <Image
+                    src={company.logo}
+                    alt={`${company.name} logo`}
+                    fill
+                    className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
+                  />
+                </div>
+                <span className="type-body text-foreground">
+                  {company.name}
+                </span>
+              </motion.a>
+            </ScrollPreviewTrigger>
           ))}
         </Panel>
 
@@ -368,33 +389,42 @@ export default function Home() {
             const logoIsSvg = project.logo.endsWith(".svg");
 
             return (
-              <motion.a
+              <ScrollPreviewTrigger
                 key={project.slug}
-                href={`/projects#${project.slug}`}
-                className="group flex flex-col"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: Math.min(index, 12) * 0.03 }}
+                url={project.url}
+                name={project.name}
               >
-                <div className="flex items-center gap-2.5">
-                  <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
-                    <Image
-                      src={project.logo}
-                      alt={`${project.name} logo`}
-                      fill
-                      unoptimized={logoIsSvg}
-                      className="object-cover"
-                    />
+                <motion.a
+                  href={`/projects#${project.slug}`}
+                  className="group flex flex-col"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: Math.min(index, 12) * 0.03,
+                  }}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
+                      <Image
+                        src={project.logo}
+                        alt={`${project.name} logo`}
+                        fill
+                        unoptimized={logoIsSvg}
+                        className="object-cover"
+                      />
+                    </div>
+                    <h3 className="type-heading transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+                      {project.name}
+                    </h3>
                   </div>
-                  <h3 className="type-heading transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
-                    {project.name}
-                  </h3>
-                </div>
-                <p className="type-caption mt-2">{project.note}</p>
-              </motion.a>
+                  <p className="type-caption mt-2">{project.note}</p>
+                </motion.a>
+              </ScrollPreviewTrigger>
             );
           })}
         </Panel>
+        </ScrollPreviewProvider>
 
         <Panel title="Recent Essays" href="/blog" className="lg:col-span-6">
           <EssayHighlights />
