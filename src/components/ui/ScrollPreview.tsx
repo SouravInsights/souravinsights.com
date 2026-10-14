@@ -166,13 +166,31 @@ export function ScrollPreviewTrigger({
   const isTouchDevice = useIsTouchDevice();
   const context = useContext(ScrollPreviewContext);
   const src = context?.previews[url];
-  // Anchor the card to the pointer, not to the trigger's box. A tall trigger (a
-  // project card) would otherwise open the card below the whole box, far from
-  // the cursor. `alignOffset` moves it along the horizontal axis, `sideOffset`
-  // along the vertical one — both measured from the trigger.
+
+  // Pointer anchoring (desktop): the card follows the cursor, not the trigger's
+  // box, so a tall project card does not throw it far from the point.
   const [alignOffset, setAlignOffset] = useState(-CARD_WIDTH / 2);
   const [sideOffset, setSideOffset] = useState(10);
   const frameRef = useRef<number | null>(null);
+
+  // Touch anchoring: there is no hover, so a long press opens the same card
+  // below the link while a plain tap still navigates. Tap elsewhere or scroll
+  // to dismiss.
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const pressTimer = useRef<number | null>(null);
+  const pressStart = useRef<{ x: number; y: number } | null>(null);
+  const didLongPress = useRef(false);
+
+  const cancelPress = useCallback(() => {
+    if (pressTimer.current !== null) {
+      window.clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
+    pressStart.current = null;
+  }, []);
+
+  useEffect(() => () => cancelPress(), [cancelPress]);
 
   useEffect(
     () => () => {
@@ -181,7 +199,22 @@ export function ScrollPreviewTrigger({
     []
   );
 
-  if (isTouchDevice) return <>{children}</>;
+  // Dismiss a touch preview on an outside tap or any scroll. Radix's own close
+  // is ignored on touch (see onOpenChange) so it cannot cut a long press short.
+  useEffect(() => {
+    if (!open || !isTouchDevice) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (triggerRef.current?.contains(event.target as Node)) return;
+      setOpen(false);
+    };
+    const onScroll = () => setOpen(false);
+    document.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [open, isTouchDevice]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -207,22 +240,73 @@ export function ScrollPreviewTrigger({
     });
   };
 
+  const handleTouchStart = (event: React.TouchEvent) => {
+    cancelPress();
+    const touch = event.touches[0];
+    pressStart.current = { x: touch.clientX, y: touch.clientY };
+    didLongPress.current = false;
+    pressTimer.current = window.setTimeout(() => {
+      didLongPress.current = true;
+      window.getSelection()?.removeAllRanges();
+      setOpen(true);
+    }, 400);
+  };
+
+  const handleTouchMove = (event: React.TouchEvent) => {
+    const start = pressStart.current;
+    if (!start || pressTimer.current === null) return;
+    const touch = event.touches[0];
+    // The finger is scrolling, not pressing.
+    if (Math.hypot(touch.clientX - start.x, touch.clientY - start.y) > 10) {
+      cancelPress();
+    }
+  };
+
+  const handleClickCapture = (event: React.MouseEvent) => {
+    // The long press already did its job; do not also follow the link.
+    if (didLongPress.current) {
+      event.preventDefault();
+      event.stopPropagation();
+      didLongPress.current = false;
+    }
+  };
+
   return (
     <TooltipPrimitive.Root
-      onOpenChange={(open) => {
-        if (open) context?.warm(url);
+      open={open}
+      onOpenChange={(next) => {
+        // On touch, only our own handler closes the card.
+        if (isTouchDevice && !next) return;
+        setOpen(next);
+        if (next) context?.warm(url);
       }}
     >
-      <TooltipPrimitive.Trigger asChild onMouseMove={handleMouseMove}>
+      <TooltipPrimitive.Trigger
+        asChild
+        ref={triggerRef}
+        onMouseMove={isTouchDevice ? undefined : handleMouseMove}
+        onTouchStart={isTouchDevice ? handleTouchStart : undefined}
+        onTouchMove={isTouchDevice ? handleTouchMove : undefined}
+        onTouchEnd={isTouchDevice ? cancelPress : undefined}
+        onContextMenu={
+          isTouchDevice
+            ? (event) => {
+                if (didLongPress.current) event.preventDefault();
+              }
+            : undefined
+        }
+        onClickCapture={isTouchDevice ? handleClickCapture : undefined}
+      >
         {children}
       </TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal>
         <TooltipPrimitive.Content
           side="bottom"
-          sideOffset={sideOffset}
+          sideOffset={isTouchDevice ? 10 : sideOffset}
           align="start"
-          alignOffset={alignOffset}
-          avoidCollisions={false}
+          alignOffset={isTouchDevice ? 0 : alignOffset}
+          collisionPadding={12}
+          avoidCollisions={isTouchDevice}
           className={cn(
             "pointer-events-none z-50 overflow-hidden rounded-lg border border-border bg-background shadow-lg shadow-black/10",
             "origin-[var(--radix-tooltip-content-transform-origin)]",
