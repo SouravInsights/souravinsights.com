@@ -117,7 +117,7 @@ export default async function CuratedLinksPage() {
         {/* The collection is a public dataset as well as a page, and this is
             where curiosity peaks: you have just watched the agent answer from
             it. The line used to sit at the very bottom of the page in the
-            faintest text tier, below ~490 links, where nobody found it. */}
+            faintest text tier, where nobody found it. */}
         <p className="type-caption mt-4">
           All of this is queryable from outside the site, over{" "}
           <Link href="/api/docs" className={linkClass}>
