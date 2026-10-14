@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
@@ -24,29 +24,23 @@ const shortDomain = (url: string) => {
 };
 
 export function FavoriteLinks() {
-  const [favorites, setFavorites] = useState<FavoriteLink[]>([]);
-  const [loading, setLoading] = useState(true);
   const { isDimmed, getItemProps } = useSpotlight();
 
-  useEffect(() => {
-    async function fetchFavorites() {
-      try {
-        const response = await fetch("/api/insights/latest");
-        const data = await response.json();
-        if (data.success) {
-          setFavorites(data.links.slice(0, 6));
-        }
-      } catch (error) {
-        console.error("Error fetching favorite links:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // TanStack Query, like the reader: the endpoint already sends cache headers,
+  // so the client keeps the same five-minute freshness without a second layer.
+  const { data, isPending } = useQuery({
+    queryKey: ["insights", "latest"],
+    queryFn: async (): Promise<FavoriteLink[]> => {
+      const response = await fetch("/api/insights/latest");
+      const payload = await response.json();
+      return payload.success ? payload.links : [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
-    fetchFavorites();
-  }, []);
+  const favorites = (data ?? []).slice(0, 6);
 
-  if (loading) {
+  if (isPending) {
     return (
       <div className="flex flex-col">
         {[...Array(6)].map((_, index) => (

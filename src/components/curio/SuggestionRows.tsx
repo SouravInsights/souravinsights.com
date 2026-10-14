@@ -29,7 +29,7 @@ export function SuggestionRows({
   disabled?: boolean;
   lanes?: number;
 }) {
-  // Dealt round-robin, so every lane stays a mix of channels instead of each
+  // Dealt round-robin, so every lane stays a mix of categories instead of each
   // lane becoming one category.
   const dealt = Array.from({ length: lanes }, (_, lane) =>
     suggestions.filter((_, index) => index % lanes === lane)

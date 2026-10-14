@@ -1,31 +1,36 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, Trash2, X } from "lucide-react";
-import { DiscordChannel, LinkData } from "../utils/discordApi";
+import type { InsightsGroup } from "../utils/links-data";
+import type { InsightsLink } from "../utils/links-data";
 import {
   appendUTMParams,
+  cleanShareUrl,
   dedupeByUrl,
   normalizeUrl,
   seededShuffle,
   sortByNewestId,
   sortByOldestId,
 } from "../utils/urlUtils";
-import { CHANNEL_LABELS, CHANNEL_ORDER } from "../utils/channels";
+import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "./LikeButton";
+import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
 import {
   PreviewCardProvider,
   PreviewCardTrigger,
 } from "@/components/ui/PreviewCard";
 import { PreviewLoader } from "@/components/ui/PreviewLoader";
+import { ReaderView } from "./reader/ReaderView";
+import { prefetchArticle } from "./reader/article-query";
 
 interface InsightsListProps {
-  channels: DiscordChannel[];
-  linkData: { [key: string]: LinkData[] };
+  groups: InsightsGroup[];
+  linkData: { [key: string]: InsightsLink[] };
   previews: Record<string, string>;
   likeCounts: Record<string, number>;
   shuffleSeed: number;
@@ -57,22 +62,35 @@ const shortDomain = (url: string) => {
 const faviconFor = (url: string) =>
   `https://www.google.com/s2/favicons?domain=${shortDomain(url)}&sz=64`;
 
-type EnrichedLink = LinkData & { category?: string };
+type EnrichedLink = InsightsLink & { category?: string };
+
+/** Every href stays the source; articles additionally open the reader on click. */
+const hrefFor = (link: EnrichedLink) =>
+  appendUTMParams(link.url, {
+    utm_source: "souravinsights.com",
+    utm_medium: "curated_links",
+  });
 
 export default function InsightsList({
-  channels,
+  groups,
   linkData,
   previews,
   likeCounts,
   shuffleSeed,
 }: InsightsListProps) {
   const router = useRouter();
-  const [activeChannel, setActiveChannel] = useState("all");
+  // The reader is a view of this page: which article (urlKey) is open, if any.
+  const [reading, setReading] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef<HTMLDivElement>(null);
+  const [topicsOpen, setTopicsOpen] = useState(false);
+  const [topicQuery, setTopicQuery] = useState("");
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const topicsMenuRef = useRef<HTMLDivElement>(null);
   const [sort, setSort] = useState<SortMode>("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -91,63 +109,117 @@ export default function InsightsList({
   const runningRef = useRef(0);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const sortedChannels = useMemo(
+  const sortedGroups = useMemo(
     () =>
-      channels
-        // Only surface channels we have a label/order for. Anything else
-        // (e.g. a stale cached channel list) would otherwise leak in as a raw
-        // channel name like "opportunities".
-        .filter((channel) => channel.name in CHANNEL_LABELS)
+      groups
+        // Only surface categories we have a label/order for. Anything else
+        // would leak in as a raw name.
+        .filter(
+          (group) =>
+            (CATEGORY_ORDER as string[]).includes(group.name)
+        )
         .sort(
           (a, b) =>
-            CHANNEL_ORDER.indexOf(a.name) - CHANNEL_ORDER.indexOf(b.name)
+            (CATEGORY_ORDER as string[]).indexOf(a.name) -
+            (CATEGORY_ORDER as string[]).indexOf(b.name)
         ),
-    [channels]
+    [groups]
   );
 
   const filters = useMemo(
     () => [
       { name: "all", label: "All" },
-      ...sortedChannels.map((channel) => ({
-        name: channel.name,
-        label: CHANNEL_LABELS[channel.name],
+      ...sortedGroups.map((group) => ({
+        name: group.name,
+        label: categoryLabel(group.name),
       })),
     ],
-    [sortedChannels]
+    [sortedGroups]
   );
 
   const activeFilterLabel =
-    filters.find((filter) => filter.name === activeChannel)?.label ?? "All";
+    filters.find((filter) => filter.name === activeCategory)?.label ?? "All";
+
+  /**
+   * The topic universe, counted across the whole visible list (not the
+   * filtered view) so counts stay stable while you narrow. 643 topics exist;
+   * 393 appear once. The picker shows the head (3+ links) and a search reaches
+   * the long tail without ever putting it on screen unasked.
+   */
+  const topicCounts = useMemo(() => {
+    // Counted inside the active category, so a count always matches what
+    // picking that topic will actually show you.
+    const scope =
+      activeCategory === "all"
+        ? sortedGroups.flatMap((group) => linkData[group.name] ?? [])
+        : linkData[activeCategory] ?? [];
+    const counts = new Map<string, number>();
+    for (const link of scope) {
+      for (const topic of link.topics ?? []) {
+        counts.set(topic, (counts.get(topic) ?? 0) + 1);
+      }
+    }
+    return counts;
+  }, [activeCategory, sortedGroups, linkData]);
+
+  const topicOptions = useMemo(() => {
+    const all = Array.from(topicCounts.entries()).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
+    const query = topicQuery.trim().toLowerCase();
+    if (query) return all.filter(([topic]) => topic.includes(query)).slice(0, 60);
+    return all.filter(([, count]) => count >= 3).slice(0, 40);
+  }, [topicCounts, topicQuery]);
+
+  const toggleTopic = (topic: string) => {
+    feedback.select();
+    setSelectedTopics((current) =>
+      current.includes(topic)
+        ? current.filter((t) => t !== topic)
+        : [...current, topic]
+    );
+  };
 
   // Every link in the active view, newest first.
   const links = useMemo<EnrichedLink[]>(() => {
     const source: EnrichedLink[] =
-      activeChannel === "all"
-        ? sortedChannels.flatMap((channel) =>
-            (linkData[channel.name] || []).map((link) => ({
+      activeCategory === "all"
+        ? sortedGroups.flatMap((group) =>
+            (linkData[group.name] || []).map((link) => ({
               ...link,
-              category: channel.name,
+              category: group.name,
             }))
           )
-        : (linkData[activeChannel] || []).map((link) => ({
+        : (linkData[activeCategory] || []).map((link) => ({
             ...link,
-            category: activeChannel,
+            category: activeCategory,
           }));
 
     // Newest first, then collapse the same URL posted to more than one
-    // channel so a link never appears twice in a view.
+    // category so a link never appears twice in a view.
     return dedupeByUrl(sortByNewestId(source));
-  }, [activeChannel, sortedChannels, linkData]);
+  }, [activeCategory, sortedGroups, linkData]);
 
   const filteredLinks = useMemo(() => {
+    let result = links;
+
+    // Topics read as "either of these" — narrowing with AND dead-ends fast on
+    // topics this small; category and search stay strict.
+    if (selectedTopics.length > 0) {
+      result = result.filter((link) =>
+        selectedTopics.some((topic) => (link.topics ?? []).includes(topic))
+      );
+    }
+
     const query = searchTerm.trim().toLowerCase();
-    if (!query) return links;
-    return links.filter(
+    if (!query) return result;
+    return result.filter(
       (link) =>
         link.title.toLowerCase().includes(query) ||
-        link.url.toLowerCase().includes(query)
+        link.url.toLowerCase().includes(query) ||
+        (link.topics ?? []).some((topic) => topic.includes(query))
     );
-  }, [links, searchTerm]);
+  }, [links, searchTerm, selectedTopics]);
 
   // Quality sort keeps newest-first order for ties (Array.sort is stable).
   const sortedLinks = useMemo(() => {
@@ -161,7 +233,7 @@ export default function InsightsList({
 
   useEffect(() => {
     setVisibleItems(ITEMS_PER_PAGE);
-  }, [activeChannel, searchTerm, sort, view]);
+  }, [activeCategory, searchTerm, sort, view]);
 
   // Close the category menu on outside click or Escape.
   useEffect(() => {
@@ -200,6 +272,25 @@ export default function InsightsList({
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [sortMenuOpen]);
+
+  // And the topics picker.
+  useEffect(() => {
+    if (!topicsOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!topicsMenuRef.current?.contains(event.target as Node)) {
+        setTopicsOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setTopicsOpen(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [topicsOpen]);
 
   // Remember the chosen view and sort across visits.
   useEffect(() => {
@@ -273,6 +364,30 @@ export default function InsightsList({
   const visibleRef = useRef<Set<string>>(new Set());
   const refreshedRef = useRef<Set<string>>(new Set());
   const feedback = useFeedback();
+
+  // Open an article in the reader overlay; Back/Escape closes it. History gets
+  // an entry so the browser's back button returns to the list exactly as left.
+  const openReader = (link: EnrichedLink) => {
+    window.history.pushState({ reader: link.urlKey }, "");
+    setReading(link.urlKey);
+  };
+
+  const closeReader = useCallback(() => {
+    if ((window.history.state as { reader?: string } | null)?.reader) {
+      window.history.back();
+    } else {
+      setReading(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onPopState = (event: PopStateEvent) => {
+      const state = event.state as { reader?: string } | null;
+      setReading(state?.reader ?? null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const loadPreview = async (
     url: string,
@@ -640,24 +755,115 @@ export default function InsightsList({
                         key={filter.name}
                         type="button"
                         role="option"
-                        aria-selected={activeChannel === filter.name}
+                        aria-selected={activeCategory === filter.name}
                         onClick={() => {
                           feedback.select();
-                          setActiveChannel(filter.name);
+                          setActiveCategory(filter.name);
                           setFilterMenuOpen(false);
                         }}
                         className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-2 text-left type-caption transition-colors ${
-                          activeChannel === filter.name
+                          activeCategory === filter.name
                             ? "bg-foreground/[0.06] text-foreground"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
                         }`}
                       >
                         {filter.label}
-                        {activeChannel === filter.name && (
+                        {activeCategory === filter.name && (
                           <Check className="h-3.5 w-3.5 shrink-0" />
                         )}
                       </button>
                     ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Topics — a picker, not a cloud: the head is listed, the long
+                  tail is a search away. Either-of semantics. */}
+              <div ref={topicsMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setTopicsOpen((open) => !open)}
+                  aria-haspopup="dialog"
+                  aria-expanded={topicsOpen}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
+                >
+                  Topics
+                  {selectedTopics.length > 0 && (
+                    <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
+                      {selectedTopics.length}
+                    </span>
+                  )}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
+                      topicsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {topicsOpen && (
+                  <div className="absolute right-0 top-full z-30 mt-1 w-72 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5">
+                    <div className="p-1">
+                      <input
+                        type="text"
+                        value={topicQuery}
+                        onChange={(event) => setTopicQuery(event.target.value)}
+                        placeholder="Find a topic…"
+                        spellCheck={false}
+                        aria-label="Find a topic"
+                        className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
+                      />
+                    </div>
+                    <div className="max-h-72 overflow-y-auto">
+                      {topicOptions.length === 0 ? (
+                        <p className="px-3 py-2 type-caption text-muted-foreground">
+                          No topics match “{topicQuery}”.
+                        </p>
+                      ) : (
+                        topicOptions.map(([topic, count]) => {
+                          const active = selectedTopics.includes(topic);
+                          return (
+                            <button
+                              key={topic}
+                              type="button"
+                              role="option"
+                              aria-selected={active}
+                              onClick={() => toggleTopic(topic)}
+                              className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors ${
+                                active
+                                  ? "bg-foreground/[0.06] text-foreground"
+                                  : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                              }`}
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                <span
+                                  className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] border ${
+                                    active
+                                      ? "border-foreground bg-foreground text-background"
+                                      : "border-muted-foreground/40"
+                                  }`}
+                                >
+                                  {active && <Check className="h-2.5 w-2.5" />}
+                                </span>
+                                <span className="truncate">{topic}</span>
+                              </span>
+                              <span className="shrink-0 tabular-nums text-faint-foreground">
+                                {count}
+                              </span>
+                            </button>
+                          );
+                        })
+                      )}
+                    </div>
+                    {selectedTopics.length > 0 && (
+                      <div className="mt-1 border-t border-border p-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTopics([])}
+                          className="w-full rounded-[3px] px-3 py-1.5 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
+                        >
+                          Clear topics
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -783,11 +989,45 @@ export default function InsightsList({
         />
       </div>
 
+      {/* Active topics: only exist when a filter is on — chips as a receipt. */}
+      {selectedTopics.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 px-3">
+          {selectedTopics.map((topic) => (
+            <button
+              key={topic}
+              type="button"
+              onClick={() => toggleTopic(topic)}
+              className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
+              aria-label={`Remove topic ${topic}`}
+            >
+              {topic}
+              <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setSelectedTopics([])}
+            className="type-caption text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Links */}
       <div className="mt-6">
         {visibleLinks.length === 0 ? (
           <p className="px-3 py-10 text-center type-caption">
-            No links match “{searchTerm}”.
+            Nothing matches these filters.
+            {selectedTopics.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setSelectedTopics([])}
+                className="ml-2 font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Clear topics
+              </button>
+            )}
           </p>
         ) : view === "list" ? (
           <>
@@ -803,10 +1043,7 @@ export default function InsightsList({
 
             <div className="flex flex-col">
               {visibleLinks.map((link, index) => {
-                const href = appendUTMParams(link.url, {
-                  utm_source: "souravinsights.com",
-                  utm_medium: "curated_links",
-                });
+                const href = hrefFor(link);
 
                 return (
                   <div key={link.id}>
@@ -815,6 +1052,11 @@ export default function InsightsList({
                       <LinkRow
                         link={link}
                         href={href}
+                        onRead={
+                          link.category === "article"
+                            ? () => openReader(link)
+                            : undefined
+                        }
                         previewSrc={
                           previewMap[link.url] ??
                           `/api/link-preview?url=${encodeURIComponent(link.url)}`
@@ -837,10 +1079,7 @@ export default function InsightsList({
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {visibleLinks.map((link, index) => {
-              const href = appendUTMParams(link.url, {
-                utm_source: "souravinsights.com",
-                utm_medium: "curated_links",
-              });
+              const href = hrefFor(link);
 
               return (
                 <FadeIn
@@ -851,6 +1090,11 @@ export default function InsightsList({
                   <LinkGridCard
                     link={link}
                     href={href}
+                    onRead={
+                      link.category === "article"
+                        ? () => openReader(link)
+                        : undefined
+                    }
                     previewSrc={previewMap[link.url]}
                     isVisible={visibleUrls.has(link.url)}
                     isFailed={failedUrls.has(link.url)}
@@ -945,7 +1189,38 @@ export default function InsightsList({
       )}
 
       </div>
+
+      <AnimatePresence>
+        {reading && (
+          <ReaderView
+            key={reading}
+            urlKey={reading}
+            onClose={closeReader}
+          />
+        )}
+      </AnimatePresence>
     </PreviewCardProvider>
+  );
+}
+
+/**
+ * Copy the link, tracking stripped. Hover-revealed on desktop; always on for
+ * touch, where there is no hover to reveal it. The clipboard itself is the
+ * shared CopyButton — one implementation for docs and the collection.
+ */
+const COPY_VISIBILITY =
+  "opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100";
+
+function CopyLinkButton({ url }: { url: string }) {
+  const feedback = useFeedback();
+  return (
+    <CopyButton
+      iconOnly
+      value={cleanShareUrl(url)}
+      label="clean link"
+      className={COPY_VISIBILITY}
+      onCopied={feedback.press}
+    />
   );
 }
 
@@ -980,6 +1255,7 @@ function LinkRow({
   selectMode,
   selected,
   onToggle,
+  onRead,
 }: {
   link: EnrichedLink;
   href: string;
@@ -989,6 +1265,7 @@ function LinkRow({
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
+  onRead?: () => void;
 }) {
   const lead = (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
@@ -1069,6 +1346,21 @@ function LinkRow({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={
+          onRead
+            ? (event) => {
+                // Left-click reads in place; middle/ctrl-click still opens the site.
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                  event.preventDefault();
+                  onRead();
+                }
+              }
+            : undefined
+        }
+        onMouseEnter={
+          // Hover warms the article, so the click opens instantly.
+          onRead ? () => prefetchArticle(link.urlKey) : undefined
+        }
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         {lead}
@@ -1076,7 +1368,8 @@ function LinkRow({
         {domain}
       </a>
 
-      <div className="flex w-24 shrink-0 items-center justify-end gap-2">
+      <div className="flex w-24 shrink-0 items-center justify-end gap-1.5">
+        <CopyLinkButton url={link.url} />
         {isAdmin && (
           <button
             type="button"
@@ -1106,6 +1399,7 @@ function LinkGridCard({
   selectMode,
   selected,
   onToggle,
+  onRead,
 }: {
   link: EnrichedLink;
   href: string;
@@ -1119,6 +1413,7 @@ function LinkGridCard({
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
+  onRead?: () => void;
 }) {
   const media = (
     <div className="relative aspect-[40/21] w-full overflow-hidden bg-secondary">
@@ -1193,7 +1488,10 @@ function LinkGridCard({
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         ) : (
-          <LikeButton linkId={link.id} />
+          <span className="flex items-center gap-1">
+            <CopyLinkButton url={link.url} />
+            <LikeButton linkId={link.id} />
+          </span>
         )}
       </div>
     </div>
@@ -1234,6 +1532,19 @@ function LinkGridCard({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={
+          onRead
+            ? (event) => {
+                if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                  event.preventDefault();
+                  onRead();
+                }
+              }
+            : undefined
+        }
+        onMouseEnter={
+          onRead ? () => prefetchArticle(link.urlKey) : undefined
+        }
         className="flex flex-1 flex-col"
       >
         {media}

@@ -18,7 +18,26 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
  */
 
 export const EMBEDDING_MODEL_ID = "openai/text-embedding-3-small";
-export const CHAT_MODEL_ID = "openai/gpt-4o-mini";
+/**
+ * The agent's model. Moved off gpt-4o-mini after measuring both on the same
+ * questions: mini answered "which sandboxes exist for running agent code" in
+ * one search and six one-line blurbs, deepseek searched per facet and answered
+ * with features, prices and the differences. On "who should I follow for
+ * design engineering" deepseek named six people with their actual work,
+ * adjacent names, where to find more, and what the collection lacks — 662
+ * words against mini's silence. Slower (20-30s on search-heavy questions) and
+ * worth it; answers stream, so the wait is visible.
+ */
+export const CHAT_MODEL_ID = "deepseek/deepseek-v4.1-flash";
+
+/**
+ * The pipeline model (classify + describe). Split from CHAT_MODEL_ID: the
+ * agent wants latency and tool-calling cost, the pipeline wants judgement.
+ * Current pick by golden-set score: deepseek-v4.1-flash (91.4% golden at
+ * prompt v5, $0.04 per full-collection run — the bake-off table lives in
+ * docs/review/categorization-feedback.md §8).
+ */
+export const PIPELINE_MODEL_ID = "deepseek/deepseek-v4.1-flash";
 
 /**
  * Used by one offline script, `scripts/kb-suggestions.ts`, which writes the Ask
@@ -47,6 +66,12 @@ export const embeddingModel = () =>
 
 /** The chat model, for the agent that writes answers. */
 export const chatModel = () => client()(CHAT_MODEL_ID);
+
+/** The pipeline model, for understand (classify + describe). */
+export const pipelineModel = () => client()(PIPELINE_MODEL_ID);
+
+/** Any chat model by id — the classify probe's bake-off dial. */
+export const modelById = (id: string) => client()(id);
 
 /** The copy model, for the offline script that writes the suggestion chips. */
 export const suggestionModel = () => client()(SUGGESTION_MODEL_ID);

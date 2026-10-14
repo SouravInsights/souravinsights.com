@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 import redis from "@/app/lib/redis";
-import { readArticle } from "./extract";
+import { readPage } from "./read";
 
 /**
  * Read one page fresh, for when the stored passages aren't enough. Compare needs
@@ -176,8 +176,11 @@ export async function readPageFresh(url: string): Promise<FetchedPage> {
   }
 
   const { finalUrl, html } = await fetchHtml(url);
-  const article = readArticle(html, finalUrl);
-  if (!article) {
+  // The same reader the pipeline uses (defuddle), so a fresh read and a stored
+  // read see a page the same way. The old v1 extractor that lived in extract.ts
+  // was a second implementation of this job and is gone.
+  const read = await readPage(html, finalUrl);
+  if (!read || !read.markdown.trim()) {
     // Worth saying out loud: most pages we can't read need JavaScript, and
     // pretending otherwise sends the model looking for reasons that aren't there.
     throw new Error("That page has no readable text — it may need JavaScript.");
@@ -185,8 +188,8 @@ export async function readPageFresh(url: string): Promise<FetchedPage> {
 
   const page = {
     url: finalUrl,
-    title: article.title,
-    text: article.text.slice(0, MAX_TEXT_CHARS),
+    title: read.title || "",
+    text: read.markdown.slice(0, MAX_TEXT_CHARS),
   };
 
   await redis.set(key, page, { ex: CACHE_TTL_SECONDS }).catch(() => undefined);

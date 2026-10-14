@@ -101,7 +101,7 @@ Reliability rules, applied everywhere:
 | :--- | :--- | :--- | :--- |
 | LLM + embeddings | OpenRouter for both — chat via `@openrouter/ai-sdk-provider`, embeddings via its `POST /api/v1/embeddings` (OpenAI-compatible) with `openai/text-embedding-3-small` | Embeddings: **~$0.05 one-time** (~450 pages × ~3K tokens). Chat: ~3.5K tokens/query ≈ **$0.001/query** | Credits already live on OpenRouter. One `OPENROUTER_API_KEY`, one `model.ts` boundary — a third id there (`suggestionModel()`) serves the offline chip script, which runs by hand. 1536 dims matches the existing `vector(1536)` column — no schema change. Chat model pinned to `openai/gpt-4o-mini` in `model.ts` (tool-calling-capable). |
 | Vector + text store | **Neon Postgres + pgvector** (existing DB) | $0 — free tier (0.5GB); 5K chunks ≈ 35MB | One service, plain SQL, Drizzle already in the repo. Changed from my earlier Upstash Vector pick: chunks are relational (chunk → link → channel), and one dependency beats two free ones. pgvector is also the standard thing worth learning. |
-| Extraction | `fetch` + `@mozilla/readability` over **jsdom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. jsdom is external by Next's own default list, and **pinned to 26.1.0**: 27+ requires ESM-only packages that a CommonJS `require("jsdom")` cannot load on Vercel's runtime, and `/api/insights/chat` does require it (see `docs/kb/02-extraction.md`). |
+| Extraction | `fetch` + `@mozilla/readability` over **jsdom** (Readability needs a real DOM; `node-html-parser` won't do); fallback to headless Chromium for JS-heavy pages | $0 | No scraping SaaS. We already run headless Chromium for screenshots — reuse the pattern. jsdom is external by Next's own default list, and **pinned to 26.1.0**: 27+ requires ESM-only packages that a CommonJS `require("jsdom")` cannot load on Vercel's runtime, and `/api/insights/chat` does require it (extraction is defuddle now — `src/lib/kb/read.ts`). |
 | Scheduling | Trigger.dev | $0 free tier | The sync task already detects + persists new links; extraction hooks in right after insert. |
 | Auth-ish for public APIs | Upstash Redis ratelimits + visitor cookie pattern (already used by likes) | $0 | Public agent without accounts. |
 
@@ -113,7 +113,9 @@ Reliability rules, applied everywhere:
 
 The tables (`links`, `link_chunks`) and every column's reasoning live in `links-registry-and-api.md` — single source of truth, not repeated here. This spec only adds what retrieval does with them.
 
-Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/channel, excludes hidden and dead rows (same filter as `getLinks()`), and ranks by meaning alone. Two details worth pinning down: group the nearest chunks by link before ranking (the closest chunks can all be from one page), and don't rank by likes — the collection gets too few likes for that signal to mean anything.
+Embedding text per chunk = chunk content. Retrieval joins back through `links` for title/URL/category, excludes hidden and dead rows (same filter as `getLinks()`), and ranks by meaning alone. Two details worth pinning down: group the nearest chunks by link before ranking (the closest chunks can all be from one page), and don't rank by likes — the collection gets too few likes for that signal to mean anything.
+
+**Retrieval, fixed 2026-10-14 (the RAG was blind to whole categories).** `article` and `tool` links carry ~12 passages each; `people`, `publication`, `inspiration`, `directory` and `learning` carry exactly ONE — their summary. So 94% of all vectors were article/tool chunks, and a shallow 60-passage pool let two long articles fill it: measured, "galleries for real app motion" ranked 60fps.design FIRST among passages and still never reached the agent. `search.ts` now (a) pulls a 200-passage pool with at most 3 passages per link, (b) runs a second ranking over summary passages only — one vector per link, every category compared fairly — and fuses the two by best similarity, and (c) takes a real `category` filter, so kind-questions ("people to follow", "tools for a job") can be restricted; the dead `channel` parameter is gone from the API, MCP tool and agent tool, and the agent prompt is told to use it. Verified on the failing questions: 60fps.design first, five real people for "who should I follow for design engineering", boat/Butter/Daytona for sandboxes.
 
 **Chunking params (don't overthink):** ~500 tokens, ~15% overlap, split on paragraph boundaries. Citation unit = chunk → URL. The text that gets *embedded* is prefixed with `{title} — {channel}:` — a bare passage like "it also handles soft deletes well" is unfindable, the header makes it searchable. The stored `content` stays clean.
 
@@ -123,7 +125,7 @@ Embedding text per chunk = chunk content. Retrieval joins back through `links` f
 
 ### 1. Ask — the public agent (solves problems 2 & 3)
 
-Chat panel on the page. One tool: `search_knowledge(query, channel?)`. The loop: retrieve → maybe search again with a refined query → answer in a few sentences with real citations rendered as link cards (favicon, domain, title). The page keeps its existing like button; citations just don't show like counts.
+Chat panel on the page. One tool: `search_knowledge(query, category?, limit?)`. The loop: retrieve → search again per facet → answer with real citations rendered as link cards (favicon, domain, title). **Rewritten 2026-10-14:** the prompt used to ask for "a couple of sentences, then the links" and got exactly that — asked which sandboxes exist for running agent code, it listed six names and said nothing about any of them. Now the shape is: direct answer in one or two sentences, then the substance (one line per item: what it does, who it is for, the concrete detail the page gives), differences when the reader is choosing, what the collection does not cover, inline citations. The agent searches per facet and may ask for more results; `MAX_STEPS` went 4 → 8 after a run made ten searches and hit the cap before writing a word. The model moved `gpt-4o-mini → deepseek/deepseek-v4.1-flash`: measured on the same questions, mini answered in one search with six blurbs where deepseek answered with features, prices and the differences (and 662 words on "who should I follow for design engineering"). Slower — 20-45s when it searches widely — and answers stream, so the wait is visible. `scripts/kb-ask.ts` runs any question through this same prompt, tools and model. The page keeps its existing like button; citations just don't show like counts.
 
 Because retrieval is over **contents**, this does what the page never could:
 - "something to test color contrast" → finds tools whose *pages* mention it
@@ -142,7 +144,7 @@ I use it from my editor via curl/MCP later; anyone writing about design/engineer
 
 "Compare sandbox services in the collection." Agent retrieves candidates, then can **fetch a page fresh** (`fetch_link` tool, 24h Redis cache, max 3 per question) when stored chunks aren't enough — e.g. a pricing detail. Returns a small table + a recommendation with tradeoffs. Choosing tools is a weekly pain; this is where the agent earns trust.
 
-**Status: built.** `fetch_link` is a second tool on the same agent (`src/lib/kb/fetch-link.ts`), with the 24h cache and the 3-per-question cap, and the panel renders its pages as citations next to the searched passages — otherwise a comparison would cite nothing. It is also the **only SSRF surface in the project**: the URL comes from a model that has just read untrusted page text. Guarded on every hop; see `docs/kb/05-failure-modes.md` for the one gap that is known and accepted.
+**Status: built.** `fetch_link` is a second tool on the same agent (`src/lib/kb/fetch-link.ts`), with the 24h cache and the 3-per-question cap, and the panel renders its pages as citations next to the searched passages — otherwise a comparison would cite nothing. It is also the **only SSRF surface in the project**: the URL comes from a model that has just read untrusted page text. Guarded on every hop; the one known gap (DNS rebinding) is documented in the tool itself.
 
 ### Next, and last in this spec: MCP
 
@@ -171,7 +173,7 @@ Two of the three things originally written here as "Later" were imagined futures
 4. **Extraction QA loop**: read the extracts by eye, fix the extractor, repeat. Weak extractor = weak KB, so this is the real product work.
 5. Runtime honesty: agent answers must only contain tool-returned URLs; PostHog records every question (`insights_asked`) and every citation click (`insights_citation_clicked`), which is the signal that says whether answers are actually used.
 
-**Extraction check: built.** `scripts/kb-fixtures.ts` froze 25 real pages into `eval/fixtures/`, and `kb-eval.ts` now reads each of them offline with the real reader — 25/25 at the moment. **Still not built:** the automated answer-grounding check (check 3 in `docs/kb/04-evals.md`).
+**Extraction check: retired.** The fixture harness and its 25 frozen pages were removed with the v1 eval machinery. Extraction is now defuddle, and the checks that matter are the ones that ship: `kb-classify-probe.ts` (categories against the golden set, stored markdown, ~$0.04), `kb-topics-test.ts` (13 gates, offline), `kb-topics-health.ts --assert` (diseases in a run), `kb-ask.ts` (any question through the real agent), and `eval/test-questions.json` (125 questions for a deployment). **Still not built:** an automated answer-grounding check — answers are judged by hand today.
 
 ---
 
@@ -179,12 +181,12 @@ Two of the three things originally written here as "Later" were imagined futures
 
 Where the build disagreed with this spec, or the spec was silent and I chose. Brief on purpose — the reasoning is the point.
 
-- **Extractor — three refinements.** The ladder worked, but the bulk run had pages marked `failed` that render fine one at a time. One Chromium per *run* instead of per page; a hard 25s cap per page, because a single URL hung a whole run; and a fall back to `document.body.innerText` when Readability finds under 50 words — it throws away the text on app-style pages. In `docs/kb/02-extraction.md`.
+- **Extractor — three refinements.** The ladder worked, but the bulk run had pages marked `failed` that render fine one at a time. One Chromium per *run* instead of per page; a hard 25s cap per page, because a single URL hung a whole run; and a fall back to `document.body.innerText` when Readability finds under 50 words — it throws away the text on app-style pages. That ladder lives in `render.ts` + `read.ts` now.
 - **Description-only channels are indexed.** The spec's "description-level only" governed *fetching*, was silent on *indexing*, and the build read it as "don't index". That left 138 links (portfolios, design, newsletters) invisible to the agent. Now title + description is stored as one passage. No fetch added.
 - **Chunks embed with a title/channel header.** The spec said "embedding text = chunk content". A bare passage like "it also handles soft deletes well" is unfindable without the title beside it.
 - **`--status` flag on kb-extract.** The spec had no way to re-read rows that came back weak. It was needed the moment the extractor improved.
 - **Eval scale.** The spec said ~40 answerable queries; there are 12. Written by hand against the real collection, so it is honest but small — a smoke test, not a benchmark.
-- **Suggestion chips exist at all.** Not in the spec. Hand-written ones drifted into title-echoes ("Scale your Next.js app"); the first derived version answered that and went bland instead ("updates on React Native development"). They are now written from each item's stored opening passage, must name a subject, must retrieve the item they claim, are refused if they match the empty shapes, and are quota'd by how much there is to read (20 chips for reading-list, 5 for newsletters) — `scripts/kb-suggestions.ts`. The copy uses its own model (`suggestionModel()`), because the chat model writes topics where a chip needs a hook.
+- **Suggestion chips exist at all.** Not in the spec. Hand-written ones drifted into title-echoes ("Scale your Next.js app"); the first derived version answered that and went bland instead ("updates on React Native development"). Two later rewrites followed the collection: **2026-10-13** the chips were regenerated from the stored summaries (the page's own voice, 2–3 sentences) in ONE pass over the whole collection instead of per Discord channel, because isolated batches repeated each other and never saw the collection as a whole. **2026-10-14** they gained three things the review asked for: four kinds (single item · connection between two or three · theme · browse — "which tools for agent memory"), a coverage quota per CATEGORY rather than per channel (the 85-link tool category had been spoken for by one chip), a truth check (a second model call reads each chip against its own evidence and drops anything vague, unsupported or misstated — retrieval alone never caught those), and a grouped output keyed by the category each chip speaks for, with `wide` for questions that only work by crossing several. **2026-10-14, later the same day:** chips are written **per category**, each with its own intent and examples (a tool, a publication and a gallery are not asked the same question — "what does The Pudding actually publish" vs "which sandbox fits long-running agents"), plus one wide pass for threads that cross categories; and every survivor passes a **substance check** — the question goes to the index, a model reads the retrieved passages and says whether the collection truly answers it, which is the cheap form of running a chip through the composer. ~66 chips, `scripts/kb-suggestions.ts`. The copy uses its own model (`suggestionModel()`).
 - **`fetch_link` reads plain HTML only.** The spec asked for a tool that reads a page fresh; it did not say what to do when the page needs JavaScript. Putting the headless renderer in a request path would mean carrying Chromium in a serverless function for a rare case, so the tool answers "that page needs JavaScript" instead. The stored passages already cover those pages.
 - **`kb-refresh` rotates; it does not filter by date.** The spec said "a weekly re-read of the most recently added links". Measured against the real table, a 90-day window covered 79 of 500 links — 84% of the collection would never have been re-read, and `content_hash` would have been consulted only for the newest slice. The job now reads least-recently-read first and caps at 100 per run (353 links are eligible), so everything is re-read roughly monthly and nothing is frozen. The cap bounds the cost; the date filter only added blind spots.
 - **The Desk's similarity floor is 0.45, not the eval's 0.35.** Different questions: the eval asks "is this in the collection at all", the Desk asks "does this passage back this claim". Measured on two drafts — one the collection cannot support, one it can — noise sat at 0.35–0.44 and genuine support at 0.53 and 0.63. At 0.35 the model dutifully wrote three confident reasons to cite unrelated pages; at 0.45 that draft returns an empty list, which is the honest answer. The cost is real and accepted: a genuine secondary support around 0.4x is now missed. Precision wins because a wrong attribution gets published.
@@ -201,7 +203,6 @@ Where the build disagreed with this spec, or the spec was silent and I chose. Br
 ```
 src/lib/kb/
   model.ts        // the one file that names the models
-  extract.ts      // the fallback ladder (see docs/kb/02-extraction.md)
   render.ts       // shared Chromium + a hard 25s cap per page
   ingest.ts       // read → chunk → embed → store; the script and the refresh share it
   chunk.ts        // ~500 tok, 15% overlap, paragraph-aware
@@ -230,14 +231,14 @@ src/components/curio/                // one copy of the agent's plumbing, two su
 
 src/app/docs/page.tsx                  // public docs: the endpoints, MCP, feeds
 src/pages/api/mcp.ts                   // hosted MCP — a Pages route, on purpose
-src/content/insights-suggestions.json  // generated chips, quota'd per channel
+src/content/insights-suggestions.json  // generated chips, grouped by category (+ `wide`)
 
 src/trigger/discord-links.ts  // intake (DONE)
 src/trigger/kb-refresh.ts     // weekly re-read; least-recently-read first, capped at 100
 
 scripts/snapshot-links.ts   // Discord → links registry (DONE)
 scripts/kb-extract.ts       // extract → chunk → embed; --status re-reads weak rows
-scripts/kb-report.ts        // writes docs/kb/build-report.md
+scripts/kb-report.ts        // writes docs/build-report.md
 scripts/kb-eval.ts          // the retrieval scoreboard
 scripts/kb-suggestions.ts   // derive the chips, then verify them against the index
 scripts/kb-fixtures.ts      // build the extraction fixtures from real pages

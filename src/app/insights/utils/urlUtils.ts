@@ -25,6 +25,43 @@ export const normalizeUrl = (url: string) =>
     .replace(/^www\./, "")
     .replace(/\/$/, "");
 
+/**
+ * The link as you'd send it to a friend: tracking params dropped, everything
+ * meaningful kept. `links.url` is stored as saved — normalizeUrl only derives
+ * a key, it never touched the query — so stripping happens here, at copy time.
+ */
+const TRACKING_PARAMS = [
+  /^utm_/,
+  /^fbclid$/,
+  /^gclid$/,
+  /^igshid$/,
+  /^mc_eid$/,
+  /^mc_cid$/,
+  /^ref$/,
+  /^ref_src$/,
+  /^twclid$/,
+  /^si$/,
+  /^source$/,
+];
+
+export function cleanShareUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const drop: string[] = [];
+    parsed.searchParams.forEach((_value, key) => {
+      if (TRACKING_PARAMS.some((pattern) => pattern.test(key.toLowerCase()))) {
+        drop.push(key);
+      }
+    });
+    for (const key of drop) parsed.searchParams.delete(key);
+    const out = parsed.toString();
+    // A query that emptied out should not leave its `?` behind.
+    return out.endsWith("?") ? out.slice(0, -1) : out;
+  } catch {
+    return url;
+  }
+}
+
 /** Newest first, by Discord snowflake id. */
 export function sortByNewestId<T extends { id: string }>(items: T[]): T[] {
   return [...items].sort((a, b) => {

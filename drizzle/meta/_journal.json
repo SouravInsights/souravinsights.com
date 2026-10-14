@@ -71,6 +71,20 @@
       "when": 1791369327285,
       "tag": "0009_links-registry",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791720009351,
+      "tag": "0010_v2-rebuild",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791751962239,
+      "tag": "0011_highlights-hue",
+      "breakpoints": true
     }
   ]
 }

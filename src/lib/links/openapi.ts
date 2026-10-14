@@ -4,7 +4,7 @@ import {
   OpenApiGeneratorV3,
 } from "@asteasolutions/zod-to-openapi";
 import {
-  channelsResponseSchema,
+  categoriesResponseSchema,
   errorSchema,
   hideRequestSchema,
   linkItemSchema,
@@ -57,11 +57,11 @@ registry.registerPath({
 
 registry.registerPath({
   method: "get",
-  path: "/api/v1/channels",
+  path: "/api/v1/categories",
   tags: ["links"],
-  summary: "List channels with visible link counts",
+  summary: "List categories with visible link counts",
   responses: {
-    200: jsonOf(channelsResponseSchema, "Channels and counts"),
+    200: jsonOf(categoriesResponseSchema, "Categories and counts"),
     429: jsonOf(errorSchema, "Rate limit exceeded"),
   },
 });

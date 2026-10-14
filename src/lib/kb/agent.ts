@@ -6,7 +6,7 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { CATEGORIES } from "./categories";
 import { chatModel } from "./model";
 import { SYSTEM_PROMPT } from "./prompt";
 import { search } from "./search";
@@ -22,11 +22,18 @@ import { readPageFresh } from "./fetch-link";
  * surface a link the search didn't return.
  */
 
-/** Max model round-trips per question (keeps a question near a tenth of a cent). */
-const MAX_STEPS = 4;
+/**
+ * Max model round-trips per question.
+ *
+ * Was 4, which assumed one or two searches. Measured on "which sandboxes exist
+ * for running agent code": the model made ten searches in four steps and hit
+ * the cap before writing a word — the visitor got an empty answer. Eight
+ * leaves room for a search per facet and the answer itself.
+ */
+export const MAX_STEPS = 8;
 
 /** How many links one search hands back to the model. */
-const SEARCH_LIMIT = 6;
+export const SEARCH_LIMIT = 6;
 
 /** How many pages one question may read fresh from the web. */
 const MAX_FETCHES = 3;
@@ -39,13 +46,30 @@ export const searchKnowledge = tool({
     "if the first results miss.",
   inputSchema: z.object({
     query: z.string().describe("What to look for, in plain words"),
-    channel: z
-      .enum(CHANNEL_ORDER as [string, ...string[]])
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(12)
       .optional()
-      .describe("Restrict the search to one channel"),
+      .describe(
+        "How many links to return (default 6). Ask for more when the question " +
+          "wants a set — every tool for a job, every person worth following."
+      ),
+    category: z
+      .enum(CATEGORIES)
+      .optional()
+      .describe(
+        "Restrict the search to one kind of saved link. Use it when the " +
+          "question is about a kind — people to follow, tools for a job, " +
+          "publications, galleries, courses."
+      ),
   }),
-  execute: async ({ query, channel }) => {
-    const hits = await search(query, { channel, limit: SEARCH_LIMIT });
+  execute: async ({ query, category, limit }) => {
+    const hits = await search(query, {
+      category,
+      limit: limit ?? SEARCH_LIMIT,
+    });
     if (hits.length === 0) {
       return { matches: [], note: "No saved links matched that query." };
     }
@@ -60,13 +84,71 @@ export const searchKnowledge = tool({
   },
 });
 
+/** The reader's scoped search: this article's passages, nothing else. */
+const scopedSearchKnowledge = (linkId: number) =>
+  tool({
+    description:
+      "Search the passages of the article the reader has open. Call it for " +
+      "anything the question needs from the article.",
+    inputSchema: z.object({
+      query: z.string().describe("What to look for in this article"),
+    }),
+    execute: async ({ query }) => {
+      const hits = await search(query, { linkId, limit: SEARCH_LIMIT });
+      if (hits.length === 0) {
+        return { matches: [], note: "The article has nothing on that." };
+      }
+      return {
+        matches: hits.map((hit) => ({
+          url: hit.url,
+          title: hit.title,
+          channel: hit.channel,
+          passage: hit.passages[0]?.content ?? "",
+        })),
+      };
+    },
+  });
+
+/**
+ * The agent's tools, in one place.
+ *
+ * A fresh `fetch_link` per call, so its three-page budget is per question rather
+ * than per process. `runAgent` and `scripts/kb-trace.ts` both read this, so what
+ * you inspect is exactly what answers a visitor — a trace over a re-created tool
+ * set would be a trace of a different agent.
+ */
+export function agentTools() {
+  return {
+    search_knowledge: searchKnowledge,
+    fetch_link: fetchLinkTool(),
+  };
+}
+
+export interface AgentScope {
+  linkId: number;
+  title: string;
+  url: string;
+}
+
+const scopedPrompt = (scope: AgentScope) =>
+  SYSTEM_PROMPT +
+  [
+    "",
+    "",
+    `Scoped mode: the visitor has one article open — "${scope.title}" (${scope.url}).`,
+    "Answer about THAT article only, from its passages. If the question goes", 
+    "beyond what the article covers, say so; do not roam the collection.",
+  ].join("\n");
+
 /** Stream an answer for the given conversation. */
-export async function runAgent(messages: UIMessage[]) {
+export async function runAgent(messages: UIMessage[], scope?: AgentScope) {
   return streamText({
     model: chatModel(),
-    system: SYSTEM_PROMPT,
+    system: scope ? scopedPrompt(scope) : SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    tools: { search_knowledge: searchKnowledge, fetch_link: fetchLinkTool() },
+    tools: scope
+      ? { search_knowledge: scopedSearchKnowledge(scope.linkId) }
+      : agentTools(),
     stopWhen: stepCountIs(MAX_STEPS),
   });
 }

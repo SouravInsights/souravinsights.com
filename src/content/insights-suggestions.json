@@ -1,84 +1,85 @@
 {
-  "reading-list": [
-    "how a context graph maps every resource an app connects to",
-    "what Kelly Johnson's KISS principle means for production stacks",
-    "how Heroku's small sharp tools philosophy shapes composable programs",
-    "how Modal serves trillion-parameter coding agents at scale",
-    "why cutting email length 90% got 8x more replies",
-    "how building skill and shipping skill work against each other",
-    "what the senior engineer death spiral looks like from inside",
-    "why AI coding might stop engineers from developing expertise",
-    "how a staff engineer listens broadly to find problems worth solving",
-    "where Armin Ronacher's agent abstractions keep breaking unexpectedly",
-    "how 22,580 GPT-2 models fit inside Kimi K3",
-    "how Amplitude built an autonomous pipeline from idea to production",
-    "how Cursor auto-approves low-risk pull requests without a reviewer",
-    "why hosting Git at scale is a nightmare Linus never anticipated",
-    "how Britain's postwar sugar rationing lowered cancer risk decades later",
-    "what 132,003 players reveal about optimal lawn-mowing paths",
-    "why manually retyping LLM code prevents cognitive debt",
-    "how task runners make common coding tasks consistent across a team",
-    "why devtools being closed source breaks the age of personalized software",
-    "how to read a Chrome DevTools flame chart without getting lost"
+  "article": [
+    "why soft delete leaks complexity",
+    "what the senior engineer death spiral looks like",
+    "halftone from printing workaround to art",
+    "why retyping LLM code prevents cognitive debt",
+    "how agents cause slop creep in codebases",
+    "what Loop engineering replaces about prompting",
+    "how sugar rationing shaped cancer risk decades later",
+    "when novelty in UI becomes counterproductive",
+    "how Paul Graham defines taste in design",
+    "when to reach for Effect in TypeScript",
+    "how Linear got fast from the ground up",
+    "how code review skill transfers to agent use",
+    "how a staff engineer finds problems to solve",
+    "why unhappiness is always self-created",
+    "corners and relative border-radius in CSS",
+    "how easing curves give motion its rhythm",
+    "why simplicity must be a stated objective",
+    "what building-block economies mean for adoption",
+    "what agents.md and CLAUDE.md have in common",
+    "how Buttondown and Linear handle database performance",
+    "React exit animations and why timing matters",
+    "shipping skill versus building skill",
+    "what code review bottleneck agents create",
+    "how sound and motion compound interface feel"
   ],
-  "resources": [
-    "how a query planner reads and executes a SQL statement",
-    "which HTTP status codes mean the server never saw the request",
-    "where the bill actually lands when serving a generative model",
-    "what harness engineering means for Codex and Claude",
-    "how time-to-first-token differs from throughput in LLM serving",
-    "which books Amit Varma and Ajay Shah return to most often",
-    "what makes an interface feel predictable rather than surprising",
-    "how THE ECHO framework connects a brand to cultural movement",
-    "what GitHub Next learned asking agents if they can be proud",
-    "how Aaron Francis ships faster without lowering code quality",
-    "what Vercel packaged as reusable skills for AI coding agents",
-    "what nervous system protocol handles acute panic in under a minute",
-    "how motion animation directs attention on a UI without words",
-    "which emotions make an app feature land on first use",
-    "what tech stack decisions shaped your favourite consumer apps",
-    "how independent blogs differ from algorithm-ranked content feeds"
+  "publication": [
+    "two system design newsletters compared",
+    "what Nautilus covers beyond science",
+    "publications about engineering and infrastructure",
+    "how LessWrong and Cold Takes differ",
+    "what The Creative Independent offers working artists",
+    "what ui.wiki writes about interface craft"
   ],
-  "product-hunt": [
-    "how Subframe connects a design canvas to live code",
-    "what makes boat sandboxes cheaper for long-running agents",
-    "how MotherDuck gives every agent its own compute",
-    "how Jan runs AI models without sending data to the cloud",
-    "what AtAt does when you type @@ in any app",
-    "how a 29MB model on Cactus knows when to hand off",
-    "why Equals guarantees the same answer to the same question",
-    "how hilos connects a designer's plain-words request to a repo diff"
+  "people": [
+    "what Emil Kowalski builds at Linear",
+    "what Amelia Wattenberger explores in novel interfaces",
+    "what Phil Eaton chases down the software stack",
+    "what Sam writes visual essays about",
+    "what Udara Jay writes about memory and AI",
+    "how Jacky Zhao thinks about agentic technology",
+    "design engineers worth following"
   ],
-  "newsletters": [
-    "what Readwise does with your Kindle highlights each day",
-    "how The Pudding turns data into a visual essay",
-    "what a venture fund pitch deck actually needs",
-    "how Felix Haas frames AI decisions for product designers",
-    "what the Brain Food newsletter sends 750,000 readers on Sunday"
+  "tool": [
+    "Tools for running agent sandboxes",
+    "boat vs Daytona vs Butter for agent isolation",
+    "what Val Town actually deploys",
+    "celld vs Durable Objects self-hosted",
+    "screenshot tools that go beyond a capture",
+    "what Unkey replaces in an API stack"
   ],
-  "fav-portfolios": [
-    "how Sujan Khadgi turns case studies into AI conversations",
-    "what Kian Bazarjani is building with avelin.app",
-    "how Sam makes programming topics visual and interactive",
-    "what design engineering components Jakub Krehel showcases at Interfere",
-    "how Alex Harri Jónsson explains TypeScript edge cases",
-    "how Josh Pigford describes his role at Maybe"
+  "learning": [
+    "building an OS line by line",
+    "courses for learning animation",
+    "how query engines work under the hood",
+    "typography rules for real interfaces",
+    "AI-assisted dev for working engineers"
   ],
-  "tools": [
-    "how celld runs Durable Objects without Cloudflare",
-    "what ordered-dither fills replace in dither-kit charts",
-    "how Tripwire screens a PR before it hits main",
-    "how Kimaki maps Discord channels to coding sessions",
-    "what continuous curve lisse borrows from Figma and iOS",
-    "how Scritto moves only the characters that changed",
-    "what an ink stroke from Highlighters does that a coloured box cannot",
-    "how Knap adds logic and filters inside a Markdown file"
+  "inspiration": [
+    "galleries for real app motion",
+    "real desk setups from designers and founders",
+    "where landing pages and homepages are collected"
   ],
-  "design-inspo": [
-    "how Mobbin's 300,000 screenshots save UI research hours",
-    "what makes an App Store screenshot convert downloads",
-    "which React Native libraries power smooth animations",
-    "how 21st.dev ships polished UIs faster than shadcn",
-    "how Flourish turns data into interactive stories without code"
+  "directory": [
+    "directories for design engineers",
+    "blogrolls of the personal web",
+    "a directory of MCP directories",
+    "how Trails and Books connect",
+    "which sites have published llms.txt"
+  ],
+  "other": [],
+  "wide": [
+    "curated newsletters for software engineers",
+    "animation theory before the code",
+    "UI patterns worth memorising",
+    "LLM inference from tokens to hardware",
+    "invisible craft in interaction design",
+    "small interface details worth noticing",
+    "motion as a design material",
+    "reading trails and book lists",
+    "running background jobs without infrastructure",
+    "exit animations in React"
   ]
 }

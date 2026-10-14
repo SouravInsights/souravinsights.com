@@ -13,7 +13,7 @@ const SELECT = {
   url: links.url,
   title: links.title,
   description: links.description,
-  channel: links.channel,
+  category: links.category,
   addedAt: links.addedAt,
 } as const;
 
@@ -24,7 +24,7 @@ interface Row {
   url: string;
   title: string;
   description: string;
-  channel: string;
+  category: string | null;
   addedAt: Date;
 }
 
@@ -34,7 +34,7 @@ const serialize = (row: Row) => ({
   url: row.url,
   title: row.title,
   description: row.description,
-  channel: row.channel,
+  category: row.category,
   added_at: row.addedAt.toISOString(),
 });
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { channel, limit, cursor, url } = parsed.data;
+  const { category, limit, cursor, url } = parsed.data;
 
   // Exact lookup mode: ?url= returns the single matching link or 404.
   if (url) {
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
   }
 
   const conditions = [VISIBLE()];
-  if (channel) conditions.push(eq(links.channel, channel));
+  if (category) conditions.push(eq(links.category, category));
 
   if (cursor) {
     const decoded = decodeCursor(cursor);

@@ -5,12 +5,12 @@ import { getLinks } from "@/lib/links/queries";
 // database on every visit. Cache the response at the edge and refresh it.
 export const revalidate = 300;
 
-// Only these channels feed the homepage, each contributing a set number of
-// recent links. Portfolios and newsletters are intentionally left out so the
-// section stays focused on reading and resources.
-const HOME_CHANNELS: { name: string; label: string; count: number }[] = [
-  { name: "reading-list", label: "Articles", count: 5 },
-  { name: "resources", label: "Resources", count: 3 },
+// Only these categories feed the homepage, each contributing a set number of
+// recent links. People, publications and galleries are left out so the section
+// stays focused on reading and tools.
+const HOME_GROUPS: { name: string; label: string; count: number }[] = [
+  { name: "article", label: "Articles", count: 5 },
+  { name: "tool", label: "Tools", count: 3 },
 ];
 
 function titleFor(url: string, title: string): string {
@@ -25,8 +25,8 @@ function titleFor(url: string, title: string): string {
 export async function GET() {
   try {
     const groups = await Promise.all(
-      HOME_CHANNELS.map(async ({ name, label, count }) => {
-        const rows = await getLinks({ channel: name });
+      HOME_GROUPS.map(async ({ name, label, count }) => {
+        const rows = await getLinks({ category: name });
         return rows.slice(0, count).map((row) => ({
           id: row.discordId ?? row.urlKey,
           url: row.url,

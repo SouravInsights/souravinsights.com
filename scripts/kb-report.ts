@@ -16,16 +16,13 @@ import { MAX_TOKENS } from "../src/lib/kb/chunk";
  *
  * Usage:
  *   npx tsx scripts/kb-report.ts           # print to stdout
- *   npx tsx scripts/kb-report.ts --write    # (re)write docs/kb/build-report.md
+ *   npx tsx scripts/kb-report.ts --write    # (re)write docs/build-report.md
  */
 
-const words = (s: string | null) =>
-  (s ?? "").trim().split(/\s+/).filter(Boolean).length;
-
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, "..", "docs", "kb", "build-report.md");
+const OUT = join(HERE, "..", "docs", "build-report.md");
 
-const STATUSES = ["ok", "thin", "failed", "skipped", "pending"];
+const STATUSES = ["ok", "thin", "failed", "pending"];
 
 async function main() {
   const one = async (query: Promise<{ n: number }[]>) => Number((await query)[0]?.n ?? 0);
@@ -39,33 +36,33 @@ async function main() {
   );
 
   const counts = await db
-    .select({ status: links.extractStatus, n: sql<number>`count(*)::int` })
+    .select({ status: links.readStatus, n: sql<number>`count(*)::int` })
     .from(links)
-    .groupBy(links.extractStatus);
+    .groupBy(links.readStatus);
   const byStatus = new Map(counts.map((c) => [c.status, Number(c.n)]));
 
   const problem = await db
     .select({
       url: links.url,
-      channel: links.channel,
-      status: links.extractStatus,
-      raw: links.rawText,
+      category: links.category,
+      status: links.readStatus,
+      words: links.wordCount,
     })
     .from(links)
-    .where(inArray(links.extractStatus, ["thin", "failed"]))
-    .orderBy(links.extractStatus, links.url);
+    .where(inArray(links.readStatus, ["thin", "failed"]))
+    .orderBy(links.readStatus, links.url);
 
   // Per channel, how much of it search can actually reach. A channel with
   // links but no passages is invisible to the agent — worth seeing at a glance.
   const coverage = (await db.execute(sql`
-    select l.channel,
+    select l.category,
            count(distinct l.id)::int as links,
            count(c.id)::int as passages,
            count(distinct l.id) filter (where c.id is null)::int as missing
     from links l
     left join link_chunks c on c.link_id = l.id
     where l.hidden_at is null
-    group by l.channel
+    group by l.category
     order by links desc
   `)) as unknown as { rows?: Record<string, unknown>[] } | Record<string, unknown>[];
   const coverageRows = Array.isArray(coverage) ? coverage : coverage.rows ?? [];
@@ -90,11 +87,11 @@ async function main() {
     `**Total links:** ${total} (${hidden} hidden). **Passages stored:** ${passages}.`,
     ""
   );
-  L.push("## Coverage per channel", "");
+  L.push("## Coverage per category", "");
   L.push(
     "`missing` = links search cannot reach at all (no passage was stored).",
     "",
-    "| Channel | Links | Passages | Missing |",
+    "| Category | Links | Passages | Missing |",
     "| :--- | ---: | ---: | ---: |"
   );
   for (const row of coverageRows) {
@@ -112,7 +109,7 @@ async function main() {
     "| :--- | ---: | :--- | :--- |"
   );
   for (const r of problem) {
-    L.push(`| ${r.status} | ${words(r.raw)} | ${r.channel} | ${r.url} |`);
+    L.push(`| ${r.status} | ${r.words ?? 0} | ${r.category} | ${r.url} |`);
   }
   L.push("", `${problem.length} thin/failed links.`, "");
 

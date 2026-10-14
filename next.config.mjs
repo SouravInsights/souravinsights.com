@@ -78,9 +78,17 @@ const nextConfig = {
   experimental: {
     // Chromium + puppeteer must stay outside the server bundle and their
     // binary must be traced into the /api/link-preview function on Vercel.
+    //
+    // defuddle and its DOM stack are here for the same reason: its CJS build
+    // requires the ESM-only css-select through linkedom, which webpack refuses
+    // to bundle ("ESM packages (css-select) need to be imported"). Left
+    // external, Node loads them at runtime — and this runtime is >= 22.12,
+    // where require() can load ESM.
     serverComponentsExternalPackages: [
       "@sparticuz/chromium",
       "puppeteer-core",
+      "defuddle",
+      "linkedom",
     ],
     // pdfkit (used by @react-pdf/renderer) loads its standard fonts through a
     // dynamic path, so the serverless file tracer never sees them. Without this

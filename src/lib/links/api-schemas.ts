@@ -1,15 +1,15 @@
 import { z } from "zod";
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
-import { CHANNEL_ORDER } from "@/app/insights/utils/channels";
+import { CATEGORIES } from "@/lib/kb/categories";
 
 extendZodWithOpenApi(z);
 
-const channelEnum = z.enum(CHANNEL_ORDER as [string, ...string[]]);
+const categoryEnum = z.enum(CATEGORIES as unknown as [string, ...string[]]);
 
 export const linksQuerySchema = z.object({
-  channel: channelEnum.optional().openapi({
-    description: "Filter by channel",
-    example: "tools",
+  category: categoryEnum.optional().openapi({
+    description: "Filter by category",
+    example: "tool",
   }),
   limit: z.coerce.number().int().min(1).max(100).default(50).openapi({
     description: "Items per page (max 100)",
@@ -38,7 +38,9 @@ export const linkItemSchema = z
     url: z.string().url(),
     title: z.string(),
     description: z.string(),
-    channel: channelEnum,
+    category: categoryEnum.nullable().openapi({
+      description: "What kind of link this is; null until it has been read",
+    }),
     added_at: z.string().openapi({ description: "ISO 8601 timestamp" }),
   })
   .openapi("LinkItem");
@@ -53,10 +55,10 @@ export const linksResponseSchema = z.object({
   }),
 });
 
-export const channelsResponseSchema = z.object({
+export const categoriesResponseSchema = z.object({
   data: z.array(
     z.object({
-      channel: z.string(),
+      category: z.string(),
       count: z.number().int(),
     })
   ),
@@ -69,10 +71,15 @@ export const searchQuerySchema = z.object({
       "pages' contents, not their titles.",
     example: "a tool to check colour contrast",
   }),
-  channel: channelEnum.optional().openapi({
-    description: "Restrict the search to one channel",
-    example: "tools",
-  }),
+  category: z
+    .enum(CATEGORIES as unknown as [string, ...string[]])
+    .optional()
+    .openapi({
+      description:
+        "Restrict the search to one kind of saved link — useful when the " +
+        "question is about a kind (people to follow, tools for a job)",
+      example: "tool",
+    }),
   limit: z.coerce.number().int().min(1).max(20).default(8).openapi({
     description: "Results to return (max 20)",
     example: 8,

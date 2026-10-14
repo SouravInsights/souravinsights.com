@@ -1,0 +1,22 @@
+{
+  "_readme": [
+    "Corrections that always win, keyed by url_key. Nothing here is wrong today.",
+    "",
+    "To fix one link: add its key, then run",
+    "  npx tsx scripts/kb-build.ts --stale --only <urlKey>",
+    "",
+    "Example:",
+    "  \"makeitanimated.dev\": { \"category\": \"learning\" }",
+    "",
+    "Fields, all optional: category (one of the eight in src/lib/kb/categories.ts),",
+    "topics (array of strings), summary (string). Whatever you write here replaces",
+    "what the model decided, on this run and every run after it.",
+    "",
+    "Why a file: the alternative is editing the database by hand, which is how a",
+    "collection drifts. This way the correction is reviewable in git and permanent.",
+    "",
+    "The plan is an admin page in the app that edits these same corrections in the",
+    "database: open a link, pick a category, done, no file and no command. Until",
+    "that exists, this file is the switchboard."
+  ]
+}

@@ -353,7 +353,7 @@ export default async function DocsPage() {
                 instead, and read the next page from <K>meta.next_cursor</K>.
               </Endpoint>
 
-              <Endpoint method="GET" path="/api/v1/channels">
+              <Endpoint method="GET" path="/api/v1/categories">
                 Every channel, with its visible link count.
               </Endpoint>
 
