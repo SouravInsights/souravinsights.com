@@ -80,9 +80,9 @@ export function createMouseMoveHandler(deps: CatAnimationDeps) {
     }
     s.mousePosX = mx;
     s.mousePosY = my;
-    // Wander mode reads this: recent pointer activity, wherever it happened.
-    // It is also where the cat is told it may stand, which is not always where
-    // the cursor is — see pointerAim.
+    // The confined region reads this: recent pointer activity, wherever it
+    // happened. It is also where the cat is told it may stand, which is not
+    // always where the cursor is — see pointerAim.
     s.pointerTarget = pointerAim(s, ev, mx, my);
     s.pointerInterest = POINTER_INTEREST_FRAMES;
   };

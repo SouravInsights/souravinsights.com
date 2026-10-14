@@ -127,14 +127,10 @@ export const DEFAULT_BUBBLE_CHANCE = 0.5;
 export const DEFAULT_FOLLOW_DISTANCE = 20;
 export const DEFAULT_ANIMATION_SPEED = 1;
 
-// Wander mode: roam a fixed region instead of chasing the cursor.
-export const WANDER_RETARGET_FRAMES = 240;
-export const WANDER_PAUSE_FRAMES = 60;
+// A confined region, with a margin so the cat clears the edges.
 export const WANDER_EDGE_MARGIN = 16;
-// Give up on an unreachable spot (blocked by a keep-out zone, pathing dead-end) after ~1.5s.
-export const WANDER_STUCK_FRAMES = 90;
-// How long the cat keeps reacting to the pointer after it last moved. After this
-// it goes back to wandering, so a parked cursor never holds it hostage.
+// How long the cat keeps reacting to the pointer after it last moved, so a
+// parked cursor never keeps it chasing.
 export const POINTER_INTEREST_FRAMES = 90;
 
 // Played once when the cat catches the laser dot

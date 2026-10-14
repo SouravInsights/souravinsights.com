@@ -36,10 +36,6 @@ type RuntimeConfigStateFields = Pick<
   | "laserCaught"
   | "wanderCfg"
   | "wanderBounds"
-  | "wanderTarget"
-  | "wanderRetarget"
-  | "wanderPause"
-  | "wanderStuck"
   | "pointerTarget"
   | "pointerInterest"
 >;
@@ -78,10 +74,6 @@ export function defaultRuntimeConfigState(): RuntimeConfigStateFields {
     laserCaught: false,
     wanderCfg: null,
     wanderBounds: null,
-    wanderTarget: { x: 0, y: 0 },
-    wanderRetarget: 0,
-    wanderPause: 0,
-    wanderStuck: 0,
     pointerTarget: null,
     pointerInterest: 0,
   };

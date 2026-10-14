@@ -63,7 +63,7 @@ function clampToBounds(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max));
 }
 
-/** Window edges by default; the wander region's edges once one is active. */
+/** Window edges by default; the confined region's edges once one is active. */
 function movementBounds(s: CatRuntimeState) {
   const b = s.wanderBounds;
   if (b) {
