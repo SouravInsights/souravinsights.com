@@ -1,5 +1,9 @@
 # Links Registry & Public API — Spec
 
+> **Superseded in part:** this spec's `links` schema predates v2. `extract_status` is now
+> `read_status` and `raw_text` is `markdown`; see [`insights-rebuild.md`](./insights-rebuild.md).
+> The registry, the health ladder and the public API still stand.
+
 Step 0 of the insights knowledge base (`insights-agent.md`). Read top to bottom; each section is one piece.
 
 ## Why this exists

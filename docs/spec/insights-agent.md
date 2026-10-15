@@ -1,5 +1,9 @@
 # Insights Agent — Spec
 
+> **Superseded:** the pipeline described here is v1. The current schema and pipeline live
+> in [`insights-rebuild.md`](./insights-rebuild.md) — `read_status` (not `extract_status`),
+> `markdown` (not `raw_text`), categories v2, and the four verbs.
+
 Turn the Insights collection from a list of URLs into a knowledge base you can think with. Read the actual contents of every link, store them, make them searchable by meaning, and put an agent on top that answers questions using only that knowledge.
 
 **Status:** the foundation (`links-registry-and-api.md`) is **shipped** — Postgres registry holds 500 links (9 provably dead never recorded), site/RSS/llms-full/homepage read the DB, public API at `/api/v1` with docs at `/api/docs`, admin hiding works, weekly health sweep runs, Discord is intake-only. This spec is what remains: extraction → embeddings → retrieval → the agent.

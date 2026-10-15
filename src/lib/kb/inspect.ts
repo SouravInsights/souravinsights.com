@@ -39,7 +39,7 @@ export interface InspectionWarning {
 export interface LinkCandidate {
   urlKey: string;
   title: string;
-  channel: string;
+  category: string | null;
   passages: number;
 }
 
@@ -59,7 +59,7 @@ export async function findLinks(
 ): Promise<LinkCandidate[]> {
   const q = `%${escapeLike(query)}%`;
   const rows = (await db.execute(sql`
-    select l.url_key, l.title, l.channel, count(c.id)::int as passages
+    select l.url_key, l.title, l.category, count(c.id)::int as passages
     from links l left join link_chunks c on c.link_id = l.id
     where l.url_key ilike ${q} or l.url ilike ${q} or l.title ilike ${q}
     group by 1, 2, 3
@@ -70,7 +70,7 @@ export async function findLinks(
   return rows.map((r: any) => ({
     urlKey: r.url_key,
     title: r.title,
-    channel: r.channel,
+    category: r.category,
     passages: r.passages,
   }));
 }
@@ -122,6 +122,7 @@ export interface LinkInspection {
     url: string;
     title: string;
     description: string;
+    category: string | null;
     channel: string | null;
     readStatus: string;
     health: string;
@@ -177,6 +178,7 @@ export async function inspectLink(
       url: links.url,
       title: links.title,
       description: links.description,
+      category: links.category,
       channel: links.channel,
       readStatus: links.readStatus,
       health: links.health,
@@ -271,7 +273,7 @@ export async function inspectLink(
     warnings.push({ level: "info", message: "Marked dead — excluded from search." });
   }
 
-  const header = [row.title, row.channel].filter(Boolean).join(" — ");
+  const header = [row.title, row.category].filter(Boolean).join(" — ");
 
   return {
     link: {
@@ -280,6 +282,7 @@ export async function inspectLink(
       url: row.url,
       title: row.title,
       description: row.description,
+      category: row.category,
       channel: row.channel,
       readStatus: row.readStatus,
       health: row.health,
@@ -312,14 +315,14 @@ export async function inspectLink(
 
 export interface OverviewRow {
   urlKey: string;
-  channel: string;
+  category: string | null;
   readStatus: string;
   passages: number;
   pctOfIndex: number;
   rawChars: number;
 }
 
-/** The shape of the whole index: totals, per channel, and the heaviest links. */
+/** The shape of the whole index: totals, per category, and the heaviest links. */
 export async function kbOverview() {
   const [totals] = (await db.execute(sql`
     select (select count(*) from links)::int as links,
@@ -330,8 +333,8 @@ export async function kbOverview() {
                 select 1 from link_chunks c where c.link_id = l.id))::int as not_indexed
   `).then((r) => r.rows)) as any;
 
-  const channels = (await db.execute(sql`
-    select l.channel,
+  const categories = (await db.execute(sql`
+    select l.category,
            count(distinct l.id)::int as links,
            count(c.id)::int as passages,
            coalesce(percentile_cont(0.5) within group (order by c.token_count)::int, 0) as median_tokens
@@ -341,10 +344,10 @@ export async function kbOverview() {
   `).then((r) => r.rows)) as any;
 
   const heaviest = (await db.execute(sql`
-    select l.url_key, l.channel, l.extract_status,
+    select l.url_key, l.category, l.read_status,
            count(c.id)::int as passages,
            round(100.0 * count(c.id) / greatest((select count(*) from link_chunks), 1), 1) as pct,
-           coalesce(length(l.raw_text), 0)::int as raw_chars
+           coalesce(length(l.markdown), 0)::int as raw_chars
     from links l join link_chunks c on c.link_id = l.id
     where l.hidden_at is null
     group by 1,2,3,6
@@ -353,29 +356,29 @@ export async function kbOverview() {
   `).then((r) => r.rows)) as any;
 
   const unindexed = (await db.execute(sql`
-    select l.url_key, l.channel, l.extract_status
+    select l.url_key, l.category, l.read_status
     from links l
     where l.hidden_at is null
       and not exists (select 1 from link_chunks c where c.link_id = l.id)
-    order by l.channel, l.url_key
+    order by l.category, l.url_key
   `).then((r) => r.rows)) as any;
 
   return {
     totals,
-    channels: channels as {
-      channel: string;
+    categories: categories as {
+      category: string | null;
       links: number;
       passages: number;
       median_tokens: number;
     }[],
     unindexed: unindexed.map((u: any) => ({
       urlKey: u.url_key,
-      channel: u.channel,
+      category: u.category,
       readStatus: u.read_status,
-    })) as { urlKey: string; channel: string; readStatus: string }[],
+    })) as { urlKey: string; category: string | null; readStatus: string }[],
     heaviest: heaviest.map((h: any) => ({
       urlKey: h.url_key,
-      channel: h.channel,
+      category: h.category,
       readStatus: h.read_status,
       passages: h.passages,
       pctOfIndex: Number(h.pct),

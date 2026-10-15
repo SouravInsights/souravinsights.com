@@ -64,7 +64,7 @@ async function main() {
   const urlKey = positional[0];
 
   if (!urlKey) {
-    const { totals, channels, heaviest, unindexed } = await kbOverview();
+    const { totals, categories, heaviest, unindexed } = await kbOverview();
 
     console.log(bold("\nTHE INDEX"));
     console.log(
@@ -72,13 +72,13 @@ async function main() {
         `${num(totals.passages)} passages · ${num(totals.not_indexed)} visible links not indexed`
     );
 
-    rule("BY CHANNEL");
+    rule("BY CATEGORY");
     console.log(
-      `  ${"channel".padEnd(16)} ${"links".padStart(6)} ${"passages".padStart(9)}  median`
+      `  ${"category".padEnd(16)} ${"links".padStart(6)} ${"passages".padStart(9)}  median`
     );
-    for (const c of channels) {
+    for (const c of categories) {
       console.log(
-        `  ${c.channel.padEnd(16)} ${num(c.links).padStart(6)} ${num(
+        `  ${(c.category ?? "—").padEnd(16)} ${num(c.links).padStart(6)} ${num(
           c.passages
         ).padStart(9)}  ${num(c.median_tokens)} tok`
       );
@@ -89,7 +89,7 @@ async function main() {
       const heavy = h.passages > HEAVY_CHUNKS;
       const line =
         `  ${num(h.passages).padStart(6)}  ${h.pctOfIndex.toFixed(1).padStart(5)}%  ` +
-        `${h.urlKey}  ${dim(`(${h.channel}, ${h.readStatus}, ${num(h.rawChars)} chars)`)}`;
+        `${h.urlKey}  ${dim(`(${h.category ?? "—"}, ${h.readStatus}, ${num(h.rawChars)} chars)`)}`;
       console.log(heavy ? red(line) : line);
     }
     console.log(
@@ -102,7 +102,7 @@ async function main() {
     if (unindexed.length) {
       rule("NOT INDEXED (invisible to search)");
       for (const u of unindexed) {
-        console.log(`  ${u.urlKey}  ${dim(`(${u.channel}, ${u.readStatus})`)}`);
+        console.log(`  ${u.urlKey}  ${dim(`(${u.category ?? "—"}, ${u.readStatus})`)}`);
       }
     }
     return;
@@ -126,7 +126,7 @@ async function main() {
   console.log(`  ${"title".padEnd(11)} ${l.title || dim("(none)")}`);
   console.log(`  ${"url".padEnd(11)} ${l.url}`);
   console.log(
-    `  ${"channel".padEnd(11)} ${l.channel}   ${dim("status")} ${l.readStatus}   ${dim("health")} ${l.health}`
+    `  ${"category".padEnd(11)} ${l.category ?? "—"}   ${dim("status")} ${l.readStatus}   ${dim("health")} ${l.health}`
   );
   console.log(
     `  ${"added".padEnd(11)} ${l.addedAt.slice(0, 10)}   ${dim("last read")} ${
@@ -185,7 +185,7 @@ main().catch((err) => {
       console.error(dim("\n  Candidates — re-run with one of these keys:\n"));
       for (const c of err.candidates.slice(0, 12)) {
         console.error(
-          `    ${cyan(c.urlKey)}  ${dim(`${c.channel} · ${num(c.passages)} passages`)}`
+          `    ${cyan(c.urlKey)}  ${dim(`${c.category ?? "—"} · ${num(c.passages)} passages`)}`
         );
         if (c.title) console.error(`      ${dim(c.title.slice(0, 68))}`);
       }

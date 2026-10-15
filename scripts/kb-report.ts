@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./load-env";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -52,7 +52,7 @@ async function main() {
     .where(inArray(links.readStatus, ["thin", "failed"]))
     .orderBy(links.readStatus, links.url);
 
-  // Per channel, how much of it search can actually reach. A channel with
+  // Per category, how much of it search can actually reach. A category with
   // links but no passages is invisible to the agent — worth seeing at a glance.
   const coverage = (await db.execute(sql`
     select l.category,
@@ -96,7 +96,7 @@ async function main() {
   );
   for (const row of coverageRows) {
     L.push(
-      `| ${row.channel} | ${row.links} | ${row.passages} | ${row.missing} |`
+      `| ${row.category ?? "—"} | ${row.links} | ${row.passages} | ${row.missing} |`
     );
   }
   L.push("");
@@ -105,11 +105,11 @@ async function main() {
     "`thin` = under 200 words (a short landing page, a paywall, or a JS shell).",
     "`failed` = no text extracted at all.",
     "",
-    "| Status | Words | Channel | URL |",
+    "| Status | Words | Category | URL |",
     "| :--- | ---: | :--- | :--- |"
   );
   for (const r of problem) {
-    L.push(`| ${r.status} | ${r.words ?? 0} | ${r.category} | ${r.url} |`);
+    L.push(`| ${r.status} | ${r.words ?? 0} | ${r.category ?? "—"} | ${r.url} |`);
   }
   L.push("", `${problem.length} thin/failed links.`, "");
 
