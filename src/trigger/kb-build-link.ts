@@ -48,6 +48,12 @@ export const kbBuildLink = task({
 
     const link: LinkRow = row;
     const outcome = await buildLink(link);
+    if (outcome.read === "failed") {
+      logger.warn("read failed", {
+        url: link.url,
+        reason: outcome.readDetail ?? "unknown",
+      });
+    }
     logger.info("built link", {
       urlKey: link.urlKey,
       category: link.category,

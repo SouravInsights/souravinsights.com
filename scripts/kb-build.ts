@@ -186,6 +186,7 @@ async function main() {
 
     let status: "ok" | "thin" | "failed" | "skipped" = "skipped";
     let passages = 0;
+    let readDetail: string | undefined;
 
     try {
       const outcome = await buildLink(row, {
@@ -197,6 +198,7 @@ async function main() {
       });
       status = outcome.read;
       passages = outcome.passages;
+      readDetail = outcome.readDetail;
       // In a stale pass every flip is a line of the review table.
       if (stale && outcome.understood && before !== row.category) {
         flips.push(row.urlKey);
@@ -218,6 +220,8 @@ async function main() {
     const width = String(rows.length).length;
     const mark = status === "failed" ? "✗" : status === "thin" ? "⚠" : "✓";
     const label = status === "failed" ? "failed" : status === "thin" ? "thin" : "ok";
+    const reason =
+      status === "failed" && readDetail ? `  ${readDetail}` : "";
     progress.finish(
       row.id,
       `${mark} ${String(n).padStart(width)}/${rows.length}  ` +
@@ -225,7 +229,7 @@ async function main() {
         `${label} · ${passages} passages · ${(
           (Date.now() - started) /
           1000
-        ).toFixed(1)}s`
+        ).toFixed(1)}s${reason}`
     );
   };
 

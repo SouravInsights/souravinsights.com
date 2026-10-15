@@ -14,6 +14,11 @@ export interface GotPage {
   html: string;
 }
 
+/** A fetch that failed, and why — so a run log can name the cause. */
+export type GetResult =
+  | ({ ok: true } & GotPage)
+  | { ok: false; reason: string };
+
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 const TIMEOUT_MS = 10_000;
@@ -45,8 +50,8 @@ async function readCapped(res: Response, max: number): Promise<string> {
   return Buffer.concat(chunks).toString("utf8");
 }
 
-/** Fetch a page, following redirects by hand. Never throws — null on failure. */
-export async function getPage(inputUrl: string): Promise<GotPage | null> {
+/** Fetch a page, following redirects by hand. Never throws. */
+export async function getPage(inputUrl: string): Promise<GetResult> {
   let url = inputUrl;
 
   for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects++) {
@@ -60,29 +65,34 @@ export async function getPage(inputUrl: string): Promise<GotPage | null> {
           accept: "text/html,application/xhtml+xml,*/*;q=0.8",
         },
       });
-    } catch {
-      return null; // DNS failure, refused, timeout
+    } catch (error) {
+      const code = (error as { cause?: { code?: string } })?.cause?.code;
+      return { ok: false, reason: code ? `network ${code}` : "network/timeout" };
     }
 
     if (res.status >= 300 && res.status < 400) {
       const location = res.headers.get("location");
-      if (!location) return null;
+      if (!location) return { ok: false, reason: `http ${res.status}, no location` };
       try {
         url = new URL(location, url).toString();
       } catch {
-        return null;
+        return { ok: false, reason: "bad redirect target" };
       }
       continue;
     }
 
-    if (!res.ok) return null;
+    if (!res.ok) return { ok: false, reason: `http ${res.status}` };
+
+    const html = await readCapped(res, MAX_BYTES).catch(() => "");
+    if (!html) return { ok: false, reason: "empty body" };
 
     return {
+      ok: true,
       finalUrl: url,
       contentType: res.headers.get("content-type") ?? "",
-      html: await readCapped(res, MAX_BYTES).catch(() => ""),
+      html,
     };
   }
 
-  return null; // redirect loop
+  return { ok: false, reason: "redirect loop" };
 }

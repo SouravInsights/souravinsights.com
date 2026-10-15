@@ -172,6 +172,8 @@ export interface BuildOutcome {
   understood: boolean;
   passages: number;
   changed: boolean;
+  /** Why the read ended as it did: "http 403", "no content after parse", "918 words". */
+  readDetail?: string;
 }
 
 /**
@@ -185,15 +187,22 @@ export async function buildLink(
 ): Promise<BuildOutcome> {
   let read: PageRead | null = null;
   let readStatus: BuildOutcome["read"] = "skipped";
+  let readDetail: string | undefined;
   let changed = false;
+  let passages = 0;
 
   const needsRead = opts.force || !link.markdown;
   if (needsRead) {
     opts.onStage?.("get");
-    const page = await getPage(link.url);
-    if (page && isHtml(page.contentType)) {
+    const got = await getPage(link.url);
+    if (!got.ok) {
+      readDetail = got.reason;
+    } else if (!isHtml(got.contentType)) {
+      readDetail = `not html (${got.contentType || "no content-type"})`;
+    } else {
       opts.onStage?.("read");
-      read = await readPage(page.html, page.finalUrl);
+      read = await readPage(got.html, got.finalUrl);
+      readDetail = read ? `${read.wordCount} words` : "no content after parse";
     }
 
     // Static path gave us nothing useful — thin page, error page, bot wall,
@@ -205,6 +214,7 @@ export async function buildLink(
         const renderedRead = await readPage(rendered.html, link.url);
         if (renderedRead && renderedRead.wordCount > (read?.wordCount ?? 0)) {
           read = renderedRead;
+          readDetail = `${renderedRead.wordCount} words (rendered)`;
         }
       }
     }
@@ -216,7 +226,7 @@ export async function buildLink(
     // A page no method could read stays answerable at the smallest honest
     // level: its intake title + description as the single passage.
     if (saved.status === "failed" && (link.title || link.description)) {
-      await savePassages(link, {
+      passages = await savePassages(link, {
         title: link.title || link.urlKey,
         summary: [link.title, link.description].filter(Boolean).join("\n\n"),
       });
@@ -286,7 +296,6 @@ export async function buildLink(
     understood = true;
   }
 
-  let passages = 0;
   const ready = Boolean(link.category && link.summary);
   const needsEmbed = ready && (understood || changed);
   if (needsEmbed) {
@@ -303,7 +312,7 @@ export async function buildLink(
     });
   }
 
-  return { read: readStatus, understood, passages, changed };
+  return { read: readStatus, understood, passages, changed, readDetail };
 }
 
 /**
