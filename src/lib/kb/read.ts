@@ -42,7 +42,16 @@ export async function readPage(
       markdown: true,
       useAsync: false,
     });
-    if (!result?.content?.trim()) return null;
+    if (!result?.content?.trim()) {
+      // Distinguish "the page was a challenge/stub" from "the parser broke":
+      // a real page is tens to hundreds of KB.
+      console.warn("readPage: defuddle returned no content", {
+        url,
+        htmlChars: html.length,
+        title: result?.title ?? null,
+      });
+      return null;
+    }
 
     return {
       markdown: result.content.trim(),
@@ -54,7 +63,12 @@ export async function readPage(
       wordCount: result.wordCount || wordCount(result.content),
       extractorType: result.extractorType,
     };
-  } catch {
+  } catch (error) {
+    console.warn("readPage: threw", {
+      url,
+      htmlChars: html.length,
+      message: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }

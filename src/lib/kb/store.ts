@@ -202,7 +202,9 @@ export async function buildLink(
     } else {
       opts.onStage?.("read");
       read = await readPage(got.html, got.finalUrl);
-      readDetail = read ? `${read.wordCount} words` : "no content after parse";
+      readDetail = read
+        ? `${read.wordCount} words`
+        : `no content after parse (${got.html.length} chars fetched)`;
     }
 
     // Static path gave us nothing useful — thin page, error page, bot wall,
