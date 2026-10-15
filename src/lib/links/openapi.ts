@@ -4,6 +4,8 @@ import {
   OpenApiGeneratorV3,
 } from "@asteasolutions/zod-to-openapi";
 import {
+  addLinkRequestSchema,
+  addLinkResponseSchema,
   categoriesResponseSchema,
   errorSchema,
   hideRequestSchema,
@@ -81,6 +83,31 @@ registry.registerPath({
     400: jsonOf(errorSchema, "Invalid query parameters"),
     429: jsonOf(errorSchema, "Rate limit exceeded"),
     502: jsonOf(errorSchema, "Embedding provider or database unavailable"),
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/links",
+  tags: ["admin"],
+  summary: "Add a link to the collection",
+  description:
+    "Files a URL into the collection under a category of your choosing. The " +
+    "category is taken as given — the classifier is skipped for this link — " +
+    "while reading, summarizing and embedding still run. A URL already in the " +
+    "collection is re-filed and keeps its stored text.",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: {
+      content: { "application/json": { schema: addLinkRequestSchema } },
+    },
+  },
+  responses: {
+    200: jsonOf(addLinkResponseSchema, "The added link"),
+    400: jsonOf(errorSchema, "Invalid body"),
+    401: jsonOf(errorSchema, "Missing or invalid admin key"),
+    422: jsonOf(errorSchema, "The URL is dead"),
+    429: jsonOf(errorSchema, "Rate limit exceeded"),
   },
 });
 

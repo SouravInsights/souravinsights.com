@@ -12,7 +12,7 @@ import {
   dedupeByUrl,
   normalizeUrl,
   snowflakeDate,
-  sortByNewestId,
+  sortByNewest,
 } from "../src/app/insights/utils/urlUtils";
 import { checkUrlHealth, mapWithConcurrency } from "../src/lib/links/health";
 
@@ -55,7 +55,7 @@ async function collect(): Promise<Candidate[]> {
   );
 
   // Newest first, then collapse cross-channel reposts (same rule as the page).
-  return dedupeByUrl(sortByNewestId(perChannel.flat()));
+  return dedupeByUrl(sortByNewest(perChannel.flat()));
 }
 
 async function main() {

@@ -1,0 +1,1 @@
+ALTER TABLE "links" ALTER COLUMN "channel" DROP NOT NULL;

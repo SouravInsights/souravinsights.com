@@ -83,7 +83,7 @@ export function createCollectionServer(): McpServer {
           return [
             `${index + 1}. ${hit.title}`,
             `   ${hit.url}`,
-            `   channel: ${hit.channel}  ·  similarity: ${hit.score.toFixed(3)}`,
+            `   similarity: ${hit.score.toFixed(3)}`,
             `   ${passage}`,
           ].join("\n");
         })

@@ -3,6 +3,7 @@ import { eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { links, linkChunks } from "@/db/schema";
 import type { Category } from "./categories";
+import { isCategory } from "./categories";
 import type { PageRead } from "./read";
 import { chunkMarkdown, type ChunkUnit } from "./chunk";
 import { EMBEDDING_MODE, embedTexts, type EmbeddingMode } from "./embed";
@@ -32,6 +33,8 @@ export interface LinkRow {
   urlKey: string;
   title: string;
   description: string;
+  /** Which intake produced the row — `web` rows were filed by hand. */
+  source: string;
   markdown: string | null;
   contentHash: string | null;
   category: string | null;
@@ -158,7 +161,11 @@ export interface BuildOptions {
   knownTopics?: string[];
   /** Winning spellings learned by buildTopicVocabulary — the topic policy's map. */
   winningSpellings?: Record<string, string>;
+  /** Called as each stage begins, so a caller can show progress. */
+  onStage?: (stage: BuildStage, detail?: string) => void;
 }
+
+export type BuildStage = "get" | "read" | "understand" | "embed";
 
 export interface BuildOutcome {
   read: "ok" | "thin" | "failed" | "skipped";
@@ -182,8 +189,10 @@ export async function buildLink(
 
   const needsRead = opts.force || !link.markdown;
   if (needsRead) {
+    opts.onStage?.("get");
     const page = await getPage(link.url);
     if (page && isHtml(page.contentType)) {
+      opts.onStage?.("read");
       read = await readPage(page.html, page.finalUrl);
     }
 
@@ -228,35 +237,49 @@ export async function buildLink(
   const needsUnderstand =
     link.markdown &&
     (!link.category ||
+      !link.summary ||
       link.promptVersion !== PROMPT_VERSION ||
       (opts.force && changed));
   if (needsUnderstand) {
+    // A hand-filed row keeps its category: skip the classifier, and let no
+    // override file second-guess the person who chose it.
+    const chosen =
+      link.source === "web" && link.category && isCategory(link.category)
+        ? link.category
+        : undefined;
+    opts.onStage?.(
+      "understand",
+      chosen ? `describe (${chosen})` : "classify + describe"
+    );
+
     // Metadata comes from the row: saveRead already stored defuddle's own
     // title/description during the read stage.
-    const result = await understandPage({
-      url: link.url,
-      title: read?.title ?? link.title,
-      description: read?.description || link.description,
-      site: read?.site ?? "",
-      author: read?.author ?? "",
-      published: read?.published ?? "",
-      markdown: link.markdown!,
-      knownTopics: opts.knownTopics ?? [],
-      winningSpellings: opts.winningSpellings ?? {},
-    });
+    const result = await understandPage(
+      {
+        url: link.url,
+        title: read?.title ?? link.title,
+        description: read?.description || link.description,
+        site: read?.site ?? "",
+        author: read?.author ?? "",
+        published: read?.published ?? "",
+        markdown: link.markdown!,
+        knownTopics: opts.knownTopics ?? [],
+        winningSpellings: opts.winningSpellings ?? {},
+      },
+      chosen
+    );
 
-    // The owner's overrides always win (docs/spec/insights-rebuild.md):
-    // src/content/category-overrides.json maps a url_key to whatever should be
-    // true of it — see the _readme in that file. Fixing one link is an edit
-    // plus `kb-build --stale --only <key>`, never a re-review of the
-    // collection. The probe deliberately ignores this file: it measures the
-    // model, and an override would flatter the score.
-    const override = (
-      categoryOverrides as Record<
-        string,
-        { category?: Category; topics?: string[]; summary?: string }
-      >
-    )[link.urlKey];
+    // The owner's overrides always win for model-classified rows
+    // (src/content/category-overrides.json maps a url_key to whatever should
+    // be true of it). A hand-picked category is already that decision.
+    const override = chosen
+      ? undefined
+      : (
+          categoryOverrides as Record<
+            string,
+            { category?: Category; topics?: string[]; summary?: string }
+          >
+        )[link.urlKey];
     await saveUnderstand(link, override ? { ...result, ...override } : result);
     link.category = result.category;
     link.summary = result.summary;
@@ -272,6 +295,7 @@ export async function buildLink(
       mode === "full" && link.markdown
         ? chunkMarkdown(link.markdown, { title: link.title })
         : [];
+    opts.onStage?.("embed", `${units.length + 1} passages`);
     passages = await savePassages(link, {
       title: link.title || link.urlKey,
       summary: link.summary!,

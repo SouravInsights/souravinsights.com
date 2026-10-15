@@ -81,7 +81,6 @@ export const searchKnowledge = tool({
       matches: hits.map((hit) => ({
         url: hit.url,
         title: hit.title,
-        channel: hit.channel,
         passage: hit.passages[0]?.content ?? "",
       })),
     };
@@ -106,7 +105,6 @@ const scopedSearchKnowledge = (linkId: number) =>
         matches: hits.map((hit) => ({
           url: hit.url,
           title: hit.title,
-          channel: hit.channel,
           passage: hit.passages[0]?.content ?? "",
         })),
       };

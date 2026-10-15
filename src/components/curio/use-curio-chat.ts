@@ -21,7 +21,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface Match {
   url: string;
   title: string;
-  channel: string;
   passage: string;
 }
 
@@ -112,7 +111,6 @@ export function citationsOf(parts: { type: string; state?: string; output?: unkn
       out.push({
         url: page.url,
         title: page.title || page.url,
-        channel: "web",
         passage: (page.text ?? "").slice(0, 240),
       });
     }

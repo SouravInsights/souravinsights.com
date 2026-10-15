@@ -99,7 +99,7 @@ async function main() {
         for (const m of tr.matches) {
           console.log(
             `      ${m.urlKey.padEnd(38)} ${dim(
-              `${m.channel} · ${num(m.passageChars)} char passage`
+              `${num(m.passageChars)} char passage`
             )}`
           );
           console.log(`      ${dim(m.title.slice(0, 70))}`);

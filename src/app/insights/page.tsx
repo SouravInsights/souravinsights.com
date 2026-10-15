@@ -3,7 +3,7 @@ export const revalidate = 300;
 import React from "react";
 import Link from "next/link";
 import InsightsList from "@/app/insights/components/InsightsList";
-import { dedupeByUrl, sortByNewestId } from "./utils/urlUtils";
+import { dedupeByUrl, sortByNewest } from "./utils/urlUtils";
 import { getInsightsData, toClientLinks } from "./utils/links-data";
 import { getPreviewMap } from "@/lib/link-preview";
 import redis from "@/app/lib/redis";
@@ -73,7 +73,7 @@ export default async function CuratedLinksPage() {
   // Grand total across every category, de-duplicated, so the header can show
   // how much is in the collection without any per-view noise.
   const totalLinks = dedupeByUrl(
-    sortByNewestId(groups.flatMap((group) => linkData[group.name] || []))
+    sortByNewest(groups.flatMap((group) => linkData[group.name] || []))
   ).length;
 
   // A new shuffle every five minutes, handed down so the server and client

@@ -14,7 +14,6 @@ export interface LinkRecord {
   category: string | null;
   summary: string | null;
   topics: string[] | null;
-  channel: string;
   addedAt: Date;
 }
 
@@ -34,7 +33,6 @@ async function selectLinks(category?: string): Promise<LinkRecord[]> {
       category: links.category,
       summary: links.summary,
       topics: links.topics,
-      channel: links.channel,
       addedAt: links.addedAt,
     })
     .from(links)

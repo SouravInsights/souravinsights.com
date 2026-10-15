@@ -127,6 +127,34 @@ export const hideRequestSchema = z.object({
     }),
 });
 
+export const addLinkRequestSchema = z.object({
+  url: z.string().url().openapi({
+    description: "The page to add.",
+    example: "https://brandur.org/minimalism",
+  }),
+  category: categoryEnum.openapi({
+    description:
+      "The category to file it under. The classifier is skipped for this link.",
+    example: "article",
+  }),
+});
+
+export const addLinkResponseSchema = z
+  .object({
+    data: z.object({
+      id: z.string().openapi({
+        description: "Stable, source-agnostic id (the normalized URL key)",
+        example: "brandur.org/minimalism",
+      }),
+      url: z.string().url(),
+      title: z.string().openapi({
+        description: "The page's title, read from its HTML",
+      }),
+      category: categoryEnum,
+    }),
+  })
+  .openapi("AddedLink");
+
 export const errorSchema = z
   .object({
     error: z.object({

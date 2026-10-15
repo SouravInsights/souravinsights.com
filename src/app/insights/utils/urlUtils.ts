@@ -62,26 +62,22 @@ export function cleanShareUrl(url: string): string {
   }
 }
 
-/** Newest first, by Discord snowflake id. */
-export function sortByNewestId<T extends { id: string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => {
-    try {
-      return BigInt(b.id) > BigInt(a.id) ? 1 : -1;
-    } catch {
-      return b.id.localeCompare(a.id);
-    }
-  });
+/** Normalize a Date or a millisecond timestamp for comparison. */
+const timeOf = (value: Date | number) =>
+  value instanceof Date ? value.getTime() : value;
+
+/** Newest first, by when the link entered the collection. */
+export function sortByNewest<T extends { addedAt: Date | number }>(
+  items: T[]
+): T[] {
+  return [...items].sort((a, b) => timeOf(b.addedAt) - timeOf(a.addedAt));
 }
 
-/** Oldest first — the inverse of sortByNewestId, used to surface stale links. */
-export function sortByOldestId<T extends { id: string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => {
-    try {
-      return BigInt(a.id) > BigInt(b.id) ? 1 : -1;
-    } catch {
-      return a.id.localeCompare(b.id);
-    }
-  });
+/** Oldest first — the inverse of sortByNewest, used to surface stale links. */
+export function sortByOldest<T extends { addedAt: Date | number }>(
+  items: T[]
+): T[] {
+  return [...items].sort((a, b) => timeOf(a.addedAt) - timeOf(b.addedAt));
 }
 
 /**

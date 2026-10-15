@@ -19,7 +19,7 @@ flowchart LR
     H -- ok --> M["fetch title + description<br/>(one small GET, no model)"]
     M --> DB[("row: category set<br/>source = web<br/>title filled")]
     DB --> P[/page shows it/]
-    API -.->|triggers| T["kb-build-one task"]
+    API -.->|triggers| T["kb-build-link task"]
     T -->|"get → read → describe → embed<br/>(classify skipped)"| DB
     T -->|"page rebuilds"| P
 ```
@@ -58,7 +58,7 @@ Admin-gated like `/api/v1/links/hide`.
 1. Validate `{ url, category }` (zod; category from `CATEGORIES`).
 2. `checkUrlHealth` — reject `dead`, keep the final URL.
 3. Fetch the page's title and description from its HTML (`<title>`, `og:title`,
-   `og:description` / `meta[name=description]`) — one GET capped at ~64KB, no model, no
+   `og:description` / `meta[name=description]`) — one GET capped at ~256KB, no model, no
    browser. The card needs a title at insert time; waiting on the pipeline for it is
    unnecessary.
 4. Upsert by `url_key`. New row: `source='web'`, `channel=null`, `discordId=null`,
@@ -108,7 +108,9 @@ needs headless Chrome, which only the local script has (`--render`). Those links
 thin until you run the script; everything else runs automatically.
 
 **The local script stays** for full rebuilds, reclassifying old rows, and the Chrome
-fallback.
+fallback. The weekly `kb-refresh` now reads never-read rows first
+(`extracted_at asc nulls first`) — without that, Postgres sorts nulls last and new rows
+never make its 100-row cut.
 
 **Prerequisite:** the deploy must mark `jsdom` external in `trigger.config.ts`, or the
 build fails on `./xhr-sync-worker.js`.
@@ -151,9 +153,9 @@ Admin only, and only when a real category tab is active.
   No alerts. On success, refresh and keep focus for the next drop.
 - Reuse the existing admin chrome: `loseAdminSession` on 401, `useFeedback` on press.
 
-**Ordering.** The client currently sorts by Discord snowflake `id`, which on-site rows do
-not have. Add `addedAt: number` to `InsightsClientLink` and sort by it in
-`sortByNewestId` / `sortByOldestId` (callers: `InsightsList`, `page.tsx`, `rss.xml`,
+**Ordering.** The client used to sort by Discord snowflake `id`, which on-site rows do
+not have. `InsightsClientLink` now carries `addedAt: number`, and `sortByNewest` /
+`sortByOldest` sort by it (callers: `InsightsList`, `page.tsx`, `rss.xml`,
 `llms-full.txt`).
 
 **Empty title.** A page with no `<title>`/OG tags falls back to the hostname in the card.
@@ -164,7 +166,7 @@ not have. Add `addedAt: number` to `InsightsClientLink` and sort by it in
 
 | Case | Behaviour |
 | :--- | :--- |
-| URL already present | upsert; set category; clear summary only if it changed |
+| URL already present | upsert; set category and `source='web'`; unhide; clear summary only if the category changed |
 | Provably dead | rejected before insert |
 | Bot-walled (`uncheckable`) | accepted; pipeline marks it thin/failed, keeps the description |
 | Non-admin | no drop box; 401 |

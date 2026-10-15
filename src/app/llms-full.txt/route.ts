@@ -1,6 +1,6 @@
 import { CATEGORY_ORDER, CATEGORY_LABELS } from "@/app/insights/utils/categories";
 import { getInsightsData } from "@/app/insights/utils/links-data";
-import { dedupeByUrl, sortByNewestId } from "@/app/insights/utils/urlUtils";
+import { dedupeByUrl, sortByNewest } from "@/app/insights/utils/urlUtils";
 
 export const revalidate = 300;
 // Render on request so the file reflects the live collection.
@@ -17,7 +17,7 @@ export async function GET() {
   const { linkData } = await getInsightsData();
 
   const sections = CATEGORY_ORDER.map((name) => {
-    const links = dedupeByUrl(sortByNewestId(linkData[name] || [])).filter(
+    const links = dedupeByUrl(sortByNewest(linkData[name] || [])).filter(
       (link) => link.url
     );
     if (links.length === 0) return null;

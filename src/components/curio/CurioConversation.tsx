@@ -97,7 +97,6 @@ export function CurioTranscript({
                             onClick={() =>
                               posthog.capture("insights_citation_clicked", {
                                 url: citation.url,
-                                channel: citation.channel,
                                 position: index + 1,
                                 total: citations.length,
                               })

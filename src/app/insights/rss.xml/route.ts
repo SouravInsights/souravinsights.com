@@ -1,6 +1,6 @@
 import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { getInsightsData } from "../utils/links-data";
-import { dedupeByUrl, sortByNewestId } from "../utils/urlUtils";
+import { dedupeByUrl, sortByNewest } from "../utils/urlUtils";
 
 export const revalidate = 300;
 // Render on request so the feed reflects the live collection rather than being
@@ -28,7 +28,7 @@ export async function GET() {
   // Iterated by category: the feed used to walk the retired channel names and
   // emitted nothing once the collection moved to categories.
   const links = dedupeByUrl(
-    sortByNewestId(
+    sortByNewest(
       CATEGORY_ORDER.flatMap((name) => linkData[name] ?? [])
     )
   )

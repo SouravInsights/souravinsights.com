@@ -1,5 +1,5 @@
 import { schedules, logger } from "@trigger.dev/sdk";
-import { and, asc, isNull, ne } from "drizzle-orm";
+import { and, isNull, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
 import { closeRenderer } from "@/lib/kb/render";
@@ -36,6 +36,7 @@ export const kbRefresh = schedules.task({
         urlKey: links.urlKey,
         title: links.title,
         description: links.description,
+        source: links.source,
         markdown: links.markdown,
         contentHash: links.contentHash,
         category: links.category,
@@ -43,7 +44,9 @@ export const kbRefresh = schedules.task({
       })
       .from(links)
       .where(and(isNull(links.hiddenAt), ne(links.health, "dead")))
-      .orderBy(asc(links.extractedAt))
+      // Never-read rows (extracted_at is null) come first; Postgres puts nulls
+      // last on ASC by default, which would skip every newly added link.
+      .orderBy(sql`${links.extractedAt} asc nulls first`)
       .limit(MAX_LINKS);
 
     logger.info("kb refresh starting", { candidates: rows.length });

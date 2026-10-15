@@ -122,7 +122,7 @@ export interface LinkInspection {
     url: string;
     title: string;
     description: string;
-    channel: string;
+    channel: string | null;
     readStatus: string;
     health: string;
     hidden: boolean;
@@ -393,7 +393,6 @@ export interface TracePassage {
   url: string;
   urlKey: string;
   title: string;
-  channel: string;
   passageChars: number;
 }
 
@@ -452,7 +451,6 @@ function summarise(name: string, output: unknown): TraceToolResult {
     matches?: {
       url: string;
       title: string;
-      channel: string;
       passage: string;
     }[];
     note?: string;
@@ -468,7 +466,6 @@ function summarise(name: string, output: unknown): TraceToolResult {
         url: m.url,
         urlKey: urlKeyOf(m.url),
         title: m.title,
-        channel: m.channel,
         passageChars: (m.passage ?? "").length,
       })),
       note: o.note,

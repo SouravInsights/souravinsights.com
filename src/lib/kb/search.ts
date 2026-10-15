@@ -46,7 +46,6 @@ export interface SearchHit {
   url: string;
   title: string;
   category: string | null;
-  channel: string;
   /** 1 − cosine distance. Higher is more relevant. */
   score: number;
   /** The best passages from this link, most relevant first. */
@@ -59,7 +58,6 @@ interface CandidateRow {
   url: string;
   title: string;
   category: string | null;
-  channel: string;
   content: string;
   chunkIndex: number;
   unitType: string;
@@ -96,7 +94,6 @@ export async function search(
     url: links.url,
     title: links.title,
     category: links.category,
-    channel: links.channel,
     content: linkChunks.content,
     chunkIndex: linkChunks.chunkIndex,
     unitType: linkChunks.unitType,
@@ -141,7 +138,6 @@ export async function search(
           url: row.url,
           title: row.title || row.url,
           category: row.category,
-          channel: row.channel,
           score: 1 - Number(row.distance),
           passages: [],
         },

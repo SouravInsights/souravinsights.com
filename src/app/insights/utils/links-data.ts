@@ -28,7 +28,7 @@ export type InsightsLink = LinkData & {
 export type InsightsClientLink = Pick<
   InsightsLink,
   "id" | "urlKey" | "category" | "topics" | "url" | "title"
->;
+> & { addedAt: number };
 
 /** Keep only the fields above, so a link's summary never reaches the browser. */
 export function toClientLinks(
@@ -37,14 +37,17 @@ export function toClientLinks(
   return Object.fromEntries(
     Object.entries(linkData).map(([category, links]) => [
       category,
-      links.map(({ id, urlKey, category: linkCategory, topics, url, title }) => ({
-        id,
-        urlKey,
-        category: linkCategory,
-        topics,
-        url,
-        title,
-      })),
+      links.map(
+        ({ id, urlKey, category: linkCategory, topics, url, title, addedAt }) => ({
+          id,
+          urlKey,
+          category: linkCategory,
+          topics,
+          url,
+          title,
+          addedAt: addedAt.getTime(),
+        })
+      ),
     ])
   );
 }

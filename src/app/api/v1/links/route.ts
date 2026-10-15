@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { tasks } from "@trigger.dev/sdk";
 import { and, desc, eq, isNull, lt, ne, or } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
 import { normalizeUrl } from "@/app/insights/utils/urlUtils";
-import { linksQuerySchema } from "@/lib/links/api-schemas";
-import { apiLimiter, clientIp } from "@/lib/links/ratelimit";
+import { requireAdmin } from "@/lib/admin-auth";
+import { addLinkRequestSchema, linksQuerySchema } from "@/lib/links/api-schemas";
+import { adminLimiter, apiLimiter, clientIp } from "@/lib/links/ratelimit";
+import { checkUrlHealth } from "@/lib/links/health";
+import { fetchPageMetadata } from "@/lib/links/metadata";
+import type { kbBuildLink } from "@/trigger/kb-build-link";
 
 const SELECT = {
   id: links.id,
@@ -145,4 +151,97 @@ export async function GET(request: NextRequest) {
       },
     }
   );
+}
+
+/**
+ * Add a link by hand. The category comes from the admin, so the pipeline skips
+ * the classifier for this row (`source='web'`).
+ */
+export async function POST(request: NextRequest) {
+  const denied = requireAdmin(request);
+  if (denied) return denied;
+
+  const rate = await adminLimiter.limit(clientIp(request.headers));
+  if (!rate.success) {
+    return err("rate_limited", "Too many requests", 429);
+  }
+
+  const parsed = addLinkRequestSchema.safeParse(
+    await request.json().catch(() => null)
+  );
+  if (!parsed.success) {
+    return err("invalid_body", "Body must be { url, category }", 400);
+  }
+  const { url, category } = parsed.data;
+
+  // Never record a provably dead link.
+  const health = await checkUrlHealth(url);
+  if (health.verdict === "dead") {
+    return err("dead_link", "That URL is dead (404 or DNS failure)", 422);
+  }
+
+  // The card shows a title, and a hand-added link has no Discord embed to
+  // borrow one from. One small GET, no model, no browser.
+  const metadata = await fetchPageMetadata(health.finalUrl);
+  const urlKey = normalizeUrl(health.finalUrl);
+  const now = new Date();
+
+  const existing = await db
+    .select({ id: links.id, category: links.category })
+    .from(links)
+    .where(eq(links.urlKey, urlKey))
+    .limit(1);
+
+  let linkId: number;
+  if (existing.length > 0) {
+    const changed = existing[0].category !== category;
+    await db
+      .update(links)
+      .set({
+        category,
+        // Marked as hand-filed so the pipeline keeps this category.
+        source: "web",
+        hiddenAt: null,
+        // A new category needs a new summary; the markdown is still good.
+        ...(changed ? { summary: null, analyzedAt: null } : {}),
+        updatedAt: now,
+      })
+      .where(eq(links.id, existing[0].id));
+    linkId = existing[0].id;
+  } else {
+    const [inserted] = await db
+      .insert(links)
+      .values({
+        urlKey,
+        url: health.finalUrl,
+        title: metadata.title,
+        description: metadata.description,
+        source: "web",
+        channel: null,
+        addedAt: now,
+        category,
+        readStatus: "pending",
+        health: health.verdict === "retry" ? "dying" : health.verdict,
+        consecutiveFailures: health.verdict === "retry" ? 1 : 0,
+        healthCheckedAt: now,
+      })
+      .returning({ id: links.id });
+    linkId = inserted.id;
+  }
+
+  // Read and summarize in the background. If this fails, the row stays pending
+  // and the weekly refresh (never-read first) still picks it up.
+  try {
+    await tasks.trigger<typeof kbBuildLink>("kb-build-link", { linkId });
+  } catch (error) {
+    console.error("kb-build-link trigger failed", linkId, error);
+  }
+
+  revalidatePath("/insights");
+  revalidatePath("/api/insights/latest");
+  revalidateTag("links");
+
+  return NextResponse.json({
+    data: { id: urlKey, url: health.finalUrl, title: metadata.title, category },
+  });
 }

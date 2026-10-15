@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, List as ListIcon, Search, Shuffle, SlidersHorizontal, Tag, Trash2, X } from "lucide-react";
+import { ArrowUp, ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, Link2, List as ListIcon, Loader2, Search, Shuffle, SlidersHorizontal, Tag, Trash2, X } from "lucide-react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsClientLink } from "../utils/links-data";
 import {
@@ -13,8 +13,8 @@ import {
   dedupeByUrl,
   normalizeUrl,
   seededShuffle,
-  sortByNewestId,
-  sortByOldestId,
+  sortByNewest,
+  sortByOldest,
 } from "../utils/urlUtils";
 import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "./LikeButton";
@@ -199,7 +199,7 @@ export default function InsightsList({
 
     // Newest first, then collapse the same URL posted to more than one
     // category so a link never appears twice in a view.
-    return dedupeByUrl(sortByNewestId(source));
+    return dedupeByUrl(sortByNewest(source));
   }, [activeCategory, sortedGroups, linkData]);
 
   const filteredLinks = useMemo(() => {
@@ -226,7 +226,7 @@ export default function InsightsList({
   // Quality sort keeps newest-first order for ties (Array.sort is stable).
   const sortedLinks = useMemo(() => {
     if (sort === "newest") return filteredLinks;
-    if (sort === "oldest") return sortByOldestId(filteredLinks);
+    if (sort === "oldest") return sortByOldest(filteredLinks);
     if (sort === "shuffle") return seededShuffle(filteredLinks, shuffleSeed);
     return [...filteredLinks].sort(
       (a, b) => (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0)
@@ -636,8 +636,9 @@ export default function InsightsList({
           tab bar at the bottom, so nothing is above it to fight for the edge
           (the floating navbar used to duck out of the way for this). */}
       <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
-        {/* View toggle + clean-up. Display choices sit on the left; clean-up is
-            the admin-only door into batch delete. */}
+        {/* Display choices sit on the left. Batch delete lives in the sort menu
+            instead — it is an admin action, not a view, and on a phone the
+            toolbar has no room to spare. */}
         <div className={`${searchOpen ? "hidden sm:block" : "block"} shrink-0`}>
           <div className="flex h-10 items-center gap-2 sm:h-9">
             <div className="flex h-full items-center gap-0.5 rounded-lg border border-border p-0.5">
@@ -678,27 +679,6 @@ export default function InsightsList({
                 );
               })}
             </div>
-
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={toggleCleanup}
-                aria-pressed={cleanup}
-                aria-label={cleanup ? "Done cleaning up" : "Clean up links"}
-                title={cleanup ? "Done cleaning up" : "Clean up links"}
-                className={`flex aspect-square h-full items-center justify-center rounded-lg border transition-colors ${
-                  cleanup
-                    ? "border-red-600/40 bg-red-600/10 text-red-600"
-                    : "border-border text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-                }`}
-              >
-                {cleanup ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Trash2 className="h-4 w-4" />
-                )}
-              </button>
-            )}
           </div>
         </div>
 
@@ -923,6 +903,34 @@ export default function InsightsList({
                         )}
                       </button>
                     ))}
+
+                    {/* Batch delete is an admin action, so it lives here rather
+                        than taking a slot in the toolbar. */}
+                    {isAdmin && (
+                      <>
+                        <div className="my-1 h-px bg-border" aria-hidden="true" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            feedback.select();
+                            setSortMenuOpen(false);
+                            toggleCleanup();
+                          }}
+                          className={`flex w-full items-center gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
+                            cleanup
+                              ? "text-red-600"
+                              : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                          }`}
+                        >
+                          {cleanup ? (
+                            <Check className="h-3.5 w-3.5" />
+                          ) : (
+                            <Trash2 className="h-3.5 w-3.5" />
+                          )}
+                          {cleanup ? "Done cleaning up" : "Clean up links"}
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -972,6 +980,16 @@ export default function InsightsList({
           aria-hidden="true"
         />
       </div>
+
+      {/* Add a link. Only for admins, and only inside a real category: you
+          pick the tab first, then drop. */}
+      {isAdmin && activeCategory !== "all" && (
+        <AddLinkComposer
+          category={activeCategory}
+          onAdded={() => router.refresh()}
+          onUnauthorized={loseAdminSession}
+        />
+      )}
 
       {/* Active topics: only exist when a filter is on — chips as a receipt. */}
       {selectedTopics.length > 0 && (
@@ -1185,6 +1203,165 @@ export default function InsightsList({
         )}
       </AnimatePresence>
     </PreviewCardProvider>
+  );
+}
+
+/**
+ * Add a link to the category you are looking at. Drop or paste a URL; the
+ * pipeline reads and summarizes it in the background.
+ */
+function AddLinkComposer({
+  category,
+  onAdded,
+  onUnauthorized,
+}: {
+  category: string;
+  onAdded: () => void;
+  onUnauthorized: () => void;
+}) {
+  const feedback = useFeedback();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [url, setUrl] = useState("");
+  const [status, setStatus] = useState<"idle" | "adding" | "added" | "error">(
+    "idle"
+  );
+  const [message, setMessage] = useState("");
+  const [dragging, setDragging] = useState(false);
+
+  const label = categoryLabel(category);
+  const busy = status === "adding";
+
+  const submit = async (raw: string) => {
+    const trimmed = raw.trim();
+    if (!trimmed || busy) return;
+    const value = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+    setStatus("adding");
+    setMessage("");
+    try {
+      const response = await fetch("/api/v1/links", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: value, category }),
+      });
+      if (response.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        setStatus("error");
+        setMessage(data?.error?.message ?? "Could not add that link.");
+        return;
+      }
+      feedback.press();
+      setStatus("added");
+      setMessage(
+        `Added “${data?.data?.title || value}”. It will be summarized in a moment.`
+      );
+      setUrl("");
+      onAdded();
+      inputRef.current?.focus();
+    } catch {
+      setStatus("error");
+      setMessage("Could not add that link.");
+    }
+  };
+
+  return (
+    <div className="mt-4">
+      <div
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(event) => {
+          event.preventDefault();
+          setDragging(false);
+          const dropped =
+            event.dataTransfer.getData("text/uri-list") ||
+            event.dataTransfer.getData("text/plain");
+          if (!dropped) return;
+          setUrl(dropped);
+          void submit(dropped);
+        }}
+        className={`rounded-lg border transition-all duration-200 ${
+          dragging
+            ? "border-green-600/50 bg-green-600/[0.06] ring-2 ring-green-600/15"
+            : "border-border bg-foreground/[0.02] focus-within:border-input focus-within:ring-2 focus-within:ring-ring/30"
+        }`}
+      >
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void submit(url);
+          }}
+          className="flex items-center gap-1 p-1.5"
+        >
+          <span
+            aria-hidden="true"
+            className={`flex h-9 w-9 shrink-0 items-center justify-center transition-colors ${
+              dragging || status === "added"
+                ? "text-green-700 dark:text-green-500"
+                : "text-faint-foreground"
+            }`}
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : status === "added" ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Link2 className="h-4 w-4" />
+            )}
+          </span>
+          <input
+            ref={inputRef}
+            type="text"
+            inputMode="url"
+            value={url}
+            onChange={(event) => {
+              setUrl(event.target.value);
+              if (status !== "idle") setStatus("idle");
+            }}
+            placeholder={
+              dragging ? "Drop to add…" : `Drop or paste a link into ${label}`
+            }
+            spellCheck={false}
+            autoComplete="off"
+            aria-label={`Add a link to ${label}`}
+            className="min-h-9 min-w-0 flex-1 bg-transparent px-1 text-base leading-normal outline-none placeholder:text-faint-foreground sm:text-sm"
+          />
+          <button
+            type="submit"
+            disabled={busy || url.trim() === ""}
+            aria-label={`Add to ${label}`}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:opacity-40"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        </form>
+      </div>
+
+      <AnimatePresence>
+        {message && (
+          <motion.p
+            initial={{ opacity: 0, y: -2 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            role={status === "error" ? "alert" : undefined}
+            className={`mt-2 px-1 type-caption ${
+              status === "error"
+                ? "text-red-600 dark:text-red-400"
+                : "text-muted-foreground"
+            }`}
+          >
+            {message}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

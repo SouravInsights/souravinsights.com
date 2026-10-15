@@ -33,8 +33,8 @@ export const links = pgTable(
     url: text("url").notNull(),
     title: text("title").notNull().default(""),
     description: text("description").notNull().default(""),
-    // Raw intake note. Nothing groups by it — the page groups by `category`.
-    channel: text("channel").notNull(),
+    // Raw intake note (the Discord channel). Null for non-Discord intake.
+    channel: text("channel"),
     addedAt: timestamp("added_at", { withTimezone: true }).notNull(),
 
     // visibility & health

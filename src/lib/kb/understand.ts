@@ -162,14 +162,20 @@ export async function describePage(
 }
 
 export async function understandPage(
-  input: UnderstandInput
+  input: UnderstandInput,
+  /** A category chosen by hand — skips the classifier entirely. */
+  chosenCategory?: Category
 ): Promise<UnderstandResult> {
-  const { category: rawCategory, confidence } = await classifyPage(
-    pipelineModel(),
-    input
-  );
-
-  const category: Category = confidence === "low" ? "other" : rawCategory;
+  let category: Category;
+  if (chosenCategory) {
+    category = chosenCategory;
+  } else {
+    const { category: rawCategory, confidence } = await classifyPage(
+      pipelineModel(),
+      input
+    );
+    category = confidence === "low" ? "other" : rawCategory;
+  }
 
   const { summary, topics } = await describePage(pipelineModel(), {
     ...input,
