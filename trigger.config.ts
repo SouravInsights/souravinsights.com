@@ -21,7 +21,9 @@ export default defineConfig({
   dirs: ["./src/trigger"],
   build: {
     // jsdom loads ./xhr-sync-worker.js at runtime, which esbuild cannot see.
-    // Keep it out of the bundle so the file ships in node_modules intact.
-    external: ["jsdom"],
+    // defuddle/node is a CommonJS file behind an import-only export map entry,
+    // and this repo is CommonJS — bundled, its Defuddle export comes out
+    // malformed. Keep both out of the bundle; Node loads them correctly.
+    external: ["jsdom", "defuddle"],
   },
 });
