@@ -1,19 +1,14 @@
 # On-Site Link Intake — Spec
 
-Add a link from the insights page: pick a category tab, drop the URL. You already know
-where it belongs, so the model's category guess is skipped. Every other stage runs.
+Add a link from the insights page: pick a category tab, drop the URL. The category is
+chosen by hand, so the pipeline's category guess is skipped. Everything else runs.
 
-**Status:** proposed. Pipeline background: [`insights-rebuild.md`](./insights-rebuild.md).
+Pipeline background: [`insights-rebuild.md`](./insights-rebuild.md).
 Table + admin auth: [`links-registry-and-api.md`](./links-registry-and-api.md).
 
 ---
 
-## 1. The one fact this rests on
-
-The pipeline is already modular: each verb skips itself when its columns are set, and
-**classify is the only verb that decides the category**. Pick the category yourself and
-that one call disappears; `get`, `read`, `describe` (summary + topics) and `embed` are
-untouched.
+## 1. How it works
 
 ```mermaid
 flowchart LR
@@ -21,169 +16,170 @@ flowchart LR
     DZ --> API["POST /api/v1/links"]
     API --> H{health check}
     H -- dead --> X[reject inline]
-    H -- ok --> DB[("row: category set<br/>source = web<br/>channel = null")]
+    H -- ok --> M["fetch title + description<br/>(one small GET, no model)"]
+    M --> DB[("row: category set<br/>source = web<br/>title filled")]
     DB --> P[/page shows it/]
-    DB --> T["kb-build-one (Trigger.dev v4)"]
-    subgraph T2["pipeline — classify skipped"]
-      direction LR
-      G[get] --> R[read → metadata] --> D[describe → summary + topics] --> E[embed]
-    end
-    T --> T2 --> DB
+    API -.->|triggers| T["kb-build-one task"]
+    T -->|"get → read → describe → embed<br/>(classify skipped)"| DB
+    T -->|"page rebuilds"| P
 ```
 
+Each pipeline stage runs only when its columns are empty, and **classify is the only
+stage that decides a category**. A hand-picked category means that one call is skipped;
+`get`, `read` (title/description/markdown), `describe` (summary + topics) and `embed` all
+run. The route fetches the title and description itself, so the card is correct the moment
+it appears; the task then fills in markdown, summary and embeddings.
+
 ---
 
-## 2. Columns: reuse, don't add
+## 2. Columns
 
-No `category_source`. The existing `source` column already means "which intake produced
-this row" — it has just never been read. Use it:
+No new column.
 
-| Row | `source` | `channel` | classify? |
+| Intake | `source` | `channel` | Classified? |
 | :--- | :--- | :--- | :--- |
 | Discord | `discord` (default) | the Discord channel name | yes |
-| On-site | `web` | `null` | **no** |
+| On-site | `web` | `null` | no |
 
-- `source = 'web'` is both the intake record and the "filed by hand" signal.
-- `channel` keeps its exact meaning (the Discord channel). An on-site row had no Discord
-  channel, so the honest value is `null`. That means one migration: drop `NOT NULL` on
-  `channel`. No new column, no sentinel strings.
-- Type ripple: `channel` becomes `string | null` in `search.ts`, `links/queries.ts`,
-  `inspect.ts`, and `Match` in the Curio client. It is only shown in analytics, so null
-  is harmless.
-
-If a future web form ever lets the model classify, revisit then. Not now.
+- `source` is the intake record. `web` means a person filed it by hand.
+- `channel` keeps its meaning (the Discord channel it was dropped in). An on-site row had
+  no Discord channel, so the column becomes nullable.
+- `channel` is also **removed from search results**. Search ranks by meaning and filters
+  by category; carrying a Discord channel through it is a leftover from when the page
+  grouped by channel. Remove it from `SearchHit`, the search query, the agent tool
+  output, `Match` in the Curio client, and the PostHog capture.
 
 ---
 
-## 3. Pipeline changes
+## 3. Intake route — `POST /api/v1/links`
 
-1. **`understandPage`** gains an optional `category`. When present, skip `classifyPage`
-   and call `describePage` with it directly.
-2. **`buildLink`** (`store.ts`): if `source === 'web'` and the stored category is valid,
-   pass it in and do **not** apply `category-overrides.json` (the on-site choice is the
-   newer human decision). `LinkRow` gains `source`.
-3. **`needsUnderstand`** adds `!link.summary`, so a manual row whose summary was cleared
-   (recategorised, or a crash between read and describe) is picked up again.
-4. **`kb-build` selection** becomes `markdown is null OR category is null OR summary is
-   null`, so a half-finished manual row is never skipped forever.
+Admin-gated like `/api/v1/links/hide`.
+
+1. Validate `{ url, category }` (zod; category from `CATEGORIES`).
+2. `checkUrlHealth` — reject `dead`, keep the final URL.
+3. Fetch the page's title and description from its HTML (`<title>`, `og:title`,
+   `og:description` / `meta[name=description]`) — one GET capped at ~64KB, no model, no
+   browser. The card needs a title at insert time; waiting on the pipeline for it is
+   unnecessary.
+4. Upsert by `url_key`. New row: `source='web'`, `channel=null`, `discordId=null`,
+   `addedAt=now()`, `readStatus='pending'`, the chosen category, the fetched title and
+   description. Existing row: set the category; if it changed, clear `summary` and
+   `analyzedAt` but keep `markdown`.
+5. Trigger the pipeline task for this row.
+6. Revalidate the page.
+
+Add `addLinkRequestSchema` to `api-schemas.ts` and the path to `openapi.ts` (tag `admin`).
 
 ---
 
-## 4. Automation (Trigger.dev v4)
+## 4. Automation
 
-v3 is deprecated and not running. Migration done (see §7). The new intake is automatic:
+The route inserts the row and returns. A Trigger.dev task then does the reading work for
+that one link:
 
-- **New task `src/trigger/kb-build-one.ts`** — payload `{ linkId }`, loads the row, calls
-  `buildLink`, then hits `/api/revalidate` so the enriched card replaces the placeholder.
-  No `render` flag, so JS-heavy pages stay thin until a local `--render` run.
-- **The route triggers it** with `tasks.trigger("kb-build-one", { linkId })` (string id,
-  so the route never imports defuddle/jsdom).
-- **The local script stays**, for backfills, `--stale` reclassify, `--render` retries and
-  debugging. It is no longer the only way a link gets read.
+```
+kb-build-link({ linkId })
+  → load the row
+  → run the same pipeline (get → read → describe → embed, classify skipped)
+  → tell the site to rebuild its cached page
+```
 
-Cost: Trigger.dev free-tier compute, plus the same model calls as before. No Vercel cost
-beyond the one route call.
+One link added = one run. The task is triggered once per link and handles only that link;
+it never scans the table. The weekly `kb-refresh` is a rotation over the whole collection
+and cannot target one link, so this is a separate task — but it reuses the same
+`buildLink`, so no pipeline is duplicated. A queue caps how many run at once, so adding
+fifty links in an hour queues them instead of firing fifty model calls at once:
+
+```ts
+const kbBuildQueue = queue({ name: "kb-build-link", concurrencyLimit: 3 });
+```
+
+Why a task and not the route: reading a page takes seconds and sometimes needs a real
+browser, and a web request should stay fast. Trigger.dev runs the same code the local
+script runs.
+
+**Rebuilding the page.** The insights page caches its link list for 5 minutes. When the
+task finishes, it calls the existing `/api/revalidate` endpoint, which tells Next.js to
+throw that cache away and rebuild now, so the page shows the real title without waiting
+for the cache to expire. The Discord intake already does this.
+
+**What Trigger.dev cannot do.** Some pages only render with JavaScript. Reading those
+needs headless Chrome, which only the local script has (`--render`). Those links stay
+thin until you run the script; everything else runs automatically.
+
+**The local script stays** for full rebuilds, reclassifying old rows, and the Chrome
+fallback.
+
+**Prerequisite:** the deploy must mark `jsdom` external in `trigger.config.ts`, or the
+build fails on `./xhr-sync-worker.js`.
 
 ---
 
 ## 5. Terminal visibility
 
-The script should say what it is doing. Add an optional `onStage` callback to `buildLink`
-(`"get" | "read" | "understand" | "embed"`), and:
+Running the script locally should show what is happening. Add an optional `onStage`
+callback to `buildLink` (`"get" | "read" | "understand" | "embed"`).
 
-- **TTY:** a small live block, one row per in-flight link, redrawn with ANSI:
+- On a terminal: a live block, one row per link in flight:
   ```
   kb-build · 42 to process · 4 at a time
   brandur.org/minimalism     embed       11 passages
   example.com/paywalled      understand  describe
   broken.example             get         fetching
   ```
-- **Non-TTY (CI/logs):** one plain line per stage transition, no cursor games.
-- **Per-link completion line** always:
+- Piped to a file or CI: one plain line per stage change.
+- Always, a completion line per link:
   ```
   ✓ 12/42  brandur.org/minimalism   article  · 11 passages · 3.2s
   ⚠ 13/42  example.com/paywalled    article  · thin, 1 passage · 1.8s
   ✗ 14/42  broken.example                      failed · 0.9s
   ```
-- **Final tally** as today: ok / thin / failed / understood / passages / errors, plus
-  elapsed time.
+- Final tally: ok / thin / failed / understood / passages / errors + elapsed time.
 
-No new dependency. If stdout is not a TTY, degrade to plain lines.
-
----
-
-## 6. Route and UI
-
-**Route** `POST /api/v1/links` (admin-gated like `/api/v1/links/hide`):
-
-1. validate `{ url, category }` (zod; category from `CATEGORIES`);
-2. `checkUrlHealth` — reject `dead`, keep `finalUrl`;
-3. upsert by `url_key`: new row gets `source='web'`, `channel=null`, `discordId=null`,
-   `addedAt=now()`, `readStatus='pending'`, the chosen `category`. Existing row: set
-   category; if it changed, clear `summary` + `analyzedAt` (keep `markdown`);
-4. trigger `kb-build-one`;
-5. revalidate.
-
-Add `addLinkRequestSchema` to `api-schemas.ts`, register the path in `openapi.ts` (tag
-`admin`).
-
-**UI** (`InsightsList.tsx`, admin only, only when a real category tab is active):
-
-- a compact row under the app bar: input ("Drop or paste a link into Articles") + Add;
-- accepts paste, Enter, and drag-and-drop (`text/uri-list` / `text/plain`), with a
-  drag-over highlight;
-- inline states: idle → submitting → success → error (invalid / dead / rate-limited).
-  No alerts. On success `router.refresh()` and keep focus;
-- reuse the existing admin chrome: `loseAdminSession` on 401, `useFeedback` on press.
-
-**Ordering:** client links currently sort by Discord snowflake `id`, which is null for web
-rows. Add `addedAt: number` to `InsightsClientLink` and switch `sortByNewestId` /
-`sortByOldestId` to sort by `addedAt` (callers: `InsightsList`, `page.tsx`,
-`rss.xml`, `llms-full.txt`). Correct regardless of this feature.
-
-**Empty title:** a fresh row has no title until `read` runs. Fall back to the hostname in
-the card when `title` is empty.
+No new dependency. Without a terminal it degrades to plain lines.
 
 ---
 
-## 7. Trigger.dev v3 → v4 (done)
+## 6. UI
 
-Only the import path and versions changed; none of the v4 breaking APIs (`init`,
-`handleError`, `toolTask`, queues, lifecycle hooks, `batchTrigger`, `triggerAndWait`) were
-in use.
+Admin only, and only when a real category tab is active.
 
-- `src/trigger/{discord-links,kb-refresh,links-health}.ts` and `trigger.config.ts`:
-  `@trigger.dev/sdk/v3` → `@trigger.dev/sdk`.
-- `package.json`: `@trigger.dev/sdk` and `@trigger.dev/build` → `^4.7.4`; installed.
-- `tsc --noEmit` clean.
-- **Still required:** redeploy with the v4 CLI (`npx trigger.dev@latest deploy`) so the
-  cron tasks resume; v4 uses the same project/secret.
+- A compact row under the app bar: input ("Drop or paste a link into Articles") + Add.
+- Accepts paste, Enter, and drag-and-drop (`text/uri-list` / `text/plain`), with a
+  drag-over highlight.
+- Inline states: idle → submitting → success → error (invalid / dead / rate-limited).
+  No alerts. On success, refresh and keep focus for the next drop.
+- Reuse the existing admin chrome: `loseAdminSession` on 401, `useFeedback` on press.
+
+**Ordering.** The client currently sorts by Discord snowflake `id`, which on-site rows do
+not have. Add `addedAt: number` to `InsightsClientLink` and sort by it in
+`sortByNewestId` / `sortByOldestId` (callers: `InsightsList`, `page.tsx`, `rss.xml`,
+`llms-full.txt`).
+
+**Empty title.** A page with no `<title>`/OG tags falls back to the hostname in the card.
 
 ---
 
-## 8. Edge cases
+## 7. Edge cases
 
 | Case | Behaviour |
 | :--- | :--- |
 | URL already present | upsert; set category; clear summary only if it changed |
 | Provably dead | rejected before insert |
-| Bot-walled (`uncheckable`) | accepted; pipeline marks thin/failed, keeps description fallback |
+| Bot-walled (`uncheckable`) | accepted; pipeline marks it thin/failed, keeps the description |
 | Non-admin | no drop box; 401 |
-| Manual row, later `--stale` | describe re-runs; category never touched |
-| Manual row vs `category-overrides.json` | manual wins |
+| Manual row, later reclassify | describe re-runs; category is never touched |
 
 ---
 
-## 9. Build order
+## 8. Build order
 
-1. Migration: `channel` nullable.
-2. `understandPage` optional category + `buildLink` `source==='web'` branch + `LinkRow.source`.
-3. `kb-build` selection filter.
-4. `addedAt` ordering swap.
+1. `channel` nullable; remove `channel` from search and its consumers.
+2. `understandPage` optional category; `buildLink` skips classify when `source='web'`;
+   `LinkRow` gains `source`.
+3. `kb-build` selection also picks rows with no summary.
+4. `addedAt` ordering.
 5. `onStage` callback + terminal output.
 6. `POST /api/v1/links` + schema + OpenAPI.
-7. `kb-build-one` task + trigger from the route.
+7. `kb-build-link` task + queue + trigger from the route + `jsdom` external.
 8. Drop box UI.
-
-Steps 1–4 are invisible and independently safe. 5 is the local-run visibility. 6 is
-curl-usable before the UI. 7 makes it automatic. 8 is the visible feature.
