@@ -19,4 +19,9 @@ export default defineConfig({
     },
   },
   dirs: ["./src/trigger"],
+  build: {
+    // jsdom loads ./xhr-sync-worker.js at runtime, which esbuild cannot see.
+    // Keep it out of the bundle so the file ships in node_modules intact.
+    external: ["jsdom"],
+  },
 });
