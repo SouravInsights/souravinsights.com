@@ -230,10 +230,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Read and summarize in the background. If this fails, the row stays pending
-  // and the weekly refresh (never-read first) still picks it up.
+  // and the weekly refresh (never-read first) still picks it up — but say so,
+  // rather than returning a success that hides a missing TRIGGER_SECRET_KEY.
+  let queued = true;
   try {
     await tasks.trigger<typeof kbBuildLink>("kb-build-link", { linkId });
   } catch (error) {
+    queued = false;
     console.error("kb-build-link trigger failed", linkId, error);
   }
 
@@ -242,6 +245,12 @@ export async function POST(request: NextRequest) {
   revalidateTag("links");
 
   return NextResponse.json({
-    data: { id: urlKey, url: health.finalUrl, title: metadata.title, category },
+    data: {
+      id: urlKey,
+      url: health.finalUrl,
+      title: metadata.title,
+      category,
+      queued,
+    },
   });
 }

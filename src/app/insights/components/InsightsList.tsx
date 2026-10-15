@@ -1256,8 +1256,11 @@ function AddLinkComposer({
       }
       feedback.press();
       setStatus("added");
+      const title = data?.data?.title || value;
       setMessage(
-        `Added “${data?.data?.title || value}”. It will be summarized in a moment.`
+        data?.data?.queued === false
+          ? `Added “${title}”. Reading couldn't be queued, so it will be picked up later.`
+          : `Added “${title}”. It will be summarized in a moment.`
       );
       setUrl("");
       onAdded();

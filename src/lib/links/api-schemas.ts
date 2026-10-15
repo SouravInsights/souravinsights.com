@@ -151,6 +151,11 @@ export const addLinkResponseSchema = z
         description: "The page's title, read from its HTML",
       }),
       category: categoryEnum,
+      queued: z.boolean().openapi({
+        description:
+          "Whether background reading was queued. False means the row was added " +
+          "but the build task could not be triggered; the weekly refresh picks it up.",
+      }),
     }),
   })
   .openapi("AddedLink");
