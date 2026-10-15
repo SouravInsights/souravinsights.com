@@ -4,6 +4,7 @@ import { z } from "zod";
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { highlights, links } from "@/db/schema";
+import { requireAdmin } from "@/lib/admin-auth";
 
 /**
  * Owner highlights on reader articles (docs/spec/insights-rebuild.md).
@@ -18,17 +19,9 @@ const bodySchema = z.object({
   hue: z.number().int().min(0).max(7).default(3),
 });
 
-const auth = (request: NextRequest) =>
-  request.headers.get("authorization") === `Bearer ${process.env.ADMIN_SECRET}`;
-
-const unauthorized = () =>
-  NextResponse.json(
-    { error: { code: "unauthorized", message: "Missing or invalid admin key" } },
-    { status: 401 }
-  );
-
 export async function POST(request: NextRequest) {
-  if (!auth(request)) return unauthorized();
+  const denied = requireAdmin(request);
+  if (denied) return denied;
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
@@ -61,7 +54,8 @@ export async function POST(request: NextRequest) {
 
 /** Recolor an existing mark (palette pick on an edit). */
 export async function PATCH(request: NextRequest) {
-  if (!auth(request)) return unauthorized();
+  const denied = requireAdmin(request);
+  if (denied) return denied;
 
   const parsed = z
     .object({ id: z.number(), hue: z.number().int().min(0).max(7) })
@@ -82,7 +76,8 @@ export async function PATCH(request: NextRequest) {
 
 /** Erase a mark. */
 export async function DELETE(request: NextRequest) {
-  if (!auth(request)) return unauthorized();
+  const denied = requireAdmin(request);
+  if (denied) return denied;
 
   const id = Number(request.nextUrl.searchParams.get("id"));
   if (!Number.isInteger(id) || id <= 0) {

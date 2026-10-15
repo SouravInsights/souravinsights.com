@@ -34,6 +34,7 @@ interface InsightsListProps {
   previews: Record<string, string>;
   likeCounts: Record<string, number>;
   shuffleSeed: number;
+  isAdmin: boolean;
 }
 
 const ITEMS_PER_PAGE = 60;
@@ -77,6 +78,7 @@ export default function InsightsList({
   previews,
   likeCounts,
   shuffleSeed,
+  isAdmin: initialIsAdmin,
 }: InsightsListProps) {
   const router = useRouter();
   // The reader is a view of this page: which article (urlKey) is open, if any.
@@ -95,7 +97,7 @@ export default function InsightsList({
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"list" | "grid">("list");
-  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
   const [hiddenKeys, setHiddenKeys] = useState<Set<string>>(new Set());
   // Clean-up (batch delete) mode. Session-only state on purpose: an admin-only
   // triage mode that survives a reload is one more thing to desync.
@@ -318,34 +320,16 @@ export default function InsightsList({
     if (sort !== "oldest") window.localStorage.setItem("insights:sort-v2", sort);
   }, [sort]);
 
-  // Admin mode: ?admin in the URL; the key is prompted once and stored in
-  // this browser only. Hiding is reversible server-side (hidden_at).
-  useEffect(() => {
-    if (!new URLSearchParams(window.location.search).has("admin")) return;
-    const stored = window.localStorage.getItem("insights_admin_key");
-    const key =
-      stored ?? window.prompt("Admin key (stored in this browser only)");
-    if (key) {
-      window.localStorage.setItem("insights_admin_key", key);
-      setAdminKey(key);
-    }
-  }, []);
-
   const hideLink = async (link: EnrichedLink) => {
-    if (!adminKey) return;
+    if (!isAdmin) return;
     if (!window.confirm(`Hide “${link.title}” from every surface?`)) return;
     const response = await fetch("/api/v1/links/hide", {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${adminKey}`,
-      },
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({ url: link.url }),
     });
     if (response.status === 401) {
-      window.localStorage.removeItem("insights_admin_key");
-      setAdminKey(null);
-      window.alert("Wrong admin key.");
+      loseAdminSession();
       return;
     }
     if (response.ok) {
@@ -582,30 +566,26 @@ export default function InsightsList({
       batches.map((batch) =>
         fetch(endpoint, {
           method: "POST",
-          headers: {
-            "content-type": "application/json",
-            authorization: `Bearer ${adminKey}`,
-          },
+          headers: { "content-type": "application/json" },
           body: JSON.stringify({ urls: batch }),
         })
       )
     );
   };
 
-  // A 401 anywhere means the stored key is wrong: drop it everywhere at once.
-  const rejectAdminKey = () => {
-    window.localStorage.removeItem("insights_admin_key");
-    setAdminKey(null);
+  // A 401 means the session expired: drop the admin chrome everywhere at once.
+  const loseAdminSession = () => {
+    setIsAdmin(false);
     setCleanup(false);
-    window.alert("Wrong admin key.");
+    window.alert("Admin session expired. Sign in again at /login.");
   };
 
   const hideSelected = async () => {
-    if (!adminKey || selected.size === 0) return;
+    if (!isAdmin || selected.size === 0) return;
     const urls = Array.from(selected);
     const responses = await sendHideBatch("/api/v1/links/hide", urls);
     if (responses.some((response) => response.status === 401)) {
-      rejectAdminKey();
+      loseAdminSession();
       return;
     }
     if (responses.some((response) => !response.ok)) {
@@ -627,11 +607,11 @@ export default function InsightsList({
   };
 
   const undoHide = async () => {
-    if (!adminKey || !lastHidden) return;
+    if (!isAdmin || !lastHidden) return;
     const urls = lastHidden;
     const responses = await sendHideBatch("/api/v1/links/unhide", urls);
     if (responses.some((response) => response.status === 401)) {
-      rejectAdminKey();
+      loseAdminSession();
       return;
     }
     if (responses.some((response) => !response.ok)) {
@@ -699,7 +679,7 @@ export default function InsightsList({
               })}
             </div>
 
-            {adminKey !== null && (
+            {isAdmin && (
               <button
                 type="button"
                 onClick={toggleCleanup}
@@ -908,7 +888,7 @@ export default function InsightsList({
                         icon: Shuffle,
                       },
                       // Oldest is a clean-up tool, so it only exists for admins.
-                      ...(adminKey !== null
+                      ...(isAdmin
                         ? [
                             {
                               value: "oldest" as const,
@@ -1065,7 +1045,7 @@ export default function InsightsList({
                           previewMap[link.url] ??
                           `/api/link-preview?url=${encodeURIComponent(link.url)}`
                         }
-                        isAdmin={adminKey !== null}
+                        isAdmin={isAdmin}
                         onHide={() => hideLink(link)}
                         selectMode={cleanup}
                         selected={selected.has(link.url)}
@@ -1104,7 +1084,7 @@ export default function InsightsList({
                     isFailed={failedUrls.has(link.url)}
                     onPreviewError={() => refreshPreview(link.url)}
                     warmUrl={previewMap[link.url] ? undefined : link.url}
-                    isAdmin={adminKey !== null}
+                    isAdmin={isAdmin}
                     onHide={() => hideLink(link)}
                     selectMode={cleanup}
                     selected={selected.has(link.url)}
@@ -1136,7 +1116,7 @@ export default function InsightsList({
       {/* Clean-up rail. Sticky so it rides the viewport without entering the
           document flow — appearing or leaving never shifts the list. Sits above
           the phone tab bar, and at the bottom edge on desktop. */}
-      {(cleanup || lastHidden) && adminKey !== null && (
+      {(cleanup || lastHidden) && isAdmin && (
         <div className="sticky bottom-[var(--tabbar-space)] z-30 mt-4 flex flex-col gap-2">
           {lastHidden && (
             <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2 shadow-lg shadow-black/5 backdrop-blur">
@@ -1199,6 +1179,7 @@ export default function InsightsList({
           <ReaderView
             key={reading}
             urlKey={reading}
+            isAdmin={isAdmin}
             onClose={closeReader}
           />
         )}

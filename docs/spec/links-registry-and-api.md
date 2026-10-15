@@ -16,7 +16,7 @@ flowchart LR
     DB --> P[Page / RSS / homepage]
     DB --> API[/api/v1 + docs/]
     W[weekly health job] --> DB
-    A[?admin on the page] -- hide --> DB
+    A[signed-in admin<br/>/login session] -- hide --> DB
     DB --> KB[KB extraction — next spec]
 ```
 
@@ -24,7 +24,7 @@ flowchart LR
 2. The sync job (already runs on Trigger.dev) notices it, checks the URL is alive, inserts one row into `links`. If the URL was posted before, the database rejects the duplicate and we update the existing row instead. If the URL is provably dead (404, domain gone), it never gets inserted.
 3. The page, RSS, homepage section, and public API all read from `links`. Nobody reads Discord except the sync job.
 4. A weekly job re-checks every URL. Three failed weeks in a row → marked `dead` → disappears everywhere. The row stays in the table; nothing is ever hard-deleted.
-5. I spot a low-quality link while browsing → open the page with `?admin` → trash icon → the row gets a `hidden_at` stamp and disappears everywhere. Undoable.
+5. I spot a low-quality link while browsing → already signed in at `/login` → trash icon → the row gets a `hidden_at` stamp and disappears everywhere. Undoable.
 6. (Next spec) the KB extraction picks up rows marked `pending`, reads the pages, and fills `link_chunks` with searchable passages.
 
 Every section below is one of those steps in detail.
@@ -145,11 +145,33 @@ GET /api/v1/channels     → { data: [{ channel, count }] }
 
 ---
 
+## Admin auth: one session, every surface
+
+One mechanism for the whole site (`src/lib/admin-auth.ts`):
+
+- One server-side env, `ADMIN_SECRET`, high entropy (≥32 random chars). The repo is
+  public, so `/login` is a known target — entropy plus a 5/15m login limit is the
+  brute-force wall, not obscurity.
+- Sign in once at `/login` (unlinked, `noindex`, rate-limited). Success sets
+  `admin_session`: an HMAC-signed, 1-year token — **never the secret itself** —
+  HttpOnly + Secure + SameSite=Strict. Rotating `ADMIN_SECRET` kills every session.
+- Pages read the session server-side (`isAdminAuthenticated()`) and render admin mode
+  with no URL param. The statically-rendered blog draft pages can't ask the server who
+  is signed in, so they read a non-secret `admin_ui` hint cookie to decide whether to
+  show the draft-unlock control; the hint authorises nothing, and the full draft content
+  still ships to every reader (a draft is a teaser, not a secret).
+- Admin writes authenticate with `requireAdmin(request)`: the session cookie
+  (same-origin) or `Authorization: Bearer $ADMIN_SECRET` for curl/MCP. One helper, no
+  per-route copies.
+- `/api/spotify-refresh` was public with no caller; now gated the same way.
+
 ## Admin: hide links from the page itself
 
-- One server-side env, `ADMIN_SECRET` (already in `.env`), sent as a Bearer token to admin endpoints. Nothing `NEXT_PUBLIC_` — the key never ships in a bundle; the page stores it in `localStorage` after I type it once. Single-user site: sufficient. Leak → rotate the var, done.
-- `POST /api/v1/links/hide` `{ url }` sets `hidden_at`; `POST /api/v1/links/unhide` `{ url }` clears it. Body-based, same reason: url_keys can't ride path segments. Both documented in the same OpenAPI spec, tagged `admin`.
-- UI: `?admin` in the page URL → key prompt once → rows grow a trash button with confirm → success removes the row. Visitors see nothing. No dashboard, no framework.
+- `POST /api/v1/links/hide` `{ url }` sets `hidden_at`; `POST /api/v1/links/unhide`
+  `{ url }` clears it. Body-based, same reason: url_keys can't ride path segments. Both
+  documented in the same OpenAPI spec, tagged `admin`.
+- UI: signed in at `/login` → rows grow a trash button with confirm → success removes
+  the row. Visitors see nothing. No dashboard, no framework.
 - No restore UI in v0: a one-off `POST /api/v1/links/unhide` covers mistakes.
 
 ---
@@ -171,7 +193,7 @@ Not built now. The schema just refuses to block it:
 1. `scripts/snapshot-links.ts`: Discord → dedupe → health gate → insert. Log inserted / skipped-dead / uncheckable counts.
 2. Cut the surfaces (`insights` page, RSS, `llms-full.txt`, homepage) to `getLinks()`. Verify: per-channel counts match today minus skipped-dead; likes still work (keys unchanged); RSS differs only by removed dead links.
 3. Switch the Trigger.dev sync task to append into `links` (same health gate).
-4. Public API + admin endpoints + `?admin` trash UI + OpenAPI + Scalar docs + `llms.txt`.
+4. Public API + admin endpoints + admin trash UI + OpenAPI + Scalar docs + `llms.txt`.
 5. Hand off to the KB spec: extraction runs against `extract_status='pending' AND hidden_at IS NULL` rows.
 
 Each step deploys alone; the site never breaks between them.

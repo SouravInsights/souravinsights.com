@@ -15,6 +15,13 @@ export const adminLimiter = new Ratelimit({
   prefix: "rl:admin",
 });
 
+/** Admin login: 5 attempts / 15 minutes. */
+export const adminLoginLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "15 m"),
+  prefix: "rl:admin-login",
+});
+
 /**
  * Public agent: a model call is not a GET. Two limits — 8 questions/minute to
  * stop bursts, and 30/day, because a personal collection has nobody who needs
@@ -50,7 +57,9 @@ export const shareDailyLimiter = new Ratelimit({
   prefix: "rl:share-day",
 });
 
-export function clientIp(headers: Headers): string {
+type HeaderReader = { get(name: string): string | null };
+
+export function clientIp(headers: HeaderReader): string {
   return (
     headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     headers.get("x-real-ip") ??

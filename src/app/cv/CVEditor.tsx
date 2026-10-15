@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { CVData, CVProjectLink } from "@/types/cv";
 import { EditableField } from "@/components/EditableField";
-import { saveCVData, loginAdmin } from "./actions";
+import { saveCVData } from "./actions";
 import { cn } from "@/lib/utils";
 import {
   Download,
@@ -26,7 +26,6 @@ import { motion, AnimatePresence } from "framer-motion";
 interface CVEditorProps {
   initialData: CVData;
   isEditing: boolean;
-  secretToLogin?: string;
 }
 
 /* ------------------------------------------------------------------ *
@@ -785,7 +784,7 @@ function AddSectionButton({
   );
 }
 
-export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretToLogin }: CVEditorProps) {
+export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEditorProps) {
   const [data, setData] = useState<CVData>(initialData);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -796,13 +795,6 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated, secretTo
 
   // Track the first mount so we don't auto-save the initial data immediately
   const isFirstRender = React.useRef(true);
-
-  React.useEffect(() => {
-    if (secretToLogin) {
-      loginAdmin(secretToLogin);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [secretToLogin]);
 
   // Auto-save logic
   React.useEffect(() => {

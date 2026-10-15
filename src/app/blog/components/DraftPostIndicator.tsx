@@ -1,75 +1,31 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FileWarning, Eye } from "lucide-react";
+import { FileWarning, Eye, EyeOff } from "lucide-react";
+import { hasAdminHint } from "@/lib/admin-client";
 
 interface DraftPostIndicatorProps {
   children: React.ReactNode;
   previewParagraphs?: number;
-  slug: string;
 }
 
-const storageKey = (slug: string) => `draft-unlocked:${slug}`;
-
+/** A draft shows as a teaser; a signed-in admin can expand it. */
 export default function DraftPostIndicator({
   children,
   previewParagraphs,
-  slug,
 }: DraftPostIndicatorProps) {
-  const [showFullContent, setShowFullContent] = useState(false);
-  const [eyeClickCount, setEyeClickCount] = useState(0);
-  const [showPasswordInput, setShowPasswordInput] = useState(false);
-  const [password, setPassword] = useState("");
-  const contentRef = useRef<HTMLDivElement>(null);
-  const childrenArray = React.Children.toArray(children);
+  const [showFull, setShowFull] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Restore a previous unlock after mount (lazy useState would mismatch SSR).
-  // The stored value is the password itself, not a flag, so changing the
-  // password quietly re-locks every remembered session.
   useEffect(() => {
-    try {
-      const correctPassword = process.env.NEXT_PUBLIC_AUTHOR_DRAFT_PASSWORD;
-      if (
-        correctPassword &&
-        localStorage.getItem(storageKey(slug)) === correctPassword
-      ) {
-        setShowFullContent(true);
-      }
-    } catch {
-      // Storage unavailable (private mode, blocked cookies) — stay locked.
-    }
-  }, [slug]);
+    setIsAdmin(hasAdminHint());
+  }, []);
 
-  // Only get the visible content (limited to previewParagraphs)
-  const visibleContent = childrenArray.slice(0, previewParagraphs);
-
-  const handleEyeClick = () => {
-    const newCount = eyeClickCount + 1;
-    setEyeClickCount(newCount);
-
-    if (newCount >= 5) {
-      setShowPasswordInput(true);
-    }
-  };
-
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const correctPassword = process.env.NEXT_PUBLIC_AUTHOR_DRAFT_PASSWORD;
-
-    if (password === correctPassword) {
-      setShowFullContent(true);
-      setShowPasswordInput(false);
-      try {
-        localStorage.setItem(storageKey(slug), password);
-      } catch {
-        // Non-fatal: unlock works for this session either way.
-      }
-    } else {
-      alert("Incorrect password");
-    }
-  };
+  const visibleContent = React.Children.toArray(children).slice(
+    0,
+    previewParagraphs
+  );
 
   return (
     <div className="relative">
@@ -87,74 +43,37 @@ export default function DraftPostIndicator({
           <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
             Draft Post - Preview Only
           </span>
-          <button
-            onClick={handleEyeClick}
-            className="ml-1 text-amber-700 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
-            aria-label="Toggle visibility"
-          >
-            <Eye size={16} />
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setShowFull((full) => !full)}
+              aria-pressed={showFull}
+              aria-label={showFull ? "Show preview only" : "Show full draft"}
+              title={showFull ? "Show preview only" : "Show full draft"}
+              className="ml-1 text-amber-700 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+            >
+              {showFull ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          )}
         </div>
       </motion.div>
 
-      {showPasswordInput && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex justify-center"
-        >
-          <form
-            onSubmit={handlePasswordSubmit}
-            className="flex items-center gap-2 bg-card p-2 rounded-lg shadow-md border border-border"
-          >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Eye
-                size={18}
-                className="text-amber-700 dark:text-amber-400 mr-1"
-              />
-            </motion.div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Author password"
-              className="px-3 py-1.5 text-sm border border-input rounded-md bg-background text-foreground"
-              autoFocus
-            />
-            <button
-              type="submit"
-              className="px-3 py-1.5 text-sm bg-green-700 dark:bg-green-600 text-white rounded-md hover:bg-green-800 dark:hover:bg-green-700 transition-colors"
-            >
-              Unlock
-            </button>
-          </form>
-        </motion.div>
+      {showFull ? (
+        <>{children}</>
+      ) : (
+        <>
+          <div className="draft-preview-fade">{visibleContent}</div>
+
+          <div className="mt-2 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
+            <h4 className="type-heading mb-2">
+              This post is still being drafted
+            </h4>
+            <p className="type-body text-muted-foreground">
+              Check back later for the complete article!
+            </p>
+          </div>
+        </>
       )}
-
-      <div ref={contentRef}>
-        {showFullContent ? (
-          // Show the full content if authorized
-          <>{children}</>
-        ) : (
-          // Otherwise show only the limited preview
-          <>
-            <div className="draft-preview-fade">{visibleContent}</div>
-
-            <div className="mt-2 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
-              <h4 className="type-heading mb-2">
-                This post is still being drafted
-              </h4>
-              <p className="type-body text-muted-foreground">
-                Check back later for the complete article!
-              </p>
-            </div>
-          </>
-        )}
-      </div>
     </div>
   );
 }

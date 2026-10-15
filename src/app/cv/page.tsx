@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getCVData } from "./actions";
 import { CVEditor } from "./CVEditor";
-import { isAdminAuthenticated, getAdminSecret } from "@/lib/admin-auth";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 const CV_TITLE = "CV | Sourav Kumar Nanda";
 const CV_DESCRIPTION =
@@ -34,25 +34,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function CVPage({
-  searchParams,
-}: {
-  searchParams: { edit?: string };
-}) {
+export default async function CVPage() {
   const data = await getCVData();
-
-  const expectedSecret = getAdminSecret();
-  let isEditing = isAdminAuthenticated();
-  let secretToLogin: string | undefined = undefined;
-
-  if (!isEditing && expectedSecret && searchParams.edit === expectedSecret) {
-    isEditing = true;
-    secretToLogin = expectedSecret;
-  }
+  const isEditing = isAdminAuthenticated();
 
   return (
     <main>
-      <CVEditor initialData={data} isEditing={isEditing} secretToLogin={secretToLogin} />
+      <CVEditor initialData={data} isEditing={isEditing} />
     </main>
   );
 }

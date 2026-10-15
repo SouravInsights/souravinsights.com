@@ -83,9 +83,11 @@ function ArticleImage({ src, alt }: { src: string; alt?: string }) {
 
 export function ReaderView({
   urlKey,
+  isAdmin,
   onClose,
 }: {
   urlKey: string;
+  isAdmin: boolean;
   onClose: () => void;
 }) {
   // Cache-first: a reopened or hover-warmed article never shows a loader.
@@ -278,7 +280,11 @@ export function ReaderView({
           )}
 
           {article && (
-            <ArticleBody urlKey={article.urlKey} initialHighlights={article.marks}>
+            <ArticleBody
+              urlKey={article.urlKey}
+              isAdmin={isAdmin}
+              initialHighlights={article.marks}
+            >
               <header className="mt-6 border-b border-border/60 pb-7">
                 <h1 className="text-[1.375rem] font-medium leading-[1.3] tracking-[-0.015em] text-foreground">
                   {article.title}

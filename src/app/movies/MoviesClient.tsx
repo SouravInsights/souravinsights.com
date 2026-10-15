@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { MoviesData, MovieEntry, emptyMovie, generateId, defaultMoviesHeader } from "@/types/movies";
 import { EditableField } from "@/components/EditableField";
-import { saveMoviesData, loginAdmin, uploadPoster } from "./actions";
+import { saveMoviesData, uploadPoster } from "./actions";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable, isSortable } from "@dnd-kit/react/sortable";
 import type { Draggable } from "@dnd-kit/dom";
@@ -656,13 +656,11 @@ function MovieDialog({
 interface MoviesClientProps {
   initialData: MoviesData;
   isEditing: boolean;
-  secretToLogin?: string;
 }
 
 export function MoviesClient({
   initialData,
   isEditing: isUserAuthenticated,
-  secretToLogin,
 }: MoviesClientProps) {
   const normalizedData: MoviesData = {
     header: {
@@ -689,13 +687,6 @@ export function MoviesClient({
   const selectedMovie = selectedId
     ? data.movies.find((m) => m.id === selectedId) ?? null
     : null;
-
-  React.useEffect(() => {
-    if (secretToLogin) {
-      loginAdmin(secretToLogin);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [secretToLogin]);
 
   React.useEffect(() => {
     if (isFirstRender.current) {

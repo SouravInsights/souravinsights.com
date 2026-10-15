@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   Highlights,
   type CreatePayload,
@@ -10,10 +10,10 @@ import { updateArticleMarks } from "./article-query";
 /**
  * The article body plus the highlight system (docs/spec/insights-rebuild.md).
  *
- * Everyone sees the owner's marks. The owner (recognised by the same admin
- * key clean-up uses) also gets the palette. Marks render the instant they're
- * made — the write is a background call; if the key turns out wrong, the mark
- * is rolled back and say so plainly.
+ * Everyone sees the owner's marks. The owner — recognised by the same admin
+ * session as every other write — also gets the palette. Marks render the
+ * instant they're made; the write is a background call, and a 401 rolls the
+ * mark back and says so plainly.
  */
 
 export interface StoredHighlight {
@@ -25,53 +25,28 @@ export interface StoredHighlight {
 
 export function ArticleBody({
   urlKey,
+  isAdmin,
   initialHighlights,
   children,
 }: {
   urlKey: string;
+  isAdmin: boolean;
   initialHighlights: StoredHighlight[];
   children: React.ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [adminKey, setAdminKey] = useState<string | null>(null);
-
-  /**
-   * The palette is the owner's tool, so it only appears with the admin key —
-   * and the key was only ever asked for on /insights?admin, in the list. Open
-   * an article on a phone that never saw that URL and selecting text did
-   * nothing at all: no prompt, no palette, no explanation. Now the reader
-   * honours ?admin too, so the device in your hand can unlock itself.
-   */
-  useEffect(() => {
-    const stored = window.localStorage.getItem("insights_admin_key");
-    if (stored) {
-      setAdminKey(stored);
-      return;
-    }
-    if (!new URLSearchParams(window.location.search).has("admin")) return;
-    const key = window.prompt("Admin key (stored in this browser only)");
-    if (key) {
-      window.localStorage.setItem("insights_admin_key", key);
-      setAdminKey(key);
-    }
-  }, []);
 
   const onCreate = useCallback(
     async (payload: CreatePayload): Promise<number | null> => {
-      if (!adminKey) return null;
+      if (!isAdmin) return null;
       try {
         const response = await fetch("/api/insights/highlights", {
           method: "POST",
-          headers: {
-            "content-type": "application/json",
-            authorization: `Bearer ${adminKey}`,
-          },
+          headers: { "content-type": "application/json" },
           body: JSON.stringify({ urlKey, ...payload }),
         });
         if (response.status === 401) {
-          window.localStorage.removeItem("insights_admin_key");
-          setAdminKey(null);
-          window.alert("Wrong admin key.");
+          window.alert("Admin session expired. Sign in again at /login.");
           return null;
         }
         if (!response.ok) return null;
@@ -90,39 +65,35 @@ export function ArticleBody({
         return null;
       }
     },
-    [adminKey, urlKey]
+    [isAdmin, urlKey]
   );
 
   const onRecolor = useCallback(
     (rowId: number, hue: number) => {
-      if (!adminKey) return;
+      if (!isAdmin) return;
       updateArticleMarks(urlKey, (marks) =>
         marks.map((m) => (m.id === rowId ? { ...m, hue } : m))
       );
       fetch("/api/insights/highlights", {
         method: "PATCH",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${adminKey}`,
-        },
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ id: rowId, hue }),
       }).catch(() => undefined);
     },
-    [adminKey, urlKey]
+    [isAdmin, urlKey]
   );
 
   const onDelete = useCallback(
     (rowId: number) => {
-      if (!adminKey) return;
+      if (!isAdmin) return;
       updateArticleMarks(urlKey, (marks) =>
         marks.filter((m) => m.id !== rowId)
       );
       fetch(`/api/insights/highlights?id=${rowId}`, {
         method: "DELETE",
-        headers: { authorization: `Bearer ${adminKey}` },
       }).catch(() => undefined);
     },
-    [adminKey, urlKey]
+    [isAdmin, urlKey]
   );
 
   return (
@@ -130,7 +101,7 @@ export function ArticleBody({
       {children}
       <Highlights
         containerRef={containerRef}
-        admin={adminKey !== null}
+        admin={isAdmin}
         initialMarks={initialHighlights}
         onCreate={onCreate}
         onRecolor={onRecolor}

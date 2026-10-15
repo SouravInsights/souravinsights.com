@@ -78,7 +78,7 @@ your curation tool while the rest lands.
   **as a side panel inside the page** — no route, no navigation away: panel slides in
   from the right (full-width sheet on phones), Back/Escape/outside-click closes, the
   list keeps its scroll; markdown served pre-baked by `GET /api/insights/article`.
-  Owner highlights: select → “Highlight” (same admin key as clean-up), green-sweep
+  Owner highlights: select → “Highlight” (same admin session as clean-up), green-sweep
   wave, quote+occurrence anchoring, public to read. Scoped ask composer answers from
   the article's passages alone (scoped agent mode; `search()` a `linkId` filter).
   (First cut was a `/insights/[...key]` route: react-markdown isn't allowed in server

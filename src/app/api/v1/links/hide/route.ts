@@ -1,5 +1,6 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { hideRequestSchema } from "@/lib/links/api-schemas";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
 import { setLinkHidden, setLinksHidden } from "@/lib/links/visibility";
@@ -9,12 +10,8 @@ const err = (code: string, message: string, status: number) =>
   NextResponse.json({ error: { code, message } }, { status });
 
 export async function POST(request: NextRequest) {
-  if (
-    request.headers.get("authorization") !==
-    `Bearer ${process.env.ADMIN_SECRET}`
-  ) {
-    return err("unauthorized", "Missing or invalid admin key", 401);
-  }
+  const denied = requireAdmin(request);
+  if (denied) return denied;
 
   const rate = await adminLimiter.limit(clientIp(request.headers));
   if (!rate.success) {

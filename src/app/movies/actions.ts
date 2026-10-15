@@ -2,10 +2,8 @@
 
 import redis from "@/app/lib/redis";
 import { MoviesData, emptyMoviesData } from "@/types/movies";
-import { isAdminAuthenticated, loginAdmin } from "@/lib/admin-auth";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { put } from "@vercel/blob";
-
-export { loginAdmin };
 
 const MOVIES_REDIS_KEY = "movies:data";
 

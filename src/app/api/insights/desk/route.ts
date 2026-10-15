@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/admin-auth";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
 import { findCitations } from "@/lib/kb/writing-desk";
 
@@ -18,22 +18,10 @@ const bodySchema = z.object({
  * The Writing Desk endpoint — admin only, for now. It spends a model call, and
  * the surface it belongs to is the author's own writing. The public version
  * waits until the loop has earned it on a real article.
- *
- * Authorised two ways, matching what already exists: the `admin_session` cookie
- * (the page) or `Authorization: Bearer $ADMIN_SECRET` (curl, as the v1 admin
- * routes do). The browser must never hold the secret, hence the cookie path.
  */
 export async function POST(request: NextRequest) {
-  const secret = process.env.ADMIN_SECRET;
-  const bearer =
-    !!secret && request.headers.get("authorization") === `Bearer ${secret}`;
-
-  if (!bearer && !isAdminAuthenticated()) {
-    return NextResponse.json(
-      { error: "unauthorized", message: "Admins only." },
-      { status: 401 }
-    );
-  }
+  const denied = requireAdmin(request);
+  if (denied) return denied;
 
   const rate = await adminLimiter.limit(clientIp(request.headers));
   if (!rate.success) {

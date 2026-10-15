@@ -2,9 +2,7 @@
 
 import redis from "@/app/lib/redis";
 import { CVData, defaultCVData } from "@/types/cv";
-import { isAdminAuthenticated, loginAdmin } from "@/lib/admin-auth";
-
-export { loginAdmin };
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 const CV_REDIS_KEY = "cv:data";
 
