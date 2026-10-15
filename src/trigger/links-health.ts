@@ -1,4 +1,4 @@
-import { schedules, logger } from "@trigger.dev/sdk/v3";
+import { schedules, logger } from "@trigger.dev/sdk";
 import { and, eq, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";

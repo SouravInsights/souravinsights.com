@@ -1,4 +1,4 @@
-import { schedules, logger } from "@trigger.dev/sdk/v3";
+import { schedules, logger } from "@trigger.dev/sdk";
 import { Redis } from "@upstash/redis";
 import { sql } from "drizzle-orm";
 import {
