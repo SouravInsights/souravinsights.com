@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/admin-auth";
 import { adminLimiter, clientIp } from "@/lib/links/ratelimit";
 import { findCitations } from "@/lib/kb/writing-desk";
+import { flushTraces } from "@/lib/observability/neatlogs";
 
 // The call embeds every claim, then runs one model pass.
 export const runtime = "nodejs";
@@ -40,7 +41,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    return NextResponse.json(await findCitations(parsed.data.draft));
+    const result = await findCitations(parsed.data.draft);
+    // Send the recorded model calls now (see flushTraces) instead of waiting
+    // for Neatlogs' next batch.
+    await flushTraces();
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
       {

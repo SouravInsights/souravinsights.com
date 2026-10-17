@@ -5,6 +5,7 @@ import { links } from "@/db/schema";
 import { searchQuerySchema } from "@/lib/links/api-schemas";
 import { apiLimiter, clientIp } from "@/lib/links/ratelimit";
 import { search } from "@/lib/kb/search";
+import { flushTraces } from "@/lib/observability/neatlogs";
 
 // An embedding call plus a vector query — not an edge route.
 export const runtime = "nodejs";
@@ -54,6 +55,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const hits = await search(q, { category, limit });
+    // The embedding call is the recorded part here; send it now (see
+    // flushTraces) so it is not lost if Vercel pauses the function.
+    await flushTraces();
 
     if (hits.length === 0) {
       return NextResponse.json(

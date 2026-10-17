@@ -23,3 +23,22 @@ export const {
   embedMany,
   rerank,
 } = wrapAISDK(ai);
+
+/**
+ * Send any recorded spans that are still waiting in memory.
+ *
+ * Neatlogs collects spans and sends them in batches every few seconds. On
+ * Vercel the server can be paused between requests, so a batch still waiting
+ * would be lost. Calling this once the request's work is done sends it right
+ * away. It never throws: recording must not break the app's own answer.
+ *
+ * Docs: https://docs.neatlogs.com/sdk/lifecycle
+ */
+export async function flushTraces(): Promise<void> {
+  try {
+    const { flush } = await import("neatlogs");
+    await flush();
+  } catch {
+    // Ignore: a failed trace must never affect the response.
+  }
+}

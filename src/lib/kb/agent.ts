@@ -10,7 +10,7 @@ import { chatModel } from "./model";
 import { SYSTEM_PROMPT } from "./prompt";
 import { search } from "./search";
 import { readPageFresh } from "./fetch-link";
-import { streamText } from "@/lib/observability/neatlogs";
+import { streamText, flushTraces } from "@/lib/observability/neatlogs";
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
@@ -163,7 +163,7 @@ export async function runAgent(
       ? { search_knowledge: scopedSearchKnowledge(scope.linkId) }
       : agentTools(),
     stopWhen: stepCountIs(MAX_STEPS),
-    onFinish: (event) => {
+    onFinish: async (event) => {
       // The number that matters for the daily budget. Field names have moved
       // between SDK versions, so both are read before giving up on zero.
       const usage = event as {
@@ -173,6 +173,9 @@ export async function runAgent(
       hooks.onFinish?.(
         usage.totalUsage?.totalTokens ?? usage.usage?.totalTokens ?? 0
       );
+      // The answer is complete, so the recorded spans are all here. Send them
+      // now rather than waiting for Neatlogs' next batch (see flushTraces).
+      await flushTraces();
     },
   });
 }

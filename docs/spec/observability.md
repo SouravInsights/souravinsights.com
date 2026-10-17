@@ -63,6 +63,17 @@ One detail worth knowing: the AI SDK drops a prompt passed as `system` before it
 reaches the trace. The agent passes its prompt as `instructions` so it appears.
 (https://docs.neatlogs.com/integrations/vercel-ai)
 
+### Sending spans promptly on Vercel
+
+Neatlogs collects spans and sends them in batches. On Vercel the server can be
+paused between requests, so a batch still waiting in memory would be lost. Each
+entry point therefore sends its batch as soon as its work is done, through
+`flushTraces()` in `src/lib/observability/neatlogs.ts`.
+(https://docs.neatlogs.com/sdk/lifecycle)
+
+`flushTraces()` deliberately swallows any error: recording must never break the
+answer the visitor is waiting for.
+
 ---
 
 ## Environment variables
