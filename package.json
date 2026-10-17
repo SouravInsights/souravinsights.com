@@ -14,6 +14,7 @@
     "trace": "tsx scripts/kb-trace.ts"
   },
   "dependencies": {
+    "@ai-sdk/otel": "^1.0.143",
     "@ai-sdk/react": "^4.0.133",
     "@apollo/client": "^3.11.5",
     "@asteasolutions/zod-to-openapi": "^7.3.0",
@@ -57,7 +58,7 @@
     "@vercel/analytics": "^1.3.1",
     "@vercel/blob": "^2.5.0",
     "@vercel/speed-insights": "^1.0.12",
-    "ai": "^7.0.130",
+    "ai": "^7.0.143",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "color": "^4.2.3",
@@ -72,6 +73,7 @@
     "jsdom": "26.1.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.435.0",
+    "neatlogs": "^1.1.28",
     "next": "14.2.6",
     "next-mdx-remote": "6.0.0",
     "posthog-js": "^1.158.1",

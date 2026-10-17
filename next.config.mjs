@@ -76,6 +76,9 @@ const nextConfig = {
   },
 
   experimental: {
+    // Next 14 gates `instrumentation.ts` behind this flag (stable in 15).
+    // That file is where Neatlogs tracing is switched on at server startup.
+    instrumentationHook: true,
     // The App Router keeps a visited route's RSC payload in the client router
     // cache. Its dynamic default is 30s, so a link revisited after half a minute
     // pays the full server render again. The collection itself is revalidated at
@@ -96,6 +99,10 @@ const nextConfig = {
       "puppeteer-core",
       "defuddle",
       "linkedom",
+      // Kept outside the server bundle so Next does not make a separate copy
+      // of the tracing packages inside each route.
+      "@ai-sdk/otel",
+      "neatlogs",
     ],
     // pdfkit (used by @react-pdf/renderer) loads its standard fonts through a
     // dynamic path, so the serverless file tracer never sees them. Without this

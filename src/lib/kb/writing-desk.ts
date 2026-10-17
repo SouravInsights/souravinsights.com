@@ -1,4 +1,4 @@
-import { generateObject } from "ai";
+import { generateObject } from "@/lib/observability/neatlogs";
 import { z } from "zod";
 import { chatModel } from "./model";
 import { search } from "./search";

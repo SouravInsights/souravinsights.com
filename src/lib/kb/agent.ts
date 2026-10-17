@@ -1,7 +1,6 @@
 import {
   convertToModelMessages,
   stepCountIs,
-  streamText,
   tool,
   type UIMessage,
 } from "ai";
@@ -11,6 +10,7 @@ import { chatModel } from "./model";
 import { SYSTEM_PROMPT } from "./prompt";
 import { search } from "./search";
 import { readPageFresh } from "./fetch-link";
+import { streamText } from "@/lib/observability/neatlogs";
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { links } from "@/db/schema";
@@ -155,7 +155,9 @@ export async function runAgent(
 ) {
   return streamText({
     model: chatModel(),
-    system: scope ? scopedPrompt(scope) : SYSTEM_PROMPT,
+    // The AI SDK's tracing (which Neatlogs uses) drops a prompt passed as
+    // `system`. Passed as `instructions`, it appears in the trace.
+    instructions: scope ? scopedPrompt(scope) : SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     tools: scope
       ? { search_knowledge: scopedSearchKnowledge(scope.linkId) }

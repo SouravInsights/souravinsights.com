@@ -1,4 +1,4 @@
-import { embedMany } from "ai";
+import { embedMany } from "@/lib/observability/neatlogs";
 import { embeddingModel } from "./model";
 import type { Category } from "./categories";
 
