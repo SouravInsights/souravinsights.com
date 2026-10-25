@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
   BookOpen,
@@ -23,7 +22,6 @@ import {
   PanelLeftClose,
   Sparkles,
   Twitter,
-  X,
   type LucideIcon,
 } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
@@ -45,6 +43,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
@@ -110,22 +109,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // A menu that survives navigation is a menu that lies about where you are.
   useEffect(() => setMenuOpen(false), [pathname]);
 
-  // While the sheet is open: Escape closes it, and the page behind can't scroll.
+  // The sheet is phone-only, so close it when the rail comes back.
+  useEffect(() => {
+    if (hasRail) setMenuOpen(false);
+  }, [hasRail]);
+
+  // The sheet is non-modal (see MoreSheet), so block the page's own scroll
+  // while it is open. Touch is handled by `touch-none`; this catches wheels.
   useEffect(() => {
     if (!menuOpen) return;
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+    const onWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey) event.preventDefault();
     };
 
-    document.addEventListener("keydown", onKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
   }, [menuOpen]);
 
   const press = () => feedback.press();
@@ -509,89 +508,62 @@ function MoreSheet({
   onClose: () => void;
   onNavigate: () => void;
 }) {
-  const reduceMotion = useReducedMotion();
-  const spring = reduceMotion
-    ? { duration: 0 }
-    : { type: "spring" as const, stiffness: 380, damping: 34 };
   const rest = destinations.filter((item) => !item.tab);
 
+  // Radix's modal lock sets `overflow: hidden` on the body, which relayouts the
+  // page and stutters the transition. Non-modal avoids that; the scrim and the
+  // card take over the scroll lock with `touch-none` and the wheel guard above.
   return (
-    <AnimatePresence initial={false}>
-      {open && (
-        <>
-          <motion.div
-            key="scrim"
-            onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.18 }}
-            className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm md:hidden"
-          />
+    <Sheet modal={false} open={open} onOpenChange={(next) => !next && onClose()}>
+      <SheetContent
+        side="bottom"
+        aria-describedby={undefined}
+        overlayClassName="touch-none bg-background/60 backdrop-blur-sm md:hidden"
+        className="pointer-events-none z-50 gap-0 border-0 bg-transparent p-0 pb-[var(--tabbar-space)] shadow-none data-[state=closed]:duration-150 data-[state=open]:duration-200 md:hidden [&>button]:pointer-events-auto"
+      >
+        {/* The card is inset from the sheet's own bottom, so the slide-out can
+            clear the tab bar instead of stopping on top of it. */}
+        <div className="pointer-events-auto touch-none rounded-t-lg border-t border-border bg-card p-2 shadow-lg">
+          <SheetTitle className="px-2 py-1.5 text-left text-[13px] font-normal leading-[1.5] text-faint-foreground">
+            More
+          </SheetTitle>
 
-          {/* Sits directly on top of the tab bar, so the band the panel gives
-              up is the band the sheet uses: `bottom` is the same variable. */}
-          <motion.div
-            key="sheet"
-            role="dialog"
-            aria-modal="true"
-            aria-label="More pages"
-            style={{ bottom: "var(--tabbar-space)" }}
-            initial={{ y: reduceMotion ? 0 : 24, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: reduceMotion ? 0 : 24, opacity: 0 }}
-            transition={spring}
-            className="fixed inset-x-0 z-50 rounded-t-lg border-t border-border bg-card p-2 shadow-lg md:hidden"
-          >
-            <div className="flex items-center justify-between px-2 py-1.5">
-              <span className="type-caption text-faint-foreground">More</span>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close menu"
-                className="rounded-md p-1 text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/30"
-              >
-                <X size={16} />
-              </button>
+          <div className="flex flex-col gap-0.5">
+            {[...rest, ...elsewhere].map((item) => {
+              const active = isActivePath(pathname, item.path);
+
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  onClick={onNavigate}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-mono text-sm transition-colors",
+                    active
+                      ? "bg-secondary text-green-700 dark:text-green-500"
+                      : "text-foreground hover:bg-accent"
+                  )}
+                >
+                  <item.icon size={16} />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="mt-1 flex items-center justify-between border-t border-border px-2 pt-2.5">
+            <span className="type-caption text-faint-foreground">
+              Theme &amp; sound
+            </span>
+            <div className="flex items-center gap-1">
+              <SoundToggle />
+              <DarkModeToggle />
             </div>
-
-            <div className="flex flex-col gap-0.5">
-              {[...rest, ...elsewhere].map((item) => {
-                const active = isActivePath(pathname, item.path);
-
-                return (
-                  <Link
-                    key={item.path}
-                    href={item.path}
-                    onClick={onNavigate}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-mono text-sm transition-colors",
-                      active
-                        ? "bg-secondary text-green-700 dark:text-green-500"
-                        : "text-foreground hover:bg-accent"
-                    )}
-                  >
-                    <item.icon size={16} />
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="mt-1 flex items-center justify-between border-t border-border px-2 pt-2.5">
-              <span className="type-caption text-faint-foreground">
-                Theme &amp; sound
-              </span>
-              <div className="flex items-center gap-1">
-                <SoundToggle />
-                <DarkModeToggle />
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
