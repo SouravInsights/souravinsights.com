@@ -3,6 +3,11 @@ import { getCVData } from "./actions";
 import { CVEditor } from "./CVEditor";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
+// Reads Redis (a no-store fetch) and the admin cookie, so it can never be
+// prerendered. Without this, `next build` attempts it, Redis throws "Dynamic
+// server usage", getCVData swallows the signal and the build logs an error.
+export const dynamic = "force-dynamic";
+
 const CV_TITLE = "CV | Sourav Kumar Nanda";
 const CV_DESCRIPTION =
   "Product Engineer with 4+ years of experience building and shipping products end-to-end.";

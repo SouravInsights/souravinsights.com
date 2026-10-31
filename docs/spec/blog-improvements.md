@@ -58,6 +58,25 @@ I will strictly draw lines between server and client domains to minimize the JS 
 3.  **Optimize Components**: Refactor `Playground` imports to use `next/dynamic`.
 4.  **Verification**: Run a local build (`npm run build`) to ensure pages are marked as `● (Static)`.
 
+## Post Renames
+
+A post's views and likes live in Redis under its slug, and the slug is the file
+name. Renaming the file orphaned both keys and 404'd every existing link — the
+last one had already been shared on HN. A rename now needs no bookkeeping:
+
+- `scripts/generate-post-aliases.mjs` reads `git log --diff-filter=R` and writes
+  `src/content/post-aliases.json` (old slug -> current slug, rename chains
+  flattened). It runs in `predev` and `prebuild`, merges with the committed map
+  so a shallow clone cannot erase old entries, and exits cleanly when git is
+  unavailable.
+- `next.config.mjs` turns each entry into a permanent `/blog/<old>` ->
+  `/blog/<new>` redirect, so outside links and search results never 404.
+- The views and likes routes resolve the alias and sum the keys of every slug a
+  post has ever had, so its history follows the rename. Writes land on the
+  current slug.
+
+The only step is renaming the file. The build does the rest.
+
 ## Questions / Risks
 
 *   **Build Time**: With many sandpacks, build time might increase. I can mitigate this by ensuring `Sandpack` itself isn't running during build (it's client-side only).

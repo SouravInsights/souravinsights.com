@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import redis from "@/app/lib/redis";
+import { getPostSlugsForStats, resolvePostSlug } from "@/lib/post-aliases";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,6 +16,22 @@ function getVisitorId(): string {
   return visitorId;
 }
 
+// A post keeps its stats across renames, so a total is the sum over every slug
+// it has answered on. See `src/lib/post-aliases.ts`.
+async function getTotalLikes(slugs: string[]): Promise<number> {
+  const values = await Promise.all(
+    slugs.map((slug) => redis.get<number>(`blog:likes:${slug}`))
+  );
+  return values.reduce<number>((total, value) => total + (value ?? 0), 0);
+}
+
+async function getUserLikes(slugs: string[], visitorId: string): Promise<number> {
+  const values = await Promise.all(
+    slugs.map((slug) => redis.get<number>(`blog:likes:${slug}:${visitorId}`))
+  );
+  return values.reduce<number>((total, value) => total + (value ?? 0), 0);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -24,13 +41,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
-    // Get total likes for the post
-    const totalLikes = (await redis.get<number>(`blog:likes:${slug}`)) || 0;
-
-    // Get user likes for this visitor
+    const slugs = getPostSlugsForStats(slug);
     const visitorId = getVisitorId();
-    const userLikes =
-      (await redis.get<number>(`blog:likes:${slug}:${visitorId}`)) || 0;
+
+    const totalLikes = await getTotalLikes(slugs);
+    const userLikes = await getUserLikes(slugs, visitorId);
 
     return NextResponse.json({ totalLikes, userLikes });
   } catch (error) {
@@ -50,32 +65,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
+    const canonical = resolvePostSlug(slug);
+    const slugs = getPostSlugsForStats(slug);
     const visitorId = getVisitorId();
-    const userLikesKey = `blog:likes:${slug}:${visitorId}`;
-    const totalLikesKey = `blog:likes:${slug}`;
 
-    // Get current user likes
-    const currentUserLikes = (await redis.get<number>(userLikesKey)) || 0;
+    // Get current user likes across every slug this post has had
+    const currentUserLikes = await getUserLikes(slugs, visitorId);
 
     // Check if user already reached max likes
     if (currentUserLikes >= 10) {
       return NextResponse.json(
         {
           error: "Maximum likes reached",
-          totalLikes: (await redis.get<number>(totalLikesKey)) || 0,
+          totalLikes: await getTotalLikes(slugs),
           userLikes: currentUserLikes,
         },
         { status: 400 }
       );
     }
 
-    // Increment both user likes and total likes
-    const newUserLikes = await redis.incr(userLikesKey);
-    const newTotalLikes = await redis.incr(totalLikesKey);
+    // Increment both user likes and total likes on the current slug
+    await redis.incr(`blog:likes:${canonical}:${visitorId}`);
+    await redis.incr(`blog:likes:${canonical}`);
 
     return NextResponse.json({
-      totalLikes: newTotalLikes,
-      userLikes: newUserLikes,
+      totalLikes: await getTotalLikes(slugs),
+      userLikes: await getUserLikes(slugs, visitorId),
     });
   } catch (error) {
     console.error("Error updating likes:", error);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import redis from "@/app/lib/redis";
+import { getPostSlugsForStats, resolvePostSlug } from "@/lib/post-aliases";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
@@ -15,6 +16,22 @@ function getVisitorId(): string {
   return visitorId;
 }
 
+// A post keeps its stats across renames, so a total is the sum over every slug
+// it has answered on. See `src/lib/post-aliases.ts`.
+async function getTotalViews(slugs: string[]): Promise<number> {
+  const values = await Promise.all(
+    slugs.map((slug) => redis.get<number>(`blog:views:${slug}`))
+  );
+  return values.reduce<number>((total, value) => total + (value ?? 0), 0);
+}
+
+async function hasViewedAny(slugs: string[], visitorId: string): Promise<boolean> {
+  const values = await Promise.all(
+    slugs.map((slug) => redis.get(`blog:views:${slug}:${visitorId}`))
+  );
+  return values.some(Boolean);
+}
+
 // Get view count for a post
 export async function GET(request: NextRequest) {
   try {
@@ -25,7 +42,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
-    const views = (await redis.get<number>(`blog:views:${slug}`)) || 0;
+    const views = await getTotalViews(getPostSlugsForStats(slug));
     return NextResponse.json({ views });
   } catch (error) {
     console.error("Error fetching views:", error);
@@ -45,21 +62,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
+    const canonical = resolvePostSlug(slug);
+    const slugs = getPostSlugsForStats(slug);
     const visitorId = getVisitorId();
-    const viewKey = `blog:views:${slug}`;
-    const visitorViewKey = `blog:views:${slug}:${visitorId}`;
 
-    // Check if this visitor has already viewed this post
-    const hasViewed = await redis.get(visitorViewKey);
+    // Check if this visitor has already viewed this post under any of its slugs
+    const hasViewed = await hasViewedAny(slugs, visitorId);
 
     if (!hasViewed) {
-      // Increment the view count
-      await redis.incr(viewKey);
+      // Increment the count on the current slug
+      await redis.incr(`blog:views:${canonical}`);
       // Mark this visitor as having viewed this post (expire after 24 hours for unique daily views)
-      await redis.set(visitorViewKey, 1, { ex: 86400 }); // 24 hours
+      await redis.set(`blog:views:${canonical}:${visitorId}`, 1, { ex: 86400 }); // 24 hours
     }
 
-    const views = (await redis.get<number>(viewKey)) || 0;
+    const views = await getTotalViews(slugs);
     return NextResponse.json({ views });
   } catch (error) {
     console.error("Error updating views:", error);

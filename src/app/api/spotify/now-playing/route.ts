@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+// A live "currently playing" read must never be prerendered. Without this Next
+// treated the GET as static, called Spotify at build time, and (with a dead
+// refresh token) logged a build error and shipped a frozen empty response.
+export const dynamic = "force-dynamic";
+
 async function getSpotifyToken() {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;

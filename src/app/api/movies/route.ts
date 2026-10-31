@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { getMoviesData } from "@/app/movies/actions";
 
-// The homepage shelf only needs a lightweight slice of the collection. It is
-// cached at the edge so Redis (and the full movie payload) isn't hit per view.
-export const revalidate = 300;
+// Upstash reads go out as no-store fetches, so Next cannot prerender this
+// route. Its build-time attempt threw "Dynamic server usage", which the catch
+// in getMoviesData swallowed and logged — leaving a prerendered empty shelf.
+// Render per request and let the CDN hold the response for 300s instead.
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -18,7 +20,14 @@ export async function GET() {
         tag: movie.tags?.[0] ?? null,
       }));
 
-    return NextResponse.json({ movies });
+    return NextResponse.json(
+      { movies },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching movies preview:", error);
     return NextResponse.json({ movies: [] }, { status: 500 });

@@ -11,7 +11,7 @@ const formatDate = (date: string) =>
 const ESSAYS = [
   {
     title: "We are unconsciously becoming someone else",
-    url: "/blog/on-becoming-someone-else",
+    url: "/blog/authenticity",
     date: "2026-09-19",
   },
   {

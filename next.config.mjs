@@ -1,5 +1,13 @@
+import { readFileSync } from "node:fs";
 import createMDX from "@next/mdx";
 import rehypePrettyCode from "rehype-pretty-code";
+
+// Renamed posts: the old URL must keep working (an HN thread still points at
+// it). Same map the stats routes read, so the file and the redirect can't
+// disagree. `scripts/generate-post-aliases.mjs` keeps it in sync with git.
+const postAliases = JSON.parse(
+  readFileSync(new URL("./src/content/post-aliases.json", import.meta.url), "utf8")
+);
 
 /** @type {import('rehype-pretty-code').Options} */
 const prettyCodeOptions = {
@@ -44,6 +52,19 @@ const nextConfig = {
 
   images: {
     domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
+  },
+
+  /**
+   * A renamed post is reachable from its old URL forever: outside links (the
+   * HN thread) and search results must not land on a 404. Permanent, so the
+   * redirect is cached and link equity moves to the new slug.
+   */
+  async redirects() {
+    return Object.entries(postAliases).map(([from, to]) => ({
+      source: `/blog/${from}`,
+      destination: `/blog/${to}`,
+      permanent: true,
+    }));
   },
 
   /**
