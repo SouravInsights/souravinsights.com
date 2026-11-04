@@ -102,6 +102,7 @@ export function VideoDetail({
   const [notes, setNotes] = useState(video.notes);
   const [tags, setTags] = useState(video.tags);
   const [tagsText, setTagsText] = useState(video.tags.join(", "));
+  const [sound, setSound] = useState(video.sound);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
     "idle"
   );
@@ -151,6 +152,11 @@ export function VideoDetail({
   const handleNotes = (value: string) => {
     setNotes(value);
     void persist({ notes: value });
+  };
+
+  const handleSound = (next: boolean) => {
+    setSound(next);
+    void persist({ sound: next });
   };
 
   const commitTags = useCallback(() => {
@@ -269,7 +275,7 @@ export function VideoDetail({
             <VideoPlayer
               src={video.src}
               poster={video.poster}
-              hasAudio={video.hasAudio}
+              sound={sound}
             />
           </motion.div>
 
@@ -351,6 +357,27 @@ export function VideoDetail({
                     aria-label="Tags"
                     className="mt-4 h-9 w-full max-w-md rounded-lg border border-border bg-transparent px-3 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
                   />
+                  <div className="mt-4 flex items-center gap-3">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={sound}
+                      aria-label="Play with sound"
+                      onClick={() => handleSound(!sound)}
+                      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                        sound ? "bg-green-600" : "bg-foreground/15"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                          sound ? "translate-x-[18px]" : "translate-x-0.5"
+                        }`}
+                      />
+                    </button>
+                    <span className="type-caption text-muted-foreground">
+                      Play with sound
+                    </span>
+                  </div>
                 </>
               ) : (
                 <>

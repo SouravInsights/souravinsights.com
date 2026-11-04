@@ -201,8 +201,9 @@ export const galleryVideos = pgTable(
     height: integer("height").notNull(),
     // Seconds. Shown before the video's metadata arrives.
     duration: doublePrecision("duration").notNull(),
-    // Whether the file has an audio track worth a mute control.
-    hasAudio: boolean("has_audio").notNull().default(false),
+    // Whether this clip plays with sound. The file keeps its track either way;
+    // off plays it muted and hides the mute control.
+    sound: boolean("sound").notNull().default(true),
     // When the interaction was recorded. Shown as `Nov 2025`.
     recordedAt: date("recorded_at"),
     // Curated order in the gallery. Lower first; not implied by any date.

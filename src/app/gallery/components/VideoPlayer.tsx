@@ -29,7 +29,7 @@ interface VideoPlayerProps {
   src: string;
   poster: string;
   /** When false, the mute control is omitted rather than shown doing nothing. */
-  hasAudio?: boolean;
+  sound?: boolean;
 }
 
 /**
@@ -42,7 +42,7 @@ interface VideoPlayerProps {
  * while playing — a paused video keeps its controls, which is when you need
  * them most.
  */
-export function VideoPlayer({ src, poster, hasAudio = true }: VideoPlayerProps) {
+export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hideTimer = useRef<number | null>(null);
@@ -61,7 +61,9 @@ export function VideoPlayer({ src, poster, hasAudio = true }: VideoPlayerProps) 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [buffered, setBuffered] = useState(0);
-  const [muted, setMuted] = useState(false);
+  // A clip marked silent starts muted and offers no unmute control; the file
+  // still carries its track, it just is not played.
+  const [muted, setMuted] = useState(!sound);
   const [loop, setLoop] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [scrubbing, setScrubbing] = useState(false);
@@ -95,6 +97,11 @@ export function VideoPlayer({ src, poster, hasAudio = true }: VideoPlayerProps) 
     },
     []
   );
+
+  // Toggling sound in the editor while the clip is open takes effect at once.
+  useEffect(() => {
+    setMuted(!sound);
+  }, [sound]);
 
   // Autoplay is inherited from the tap that opened the detail view; if the
   // browser still refuses it, the paused state is what renders a play button.
@@ -165,7 +172,11 @@ export function VideoPlayer({ src, poster, hasAudio = true }: VideoPlayerProps) 
   return (
     <div
       ref={containerRef}
-      className="group/player relative h-full w-full overflow-hidden bg-black"
+      className="group/player relative h-full w-full cursor-pointer overflow-hidden bg-black"
+      // Play/pause lives on the container rather than an overlay button, so the
+      // <video> stays the element under the pointer and the browser's own
+      // right-click / long-press "Save video as" still reaches it.
+      onClick={togglePlay}
       onPointerMove={wakeControls}
       onPointerLeave={() => playing && !scrubbing && setControlsVisible(false)}
     >
@@ -218,14 +229,6 @@ export function VideoPlayer({ src, poster, hasAudio = true }: VideoPlayerProps) 
         className={`relative h-full w-full object-contain transition-opacity duration-200 ${
           ready ? "opacity-100" : "opacity-0"
         }`}
-      />
-
-      {/* The picture is the play/pause target; the chrome sits above it. */}
-      <button
-        type="button"
-        onClick={togglePlay}
-        aria-label={playing ? "Pause" : "Play"}
-        className="absolute inset-0 z-10 cursor-pointer"
       />
 
       {/* Centre glyph: a state, not a control, so it never intercepts a tap. */}
@@ -335,7 +338,7 @@ export function VideoPlayer({ src, poster, hasAudio = true }: VideoPlayerProps) 
             <Repeat className="h-4 w-4" />
           </button>
 
-          {hasAudio && (
+          {sound && (
             <button
               type="button"
               onClick={() => setMuted((value) => !value)}

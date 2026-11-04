@@ -19,6 +19,7 @@ const bodySchema = z.object({
   title: z.string().max(200).optional(),
   notes: z.string().max(8000).optional(),
   tags: z.array(z.string().max(40)).max(12).optional(),
+  sound: z.boolean().optional(),
 });
 
 export async function PATCH(request: NextRequest) {
@@ -31,20 +32,21 @@ export async function PATCH(request: NextRequest) {
       {
         error: {
           code: "invalid_body",
-          message: "Body must be { id, title?, notes?, tags? }",
+          message: "Body must be { id, title?, notes?, tags?, sound? }",
         },
       },
       { status: 400 }
     );
   }
 
-  const { id, title, notes, tags } = parsed.data;
+  const { id, title, notes, tags, sound } = parsed.data;
   const update: Record<string, unknown> = { updatedAt: new Date() };
   if (title !== undefined) update.title = title.trim();
   if (notes !== undefined) update.notes = notes.trim();
   if (tags !== undefined) {
     update.tags = tags.map((tag) => tag.trim()).filter(Boolean);
   }
+  if (sound !== undefined) update.sound = sound;
 
   await db.update(galleryVideos).set(update).where(eq(galleryVideos.id, id));
   revalidatePath("/gallery");

@@ -28,7 +28,7 @@ export interface GalleryVideo {
   /** Seconds. Shown before the video loads. */
   duration: number;
   /** Whether the file has an audio track worth a mute control. */
-  hasAudio: boolean;
+  sound: boolean;
   tags: string[];
   /** ISO date (`YYYY-MM-DD`) the interaction was recorded. */
   recordedAt: string;
@@ -39,6 +39,8 @@ export interface GalleryClipPatch {
   title?: string;
   notes?: string;
   tags?: string[];
+  /** Play this clip with its sound on. */
+  sound?: boolean;
 }
 
 /** The whole `GET /api/gallery` response. */

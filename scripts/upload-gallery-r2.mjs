@@ -68,10 +68,12 @@ for (const file of files) {
   const response = await client.fetch(`${endpoint}/${R2_BUCKET}/${key}`, {
     method: "PUT",
     body: readFileSync(path),
-    // Immutable: a clip is never re-uploaded under the same name.
+    // A clip can be re-uploaded under the same key (a re-encode), so this is
+    // a normal media cache rather than `immutable` — otherwise an old file
+    // would outlive its replacement for a year.
     headers: {
       "Content-Type": contentType(file),
-      "Cache-Control": "public, max-age=31536000, immutable",
+      "Cache-Control": "public, max-age=3600",
     },
   });
 

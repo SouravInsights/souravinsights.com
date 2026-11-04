@@ -54,7 +54,7 @@ export async function GET() {
       width: video.width,
       height: video.height,
       duration: video.duration,
-      hasAudio: video.hasAudio,
+      sound: video.sound,
       tags: video.tags ?? [],
       recordedAt: video.recordedAt ?? "",
     })),
