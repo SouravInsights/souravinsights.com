@@ -7,7 +7,19 @@ import { isAdminAuthenticated } from "@/lib/admin-auth";
 import type { GalleryPayload } from "@/app/gallery/gallery-types";
 
 const R2_BASE = (process.env.R2_PUBLIC_URL ?? "").replace(/\/+$/, "");
-const publicUrl = (key: string) => `${R2_BASE}/${key}`;
+
+/**
+ * Cache-busting version for the media URLs.
+ *
+ * Bump this whenever a file is replaced under the same R2 key. The first
+ * uploads were served with `Cache-Control: immutable`, so a device that has
+ * one never revalidates — a phone cannot hard-refresh, and only a URL change
+ * reaches it. Uploads now use a one-hour cache, so a bump is needed only when
+ * a replacement has to land immediately.
+ */
+const MEDIA_VERSION = 2;
+
+const publicUrl = (key: string) => `${R2_BASE}/${key}?v=${MEDIA_VERSION}`;
 
 const toCounts = (raw: Record<string, number> | null): Record<string, number> =>
   Object.fromEntries(
