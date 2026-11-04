@@ -13,6 +13,7 @@ import {
   Braces,
   Clapperboard,
   Code,
+  Film,
   Gamepad2,
   Github,
   Home,
@@ -78,6 +79,7 @@ interface Destination {
 const destinations: Destination[] = [
   { name: "Home", path: "/", icon: Home, tab: true },
   { name: "Projects", path: "/projects", icon: Boxes },
+  { name: "Gallery", path: "/gallery", icon: Film },
   { name: "Blog", path: "/blog", icon: BookText, tab: true },
   { name: "Books", path: "/books", icon: BookOpen },
   { name: "Insights", path: "/insights", icon: BookmarkCheck, tab: true },

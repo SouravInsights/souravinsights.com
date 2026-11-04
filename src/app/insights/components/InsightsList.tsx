@@ -17,7 +17,7 @@ import {
   sortByOldest,
 } from "../utils/urlUtils";
 import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
-import { LikeButton } from "./LikeButton";
+import { LikeButton } from "@/components/LikeButton";
 import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
 import {
@@ -1545,7 +1545,7 @@ function LinkRow({
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         )}
-        <LikeButton linkId={link.id} />
+        <LikeButton id={link.id} />
       </div>
     </PreviewCardTrigger>
   );
@@ -1655,7 +1655,7 @@ function LinkGridCard({
         ) : (
           <span className="flex items-center gap-1">
             <CopyLinkButton url={link.url} />
-            <LikeButton linkId={link.id} />
+            <LikeButton id={link.id} />
           </span>
         )}
       </div>

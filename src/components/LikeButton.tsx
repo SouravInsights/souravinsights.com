@@ -18,19 +18,45 @@ import {
   useLikeBurst,
 } from "@/components/like-burst";
 
-/** How many times a visitor may like a single link. */
+/** How many times a visitor may like a single item. */
 const MAX_USER_LIKES = 10;
 
 /** Press timing, matching the blog's 3D button: quick squash, easy release. */
 const PRESS = 0.14;
 const RELEASE = 0.34;
 
-export function LikeButton({ linkId }: { linkId: string }) {
+interface LikeButtonProps {
+  /** Identifier for the thing being liked (a link id, a video id, …). */
+  id: string;
+  /**
+   * Endpoint that supports GET `?param=id` and POST `{ [param]: id }`.
+   * Defaults to the insights collection.
+   */
+  endpoint?: string;
+  /** Query/body key for the id. Defaults to "linkId". */
+  param?: string;
+  /** How many times one visitor may like this item. */
+  max?: number;
+  /** Server-known total, so the count never flashes a zero first. */
+  initialTotalLikes?: number;
+  /** Reports the authoritative total whenever it changes. */
+  onTotalChange?: (total: number) => void;
+}
+
+export function LikeButton({
+  id,
+  endpoint = "/api/insights/likes",
+  param = "linkId",
+  max = MAX_USER_LIKES,
+  initialTotalLikes = 0,
+  onTotalChange,
+}: LikeButtonProps) {
   const { totalLikes, userLikes, isMaxed, addLike } = useLikes({
-    id: linkId,
-    endpoint: "/api/insights/likes",
-    param: "linkId",
-    max: MAX_USER_LIKES,
+    id,
+    endpoint,
+    param,
+    max,
+    initialTotalLikes,
   });
 
   const { isDarkMode } = useTheme();
@@ -44,6 +70,11 @@ export function LikeButton({ linkId }: { linkId: string }) {
   const { burst, particles } = useLikeBurst({ ramp, scale: 0.7 });
 
   const liked = userLikes > 0;
+
+  // Keep a parent that shows the same total (a gallery tile, say) in step.
+  useEffect(() => {
+    onTotalChange?.(totalLikes);
+  }, [totalLikes, onTotalChange]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
     const timeout = setTimeout(fn, ms);
@@ -65,7 +96,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
       return;
     }
 
-    const isFinalLike = userLikes === MAX_USER_LIKES - 1;
+    const isFinalLike = userLikes === max - 1;
     if (isFinalLike) {
       feedback.success();
     } else {
@@ -97,7 +128,7 @@ export function LikeButton({ linkId }: { linkId: string }) {
       onClick={handleClick}
       aria-pressed={liked}
       aria-label={liked ? "Liked" : "Like"}
-      title={isMaxed ? "You've reached the 10-like limit" : undefined}
+      title={isMaxed ? `You've reached the ${max}-like limit` : undefined}
       className={`relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium leading-none transition-colors after:absolute after:-inset-2 after:content-[''] ${
         liked
           ? "bg-rose-600/10 text-rose-600"
