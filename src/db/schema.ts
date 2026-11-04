@@ -3,6 +3,8 @@ import {
   bigint,
   boolean,
   check,
+  date,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -143,6 +145,80 @@ export const highlights = pgTable(
       .defaultNow(),
   },
   (table) => [index("highlights_link_id_idx").on(table.linkId)]
+);
+
+/**
+ * The gallery's projects — one row per side project a clip belongs to. Here
+ * rather than in the repo because the repo is public and this is content: the
+ * gallery can gain a project without a deploy.
+ */
+export const galleryProjects = pgTable("gallery_projects", {
+  // Short stable id, also the R2 folder name (`spotfree`, `beenthere`).
+  key: text("key").primaryKey(),
+  // Shown on the filter chip and above a clip's title.
+  name: text("name").notNull(),
+  // Where clicking the project goes. Null when it has no public site.
+  url: text("url"),
+  // Order in the filter row. Lower first; the id is only a label.
+  position: integer("position").notNull().default(0),
+});
+
+/**
+ * One row per clip.
+ *
+ * Everything about a clip lives here, its Cloudflare R2 keys included, so the
+ * open-source repo holds no content and no bucket layout — only the code that
+ * reads this table. `video_key` / `poster_key` are object keys relative to the
+ * bucket (`<project>/<file>`); the public base is an env var, never committed.
+ *
+ * The facts about the file (dimensions, duration) are written once when it is
+ * registered; title, notes and tags are the parts edited in the UI.
+ */
+export const galleryVideos = pgTable(
+  "gallery_videos",
+  {
+    // Stable id, also the clip's filename stem on R2. Used in like/view keys.
+    id: text("id").primaryKey(),
+    // The project this clip belongs to (`gallery_projects.key`).
+    project: text("project")
+      .notNull()
+      .references(() => galleryProjects.key, { onDelete: "cascade" }),
+    // R2 object key of the video, e.g. `spotfree/spotfree-icon-animations.mp4`.
+    videoKey: text("video_key").notNull(),
+    // R2 object key of the still shown before the video loads (`…-poster.webp`).
+    posterKey: text("poster_key").notNull(),
+    // Detail-view heading. Edited in the UI.
+    title: text("title").notNull().default(""),
+    // The paragraph under the title. Edited in the UI.
+    notes: text("notes").notNull().default(""),
+    // Free-form labels shown as chips. Edited in the UI.
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    // Intrinsic video pixels. Let the frame reserve its space before load.
+    width: integer("width").notNull(),
+    height: integer("height").notNull(),
+    // Seconds. Shown before the video's metadata arrives.
+    duration: doublePrecision("duration").notNull(),
+    // Whether the file has an audio track worth a mute control.
+    hasAudio: boolean("has_audio").notNull().default(false),
+    // When the interaction was recorded. Shown as `Nov 2025`.
+    recordedAt: date("recorded_at"),
+    // Curated order in the gallery. Lower first; not implied by any date.
+    position: integer("position").notNull().default(0),
+    // Row inserted.
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    // Last edit to title/notes/tags. Lets a save be visible and ordered.
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("gallery_videos_project_idx").on(table.project, table.position),
+  ]
 );
 
 /**

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Heart, Play } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { GalleryProject, GalleryVideo } from "../gallery-data";
+import type { GalleryProject, GalleryVideo } from "../gallery-types";
 import { formatTime } from "./VideoPlayer";
 
 interface VideoCardProps {
@@ -61,7 +61,7 @@ export function VideoCard({
         <div
           aria-hidden="true"
           style={{ aspectRatio: `${video.width} / ${video.height}` }}
-          className="relative block w-full overflow-hidden rounded-xl border border-border bg-secondary"
+          className="relative block w-full overflow-hidden rounded-lg border border-border bg-secondary"
         />
       ) : (
         <motion.button
@@ -85,7 +85,7 @@ export function VideoCard({
           style={{
             aspectRatio: `${video.width} / ${video.height}`,
             borderRadius: 0,
-            clipPath: "inset(0 round 0.75rem)",
+            clipPath: "inset(0 round 0.5rem)",
           }}
           className="group relative block w-full overflow-hidden bg-secondary text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >

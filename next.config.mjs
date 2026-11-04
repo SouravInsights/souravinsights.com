@@ -52,18 +52,17 @@ const nextConfig = {
 
   images: {
     domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
-    // Gallery posters are served from R2. The public base is public, so it is
-    // also the fallback when the env is absent. Derived rather than hardcoded so
-    // a move to a custom domain is one env change, not two.
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: new URL(
-          process.env.R2_PUBLIC_URL ??
-            "https://pub-571f767160b845dc919f10d98335c957.r2.dev"
-        ).hostname,
-      },
-    ],
+    // Gallery posters come from R2. The host is read from the env, never
+    // committed — the repo is public and the bucket address is not ours to
+    // publish. A checkout without `R2_PUBLIC_URL` simply has no remote pattern.
+    remotePatterns: process.env.R2_PUBLIC_URL
+      ? [
+          {
+            protocol: "https",
+            hostname: new URL(process.env.R2_PUBLIC_URL).hostname,
+          },
+        ]
+      : [],
   },
 
   /**

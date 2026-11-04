@@ -12,6 +12,8 @@ export const qk = {
   insights: {
     latest: () => ["insights", "latest"] as const,
   },
+  /** The gallery's one read: projects, clips and their totals. */
+  gallery: () => ["gallery"] as const,
   /** Likes are shared by scope so posts, links and books never collide. */
   likes: (scope: string, id: string) => ["likes", scope, id] as const,
   article: (urlKey: string) => ["article", urlKey] as const,

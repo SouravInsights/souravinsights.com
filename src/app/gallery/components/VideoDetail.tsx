@@ -1,18 +1,35 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import {
+  AnimatePresence,
   motion,
   useDragControls,
   useReducedMotion,
 } from "framer-motion";
-import { ArrowUpRight, Clock, Play, X } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  Clock,
+  Loader2,
+  Pencil,
+  Play,
+  X,
+} from "lucide-react";
+import { EditableField } from "@/components/EditableField";
 import { LikeButton } from "@/components/LikeButton";
+import { apiJson } from "@/lib/query/api";
+import { qk } from "@/lib/query/keys";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useGalleryViews } from "@/hooks/useGalleryViews";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { GalleryProject, GalleryVideo } from "../gallery-data";
+import type {
+  GalleryClipPatch,
+  GalleryProject,
+  GalleryVideo,
+} from "../gallery-types";
 import { formatTime, VideoPlayer } from "./VideoPlayer";
 
 interface VideoDetailProps {
@@ -24,13 +41,17 @@ interface VideoDetailProps {
   /** Report changed totals back to the grid so its tile stays in step. */
   onLikeChange: (total: number) => void;
   onViewChange: (total: number) => void;
+  /** Admin sees the inline editor for title, notes and tags. */
+  isAdmin: boolean;
 }
 
 const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    year: "numeric",
-  });
+  iso
+    ? new Date(iso).toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      })
+    : "";
 
 /** Drag distance or velocity past which the sheet dismisses. */
 const DISMISS_OFFSET = 110;
@@ -46,6 +67,10 @@ const DISMISS_VELOCITY = 700;
  * The video frame carries the card's `layoutId`, so it grows out of the grid
  * tile it was clicked from and returns there on close. Everything else fades in
  * a beat later, which keeps the eye on the picture rather than on a panel.
+ *
+ * For an admin the title, notes and tags become editable in place. The save is
+ * a PATCH to `/api/gallery/clip` (the same admin-write shape as the rest of the
+ * site), followed by a router refresh so the grid tile picks up the new title.
  */
 export function VideoDetail({
   video,
@@ -55,26 +80,89 @@ export function VideoDetail({
   onClose,
   onLikeChange,
   onViewChange,
+  isAdmin,
 }: VideoDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const reduceMotion = useReducedMotion();
   const feedback = useFeedback();
   const dragControls = useDragControls();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const savedTimer = useRef<number | null>(null);
+  const queryClient = useQueryClient();
 
   const { views } = useGalleryViews({
     videoId: video.id,
     initialViews,
   });
 
+  // The editable copy of the clip's words. Kept local so typing never waits on
+  // the network; the server is told on blur.
+  const [editing, setEditing] = useState(false);
+  const [title, setTitle] = useState(video.title);
+  const [notes, setNotes] = useState(video.notes);
+  const [tags, setTags] = useState(video.tags);
+  const [tagsText, setTagsText] = useState(video.tags.join(", "));
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
+    "idle"
+  );
+
   useEffect(() => {
     onViewChange(views);
   }, [views, onViewChange]);
+
+  useEffect(
+    () => () => {
+      if (savedTimer.current) window.clearTimeout(savedTimer.current);
+    },
+    []
+  );
 
   const handleLikeChange = useCallback(
     (total: number) => onLikeChange(total),
     [onLikeChange]
   );
+
+  const persist = useCallback(
+    async (patch: GalleryClipPatch) => {
+      setSaveState("saving");
+      try {
+        await apiJson("/api/gallery/clip", {
+          method: "PATCH",
+          body: JSON.stringify({ id: video.id, ...patch }),
+        });
+        setSaveState("saved");
+        // Refetch the one read, so the grid tile behind the panel shows the
+        // new title without a page reload.
+        queryClient.invalidateQueries({ queryKey: qk.gallery() });
+        if (savedTimer.current) window.clearTimeout(savedTimer.current);
+        savedTimer.current = window.setTimeout(() => setSaveState("idle"), 1600);
+      } catch {
+        setSaveState("idle");
+      }
+    },
+    [video.id, queryClient]
+  );
+
+  const handleTitle = (value: string) => {
+    setTitle(value);
+    void persist({ title: value });
+  };
+
+  const handleNotes = (value: string) => {
+    setNotes(value);
+    void persist({ notes: value });
+  };
+
+  const commitTags = useCallback(() => {
+    const next = tagsText
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+    if (next.join("|") === tags.join("|")) return;
+    setTags(next);
+    setTagsText(next.join(", "));
+    void persist({ tags: next });
+  }, [tagsText, tags, persist]);
 
   // Lock the page behind the panel and close on Escape.
   useEffect(() => {
@@ -92,18 +180,21 @@ export function VideoDetail({
   }, [onClose]);
 
   const close = () => {
+    // An open field saves as the click blurs it; tags have no blur of their own,
+    // so they are committed here too.
+    commitTags();
     feedback.press();
     onClose();
   };
 
-  // The shell, the grabber and the close button all arrive after the frame has
-  // grown into place. Anything drawn during the morph reads as a second thing
-  // moving; a beat of delay keeps the eye on the video alone.
   // The frame is on a 0.34s tween (shared with the tile). The chrome waits
   // almost all of it, so nothing reads as an empty panel the video then fills.
   const reveal = reduceMotion
     ? { duration: 0 }
     : { duration: 0.2, delay: 0.26, ease: [0.23, 1, 0.32, 1] as const };
+
+  const iconButton =
+    "flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80";
 
   return createPortal(
     <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-6">
@@ -116,7 +207,7 @@ export function VideoDetail({
       <motion.div
         role="dialog"
         aria-modal="true"
-        aria-label={video.title}
+        aria-label={title}
         className="relative flex max-h-[92svh] w-full flex-col sm:max-h-[min(92svh,56rem)] sm:max-w-3xl"
         drag={isDesktop ? false : "y"}
         dragListener={false}
@@ -138,13 +229,13 @@ export function VideoDetail({
             the clipping box below so its shadow is not cut off. */}
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-t-2xl border border-border bg-background shadow-2xl shadow-black/40 sm:rounded-2xl"
+          className="pointer-events-none absolute inset-0 rounded-t-lg border border-border bg-background shadow-2xl shadow-black/40 sm:rounded-lg"
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={reveal}
         />
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-lg sm:rounded-lg">
           {/* Phone-only grabber. It is also the drag handle, so the video and
               the notes below keep their own gestures. */}
           <motion.div
@@ -172,7 +263,7 @@ export function VideoDetail({
             style={{
               aspectRatio: `${video.width} / ${video.height}`,
               borderRadius: 0,
-              clipPath: "inset(0 round 1rem 1rem 0 0)",
+              clipPath: "inset(0 round 0.5rem 0.5rem 0 0)",
             }}
           >
             <VideoPlayer
@@ -194,32 +285,92 @@ export function VideoDetail({
                 <span className="type-label text-faint-foreground">
                   {project.name}
                 </span>
-                <span
-                  className="h-1 w-1 rounded-full bg-border"
-                  aria-hidden="true"
-                />
-                <span className="type-caption text-faint-foreground">
-                  {formatDate(video.recordedAt)}
-                </span>
+                {video.recordedAt ? (
+                  <>
+                    <span
+                      className="h-1 w-1 rounded-full bg-border"
+                      aria-hidden="true"
+                    />
+                    <span className="type-caption text-faint-foreground">
+                      {formatDate(video.recordedAt)}
+                    </span>
+                  </>
+                ) : null}
+
+                <AnimatePresence>
+                  {saveState !== "idle" && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="ml-auto inline-flex items-center gap-1 type-caption text-faint-foreground"
+                    >
+                      {saveState === "saving" ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Check className="h-3 w-3 text-green-700 dark:text-green-500" />
+                      )}
+                      {saveState === "saving" ? "Saving" : "Saved"}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
 
-              <h2 className="type-title mt-2">{video.title}</h2>
-
-              <p className="type-body mt-3 max-w-2xl text-muted-foreground">
-                {video.notes}
-              </p>
-
-              {video.tags.length > 0 && (
-                <ul className="mt-4 flex flex-wrap gap-1.5">
-                  {video.tags.map((tag) => (
-                    <li
-                      key={tag}
-                      className="rounded-full bg-foreground/5 px-2.5 py-1 type-caption text-muted-foreground"
-                    >
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
+              {editing ? (
+                <>
+                  <EditableField
+                    as="h2"
+                    value={title}
+                    onChange={handleTitle}
+                    isEditing
+                    placeholder="Title"
+                    className="type-title mt-2 block"
+                  />
+                  <EditableField
+                    as="p"
+                    value={notes}
+                    onChange={handleNotes}
+                    isEditing
+                    multiline
+                    placeholder="Notes"
+                    className="type-body mt-3 block max-w-2xl text-muted-foreground"
+                  />
+                  <input
+                    type="text"
+                    value={tagsText}
+                    onChange={(event) => setTagsText(event.target.value)}
+                    onBlur={commitTags}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                      }
+                    }}
+                    placeholder="Tags, comma separated"
+                    spellCheck={false}
+                    aria-label="Tags"
+                    className="mt-4 h-9 w-full max-w-md rounded-lg border border-border bg-transparent px-3 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
+                  />
+                </>
+              ) : (
+                <>
+                  <h2 className="type-title mt-2">{title}</h2>
+                  <p className="type-body mt-3 max-w-2xl text-muted-foreground">
+                    {notes}
+                  </p>
+                  {tags.length > 0 && (
+                    <ul className="mt-4 flex flex-wrap gap-1.5">
+                      {tags.map((tag) => (
+                        <li
+                          key={tag}
+                          className="rounded-full bg-foreground/5 px-2.5 py-1 type-caption text-muted-foreground"
+                        >
+                          {tag}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
               )}
 
               <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
@@ -258,6 +409,34 @@ export function VideoDetail({
           </motion.div>
         </div>
 
+        {isAdmin && (
+          <motion.button
+            type="button"
+            onClick={() => {
+              feedback.select();
+              if (editing) commitTags();
+              setEditing((value) => !value);
+            }}
+            aria-pressed={editing}
+            aria-label={editing ? "Done editing" : "Edit clip"}
+            title={editing ? "Done editing" : "Edit title, notes and tags"}
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={reveal}
+            className={`absolute right-14 top-3 z-30 sm:right-16 sm:top-4 ${iconButton} ${
+              editing
+                ? "bg-white text-black"
+                : "bg-black/45 text-white ring-1 ring-white/15 backdrop-blur-sm hover:bg-black/65"
+            }`}
+          >
+            {editing ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Pencil className="h-3.5 w-3.5" />
+            )}
+          </motion.button>
+        )}
+
         <motion.button
           ref={closeRef}
           type="button"
@@ -266,7 +445,7 @@ export function VideoDetail({
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={reveal}
-          className="absolute right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white ring-1 ring-white/15 backdrop-blur-sm transition-colors hover:bg-black/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:right-4 sm:top-4"
+          className={`absolute right-3 top-3 z-30 sm:right-4 sm:top-4 ${iconButton} bg-black/45 text-white ring-1 ring-white/15 backdrop-blur-sm transition-colors hover:bg-black/65`}
         >
           <X className="h-4 w-4" />
         </motion.button>

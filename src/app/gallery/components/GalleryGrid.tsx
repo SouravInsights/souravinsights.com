@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { LayoutGroup, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import type { GalleryProject, GalleryVideo } from "../gallery-data";
+import type { GalleryProject, GalleryVideo } from "../gallery-types";
 import { VideoCard } from "./VideoCard";
 import { VideoDetail } from "./VideoDetail";
 
@@ -12,6 +12,7 @@ interface GalleryGridProps {
   projects: GalleryProject[];
   likeCounts: Record<string, number>;
   viewCounts: Record<string, number>;
+  isAdmin: boolean;
 }
 
 /**
@@ -24,6 +25,7 @@ export function GalleryGrid({
   projects,
   likeCounts,
   viewCounts,
+  isAdmin,
 }: GalleryGridProps) {
   const [category, setCategory] = useState("all");
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -95,7 +97,7 @@ export function GalleryGrid({
         <div
           role="group"
           aria-label="Filter by project"
-          className="no-scrollbar flex gap-1 overflow-x-auto rounded-xl border border-border bg-secondary/60 p-1"
+          className="no-scrollbar flex gap-0.5 overflow-x-auto rounded-lg border border-border p-0.5"
         >
           {filters.map((filter) => {
             const selected = category === filter.key;
@@ -108,7 +110,7 @@ export function GalleryGrid({
                   setCategory(filter.key);
                 }}
                 aria-pressed={selected}
-                className={`relative flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                className={`relative flex shrink-0 items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors ${
                   selected
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -117,7 +119,7 @@ export function GalleryGrid({
                 {selected && (
                   <motion.span
                     layoutId="gallery-category-pill"
-                    className="absolute inset-0 rounded-lg bg-background shadow-sm"
+                    className="absolute inset-0 rounded-[5px] bg-foreground/10"
                     transition={{ type: "spring", stiffness: 520, damping: 42 }}
                   />
                 )}
@@ -166,6 +168,7 @@ export function GalleryGrid({
           onClose={close}
           onLikeChange={(total) => setLikeTotal(active.id, total)}
           onViewChange={(total) => setViewTotal(active.id, total)}
+          isAdmin={isAdmin}
         />
       )}
     </LayoutGroup>
