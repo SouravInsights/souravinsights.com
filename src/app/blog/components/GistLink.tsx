@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileCode } from "lucide-react";
+import { FileCode } from "@phosphor-icons/react/ssr";
 
 interface GistLinkProps {
   id: string;

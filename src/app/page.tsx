@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
 import { motion } from "framer-motion";
-import { Twitter, Github, Bike, Footprints, Coffee, Music } from "lucide-react";
+import { XLogo, GithubLogo, Bicycle, Footprints, Coffee, MusicNotes } from "@phosphor-icons/react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
 import { Panel } from "@/components/Panel";
@@ -149,10 +149,10 @@ const myToolkit = {
         logo: "/logos/goguma.png",
         url: "https://play.google.com/store/apps/details?id=fr.emersion.goguma",
       },
-      { name: "Bike rides", logo: Bike, url: null },
+      { name: "Bike rides", logo: Bicycle, url: null },
       { name: "Solo walks", logo: Footprints, url: null },
       { name: "Cafes", logo: Coffee, url: null },
-      { name: "Guitar", logo: Music, url: null },
+      { name: "Guitar", logo: MusicNotes, url: null },
     ],
   },
 };
@@ -280,7 +280,7 @@ const HeroSection = () => {
                 onClick={() => feedback.press()}
                 className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
-                <Github className="w-4 h-4" />
+                <GithubLogo className="w-4 h-4" />
                 <span>GitHub</span>
               </a>
               <a
@@ -290,7 +290,7 @@ const HeroSection = () => {
                 onClick={() => feedback.press()}
                 className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
               >
-                <Twitter className="w-4 h-4" />
+                <XLogo className="w-4 h-4" />
                 <span>Twitter</span>
               </a>
             </motion.div>

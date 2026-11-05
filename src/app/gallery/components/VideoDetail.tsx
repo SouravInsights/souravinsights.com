@@ -9,15 +9,7 @@ import {
   useDragControls,
   useReducedMotion,
 } from "framer-motion";
-import {
-  ArrowUpRight,
-  Check,
-  Clock,
-  Loader2,
-  Pencil,
-  Play,
-  X,
-} from "lucide-react";
+import { ArrowUpRight, Check, Clock, CircleNotch, Pencil, Play, X } from "@phosphor-icons/react";
 import { EditableField } from "@/components/EditableField";
 import { LikeButton } from "@/components/LikeButton";
 import { apiJson } from "@/lib/query/api";
@@ -312,7 +304,7 @@ export function VideoDetail({
                       className="ml-auto inline-flex items-center gap-1 type-caption text-faint-foreground"
                     >
                       {saveState === "saving" ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
+                        <CircleNotch className="h-3 w-3 animate-spin" />
                       ) : (
                         <Check className="h-3 w-3 text-green-700 dark:text-green-500" />
                       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ExternalLink } from "lucide-react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import { useFeedback } from "@/hooks/useFeedback";
 
 interface HackerNewsButtonProps {
@@ -35,7 +35,7 @@ export default function HackerNewsButton({ url }: HackerNewsButtonProps) {
         />
       </svg>
       <span>Discuss on HN</span>
-      <ExternalLink className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />
+      <ArrowSquareOut className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />
     </a>
   );
 }

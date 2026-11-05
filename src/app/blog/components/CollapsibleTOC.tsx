@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, ChevronLeft, BookOpen, Menu } from "lucide-react";
+import { CaretRight, CaretLeft, BookOpen, List } from "@phosphor-icons/react";
 import { useFeedback } from "@/hooks/useFeedback";
 
 interface TOCItem {
@@ -74,7 +74,7 @@ export default function CollapsibleTOC({
               <span className="text-xs mr-1 text-muted-foreground">
                 Collapse
               </span>
-              <ChevronRight size={16} />
+              <CaretRight size={16} />
             </button>
           </div>
 
@@ -105,7 +105,7 @@ export default function CollapsibleTOC({
                       }}
                     >
                       {activeHeading === heading.id && (
-                        <ChevronRight className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <CaretRight className="h-3 w-3 mr-1 flex-shrink-0" />
                       )}
                       <span className="truncate">{heading.text}</span>
                     </a>
@@ -130,7 +130,7 @@ export default function CollapsibleTOC({
             title="Expand table of contents"
           >
             <div className="flex items-center justify-center">
-              <ChevronLeft
+              <CaretLeft
                 size={18}
                 className="text-muted-foreground"
               />

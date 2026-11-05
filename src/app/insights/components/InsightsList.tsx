@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUp, ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, Link2, List as ListIcon, Loader2, Search, Shuffle, Tag, Trash2, X } from "lucide-react";
+import { ArrowUp, ArrowsDownUp, Check, CaretDown, Clock, ArrowSquareOut, Heart, ClockCounterClockwise, SquaresFour, LinkSimple, List as ListIcon, CircleNotch, MagnifyingGlass, Shuffle, Tag, Trash, X } from "@phosphor-icons/react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsClientLink } from "../utils/links-data";
 import {
@@ -625,7 +625,7 @@ export default function InsightsList({
           <SegmentedControl
             options={[
               { value: "list", label: "List view", icon: ListIcon },
-              { value: "grid", label: "Grid view", icon: LayoutGrid },
+              { value: "grid", label: "Grid view", icon: SquaresFour },
             ]}
             value={view}
             onChange={setView}
@@ -668,7 +668,7 @@ export default function InsightsList({
                       {selectedTopics.length}
                     </span>
                   )}
-                  <ChevronDown
+                  <CaretDown
                     className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
                       topicsOpen ? "rotate-180" : ""
                     }`}
@@ -753,9 +753,9 @@ export default function InsightsList({
                   aria-label={`Sort: ${SORT_LABELS[sort]}`}
                   className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-2.5 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9 sm:px-3"
                 >
-                  <ArrowUpDown className="h-3.5 w-3.5 shrink-0 text-faint-foreground" />
+                  <ArrowsDownUp className="h-3.5 w-3.5 shrink-0 text-faint-foreground" />
                   <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
-                  <ChevronDown
+                  <CaretDown
                     className={`hidden h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform sm:block ${
                       sortMenuOpen ? "rotate-180" : ""
                     }`}
@@ -784,7 +784,7 @@ export default function InsightsList({
                             {
                               value: "oldest" as const,
                               label: "Oldest",
-                              icon: History,
+                              icon: ClockCounterClockwise,
                             },
                           ]
                         : []),
@@ -836,7 +836,7 @@ export default function InsightsList({
                           {cleanup ? (
                             <Check className="h-3.5 w-3.5" />
                           ) : (
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash className="h-3.5 w-3.5" />
                           )}
                           {cleanup ? "Done cleaning up" : "Clean up links"}
                         </button>
@@ -862,14 +862,14 @@ export default function InsightsList({
             {searchOpen ? (
               <X className="h-4 w-4" />
             ) : (
-              <Search className="h-4 w-4" />
+              <MagnifyingGlass className="h-4 w-4" />
             )}
           </button>
 
           <div
             className={`relative ${searchOpen ? "flex-1" : "hidden"} sm:block sm:w-56`}
           >
-            <Search
+            <MagnifyingGlass
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
               aria-hidden="true"
             />
@@ -1093,7 +1093,7 @@ export default function InsightsList({
                 aria-label={`Hide ${selected.size} selected`}
                 className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-3 type-caption font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash className="h-3.5 w-3.5" />
                 Hide{selected.size > 0 ? ` ${selected.size}` : ""}
               </button>
             </div>
@@ -1222,11 +1222,11 @@ function AddLinkComposer({
             }`}
           >
             {busy ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <CircleNotch className="h-4 w-4 animate-spin" />
             ) : status === "added" ? (
               <Check className="h-4 w-4" />
             ) : (
-              <Link2 className="h-4 w-4" />
+              <LinkSimple className="h-4 w-4" />
             )}
           </span>
           <input
@@ -1406,7 +1406,7 @@ function LinkRow({
             title="Open link"
             className="relative flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-foreground/5 hover:text-foreground"
           >
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ArrowSquareOut className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>
@@ -1453,7 +1453,7 @@ function LinkRow({
             aria-label="Hide link"
             className="text-muted-foreground opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100 focus-visible:opacity-100"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash className="h-3.5 w-3.5" />
           </button>
         )}
         <LikeButton id={link.id} />
@@ -1548,7 +1548,7 @@ function LinkGridCard({
             aria-label="Hide link"
             className="text-muted-foreground transition-colors hover:text-red-600"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash className="h-3.5 w-3.5" />
           </button>
         )}
         {selectMode ? (
@@ -1561,7 +1561,7 @@ function LinkGridCard({
             title="Open link"
             className="relative flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors after:absolute after:-inset-2 after:content-[''] hover:bg-foreground/5 hover:text-foreground"
           >
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ArrowSquareOut className="h-3.5 w-3.5" />
           </a>
         ) : (
           <span className="flex items-center gap-1">

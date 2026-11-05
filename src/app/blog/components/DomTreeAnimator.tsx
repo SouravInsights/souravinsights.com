@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, LayoutGrid } from 'lucide-react';
+import { User, SquaresFour } from "@phosphor-icons/react";
 
 export default function DomTreeAnimator() {
   const [isBroken, setIsBroken] = useState(false);
@@ -74,7 +74,7 @@ export default function DomTreeAnimator() {
                   className="flex items-center gap-3 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 shadow-sm z-10"
                 >
                   <div className="w-6 h-6 rounded bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-500 dark:text-indigo-400">
-                    <LayoutGrid size={14} />
+                    <SquaresFour size={14} />
                   </div>
                   <span className="font-mono text-sm text-indigo-700 dark:text-indigo-300 truncate">TripCardGrid</span>
                   <span className="ml-auto whitespace-nowrap text-[10px] uppercase tracking-wider text-indigo-600 font-bold bg-indigo-100 dark:bg-indigo-900/50 px-2 py-1 rounded">Safely Inside</span>
@@ -101,7 +101,7 @@ export default function DomTreeAnimator() {
               className="flex items-center gap-3 p-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 shadow-sm z-10 w-[110%] -ml-[5%]"
             >
               <div className="w-6 h-6 rounded bg-red-100 dark:bg-red-900/50 flex items-center justify-center text-red-500 dark:text-red-400">
-                <LayoutGrid size={14} />
+                <SquaresFour size={14} />
               </div>
               <span className="font-mono text-sm text-red-700 dark:text-red-300">TripCardGrid</span>
               <span className="ml-auto text-[10px] uppercase tracking-wider text-red-600 font-bold bg-red-100 dark:bg-red-900/50 px-2 py-1 rounded shadow-sm border border-red-200 dark:border-red-800">Fell Outside!</span>

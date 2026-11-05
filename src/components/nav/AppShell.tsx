@@ -5,26 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  BookOpen,
-  BookText,
-  BookmarkCheck,
-  Boxes,
-  Braces,
-  Clapperboard,
-  Code,
-  Film,
-  Gamepad2,
-  Github,
-  Home,
-  Linkedin,
-  Mail,
-  MoreHorizontal,
-  PanelLeftClose,
-  Sparkles,
-  Twitter,
-  type LucideIcon,
-} from "lucide-react";
+import { BookOpen, BookOpenText, BookmarkSimple, Stack, BracketsCurly, FilmSlate, Code, FilmStrip, GameController, GithubLogo, House, LinkedinLogo, EnvelopeSimple, DotsThree, SidebarSimple, Sparkle, XLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
 import Oneko from "@/components/oneko";
@@ -70,27 +51,27 @@ import { useRail } from "./use-rail";
 interface Destination {
   name: string;
   path: string;
-  icon: LucideIcon;
+  icon: PhosphorIcon;
   /** Gets a slot on the phone's tab bar; the rest live behind More. */
   tab?: boolean;
 }
 
 /** The sections. */
 const destinations: Destination[] = [
-  { name: "Home", path: "/", icon: Home, tab: true },
-  { name: "Projects", path: "/projects", icon: Boxes },
-  { name: "Gallery", path: "/gallery", icon: Film },
-  { name: "Blog", path: "/blog", icon: BookText, tab: true },
+  { name: "Home", path: "/", icon: House, tab: true },
+  { name: "Projects", path: "/projects", icon: Stack },
+  { name: "Gallery", path: "/gallery", icon: FilmStrip },
+  { name: "Blog", path: "/blog", icon: BookOpenText, tab: true },
   { name: "Books", path: "/books", icon: BookOpen },
-  { name: "Insights", path: "/insights", icon: BookmarkCheck, tab: true },
-  { name: "Curio", path: "/curio", icon: Sparkles, tab: true },
+  { name: "Insights", path: "/insights", icon: BookmarkSimple, tab: true },
+  { name: "Curio", path: "/curio", icon: Sparkle, tab: true },
 ];
 
 /** The toys and the paper trail: real pages, not sections. */
 const elsewhere: Destination[] = [
-  { name: "Game", path: "/play", icon: Gamepad2 },
-  { name: "Movies", path: "/movies", icon: Clapperboard },
-  { name: "Docs", path: "/docs", icon: Braces },
+  { name: "Game", path: "/play", icon: GameController },
+  { name: "Movies", path: "/movies", icon: FilmSlate },
+  { name: "Docs", path: "/docs", icon: BracketsCurly },
 ];
 
 const tabs = destinations.filter((item) => item.tab);
@@ -223,14 +204,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 /** The rail's foot carries what the footer used to: the socials and a way to
     write. Icons with a title, because they are never words. */
 const socials = [
-  { href: "https://github.com/souravinsights", label: "GitHub", icon: Github },
+  { href: "https://github.com/souravinsights", label: "GitHub", icon: GithubLogo },
   {
     href: "https://linkedin.com/in/souravinsights",
     label: "LinkedIn",
-    icon: Linkedin,
+    icon: LinkedinLogo,
   },
-  { href: "https://twitter.com/souravinsights", label: "Twitter", icon: Twitter },
-  { href: "mailto:souravinsights@gmail.com", label: "Email me", icon: Mail },
+  { href: "https://twitter.com/souravinsights", label: "Twitter", icon: XLogo },
+  { href: "mailto:souravinsights@gmail.com", label: "Email me", icon: EnvelopeSimple },
   {
     href: "https://github.com/SouravInsights/souravinsights.com",
     label: "Source code",
@@ -290,7 +271,7 @@ function SiteRail({
               <span className="truncate font-mono transition-opacity shell-transition group-data-[collapsible=icon]:opacity-0">
                 Sourav
               </span>
-              <PanelLeftClose
+              <SidebarSimple
                 aria-hidden="true"
                 className="ml-auto shrink-0 text-faint-foreground transition-opacity shell-transition group-data-[collapsible=icon]:opacity-0"
               />
@@ -361,8 +342,12 @@ function SiteRail({
                 rel="noopener noreferrer"
                 aria-label={social.label}
                 title={social.label}
+                className="group/social"
               >
-                <social.icon />
+                <social.icon
+                  weight="regular"
+                  className="transition-transform duration-200 group-hover/social:scale-110 group-hover/social:-translate-y-0.5"
+                />
               </a>
             </Button>
           ))}
@@ -425,8 +410,12 @@ function RailItem({
           href={item.path}
           onClick={onNavigate}
           aria-current={active ? "page" : undefined}
+          className="group/nav"
         >
-          <item.icon />
+          <item.icon
+            weight={active ? "fill" : "regular"}
+            className="transition-transform duration-200 group-hover/nav:scale-110"
+          />
           {/* shadcn clips this span out of a 32px box the instant the state
               flips, which reads as the word vanishing before the rail has
               moved. Fading it over the same 180ms as the width makes the two
@@ -470,13 +459,17 @@ function TabBar({
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex flex-1 flex-col items-center justify-center gap-1 font-mono text-[10px] outline-none transition-colors focus-visible:bg-accent",
+              "group flex flex-1 flex-col items-center justify-center gap-1 font-mono text-[10px] outline-none transition-colors focus-visible:bg-accent",
               active
                 ? "text-green-700 dark:text-green-500"
                 : "text-muted-foreground"
             )}
           >
-            <item.icon size={18} />
+            <item.icon
+              size={18}
+              weight={active ? "fill" : "regular"}
+              className="transition-transform duration-200 group-hover:scale-110"
+            />
             <span>{item.name}</span>
           </Link>
         );
@@ -488,11 +481,15 @@ function TabBar({
         aria-expanded={menuOpen}
         aria-haspopup="dialog"
         className={cn(
-          "flex flex-1 flex-col items-center justify-center gap-1 font-mono text-[10px] outline-none transition-colors focus-visible:bg-accent",
+          "group flex flex-1 flex-col items-center justify-center gap-1 font-mono text-[10px] outline-none transition-colors focus-visible:bg-accent",
           menuOpen ? "text-foreground" : "text-muted-foreground"
         )}
       >
-        <MoreHorizontal size={18} />
+        <DotsThree
+          size={18}
+          weight={menuOpen ? "fill" : "regular"}
+          className="transition-transform duration-200 group-hover:scale-110"
+        />
         <span>More</span>
       </button>
     </nav>
@@ -541,13 +538,17 @@ function MoreSheet({
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-mono text-sm transition-colors",
+                    "group flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-mono text-sm transition-colors",
                     active
                       ? "bg-secondary text-green-700 dark:text-green-500"
                       : "text-foreground hover:bg-accent"
                   )}
                 >
-                  <item.icon size={16} />
+                  <item.icon
+                    size={16}
+                    weight={active ? "fill" : "regular"}
+                    className="transition-transform duration-200 group-hover:scale-110"
+                  />
                   <span>{item.name}</span>
                 </Link>
               );

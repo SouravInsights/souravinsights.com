@@ -10,7 +10,7 @@ import {
 } from "@codesandbox/sandpack-react";
 import { nightOwl, githubLight } from "@codesandbox/sandpack-themes";
 import { useTheme } from "@/context/ThemeContext";
-import { RotateCcw } from "lucide-react";
+import { ArrowCounterClockwise } from "@phosphor-icons/react";
 
 // Reset button component
 const ResetButton = () => {
@@ -22,7 +22,7 @@ const ResetButton = () => {
       className="absolute top-3 right-3 z-10 p-1.5 rounded text-xs flex items-center gap-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
       title="Reset code"
     >
-      <RotateCcw size={14} />
+      <ArrowCounterClockwise size={14} />
       <span>Reset</span>
     </button>
   );

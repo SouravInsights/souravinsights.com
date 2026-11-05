@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Check,
-  ChevronDown,
-  SlidersHorizontal,
-  type LucideIcon,
-} from "lucide-react";
+import { Check, CaretDown, SlidersHorizontal, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { useFeedback } from "@/hooks/useFeedback";
 
 export interface FilterOption {
@@ -24,7 +19,7 @@ interface FilterMenuProps {
   onChange: (value: string) => void;
   ariaLabel?: string;
   /** Mobile-only glyph; the label is hidden below `sm`. */
-  icon?: LucideIcon;
+  icon?: PhosphorIcon;
   align?: "left" | "right";
 }
 
@@ -70,12 +65,12 @@ export function FilterMenu({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`${ariaLabel}: ${label}`}
-        className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
+        className="group inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-all duration-200 hover:bg-foreground/5 active:scale-[0.98] sm:h-9"
       >
-        <Icon className="h-4 w-4 shrink-0 sm:hidden" />
+        <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 sm:hidden" />
         <span className="hidden max-w-[7rem] truncate sm:inline">{label}</span>
-        <ChevronDown
-          className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
+        <CaretDown
+          className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
         />
@@ -101,7 +96,7 @@ export function FilterMenu({
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
+                className={`group/option flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors duration-150 active:scale-[0.99] sm:py-2 ${
                   selected
                     ? "bg-foreground/[0.06] text-foreground"
                     : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"

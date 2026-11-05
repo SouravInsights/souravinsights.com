@@ -5,22 +5,7 @@ import { CVData, CVProjectLink } from "@/types/cv";
 import { EditableField } from "@/components/EditableField";
 import { saveCVData } from "./actions";
 import { cn } from "@/lib/utils";
-import {
-  Download,
-  Check,
-  Loader2,
-  Eye,
-  Edit2,
-  Link as LinkIcon,
-  Image as ImageIcon,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Linkedin,
-  ArrowUpRight,
-  ChevronDown,
-} from "lucide-react";
+import { DownloadSimple, Check, CircleNotch, Eye, PencilSimple, LinkSimple as LinkIcon, Image as ImageIcon, MapPin, Phone, EnvelopeSimple, Globe, LinkedinLogo, ArrowUpRight, CaretDown } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CVEditorProps {
@@ -158,8 +143,8 @@ function spanOf(items: Array<{ startDate: string; endDate: string }>): string | 
   return `${Math.min(...years)} – ${ongoing ? "Present" : Math.max(...years)}`;
 }
 
-/* X's mark exists in no version of lucide the site pins, so it ships inline.
-   The path is X's official glyph; everything else in the header is lucide. */
+/* X's mark ships inline rather than as a Phosphor icon: the path is X's
+   official glyph; everything else in the header is Phosphor. */
 function XLogo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
@@ -428,7 +413,7 @@ function DisclosureToggle({
       )}
     >
       {!inFlow && (
-        <ChevronDown
+        <CaretDown
           aria-hidden="true"
           strokeWidth={2}
           className={cn("h-3 w-3 transition-transform duration-200 motion-reduce:transition-none", open && "-rotate-180")}
@@ -919,7 +904,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
           )}
           title={isPreviewMode ? "Back to edit mode" : "Preview mode"}
         >
-          {isPreviewMode ? <Edit2 className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          {isPreviewMode ? <PencilSimple className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
       )}
 
@@ -934,7 +919,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
         >
           {saveStatus === "saving" && (
             <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <CircleNotch className="h-3.5 w-3.5 animate-spin" />
               Saving
             </span>
           )}
@@ -975,13 +960,13 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
               <div className="mt-3.5 space-y-2 sm:mt-4">
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
                   <MetaItem
-                    icon={<MapPin className="h-3.5 w-3.5" strokeWidth={iconStroke} />}
+                    icon={<MapPin className="h-3.5 w-3.5" weight="regular" />}
                     value={data.header.location}
                     onChange={(val) => updateHeader("location", val)}
                     isEditing={isEditing}
                   />
                   <MetaItem
-                    icon={<Phone className="h-3.5 w-3.5" strokeWidth={iconStroke} />}
+                    icon={<Phone className="h-3.5 w-3.5" weight="regular" />}
                     value={data.header.phone}
                     href={`tel:${data.header.phone.replace(/[^+\d]/g, "")}`}
                     isLink
@@ -989,7 +974,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     isEditing={isEditing}
                   />
                   <MetaItem
-                    icon={<Mail className="h-3.5 w-3.5" strokeWidth={iconStroke} />}
+                    icon={<EnvelopeSimple className="h-3.5 w-3.5" weight="regular" />}
                     value={data.header.email}
                     href={`mailto:${data.header.email.trim()}`}
                     isLink
@@ -1000,7 +985,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
 
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
                   <MetaItem
-                    icon={<Globe className="h-3.5 w-3.5" strokeWidth={iconStroke} />}
+                    icon={<Globe className="h-3.5 w-3.5" weight="regular" />}
                     value={data.header.website}
                     displayValue={urlLabel(data.header.website)}
                     href={withProtocol(data.header.website)}
@@ -1009,7 +994,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     isEditing={isEditing}
                   />
                   <MetaItem
-                    icon={<Linkedin className="h-3.5 w-3.5" strokeWidth={iconStroke} />}
+                    icon={<LinkedinLogo className="h-3.5 w-3.5" weight="regular" />}
                     value={data.header.linkedin}
                     displayValue={linkedinLabel(data.header.linkedin)}
                     href={withProtocol(data.header.linkedin)}
@@ -1018,7 +1003,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     isEditing={isEditing}
                   />
                   <MetaItem
-                    // X's glyph is denser than the stroked lucide marks,
+                    // X's glyph is denser than the stroked Phosphor marks,
                     // so it renders 0.5px smaller to share optical weight.
                     icon={<XLogo className="h-3 w-3" />}
                     value={data.header.twitter}
@@ -1062,11 +1047,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                   transition={{ type: "spring", duration: 0.3, bounce: 0 }}
                 >
                   {downloadStatus === "preparing" ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <CircleNotch className="h-3.5 w-3.5 animate-spin" />
                   ) : downloadStatus === "done" ? (
                     <Check className="h-3.5 w-3.5" />
                   ) : (
-                    <Download className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-[1px]" />
+                    <DownloadSimple className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-[1px]" />
                   )}
                 </motion.span>
               </AnimatePresence>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Check, Copy, Link2, MoreHorizontal, Plus } from "lucide-react";
+import { Check, Copy, LinkSimple, DotsThree, Plus } from "@phosphor-icons/react";
 import {
   Popover,
   PopoverContent,
@@ -111,7 +111,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                           aria-label="Conversation actions"
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
                         >
-                          <MoreHorizontal className="h-4 w-4" />
+                          <DotsThree className="h-4 w-4" />
                         </button>
                       </PopoverTrigger>
                       <PopoverContent
@@ -155,7 +155,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                             {shareState === "copied" ? (
                               <Check className="h-3.5 w-3.5" />
                             ) : (
-                              <Link2 className="h-3.5 w-3.5" />
+                              <LinkSimple className="h-3.5 w-3.5" />
                             )}
                             {shareState === "working"
                               ? "Creating link…"
@@ -197,7 +197,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                                   }
                                   className="mr-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                                 >
-                                  <Link2 className="h-3.5 w-3.5" />
+                                  <LinkSimple className="h-3.5 w-3.5" />
                                 </button>
                               </div>
                             ))}
@@ -270,7 +270,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                           aria-label="Conversation actions"
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
                         >
-                          <MoreHorizontal className="h-4 w-4" />
+                          <DotsThree className="h-4 w-4" />
                         </button>
                       </PopoverTrigger>
                       <PopoverContent
@@ -314,7 +314,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                             {shareState === "copied" ? (
                               <Check className="h-3.5 w-3.5" />
                             ) : (
-                              <Link2 className="h-3.5 w-3.5" />
+                              <LinkSimple className="h-3.5 w-3.5" />
                             )}
                             {shareState === "working"
                               ? "Creating link…"
@@ -356,7 +356,7 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
                                   }
                                   className="mr-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                                 >
-                                  <Link2 className="h-3.5 w-3.5" />
+                                  <LinkSimple className="h-3.5 w-3.5" />
                                 </button>
                               </div>
                             ))}

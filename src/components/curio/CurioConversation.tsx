@@ -2,7 +2,7 @@
 
 import type { UIMessage } from "ai";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { CircleNotch } from "@phosphor-icons/react";
 import posthog from "posthog-js";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import { CopyButton, answerAsMarkdown } from "./CopyButton";
@@ -138,7 +138,7 @@ export function CurioTranscript({
                twice on one screen reads as a glitch. */
             <Curio size={20} busy />
           ) : (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <CircleNotch className="h-3.5 w-3.5 animate-spin" />
           )}
           <span className="type-caption">{phase}</span>
         </div>

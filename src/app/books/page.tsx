@@ -6,7 +6,7 @@ import { ApolloProvider } from "@apollo/client";
 import client from "@/app/lib/literalApiClient";
 import { BookshelfContent } from "./components/BookshelfContent";
 import { CoverToggle } from "./components/CoverToggle";
-import { ExternalLink } from "lucide-react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import Image from "next/image";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -71,7 +71,7 @@ function LiteralCredit() {
           rel="noopener noreferrer"
           className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border px-3 py-1.5 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
         >
-          Check it out <ExternalLink className="h-3.5 w-3.5" />
+          Check it out <ArrowSquareOut className="h-3.5 w-3.5" />
         </a>
       </div>
     </section>

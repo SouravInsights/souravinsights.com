@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FileWarning, Eye, EyeOff } from "lucide-react";
+import { Warning, Eye, EyeSlash } from "@phosphor-icons/react";
 import { hasAdminHint } from "@/lib/admin-client";
 
 interface DraftPostIndicatorProps {
@@ -36,7 +36,7 @@ export default function DraftPostIndicator({
         className="mb-6 lg:mb-8 flex justify-center"
       >
         <div className="bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/50 rounded-full px-4 py-2 inline-flex items-center gap-2 shadow-sm">
-          <FileWarning
+          <Warning
             size={16}
             className="text-amber-700 dark:text-amber-400"
           />
@@ -52,7 +52,7 @@ export default function DraftPostIndicator({
               title={showFull ? "Show preview only" : "Show full draft"}
               className="ml-1 text-amber-700 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
             >
-              {showFull ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showFull ? <EyeSlash size={16} /> : <Eye size={16} />}
             </button>
           )}
         </div>

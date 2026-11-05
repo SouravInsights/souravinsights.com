@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Expand } from "lucide-react";
+import { ArrowsOut } from "@phosphor-icons/react";
 import {
   Dialog,
   DialogContent,
@@ -51,7 +51,7 @@ export default function BlogImage({ src, alt = "", title }: BlogImageProps) {
               className="my-0 w-full rounded-lg border border-border bg-card transition-colors duration-200 group-hover:border-foreground/25"
             />
             <span className="absolute right-2 top-2 rounded-md border border-border bg-background/80 p-1.5 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
-              <Expand size={14} className="text-muted-foreground" />
+              <ArrowsOut size={14} className="text-muted-foreground" />
             </span>
           </button>
         </DialogTrigger>

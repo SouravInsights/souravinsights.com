@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ArrowUpRight, ChevronRight, Github } from "lucide-react";
+import { ArrowUpRight, CaretRight, GithubLogo } from "@phosphor-icons/react/ssr";
 import { featuredProjects, otherProjects } from "./projects-data";
 import { MoreProjects } from "./MoreProjects";
 import { PageHeader } from "@/components/PageHeader";
@@ -75,7 +75,7 @@ export default function ProjectsPage() {
                         aria-label={`${project.name} on GitHub`}
                         className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        <Github className="h-5 w-5" />
+                        <GithubLogo className="h-5 w-5" />
                       </a>
                     )}
                   </div>
@@ -103,7 +103,7 @@ export default function ProjectsPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 type-caption font-medium text-muted-foreground hover:text-green-700 dark:hover:text-green-500 transition-colors"
           >
-            More on GitHub <ChevronRight className="w-4 h-4" />
+            More on GitHub <CaretRight className="w-4 h-4" />
           </a>
         </FadeIn>
       </div>

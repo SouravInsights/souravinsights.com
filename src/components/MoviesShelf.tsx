@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { HTMLAttributes } from "react";
 import Image from "next/image";
-import { Film } from "lucide-react";
+import { FilmStrip } from "@phosphor-icons/react";
 import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 import { apiJson } from "@/lib/query/api";
@@ -45,7 +45,7 @@ function MovieRow({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-secondary">
-            <Film className="h-4 w-4 text-faint-foreground" />
+            <FilmStrip className="h-4 w-4 text-faint-foreground" />
           </div>
         )}
       </div>

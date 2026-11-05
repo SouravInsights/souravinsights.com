@@ -8,7 +8,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
-import { X, Maximize2, Minimize2 } from "lucide-react";
+import { X, ArrowsOut, ArrowsIn } from "@phosphor-icons/react";
 import { ArticleBody } from "./ArticleBody";
 import { ReaderAsk } from "./ReaderAsk";
 import { articleQuery } from "./article-query";
@@ -244,9 +244,9 @@ export function ReaderView({
               className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
             >
               {fullscreen ? (
-                <Minimize2 className="h-4 w-4" />
+                <ArrowsIn className="h-4 w-4" />
               ) : (
-                <Maximize2 className="h-4 w-4" />
+                <ArrowsOut className="h-4 w-4" />
               )}
             </button>
           </div>

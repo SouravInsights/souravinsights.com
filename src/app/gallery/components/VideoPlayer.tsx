@@ -3,16 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import {
-  Loader2,
-  Maximize,
-  Minimize,
-  Pause,
-  Play,
-  Repeat,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
+import { CircleNotch, ArrowsOut, ArrowsIn, Pause, Play, Repeat, SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
 
 /** Milliseconds of stillness, while playing, before the chrome fades out. */
 const CONTROLS_IDLE = 2600;
@@ -243,7 +234,7 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
               transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
               className="flex h-16 w-16 items-center justify-center rounded-full bg-black/45 text-white shadow-lg ring-1 ring-white/15 backdrop-blur-sm"
             >
-              <Play className="ml-0.5 h-6 w-6" fill="currentColor" />
+              <Play className="ml-0.5 h-6 w-6" weight="fill" />
             </motion.span>
           )}
         </AnimatePresence>
@@ -253,7 +244,7 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
           still loading is noise. */}
       {buffering && ready && (
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-white/80" />
+          <CircleNotch className="h-7 w-7 animate-spin text-white/80" />
         </div>
       )}
 
@@ -313,9 +304,9 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
             className={controlButton}
           >
             {playing ? (
-              <Pause className="h-[18px] w-[18px]" fill="currentColor" />
+              <Pause className="h-[18px] w-[18px]" weight="fill" />
             ) : (
-              <Play className="ml-0.5 h-[18px] w-[18px]" fill="currentColor" />
+              <Play className="ml-0.5 h-[18px] w-[18px]" weight="fill" />
             )}
           </button>
 
@@ -347,9 +338,9 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
               className={controlButton}
             >
               {muted ? (
-                <VolumeX className="h-[18px] w-[18px]" />
+                <SpeakerX className="h-[18px] w-[18px]" />
               ) : (
-                <Volume2 className="h-[18px] w-[18px]" />
+                <SpeakerHigh className="h-[18px] w-[18px]" />
               )}
             </button>
           )}
@@ -362,9 +353,9 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
             className={controlButton}
           >
             {fullscreen ? (
-              <Minimize className="h-[18px] w-[18px]" />
+              <ArrowsIn className="h-[18px] w-[18px]" />
             ) : (
-              <Maximize className="h-[18px] w-[18px]" />
+              <ArrowsOut className="h-[18px] w-[18px]" />
             )}
           </button>
         </div>

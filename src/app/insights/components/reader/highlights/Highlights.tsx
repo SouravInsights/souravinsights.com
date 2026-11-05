@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Eraser } from "lucide-react";
+import { Eraser } from "@phosphor-icons/react";
 import {
   useCallback,
   useEffect,

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Heart, Play } from "lucide-react";
+import { Heart, Play } from "@phosphor-icons/react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { GalleryProject, GalleryVideo } from "../gallery-types";
 import { formatTime } from "./VideoPlayer";
@@ -125,7 +125,7 @@ export function VideoCard({
                 previewing ? "opacity-0" : "opacity-100"
               }`}
             >
-              <Play className="ml-0.5 h-5 w-5" fill="currentColor" />
+              <Play className="ml-0.5 h-5 w-5" weight="fill" />
             </span>
           </span>
 

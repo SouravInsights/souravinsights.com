@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Terminal, Layout } from 'lucide-react';
+import { Terminal, Layout } from "@phosphor-icons/react";
 
 export default function HtmlNestingVisualizer() {
   const [isBroken, setIsBroken] = useState(true);

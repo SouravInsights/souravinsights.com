@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, Calendar, Menu } from "lucide-react";
+import { ArrowLeft, Clock, CalendarBlank, List } from "@phosphor-icons/react";
 import Link from "next/link";
 import { PostData } from "../utils/blogUtils";
 import ThreeDLikeButton from "./ThreeDLikeButton";
@@ -152,7 +152,7 @@ export default function BlogPostContent({
                 aria-label="On this page"
                 className="flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-foreground/5 data-[state=open]:bg-foreground/5"
               >
-                <Menu size={16} />
+                <List size={16} />
                 <span>Contents</span>
               </button>
             </PopoverTrigger>
@@ -253,7 +253,7 @@ export default function BlogPostContent({
 
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 type-caption">
                 <div className="flex items-center">
-                  <Calendar className="mr-1 h-4 w-4" />
+                  <CalendarBlank className="mr-1 h-4 w-4" />
                   <time dateTime={post.date}>
                     {format(new Date(post.date), "MMMM d, yyyy")}
                   </time>

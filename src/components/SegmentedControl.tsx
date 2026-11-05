@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react";
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { useFeedback } from "@/hooks/useFeedback";
 
 export interface SegmentedOption<T extends string> {
   value: T;
   /** Accessible name; the control is icon-only. */
   label: string;
-  icon: LucideIcon;
+  icon: PhosphorIcon;
 }
 
 interface SegmentedControlProps<T extends string> {

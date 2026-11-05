@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Eye } from "lucide-react";
+import { Eye } from "@phosphor-icons/react";
 import { usePostViews } from "@/hooks/usePostViews";
 import { motion } from "framer-motion";
 import Scritto from "@scritto/react";

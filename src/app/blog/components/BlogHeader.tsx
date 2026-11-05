@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function BlogHeader() {
@@ -51,7 +51,7 @@ export default function BlogHeader() {
             type="submit"
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
           >
-            <Search className="h-4 w-4" />
+            <MagnifyingGlass className="h-4 w-4" />
           </button>
         </form>
       </div>

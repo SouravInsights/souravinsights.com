@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Square, ArrowUpRight } from "lucide-react";
+import { ArrowUp, Square, ArrowUpRight } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {

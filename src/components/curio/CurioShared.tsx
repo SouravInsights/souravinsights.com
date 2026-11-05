@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import type { UIMessage } from "ai";
 import posthog from "posthog-js";
-import { Check, Link2 } from "lucide-react";
+import { Check, LinkSimple } from "@phosphor-icons/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -191,7 +191,7 @@ export function CurioShared({
             {shareState === "copied" ? (
               <Check className="h-3.5 w-3.5" />
             ) : (
-              <Link2 className="h-3.5 w-3.5" />
+              <LinkSimple className="h-3.5 w-3.5" />
             )}
             {shareLabel}
           </button>

@@ -9,12 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  AlertCircle,
-  ChevronDown,
-  ExternalLink,
-  MessageSquare,
-} from "lucide-react";
+import { WarningCircle, CaretDown, ArrowSquareOut, ChatCircle } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import {
   countComments,
@@ -171,7 +166,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
           className="inline-flex items-center gap-1.5 rounded-lg border border-border py-1.5 pl-3.5 pr-3 text-sm font-medium text-foreground transition-[color,border-color,scale] duration-150 ease-out hover:border-[#ff6600] hover:text-[#ff6600] active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6600] focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:active:scale-100"
         >
           Open thread
-          <ExternalLink className="h-3.5 w-3.5" />
+          <ArrowSquareOut className="h-3.5 w-3.5" />
         </a>
       </header>
 
@@ -181,7 +176,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
         {status === "error" && (
           <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+              <WarningCircle className="h-4 w-4 flex-shrink-0" />
               <span>Couldn&apos;t load the discussion right now.</span>
             </div>
             <button
@@ -196,7 +191,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
 
         {status === "ready" && comments.length === 0 && (
           <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
-            <MessageSquare className="h-4 w-4 flex-shrink-0" />
+            <ChatCircle className="h-4 w-4 flex-shrink-0" />
             <span>
               No comments yet.{" "}
               <a
@@ -235,7 +230,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
                   }
                   className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border py-2.5 text-sm font-medium text-muted-foreground transition-[color,border-color,scale] duration-150 ease-out hover:border-[#ff6600]/50 hover:text-[#ff6600] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6600] focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:active:scale-100"
                 >
-                  <ChevronDown className="h-4 w-4" />
+                  <CaretDown className="h-4 w-4" />
                   Show {remaining} more{" "}
                   {remaining === 1 ? "comment" : "comments"}
                 </button>
@@ -416,7 +411,7 @@ function HnCommentNode({
                   }
                   className="ml-auto inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6600] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
-                  <ChevronDown
+                  <CaretDown
                     className={cn(
                       "h-3.5 w-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none",
                       collapsed && "-rotate-90"

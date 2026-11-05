@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
+import { Check, Copy } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
@@ -65,11 +65,12 @@ export function CopyButton({
         }}
         aria-label={copied ? `${label} copied` : `Copy ${label}`}
         title={copied ? "Copied" : `Copy ${label}`}
-        className={`flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-opacity hover:text-foreground ${className ?? ""}`}
+        className={`flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-all duration-150 hover:text-foreground active:scale-90 ${className ?? ""}`}
       >
         <Icon
           aria-hidden="true"
-          className={`h-3.5 w-3.5 ${copied ? "text-green-600" : ""}`}
+          weight={copied ? "bold" : "regular"}
+          className={`h-3.5 w-3.5 transition-transform duration-150 ${copied ? "scale-110 text-green-600" : ""}`}
         />
         <span aria-live="polite" className="sr-only">
           {copied ? `${label} copied to clipboard` : ""}
@@ -83,9 +84,13 @@ export function CopyButton({
       type="button"
       onClick={copy}
       aria-label={copied ? `${label} copied` : `Copy ${label}`}
-      className="-mr-1 inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group -mr-1 inline-flex shrink-0 items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      <Icon aria-hidden="true" className="h-3.5 w-3.5" />
+      <Icon
+        aria-hidden="true"
+        weight={copied ? "bold" : "regular"}
+        className={`h-3.5 w-3.5 transition-transform duration-150 ${copied ? "scale-110 text-green-600" : "group-hover:scale-110"}`}
+      />
       {copied ? "Copied" : "Copy"}
       <span aria-live="polite" className="sr-only">
         {copied ? `${label} copied to clipboard` : ""}

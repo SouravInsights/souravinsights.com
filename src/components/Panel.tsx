@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +40,8 @@ export function Panel({
       {href ? (
         <ArrowUpRight
           aria-hidden="true"
-          className="h-3.5 w-3.5 -translate-x-1 translate-y-1 opacity-0 transition-all duration-200 group-hover/panel:translate-x-0 group-hover/panel:translate-y-0 group-hover/panel:opacity-100"
+          weight="bold"
+          className="h-3.5 w-3.5 -translate-x-1 translate-y-1 opacity-0 transition-all duration-200 group-hover/panel:translate-x-0 group-hover/panel:translate-y-0 group-hover/panel:opacity-100 group-hover/panel:scale-110"
         />
       ) : null}
     </span>

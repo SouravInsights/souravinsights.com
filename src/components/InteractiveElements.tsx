@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, Code2, Command, Cpu } from "lucide-react";
+import { Terminal, Code, Command, Cpu } from "@phosphor-icons/react/ssr";
 
 interface CommandEntry {
   text: string;

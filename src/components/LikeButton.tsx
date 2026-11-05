@@ -6,7 +6,7 @@ import {
   useAnimationControls,
   useReducedMotion,
 } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Heart } from "@phosphor-icons/react";
 import Scritto from "@scritto/react";
 import { useLikes } from "@/hooks/useLikes";
 import { useTheme } from "@/context/ThemeContext";
@@ -146,7 +146,7 @@ export function LikeButton({
         >
           <Heart
             className="h-3.5 w-3.5"
-            fill={liked ? "currentColor" : "none"}
+            weight={liked ? "fill" : "regular"}
           />
           {!reduceMotion && <LikeBurst particles={particles} />}
         </motion.span>

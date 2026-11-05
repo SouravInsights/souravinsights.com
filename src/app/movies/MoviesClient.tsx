@@ -7,22 +7,7 @@ import { saveMoviesData, uploadPoster } from "./actions";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable, isSortable } from "@dnd-kit/react/sortable";
 import type { Draggable } from "@dnd-kit/dom";
-import {
-  GripVertical,
-  Eye,
-  Edit2,
-  Loader2,
-  Plus,
-  Trash2,
-  X,
-  Film,
-  Quote,
-  Upload,
-  Check,
-  ExternalLink,
-  Maximize2,
-  ChevronLeft,
-} from "lucide-react";
+import { DotsSixVertical, Eye, PencilSimple, CircleNotch, Plus, Trash, X, FilmStrip, Quotes, UploadSimple, Check, ArrowSquareOut, ArrowsOut, CaretLeft } from "@phosphor-icons/react";
 
 type DraggableType = Draggable | null;
 
@@ -74,7 +59,7 @@ function SortablePoster({
         />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
-          <Film className="w-5 h-5 text-faint-foreground mb-2" />
+          <FilmStrip className="w-5 h-5 text-faint-foreground mb-2" />
           <span className="text-[10px] font-medium text-faint-foreground leading-tight line-clamp-3">
             {movie.title}
           </span>
@@ -95,7 +80,7 @@ function SortablePoster({
           className="absolute top-1.5 left-1.5 z-10 flex items-center justify-center w-5 h-5 rounded bg-black/50 opacity-0 group-hover:opacity-100 hover:bg-black/70 cursor-grab active:cursor-grabbing transition-all text-white/80"
           onClick={(e) => e.stopPropagation()}
         >
-          <GripVertical className="w-3 h-3" />
+          <DotsSixVertical className="w-3 h-3" />
         </div>
       )}
     </div>
@@ -175,7 +160,7 @@ function FocusModeEditor({
       <div className="flex items-center justify-between px-3 py-3 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0">
         <div className="flex items-center gap-2">
           <button onClick={onClose} className="p-1.5 -ml-1.5 rounded-full hover:bg-muted text-muted-foreground transition-colors">
-            <ChevronLeft className="w-5 h-5" />
+            <CaretLeft className="w-5 h-5" />
           </button>
           <span className="type-label text-faint-foreground">{title}</span>
         </div>
@@ -281,7 +266,7 @@ function MovieDialog({
             <div className="shrink-0 w-full sm:w-44 aspect-[2/3] sm:aspect-auto sm:min-h-[360px] bg-secondary relative group/upload sm:sticky sm:top-0 border-b sm:border-b-0 sm:border-r border-border">
               {isUploadingImage ? (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2 absolute inset-0">
-                  <Loader2 className="w-8 h-8 text-faint-foreground animate-spin" />
+                  <CircleNotch className="w-8 h-8 text-faint-foreground animate-spin" />
                   <span className="text-[10px] text-faint-foreground font-medium px-4 text-center">
                     Uploading...
                   </span>
@@ -295,7 +280,7 @@ function MovieDialog({
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2 absolute inset-0">
-                  <Film className="w-8 h-8 text-faint-foreground" />
+                  <FilmStrip className="w-8 h-8 text-faint-foreground" />
                   <span className="text-[10px] text-faint-foreground font-medium px-4 text-center leading-relaxed">
                     {movie.title || "No poster yet"}
                   </span>
@@ -308,7 +293,7 @@ function MovieDialog({
                   className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-colors flex items-center justify-center group/btn cursor-pointer"
                 >
                   <div className="flex flex-col items-center gap-1.5 opacity-0 group-hover/btn:opacity-100 transition-opacity">
-                    <Upload className="w-5 h-5 text-white" />
+                    <UploadSimple className="w-5 h-5 text-white" />
                     <span className="text-[10px] font-medium text-white/80">Upload poster</span>
                   </div>
                 </button>
@@ -347,7 +332,7 @@ function MovieDialog({
                       className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-faint-foreground hover:bg-muted hover:text-foreground"
                       title="Focus Mode"
                     >
-                      <Maximize2 className="w-3 h-3" />
+                      <ArrowsOut className="w-3 h-3" />
                     </button>
                   )}
                 </div>
@@ -373,7 +358,7 @@ function MovieDialog({
                         className="p-1 rounded opacity-100 sm:opacity-0 sm:group-hover/field:opacity-100 transition-opacity text-faint-foreground hover:bg-muted hover:text-foreground"
                         title="Focus Mode"
                       >
-                        <Maximize2 className="w-3 h-3" />
+                        <ArrowsOut className="w-3 h-3" />
                       </button>
                     )}
                   </div>
@@ -421,7 +406,7 @@ function MovieDialog({
                           <X className="w-2.5 h-2.5" />
                         </button>
                       )}
-                      <Quote className="w-3 h-3 text-faint-foreground mb-1" />
+                      <Quotes className="w-3 h-3 text-faint-foreground mb-1" />
                       <EditableField
                         as="p"
                         value={quote.text}
@@ -586,7 +571,7 @@ function MovieDialog({
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 text-[11px] text-green-700/70 dark:text-green-500/70 hover:text-green-700 dark:hover:text-green-500 transition-colors"
                           >
-                            <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                            <ArrowSquareOut className="w-2.5 h-2.5 shrink-0" />
                             <span className="truncate">{link.label}</span>
                           </a>
                         )}
@@ -634,7 +619,7 @@ function MovieDialog({
               }}
               className="flex items-center gap-1.5 text-xs font-medium text-destructive/50 hover:text-destructive transition-colors"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash className="w-3 h-3" />
               Remove film
             </button>
           )}
@@ -772,7 +757,7 @@ export function MoviesClient({
           title={isPreviewMode ? "Back to Edit Mode" : "Preview Mode"}
         >
           {isPreviewMode ? (
-            <Edit2 className="w-5 h-5" />
+            <PencilSimple className="w-5 h-5" />
           ) : (
             <Eye className="w-5 h-5" />
           )}
@@ -784,7 +769,7 @@ export function MoviesClient({
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-background/90 backdrop-blur-md border border-border px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)]">
           {saveStatus === "saving" && (
             <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <CircleNotch className="w-3.5 h-3.5 animate-spin" />
               <span>Saving...</span>
             </div>
           )}
@@ -839,7 +824,7 @@ export function MoviesClient({
         {/* Film grid */}
         {data.movies.length === 0 && !isEditing ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <Film className="w-8 h-8 text-faint-foreground mb-3" />
+            <FilmStrip className="w-8 h-8 text-faint-foreground mb-3" />
             <p className="text-sm text-faint-foreground">
               No films here yet.
             </p>

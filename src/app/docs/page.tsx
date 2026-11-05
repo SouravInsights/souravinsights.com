@@ -2,7 +2,7 @@ export const revalidate = 300;
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { List, Plug, Search } from "lucide-react";
+import { List, Plugs, MagnifyingGlass } from "@phosphor-icons/react/ssr";
 import { sql } from "drizzle-orm";
 import { db } from "@/db";
 import { linkChunks } from "@/db/schema";
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
  * sequence the content does not have, so they are just labelled.
  */
 const doors = [
-  { id: "search", label: "Search by meaning", icon: Search },
+  { id: "search", label: "Search by meaning", icon: MagnifyingGlass },
   { id: "read", label: "Read it as JSON", icon: List },
-  { id: "mcp", label: "Connect an assistant", icon: Plug },
+  { id: "mcp", label: "Connect an assistant", icon: Plugs },
 ];
 
 /** The site's link treatment, with a focus ring for keyboard users. */

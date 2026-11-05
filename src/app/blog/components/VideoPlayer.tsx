@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+import { Play, Pause, ArrowCounterClockwise } from "@phosphor-icons/react";
 
 interface VideoPlayerProps {
   src?: string;
@@ -178,9 +178,9 @@ export default function VideoPlayer({
               aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
-                <Pause size={16} className="fill-current" />
+                <Pause size={16} weight="fill" />
               ) : (
-                <Play size={16} className="fill-current" />
+                <Play size={16} weight="fill" />
               )}
             </button>
             
@@ -197,7 +197,7 @@ export default function VideoPlayer({
               className="flex items-center justify-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors focus:outline-none"
               aria-label="Replay"
             >
-              <RotateCcw size={16} />
+              <ArrowCounterClockwise size={16} />
             </button>
           </div>
         )}

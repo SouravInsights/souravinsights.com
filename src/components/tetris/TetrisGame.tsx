@@ -23,15 +23,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Scritto from "@scritto/react";
-import {
-  ArrowDownToLine,
-  Flame,
-  Package,
-  Pause,
-  Play,
-  RotateCcw,
-  RotateCw,
-} from "lucide-react";
+import { ArrowLineDown, Flame, Package, Pause, Play, ArrowCounterClockwise, ArrowClockwise } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { BoardCanvas, type BoardMetrics } from "./BoardCanvas";
 import { TouchSurface } from "./TouchSurface";
@@ -311,14 +303,14 @@ export default function TetrisGame() {
             disabled={!playing}
             onPress={() => handleEvents(engine.rotateActive(1))}
           >
-            <RotateCw className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            <ArrowClockwise className="h-[18px] w-[18px]" strokeWidth={1.75} />
           </ControlButton>
           <ControlButton
             label="Drop"
             disabled={!playing}
             onPress={() => handleEvents(engine.hardDrop())}
           >
-            <ArrowDownToLine className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            <ArrowLineDown className="h-[18px] w-[18px]" strokeWidth={1.75} />
           </ControlButton>
         </div>
         </motion.div>
@@ -745,7 +737,7 @@ function PausedCard({
         Resume
       </Button>
       <Button variant="outline" onClick={onRestart} className={secondaryButtonClass}>
-        <RotateCcw className="h-4 w-4" />
+        <ArrowCounterClockwise className="h-4 w-4" />
         Start over
       </Button>
       <EnterHint action="resumes" />
@@ -804,7 +796,7 @@ function GameOverCard({
       </dl>
 
       <Button onClick={onRestart} className={primaryButtonClass}>
-        <RotateCcw className="h-4 w-4" />
+        <ArrowCounterClockwise className="h-4 w-4" />
         Play again
       </Button>
       <EnterHint action="plays again" />

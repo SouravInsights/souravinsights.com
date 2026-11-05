@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 import type { SmallProject } from "./projects-data";
 import { FadeIn } from "@/components/FadeIn";
 

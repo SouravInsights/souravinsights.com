@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 
 interface SectionHeaderProps {
   title: string;
@@ -30,7 +30,8 @@ export function SectionHeader({
             {title}
             <ArrowUpRight
               aria-hidden="true"
-              className="h-3.5 w-3.5 shrink-0 -translate-x-1 translate-y-1 text-faint-foreground opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:text-green-700 group-hover:opacity-100 group-hover/section:translate-x-0 group-hover/section:translate-y-0 group-hover/section:text-green-700 group-hover/section:opacity-100 dark:group-hover:text-green-500 dark:group-hover/section:text-green-500"
+              weight="bold"
+              className="h-3.5 w-3.5 shrink-0 -translate-x-1 translate-y-1 text-faint-foreground opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:scale-110 group-hover:text-green-700 group-hover:opacity-100 group-hover/section:translate-x-0 group-hover/section:translate-y-0 group-hover/section:scale-110 group-hover/section:text-green-700 group-hover/section:opacity-100 dark:group-hover:text-green-500 dark:group-hover/section:text-green-500"
             />
           </Link>
         </h2>

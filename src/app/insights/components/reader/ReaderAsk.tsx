@@ -3,7 +3,7 @@
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import {
   citationsOf,
   phaseOf,
@@ -98,7 +98,7 @@ export function ReaderAsk({ linkId, title }: Props) {
       )}
 
       <div className="relative mt-4">
-        <Search
+        <MagnifyingGlass
           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
           aria-hidden="true"
         />

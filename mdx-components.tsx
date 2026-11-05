@@ -1,7 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
 import Link from "next/link";
-import { Terminal, Clipboard, Check } from "lucide-react";
+import { Terminal, Clipboard, Check } from "@phosphor-icons/react";
 import { useState } from "react";
 import React from "react";
 

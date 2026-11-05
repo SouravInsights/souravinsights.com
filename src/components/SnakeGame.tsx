@@ -2,13 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronUp,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Gamepad2,
-} from "lucide-react";
+import { CaretUp, CaretLeft, CaretRight, CaretDown, GameController } from "@phosphor-icons/react";
 import { useUISound } from "@/hooks/useUISound";
 import { useFeedback } from "@/hooks/useFeedback";
 import {
@@ -310,7 +304,7 @@ const SnakeGame: React.FC = () => {
         transition={{ delay: 0.3 }}
       >
         <h4 className="text-sm font-semibold text-green-700 dark:text-green-500 flex items-center justify-center">
-          <Gamepad2 className="mr-2" size={16} />
+          <GameController className="mr-2" size={16} />
           How to Play
         </h4>
         <ul className="text-xs text-gray-600 dark:text-muted-foreground space-y-1">
@@ -413,7 +407,7 @@ const SnakeGame: React.FC = () => {
           onClick={() => handleDirectionChange("UP")}
           className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ChevronUp size={24} />
+          <CaretUp size={24} />
         </Button>
         <div></div>
         <Button
@@ -421,7 +415,7 @@ const SnakeGame: React.FC = () => {
           onClick={() => handleDirectionChange("LEFT")}
           className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ChevronLeft size={24} />
+          <CaretLeft size={24} />
         </Button>
         <div></div>
         <Button
@@ -429,7 +423,7 @@ const SnakeGame: React.FC = () => {
           onClick={() => handleDirectionChange("RIGHT")}
           className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ChevronRight size={24} />
+          <CaretRight size={24} />
         </Button>
         <div></div>
         <Button
@@ -437,7 +431,7 @@ const SnakeGame: React.FC = () => {
           onClick={() => handleDirectionChange("DOWN")}
           className="p-2 bg-green-500 hover:bg-green-700 text-white rounded-full shadow-md active:shadow-inner transition-all duration-200"
         >
-          <ChevronDown size={24} />
+          <CaretDown size={24} />
         </Button>
         <div></div>
       </div>

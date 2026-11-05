@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import { Volume1, Volume2, VolumeX } from "lucide-react";
+import { SpeakerLow, SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
 import {
   Popover,
   PopoverAnchor,
@@ -36,7 +36,7 @@ export function SoundToggle() {
   // useful anchor — hence the point anchor below.
   const isNarrow = useMediaQuery("(max-width: 767px)");
 
-  const Icon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+  const Icon = volume === 0 ? SpeakerX : volume < 0.5 ? SpeakerLow : SpeakerHigh;
 
   const handleChange = (next: number) => {
     // A tap on the current value is a no-op — it shouldn't get a commit click.
@@ -69,9 +69,13 @@ export function SoundToggle() {
         <button
           type="button"
           aria-label="Volume"
-          className="flex items-center justify-center rounded-md p-2 text-foreground transition-colors hover:bg-accent"
+          className="group flex items-center justify-center rounded-md p-2 text-foreground transition-colors duration-200 hover:bg-accent"
         >
-          <Icon size={16} />
+          <Icon
+            size={16}
+            weight="regular"
+            className="transition-transform duration-200 group-hover:scale-110"
+          />
         </button>
       </PopoverTrigger>
 

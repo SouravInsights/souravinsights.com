@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { LayoutGroup, motion } from "framer-motion";
-import { Columns2, Columns3 } from "lucide-react";
+import { Columns, GridFour } from "@phosphor-icons/react";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { StickyBar } from "@/components/StickyBar";
 import { useFeedback } from "@/hooks/useFeedback";
@@ -155,8 +155,8 @@ export function GalleryGrid({
         <div className="hidden shrink-0 sm:block">
           <SegmentedControl
             options={[
-              { value: "2", label: "Two columns", icon: Columns2 },
-              { value: "3", label: "Three columns", icon: Columns3 },
+              { value: "2", label: "Two columns", icon: Columns },
+              { value: "3", label: "Three columns", icon: GridFour },
             ]}
             value={columns}
             onChange={setColumns}

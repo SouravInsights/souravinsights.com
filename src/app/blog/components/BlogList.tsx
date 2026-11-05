@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { PostMetadata } from "../utils/blogUtils";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
-import { FileWarning } from "lucide-react";
+import { Warning } from "@phosphor-icons/react";
 
 interface BlogListProps {
   posts: PostMetadata[];
@@ -49,7 +49,7 @@ export default function BlogList({ posts }: BlogListProps) {
                     <time dateTime={post.date}>{formatPostDate(post.date)}</time>
                     {post.status === "draft" && (
                       <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400">
-                        <FileWarning size={12} />
+                        <Warning size={12} />
                         Draft
                       </span>
                     )}
