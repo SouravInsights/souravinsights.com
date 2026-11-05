@@ -71,7 +71,8 @@ export function ProjectSmallRow({
   if (editable) {
     return (
       <div>
-        <div className="flex items-center gap-4">
+        {/* Scoped to the row, not the panel: the form should not hover. */}
+        <div className="flex items-center gap-4 rounded-lg transition-colors hover:bg-foreground/[0.03]">
           {logo}
           <span className="min-w-0 flex-1">
             <EditableField

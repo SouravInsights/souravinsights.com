@@ -61,7 +61,15 @@ export function ProjectRow({
 
   return (
     <article id={project.slug} className="scroll-mt-24">
-      <div className="flex items-center gap-4">
+      {/* The hover is scoped to the row itself, never the panel below it: a
+          form is not a draggable thing and should not light up like one. */}
+      <div
+        className={
+          editable
+            ? "flex items-center gap-4 rounded-lg transition-colors hover:bg-foreground/[0.03]"
+            : "flex items-center gap-4"
+        }
+      >
         {editable ? (
           <>
             <div className="flex min-w-0 flex-1 items-center gap-4 sm:gap-5">

@@ -78,7 +78,7 @@ function SortableRow({
     <div
       ref={sortable.ref}
       data-dragging={sortable.isDragging || undefined}
-      className="rounded-lg transition-colors hover:bg-foreground/[0.03] data-[dragging]:opacity-40 data-[dragging]:hover:bg-transparent"
+      className="rounded-lg transition-opacity data-[dragging]:opacity-40"
     >
       <Row
         project={project}

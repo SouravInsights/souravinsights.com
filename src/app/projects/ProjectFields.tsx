@@ -61,7 +61,7 @@ export function ProjectFields({
   onRemove?: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-foreground/[0.02] p-4">
+    <div className="rounded-lg border border-border p-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Slug"
