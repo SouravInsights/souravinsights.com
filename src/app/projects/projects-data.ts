@@ -42,7 +42,7 @@ export const featuredProjects: FeaturedProject[] = [
   {
     slug: "safetomerge",
     name: "Safe to Merge",
-    logo: "/projects/safetomerge-logo.svg",
+    logo: "/projects/safetomerge-logo.png",
     url: "https://www.safetomerge.com/",
     repo: "https://github.com/SouravInsights/safetomerge",
     tagline:
@@ -64,6 +64,21 @@ export type SmallProject = {
  * on /projects so they never compete with the featured work.
  */
 export const otherProjects: SmallProject[] = [
+  {
+    name: "Snapkin",
+    logo: "/projects/snapkin-logo.png",
+    url: "https://snapkin.souravinsights.com",
+  },
+  {
+    name: "Spotfree",
+    logo: "/projects/spotfree-logo.png",
+    url: "https://spotfreee.vercel.app/",
+  },
+  {
+    name: "Curio",
+    logo: "/projects/curio-logo.png",
+    url: "https://www.souravinsights.com/curio",
+  },
   {
     name: "BeenThere Stamps",
     logo: "/projects/stamps-beenthere-logo.png",
