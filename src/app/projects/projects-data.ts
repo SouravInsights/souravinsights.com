@@ -125,7 +125,7 @@ export const seedProjects: Project[] = [
     slug: "poetik",
     name: "Poetik",
     logo: "/projects/poetik-logo.png",
-    url: "https://poetik.vercel.app/",
+    url: "https://poetik.souravinsights.com/",
     tagline: "",
     note: "",
     what: "",
