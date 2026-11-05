@@ -13,10 +13,19 @@ const ProjectFields = dynamic(
   { ssr: false }
 );
 
-/** Hostname only, without protocol or `www.`, to hint at the source. */
-const shortDomain = (url: string) => {
+/**
+ * Host and path, without the protocol or `www.`.
+ *
+ * The path matters: Curio is not a domain of its own, it is a route on this
+ * site, and "souravinsights.com" alone would tell the reader nothing about
+ * where the link goes.
+ */
+const shortLabel = (url: string) => {
   try {
-    return new URL(url).hostname.replace(/^www\./, "");
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const path = parsed.pathname.replace(/\/$/, "");
+    return `${host}${path}`;
   } catch {
     return "";
   }
@@ -122,7 +131,7 @@ export function ProjectSmallRow({
           {project.name}
         </span>
         <span className="type-caption block text-faint-foreground">
-          {shortDomain(project.url)}
+          {shortLabel(project.url)}
         </span>
       </span>
       <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-700 dark:group-hover:text-green-500" />
