@@ -107,23 +107,3 @@ export function snowflakeDate(id: string): Date {
   }
 }
 
-/**
- * Deterministic Fisher-Yates shuffle. Same seed → same order everywhere, which
- * is what lets the server and client agree on a shuffled list.
- */
-export function seededShuffle<T>(items: readonly T[], seed: number): T[] {
-  const out = [...items];
-  let state = seed || 1;
-
-  const random = () => {
-    state = (state * 1103515245 + 12345) & 0x7fffffff;
-    return state / 0x7fffffff;
-  };
-
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-
-  return out;
-}

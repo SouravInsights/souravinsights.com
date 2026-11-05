@@ -53,6 +53,7 @@ export function GalleryClient() {
               likeCounts={data.likes}
               viewCounts={data.views}
               isAdmin={data.isAdmin}
+              shuffleSeed={data.shuffleSeed}
             />
           )}
         </div>

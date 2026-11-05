@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { LayoutGroup, motion } from "framer-motion";
+import { LayoutGroup } from "framer-motion";
+import { FilterMenu } from "@/components/FilterMenu";
+import { StickyBar } from "@/components/StickyBar";
 import { useFeedback } from "@/hooks/useFeedback";
+import { seededShuffle } from "@/lib/shuffle";
 import type { GalleryProject, GalleryVideo } from "../gallery-types";
 import { VideoCard } from "./VideoCard";
 import { VideoDetail } from "./VideoDetail";
@@ -13,12 +16,19 @@ interface GalleryGridProps {
   likeCounts: Record<string, number>;
   viewCounts: Record<string, number>;
   isAdmin: boolean;
+  /** Five-minute seed from the API, so the order is not always the same. */
+  shuffleSeed: number;
 }
 
 /**
- * The gallery's one interactive surface: the category filter, the grid, and
- * the detail overlay, kept in a single `LayoutGroup` so the tile-to-panel morph
- * has both ends in view.
+ * The gallery's one interactive surface: the project filter, the grid, and the
+ * detail overlay, kept in a single `LayoutGroup` so the tile-to-panel morph has
+ * both ends in view.
+ *
+ * The list is shuffled with the same seeded helper the insights collection
+ * uses. A fixed order meant the first few tiles were the only ones anyone ever
+ * saw; a new seed every five minutes surfaces the rest without the order
+ * jumping on every render.
  */
 export function GalleryGrid({
   videos,
@@ -26,6 +36,7 @@ export function GalleryGrid({
   likeCounts,
   viewCounts,
   isAdmin,
+  shuffleSeed,
 }: GalleryGridProps) {
   const [category, setCategory] = useState("all");
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -59,12 +70,22 @@ export function GalleryGrid({
     ];
   }, [projects, videos]);
 
+  const activeFilterLabel =
+    filters.find((filter) => filter.key === category)?.name ?? "All";
+
+  // Shuffle once, then filter. Filtering a shuffled list keeps each project's
+  // order stable when you switch between filters.
+  const ordered = useMemo(
+    () => seededShuffle(videos, shuffleSeed),
+    [videos, shuffleSeed]
+  );
+
   const visible = useMemo(
     () =>
       category === "all"
-        ? videos
-        : videos.filter((video) => video.project === category),
-    [videos, category]
+        ? ordered
+        : ordered.filter((video) => video.project === category),
+    [ordered, category]
   );
 
   const active = videos.find((video) => video.id === activeId) ?? null;
@@ -91,47 +112,19 @@ export function GalleryGrid({
 
   return (
     <LayoutGroup>
-      {/* A segmented control, not a menu: there are as many projects as there
-          are clips, and both numbers are visible at a glance. */}
-      <div className="sticky-tabs -mx-5 flex bg-background px-5 py-3 sm:-mx-6 sm:px-6">
-        <div
-          role="group"
-          aria-label="Filter by project"
-          className="no-scrollbar flex gap-0.5 overflow-x-auto rounded-lg border border-border p-0.5"
-        >
-          {filters.map((filter) => {
-            const selected = category === filter.key;
-            return (
-              <button
-                key={filter.key}
-                type="button"
-                onClick={() => {
-                  feedback.select();
-                  setCategory(filter.key);
-                }}
-                aria-pressed={selected}
-                className={`relative flex shrink-0 items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors ${
-                  selected
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {selected && (
-                  <motion.span
-                    layoutId="gallery-category-pill"
-                    className="absolute inset-0 rounded-[5px] bg-foreground/10"
-                    transition={{ type: "spring", stiffness: 520, damping: 42 }}
-                  />
-                )}
-                <span className="relative z-10">{filter.name}</span>
-                <span className="relative z-10 text-[11px] tabular-nums text-faint-foreground">
-                  {filter.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <StickyBar>
+        <FilterMenu
+          label={activeFilterLabel}
+          value={category}
+          options={filters.map((filter) => ({
+            value: filter.key,
+            label: filter.name,
+            count: filter.count,
+          }))}
+          onChange={setCategory}
+          ariaLabel="Filter by project"
+        />
+      </StickyBar>
 
       <div
         key={category}

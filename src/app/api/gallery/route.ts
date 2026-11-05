@@ -73,6 +73,10 @@ export async function GET() {
     likes: toCounts(likes),
     views: toCounts(views),
     isAdmin,
+    // A new order every five minutes, the same window the insights list uses.
+    // Stable within the window so a reload does not jump, different across it
+    // so the same first few clips are not the only ones anyone sees.
+    shuffleSeed: Math.floor(Date.now() / (5 * 60 * 1000)),
   };
 
   return NextResponse.json(payload);

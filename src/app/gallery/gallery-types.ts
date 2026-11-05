@@ -53,4 +53,6 @@ export interface GalleryPayload {
   views: Record<string, number>;
   /** Whether the caller carries an admin session, for showing the editor. */
   isAdmin: boolean;
+  /** Seed for the five-minute shuffle, so the order is not always the same. */
+  shuffleSeed: number;
 }

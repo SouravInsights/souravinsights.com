@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUp, ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, Link2, List as ListIcon, Loader2, Search, Shuffle, SlidersHorizontal, Tag, Trash2, X } from "lucide-react";
+import { ArrowUp, ArrowUpDown, Check, ChevronDown, Clock, ExternalLink, Heart, History, LayoutGrid, Link2, List as ListIcon, Loader2, Search, Shuffle, Tag, Trash2, X } from "lucide-react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsClientLink } from "../utils/links-data";
 import {
@@ -12,10 +12,12 @@ import {
   cleanShareUrl,
   dedupeByUrl,
   normalizeUrl,
-  seededShuffle,
   sortByNewest,
   sortByOldest,
 } from "../utils/urlUtils";
+import { seededShuffle } from "@/lib/shuffle";
+import { FilterMenu } from "@/components/FilterMenu";
+import { StickyBar } from "@/components/StickyBar";
 import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "@/components/LikeButton";
 import { CopyButton } from "@/components/CopyButton";
@@ -87,8 +89,6 @@ export default function InsightsList({
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
-  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
-  const filterMenuRef = useRef<HTMLDivElement>(null);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [topicQuery, setTopicQuery] = useState("");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -236,25 +236,6 @@ export default function InsightsList({
   useEffect(() => {
     setVisibleItems(ITEMS_PER_PAGE);
   }, [activeCategory, searchTerm, sort, view]);
-
-  // Close the category menu on outside click or Escape.
-  useEffect(() => {
-    if (!filterMenuOpen) return;
-    const onPointerDown = (event: MouseEvent) => {
-      if (!filterMenuRef.current?.contains(event.target as Node)) {
-        setFilterMenuOpen(false);
-      }
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setFilterMenuOpen(false);
-    };
-    document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [filterMenuOpen]);
 
   // Close the sort menu the same way.
   useEffect(() => {
@@ -635,7 +616,7 @@ export default function InsightsList({
           Sticks to the top of the panel: the frame is a rail on the left and a
           tab bar at the bottom, so nothing is above it to fight for the edge
           (the floating navbar used to duck out of the way for this). */}
-      <div className="sticky-tabs -mx-5 flex items-center justify-between gap-3 bg-background px-5 py-3 sm:-mx-6 sm:px-6">
+      <StickyBar>
         {/* Display choices sit on the left. Batch delete lives in the sort menu
             instead — it is an admin action, not a view, and on a phone the
             toolbar has no room to spare. */}
@@ -688,56 +669,16 @@ export default function InsightsList({
         >
           {!searchOpen && (
             <>
-              <div ref={filterMenuRef} className="relative">
-                <button
-                  type="button"
-                  onClick={() => setFilterMenuOpen((open) => !open)}
-                  aria-haspopup="listbox"
-                  aria-expanded={filterMenuOpen}
-                  aria-label={`Filter: ${activeFilterLabel}`}
-                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
-                >
-                  <SlidersHorizontal className="h-4 w-4 shrink-0 sm:hidden" />
-                  <span className="hidden max-w-[7rem] truncate sm:inline">
-                    {activeFilterLabel}
-                  </span>
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
-                      filterMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {filterMenuOpen && (
-                  <div
-                    role="listbox"
-                    className="absolute right-0 top-full z-30 mt-1 max-h-[min(80svh,26rem)] w-auto min-w-[8rem] max-w-[min(72vw,13rem)] overflow-y-auto overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5"
-                  >
-                    {filters.map((filter) => (
-                      <button
-                        key={filter.name}
-                        type="button"
-                        role="option"
-                        aria-selected={activeCategory === filter.name}
-                        onClick={() => {
-                          feedback.select();
-                          setActiveCategory(filter.name);
-                          setFilterMenuOpen(false);
-                        }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
-                          activeCategory === filter.name
-                            ? "bg-foreground/[0.06] text-foreground"
-                            : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
-                        }`}
-                      >
-                        {filter.label}
-                        {activeCategory === filter.name && (
-                          <Check className="h-3.5 w-3.5 shrink-0" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <FilterMenu
+                label={activeFilterLabel}
+                value={activeCategory}
+                options={filters.map((filter) => ({
+                  value: filter.name,
+                  label: filter.label,
+                }))}
+                onChange={setActiveCategory}
+                ariaLabel="Filter"
+              />
 
               {/* Topics — a picker, not a cloud: the head is listed, the long
                   tail is a search away. Either-of semantics. */}
@@ -979,7 +920,7 @@ export default function InsightsList({
           className="rule absolute inset-x-5 bottom-0 w-auto sm:inset-x-6"
           aria-hidden="true"
         />
-      </div>
+      </StickyBar>
 
       {/* Add a link. Only for admins, and only inside a real category: you
           pick the tab first, then drop. */}
