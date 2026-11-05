@@ -17,6 +17,7 @@ import {
 } from "../utils/urlUtils";
 import { seededShuffle } from "@/lib/shuffle";
 import { FilterMenu } from "@/components/FilterMenu";
+import { SegmentedControl } from "@/components/SegmentedControl";
 import { StickyBar } from "@/components/StickyBar";
 import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "@/components/LikeButton";
@@ -621,46 +622,15 @@ export default function InsightsList({
             instead — it is an admin action, not a view, and on a phone the
             toolbar has no room to spare. */}
         <div className={`${searchOpen ? "hidden sm:block" : "block"} shrink-0`}>
-          <div className="flex h-10 items-center gap-2 sm:h-9">
-            <div className="flex h-full items-center gap-0.5 rounded-lg border border-border p-0.5">
-              {[
-                { mode: "list" as const, label: "List view", Icon: ListIcon },
-                { mode: "grid" as const, label: "Grid view", Icon: LayoutGrid },
-              ].map(({ mode, label, Icon }) => {
-                const active = view === mode;
-                return (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => {
-                      feedback.select();
-                      setView(mode);
-                    }}
-                    aria-label={label}
-                    aria-pressed={active}
-                    className={`relative flex h-full aspect-square items-center justify-center rounded-[5px] transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] ${
-                      active
-                        ? "text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {active && (
-                      <motion.span
-                        layoutId="insights-view-pill"
-                        className="absolute inset-0 rounded-[5px] bg-foreground/10"
-                        transition={{
-                          type: "spring",
-                          stiffness: 520,
-                          damping: 42,
-                        }}
-                      />
-                    )}
-                    <Icon className="relative z-10 h-4 w-4" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <SegmentedControl
+            options={[
+              { value: "list", label: "List view", icon: ListIcon },
+              { value: "grid", label: "Grid view", icon: LayoutGrid },
+            ]}
+            value={view}
+            onChange={setView}
+            layoutId="insights-view-pill"
+          />
         </div>
 
         {/* Filters + search */}
