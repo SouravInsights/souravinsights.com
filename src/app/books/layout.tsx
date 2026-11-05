@@ -3,32 +3,34 @@ import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
 import dynamic from "next/dynamic";
 
-const DESCRIPTION = `Explore my reading journey: see what I'm reading now, what's next,
-  and the books I've finished!`;
+const DESCRIPTION =
+  "A running list of books worth reading: what I'm reading now, what's next, and everything I've finished.";
 const TITLE = "My Reading Lists";
+
+const OG_IMAGE = {
+  url: "/books-page-og-image.jpg",
+  width: 1200,
+  height: 630,
+  alt: "My Library page, with covers of the books I'm reading",
+};
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  alternates: { canonical: "/books" },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    url: "https://souravinsights.com",
+    url: "https://www.souravinsights.com/books",
+    siteName: "Sourav Insights",
     type: "website",
-    images: [
-      {
-        url: "/books-page-og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "My Books Page Preview Image",
-      },
-    ],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/books-page-og-image.jpg"],
+    images: [OG_IMAGE.url],
   },
 };
 

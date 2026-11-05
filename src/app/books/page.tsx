@@ -88,7 +88,7 @@ export default function BookshelfPage() {
         <FadeIn y={20} duration={0.3}>
           <PageHeader
             title="Library"
-            description="Books I'm reading and have read lately."
+            description="A running list of books worth reading: what I'm reading now, what's next, and everything I've finished."
             action={
               <CoverToggle
                 checked={showGenerativeCovers}
