@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react";
 import { EditableField } from "@/components/EditableField";
 import type { Project } from "./projects-data";
+import { DeadMark } from "./DeadMark";
 import dynamic from "next/dynamic";
 
 // Edit-only, so it is a separate chunk: a visitor never downloads it.
@@ -32,29 +33,48 @@ export function ProjectRow({
   onChange,
   onRemove,
   dragHandle,
+  dead,
 }: {
   project: Project;
   editable?: boolean;
   onChange?: (patch: Partial<Project>) => void;
   onRemove?: () => void;
   dragHandle?: ReactNode;
+  /** Overrides the section-derived default, for the editor's live state. */
+  dead?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const patch = (next: Partial<Project>) => onChange?.(next);
 
+  // A graveyard project's tile takes a headstone silhouette: an arched top, a
+  // flat base. The shape is the whole signal — you read it before the logo or
+  // the name, and the grey inside reads as stone rather than a live icon.
+  const isDead = dead ?? project.section === "graveyard";
+  const tile = isDead ? "rounded-t-full rounded-b-md" : "rounded-lg";
+
   // A new project has no logo yet, and an empty src is a broken image.
   const logo = project.logo ? (
-    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-secondary sm:h-16 sm:w-16">
+    <div
+      className={`relative h-14 w-14 shrink-0 overflow-hidden ${tile} bg-secondary transition-transform duration-500 sm:h-16 sm:w-16 ${
+        isDead ? "group-hover:-rotate-6" : ""
+      }`}
+    >
       <Image
         src={project.logo}
         alt={`${project.name} logo`}
         fill
         unoptimized={project.logo.endsWith(".svg")}
-        className="object-cover"
+        className={
+          isDead
+            ? "object-cover opacity-40 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
+            : "object-cover"
+        }
       />
     </div>
   ) : (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-dashed border-border text-faint-foreground sm:h-16 sm:w-16">
+    <div
+      className={`flex h-14 w-14 shrink-0 items-center justify-center ${tile} border border-dashed border-border text-faint-foreground sm:h-16 sm:w-16`}
+    >
       <ImageSquare className="h-5 w-5" />
     </div>
   );
@@ -119,6 +139,7 @@ export function ProjectRow({
               <div className="min-w-0 flex-1">
                 <h2 className="type-title transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
                   {project.name}
+                  {isDead && <DeadMark />}
                 </h2>
                 {project.tagline && (
                   <p className="type-body mt-0.5 text-muted-foreground">

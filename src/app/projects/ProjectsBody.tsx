@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { FadeIn } from "@/components/FadeIn";
 import { splitProjects, type Project } from "./projects-data";
@@ -28,7 +28,18 @@ export function ProjectsBody({
 }) {
   const { editing } = useProjectsEditing();
   const [projects, setProjects] = useState(initialProjects);
-  const { featured, other } = splitProjects(projects);
+  const { featured, other, graveyard } = splitProjects(projects);
+
+  // For whoever opens the console. The graveyard is at the bottom.
+  useEffect(() => {
+    const buried = graveyard.length;
+    if (!buried) return;
+    console.log(
+      `%c†  ${buried} project${buried === 1 ? "" : "s"} in the graveyard. mind the ghosts.`,
+      "color:#8C8278;font-style:italic;font-family:ui-serif,Georgia,serif"
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (editing) {
     return <ProjectsEditor initialData={projects} onChange={setProjects} />;
@@ -45,6 +56,14 @@ export function ProjectsBody({
         ),
       }))}
       otherItems={other.map((project, index) => ({
+        key: project.slug,
+        node: (
+          <FadeIn delay={Math.min(index, 12) * 0.03}>
+            <ProjectSmallRow project={project} />
+          </FadeIn>
+        ),
+      }))}
+      graveyardItems={graveyard.map((project, index) => ({
         key: project.slug,
         node: (
           <FadeIn delay={Math.min(index, 12) * 0.03}>

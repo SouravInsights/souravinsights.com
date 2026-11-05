@@ -31,7 +31,11 @@ function toColumns(projects: Project[]): Columns {
       .filter((project) => project.section === section)
       .sort((a, b) => a.position - b.position)
       .map((project) => ({ ...project, id: project.slug }));
-  return { featured: pick("featured"), other: pick("other") };
+  return {
+    featured: pick("featured"),
+    other: pick("other"),
+    graveyard: pick("graveyard"),
+  };
 }
 
 function toProjects(columns: Columns): Project[] {
@@ -43,6 +47,7 @@ function toProjects(columns: Columns): Project[] {
   return [
     ...flatten(columns.featured, "featured"),
     ...flatten(columns.other, "other"),
+    ...flatten(columns.graveyard, "graveyard"),
   ];
 }
 
@@ -78,11 +83,12 @@ function SortableRow({
     <div
       ref={sortable.ref}
       data-dragging={sortable.isDragging || undefined}
-      className="rounded-lg transition-opacity data-[dragging]:opacity-40"
+      className="group transition-opacity data-[dragging]:opacity-40"
     >
       <Row
         project={project}
         editable
+        dead={section === "graveyard"}
         onChange={(patch) => onChange(project.id, patch)}
         onRemove={() => onRemove(project.id)}
         dragHandle={dragHandle}
@@ -221,8 +227,21 @@ export function ProjectsEditor({
               />
             ),
           }))}
+          graveyardItems={columns.graveyard.map((project, index) => ({
+            key: project.id,
+            node: (
+              <SortableRow
+                project={project}
+                index={index}
+                section="graveyard"
+                onChange={updateProject}
+                onRemove={removeProject}
+              />
+            ),
+          }))}
           featuredFooter={addButton("featured")}
           otherFooter={addButton("other")}
+          graveyardFooter={addButton("graveyard")}
         />
       </DragDropProvider>
 

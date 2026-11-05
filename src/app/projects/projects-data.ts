@@ -10,7 +10,7 @@
  * section to the other — two arrays made that a rewrite.
  */
 
-export type ProjectSection = "featured" | "other";
+export type ProjectSection = "featured" | "other" | "graveyard";
 
 export type Project = {
   /** Stable key. Also the `/projects` anchor. */
@@ -30,6 +30,8 @@ export type Project = {
   section: ProjectSection;
   /** Order within the section. */
   position: number;
+  /** A line carved on the headstone. Only the graveyard shows it. */
+  epitaph?: string;
 };
 
 export const seedProjects: Project[] = [
@@ -142,7 +144,8 @@ export const seedProjects: Project[] = [
     note: "",
     what: "",
     why: "",
-    section: "other",
+    epitaph: "Form builders used to be companies. Now they're a prompt.",
+    section: "graveyard",
     position: 5,
   },
   {
@@ -154,20 +157,9 @@ export const seedProjects: Project[] = [
     note: "",
     what: "",
     why: "",
-    section: "other",
+    epitaph: "A waitlist needed a slow launch. Nothing ships slow now.",
+    section: "graveyard",
     position: 6,
-  },
-  {
-    slug: "3reads",
-    name: "3Reads",
-    logo: "/projects/3reads-logo.png",
-    url: "https://3reads.vercel.app/",
-    tagline: "",
-    note: "",
-    what: "",
-    why: "",
-    section: "other",
-    position: 7,
   },
 ];
 
@@ -177,5 +169,9 @@ export function splitProjects(projects: Project[]) {
     projects
       .filter((project) => project.section === section)
       .sort((a, b) => a.position - b.position);
-  return { featured: bySection("featured"), other: bySection("other") };
+  return {
+    featured: bySection("featured"),
+    other: bySection("other"),
+    graveyard: bySection("graveyard"),
+  };
 }

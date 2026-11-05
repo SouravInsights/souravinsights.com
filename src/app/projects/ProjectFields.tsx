@@ -108,6 +108,12 @@ export function ProjectFields({
           onChange={(value) => onChange({ why: value })}
           multiline
         />
+        <Field
+          label="Epitaph"
+          value={project.epitaph ?? ""}
+          placeholder="One line for the headstone"
+          onChange={(value) => onChange({ epitaph: value })}
+        />
       </div>
 
       {onRemove && (

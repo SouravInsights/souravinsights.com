@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight, CaretDown, ImageSquare } from "@phosphor-icons/react";
 import { EditableField } from "@/components/EditableField";
 import type { Project } from "./projects-data";
+import { DeadMark } from "./DeadMark";
 import dynamic from "next/dynamic";
 
 // Edit-only, so it is a separate chunk: a visitor never downloads it.
@@ -41,29 +42,46 @@ export function ProjectSmallRow({
   onChange,
   onRemove,
   dragHandle,
+  dead,
 }: {
   project: Project;
   editable?: boolean;
   onChange?: (patch: Partial<Project>) => void;
   onRemove?: () => void;
   dragHandle?: ReactNode;
+  /** Overrides the section-derived default, for the editor's live state. */
+  dead?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const patch = (next: Partial<Project>) => onChange?.(next);
 
+  // A graveyard project's tile takes a headstone silhouette (see ProjectRow).
+  const isDead = dead ?? project.section === "graveyard";
+  const tile = isDead ? "rounded-t-full rounded-b-md" : "rounded-lg";
+
   // A new project has no logo yet, and an empty src is a broken image.
   const logo = project.logo ? (
-    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-secondary">
+    <span
+      className={`relative h-12 w-12 shrink-0 overflow-hidden ${tile} bg-secondary transition-transform duration-500 ${
+        isDead ? "group-hover:-rotate-6" : ""
+      }`}
+    >
       <Image
         src={project.logo}
         alt={`${project.name} logo`}
         fill
         unoptimized={project.logo.endsWith(".svg")}
-        className="object-cover"
+        className={
+          isDead
+            ? "object-cover opacity-40 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
+            : "object-cover"
+        }
       />
     </span>
   ) : (
-    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-dashed border-border text-faint-foreground">
+    <span
+      className={`flex h-12 w-12 shrink-0 items-center justify-center ${tile} border border-dashed border-border text-faint-foreground`}
+    >
       <ImageSquare className="h-4 w-4" />
     </span>
   );
@@ -130,10 +148,20 @@ export function ProjectSmallRow({
       <span className="min-w-0 flex-1">
         <span className="type-heading block transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
           {project.name}
+          {isDead && <DeadMark />}
         </span>
         <span className="type-caption block text-faint-foreground">
           {shortLabel(project.url)}
         </span>
+        {isDead && project.epitaph && (
+          // Held back until you look at the stone: a headstone you have to
+          // read, not a caption you scan past.
+          <span className="block max-h-0 overflow-hidden opacity-0 transition-all duration-500 group-hover:max-h-12 group-hover:opacity-100">
+            <span className="mt-1 block type-caption text-muted-foreground">
+              {project.epitaph}
+            </span>
+          </span>
+        )}
       </span>
       <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-700 dark:group-hover:text-green-500" />
     </a>

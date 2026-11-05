@@ -5,7 +5,8 @@ import { SectionHeader } from "@/components/SectionHeader";
 export type SkeletonItem = { key: string; node: ReactNode };
 
 /**
- * The projects page layout: the main list, then the "Smaller things" band.
+ * The projects page layout: the main list, the "Smaller things" band, and the
+ * graveyard.
  *
  * It takes rendered rows, not projects, so the viewer and the editor hand it the
  * *same* structure. The only difference between the two is which row component
@@ -17,14 +18,18 @@ export type SkeletonItem = { key: string; node: ReactNode };
 export function ProjectsSkeleton({
   featuredItems,
   otherItems,
+  graveyardItems,
   featuredFooter,
   otherFooter,
+  graveyardFooter,
 }: {
   featuredItems: SkeletonItem[];
   otherItems: SkeletonItem[];
+  graveyardItems?: SkeletonItem[];
   /** Optional trailing action, e.g. the editor's "Add project". */
   featuredFooter?: ReactNode;
   otherFooter?: ReactNode;
+  graveyardFooter?: ReactNode;
 }) {
   return (
     <>
@@ -57,6 +62,26 @@ export function ProjectsSkeleton({
           {otherFooter}
         </div>
       </section>
+
+      {graveyardItems && graveyardItems.length > 0 && (
+        <section className="mt-16 sm:mt-24">
+          <SectionHeader
+            title="The graveyard"
+            description="Things I built, shipped, and then stopped. The links are still up, if you're curious."
+          />
+          <div className="flex flex-col">
+            {graveyardItems.map((item, index) => (
+              <Fragment key={item.key}>
+                {index > 0 && (
+                  <div className="rule my-5 sm:my-6" aria-hidden="true" />
+                )}
+                {item.node}
+              </Fragment>
+            ))}
+            {graveyardFooter}
+          </div>
+        </section>
+      )}
     </>
   );
 }

@@ -25,7 +25,8 @@ const projectSchema = z.object({
   note: z.string().max(400),
   what: z.string().max(4000),
   why: z.string().max(4000),
-  section: z.enum(["featured", "other"]),
+  epitaph: z.string().max(160).optional(),
+  section: z.enum(["featured", "other", "graveyard"]),
   position: z.number().int().min(0),
 });
 

@@ -38,7 +38,7 @@ export default async function ProjectsPage() {
               handles. Nothing around it moves. */}
           <ProjectsBody initialProjects={projects} />
 
-          <FadeIn className="mt-16 sm:mt-24">
+          <FadeIn className="mt-10 sm:mt-14">
             <a
               href="https://github.com/SouravInsights"
               target="_blank"
