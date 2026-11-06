@@ -94,7 +94,9 @@ export function MovieDetail({
       layoutId={`movie-poster-${movie.id}`}
       /* The tile is 2:3, so the shared-layout travel is a pure scale. */
       mediaClassName="h-[38svh] w-auto aspect-[2/3] sm:h-[52svh]"
-      mediaStyle={{ clipPath: "inset(0 round 0.5rem)" }}
+      /* No radius of its own. The sheet and the media band are the containers,
+         so they round; the image inside is content and stays square. */
+      mediaStyle={{ clipPath: "none" }}
       mediaBackdrop={
         <div className="h-full w-full bg-black">
           {movie.posterData && (
