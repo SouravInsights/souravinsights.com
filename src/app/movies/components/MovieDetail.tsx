@@ -89,7 +89,7 @@ export function MovieDetail({
       saveState={saveState}
       layoutId={`movie-poster-${movie.id}`}
       /* The tile is 2:3, so the shared-layout travel is a pure scale. */
-      mediaClassName="h-[38svh] w-auto aspect-[2/3] sm:h-[52svh]"
+      mediaClassName="h-[30svh] w-auto aspect-[2/3] sm:h-[34svh]"
       /* No radius of its own. The sheet and the media band are the containers,
          so they round; the image inside is content and stays square. */
       mediaStyle={{ clipPath: "none" }}
