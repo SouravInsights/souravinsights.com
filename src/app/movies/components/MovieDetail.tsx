@@ -152,45 +152,54 @@ export function MovieDetail({
         />
       )}
 
-      {movie.quotes.length > 0 && (
-        <ul className="mt-5 space-y-3">
-          {movie.quotes.map((quote) => (
-            <li
-              key={quote.id}
-              className="group/quote relative border-l border-border pl-4"
-            >
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => deleteQuote(quote.id)}
-                  aria-label="Remove line"
-                  className="absolute -left-2.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-background text-destructive opacity-0 transition-opacity hover:bg-destructive/10 group-hover/quote:opacity-100"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-              <EditableField
-                as="p"
-                value={quote.text}
-                onChange={(val) => updateQuote(quote.id, val)}
-                isEditing={isAdmin}
-                multiline
-                placeholder="A line that stayed with you…"
-                className="type-body block text-foreground/85"
-              />
-            </li>
-          ))}
-        </ul>
-      )}
+      {(movie.quotes.length > 0 || isAdmin) && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="type-label text-faint-foreground">
+              Favorite lines
+            </h3>
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={addQuote}
+                className="text-sm font-medium text-green-700 transition-colors hover:text-green-800 dark:text-green-500 dark:hover:text-green-400"
+              >
+                Add line
+              </button>
+            )}
+          </div>
 
-      {isAdmin && (
-        <button
-          type="button"
-          onClick={addQuote}
-          className="mt-4 text-sm font-medium text-green-700 transition-colors hover:text-green-800 dark:text-green-500 dark:hover:text-green-400"
-        >
-          + Add line
-        </button>
+          {movie.quotes.length > 0 && (
+            <ul className="mt-3 space-y-3">
+              {movie.quotes.map((quote) => (
+                <li
+                  key={quote.id}
+                  className="group/quote relative border-l border-border pl-4"
+                >
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => deleteQuote(quote.id)}
+                      aria-label="Remove line"
+                      className="absolute -left-2.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-background text-destructive opacity-0 transition-opacity hover:bg-destructive/10 group-hover/quote:opacity-100"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                  <EditableField
+                    as="p"
+                    value={quote.text}
+                    onChange={(val) => updateQuote(quote.id, val)}
+                    isEditing={isAdmin}
+                    multiline
+                    placeholder="A line that stayed with you…"
+                    className="type-body block text-foreground/85"
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       {isAdmin && (
