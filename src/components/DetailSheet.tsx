@@ -3,14 +3,13 @@
 import { ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
-  AnimatePresence,
   motion,
   useDragControls,
   useMotionValue,
   useReducedMotion,
   useTransform,
 } from "framer-motion";
-import { Check, CircleNotch, Pencil, X } from "@phosphor-icons/react";
+import { Check, CircleNotch, X } from "@phosphor-icons/react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useFeedback } from "@/hooks/useFeedback";
 
@@ -22,9 +21,6 @@ export interface DetailSheetProps {
   /** Accessible name for the dialog. */
   label: string;
   onClose: () => void;
-  isAdmin?: boolean;
-  editing?: boolean;
-  onToggleEdit?: () => void;
   saveState?: "idle" | "saving" | "saved";
   /** Left side of the meta row. */
   meta?: ReactNode;
@@ -38,33 +34,6 @@ export interface DetailSheetProps {
   mediaBackdrop?: ReactNode;
   media: ReactNode;
   children: ReactNode;
-}
-
-/** The transient save state. Only rendered when there is something to say. */
-function SaveBadge({
-  saveState,
-}: {
-  saveState?: "idle" | "saving" | "saved";
-}) {
-  return (
-    <AnimatePresence>
-      {saveState && saveState !== "idle" && (
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="inline-flex items-center gap-1 type-caption text-faint-foreground"
-        >
-          {saveState === "saving" ? (
-            <CircleNotch className="h-3 w-3 animate-spin" />
-          ) : (
-            <Check className="h-3 w-3 text-green-700 dark:text-green-500" />
-          )}
-          {saveState === "saving" ? "Saving" : "Saved"}
-        </motion.span>
-      )}
-    </AnimatePresence>
-  );
 }
 
 /**
@@ -81,9 +50,6 @@ function SaveBadge({
 export function DetailSheet({
   label,
   onClose,
-  isAdmin,
-  editing,
-  onToggleEdit,
   saveState,
   meta,
   layoutId,
@@ -238,17 +204,10 @@ export function DetailSheet({
             className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain"
           >
             <div className="relative px-5 pt-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] sm:px-7 sm:pt-6 sm:pb-8">
-              {meta ? (
+              {meta && (
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   {meta}
-                  <span className="ml-auto">
-                    <SaveBadge saveState={saveState} />
-                  </span>
                 </div>
-              ) : (
-                <span className="absolute right-5 top-4 sm:right-7">
-                  <SaveBadge saveState={saveState} />
-                </span>
               )}
 
               {children}
@@ -256,31 +215,28 @@ export function DetailSheet({
           </motion.div>
         </div>
 
-        {isAdmin && onToggleEdit && (
-          <motion.button
-            type="button"
-            onClick={() => {
-              feedback.select();
-              onToggleEdit();
-            }}
-            aria-pressed={editing}
-            aria-label={editing ? "Done editing" : "Edit"}
-            title={editing ? "Done editing" : "Edit"}
+        {/* Chrome, over the media. The save state lives here, beside the close
+            button, so it never enters the flow and can never shift the words. */}
+        {saveState && saveState !== "idle" && (
+          <motion.span
+            aria-live="polite"
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={reveal}
-            className={`absolute right-14 top-3 z-30 sm:right-16 sm:top-4 ${iconButton} ${
-              editing
-                ? "bg-white text-black"
-                : "bg-black/45 text-white ring-1 ring-white/15 backdrop-blur-sm hover:bg-black/65"
-            }`}
+            className="absolute right-14 top-3 z-30 inline-flex h-9 items-center gap-1.5 rounded-full bg-black/45 px-3 text-xs font-medium text-white ring-1 ring-white/15 backdrop-blur-sm sm:right-16 sm:top-4"
           >
-            {editing ? (
-              <Check className="h-4 w-4" />
+            {saveState === "saving" ? (
+              <>
+                <CircleNotch className="h-3.5 w-3.5 animate-spin" />
+                Saving…
+              </>
             ) : (
-              <Pencil className="h-3.5 w-3.5" />
+              <>
+                <Check className="h-3.5 w-3.5 text-green-400" />
+                Saved
+              </>
             )}
-          </motion.button>
+          </motion.span>
         )}
 
         <motion.button

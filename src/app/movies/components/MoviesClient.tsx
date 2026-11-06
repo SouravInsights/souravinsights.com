@@ -10,18 +10,12 @@ import {
   normalizeMoviesData,
 } from "@/types/movies";
 import { EditableField } from "@/components/EditableField";
+import { SavePill } from "@/components/SavePill";
 import { saveMoviesData } from "../actions";
 import { DragDropProvider } from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 import type { Draggable } from "@dnd-kit/dom";
-import {
-  Check,
-  CircleNotch,
-  Eye,
-  FilmStrip,
-  PencilSimple,
-  Plus,
-} from "@phosphor-icons/react";
+import { FilmStrip, Plus } from "@phosphor-icons/react";
 import { MovieCard } from "./MovieCard";
 import { MovieDetail } from "./MovieDetail";
 
@@ -43,11 +37,10 @@ export function MoviesClient({
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
     "idle"
   );
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isFirstRender = useRef(true);
 
-  const isEditing = isUserAuthenticated && !isPreviewMode;
+  const isEditing = isUserAuthenticated;
   const selectedMovie = selectedId
     ? data.movies.find((m) => m.id === selectedId) ?? null
     : null;
@@ -127,41 +120,8 @@ export function MoviesClient({
   return (
     <LayoutGroup>
       <div className="relative bg-background text-foreground selection:bg-primary/20">
-        {/* Preview toggle - matches CV page pattern */}
-        {isUserAuthenticated && (
-          <button
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-background/90 backdrop-blur-md border border-border shadow-[0_0_15px_rgba(0,0,0,0.1)] hover:bg-muted transition-all text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title={isPreviewMode ? "Back to Edit Mode" : "Preview Mode"}
-          >
-            {isPreviewMode ? (
-              <PencilSimple className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
-            )}
-          </button>
-        )}
-
-        {/* Save status: inline in the detail sheet, a pill on the grid. */}
-        {isEditing && !selectedMovie && saveStatus !== "idle" && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-background/90 backdrop-blur-md border border-border px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)]">
-            {saveStatus === "saving" && (
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <CircleNotch className="w-3.5 h-3.5 animate-spin" />
-                <span>Saving...</span>
-              </div>
-            )}
-            {saveStatus === "saved" && (
-              <div className="flex items-center gap-2 text-xs font-medium text-green-700 dark:text-green-500">
-                <Check className="w-3.5 h-3.5" />
-                <span>Saved</span>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="mx-auto max-w-6xl px-5 pb-10 pt-6 sm:px-6 sm:pt-8">
-          <header className="mb-8">
+          <header className="mb-6">
             <div className="flex items-center justify-between gap-6">
               <EditableField
                 as="h1"
@@ -228,6 +188,8 @@ export function MoviesClient({
             </DragDropProvider>
           )}
         </div>
+
+        {!selectedMovie && <SavePill state={saveStatus} />}
 
         {selectedMovie && (
           <MovieDetail

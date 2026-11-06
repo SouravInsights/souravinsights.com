@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { CVData, CVProjectLink } from "@/types/cv";
 import { EditableField } from "@/components/EditableField";
+import { SavePill } from "@/components/SavePill";
 import { saveCVData } from "./actions";
 import { cn } from "@/lib/utils";
-import { DownloadSimple, Check, CircleNotch, Eye, PencilSimple, LinkSimple as LinkIcon, Image as ImageIcon, MapPin, Phone, EnvelopeSimple, Globe, LinkedinLogo, ArrowUpRight, CaretDown } from "@phosphor-icons/react";
+import { DownloadSimple, Check, CircleNotch, LinkSimple as LinkIcon, Image as ImageIcon, MapPin, Phone, EnvelopeSimple, Globe, LinkedinLogo, ArrowUpRight, CaretDown } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CVEditorProps {
@@ -772,11 +773,11 @@ function AddSectionButton({
 export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEditorProps) {
   const [data, setData] = useState<CVData>(initialData);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  // Derived state: edit controls only show for an authenticated user who is not previewing
-  const isEditing = isUserAuthenticated && !isPreviewMode;
+  // Edit controls are always available to the signed-in owner. There is no
+  // edit mode and no preview mode: the page already is the public page.
+  const isEditing = isUserAuthenticated;
 
   // Track the first mount so we don't auto-save the initial data immediately
   const isFirstRender = React.useRef(true);
@@ -889,48 +890,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
 
   return (
     <div className="relative min-h-screen bg-background px-5 pb-12 pt-20 text-foreground antialiased selection:bg-primary/20 sm:pb-24 sm:pt-36">
-      {/* Floating preview toggle for the authenticated user */}
-      {isUserAuthenticated && (
-        <button
-          onClick={() => setIsPreviewMode(!isPreviewMode)}
-          className={cn(
-            // On mobile the site nav sits at bottom-right, so this moves left to stay clear of it.
-            "fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full sm:bottom-6 sm:left-auto sm:right-6",
-            "border border-border/60 bg-background/80 text-muted-foreground backdrop-blur-md",
-            "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-8px_rgba(0,0,0,0.16)]",
-            "transition-[background-color,color,transform] duration-200",
-            "hover:bg-muted hover:text-foreground active:scale-95 motion-reduce:active:scale-100",
-            FOCUS_RING
-          )}
-          title={isPreviewMode ? "Back to edit mode" : "Preview mode"}
-        >
-          {isPreviewMode ? <PencilSimple className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </button>
-      )}
-
-      {/* Auto-save status */}
-      {isEditing && saveStatus !== "idle" && (
-        <div
-          className={cn(
-            "fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full",
-            "border border-border/60 bg-background/80 px-3 py-1.5 backdrop-blur-md",
-            "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-8px_rgba(0,0,0,0.16)]"
-          )}
-        >
-          {saveStatus === "saving" && (
-            <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-              <CircleNotch className="h-3.5 w-3.5 animate-spin" />
-              Saving
-            </span>
-          )}
-          {saveStatus === "saved" && (
-            <span className="flex items-center gap-2 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              <Check className="h-3.5 w-3.5" />
-              Saved
-            </span>
-          )}
-        </div>
-      )}
+      <SavePill state={saveStatus} />
 
       <div className="mx-auto max-w-[760px]">
         <header className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6">

@@ -35,7 +35,6 @@ export function MovieDetail({
   onDelete,
 }: MovieDetailProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [editing, setEditing] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const handleImageUpload = useCallback(
@@ -87,9 +86,6 @@ export function MovieDetail({
     <DetailSheet
       label={movie.title}
       onClose={onClose}
-      isAdmin={isAdmin}
-      editing={editing}
-      onToggleEdit={() => setEditing((value) => !value)}
       saveState={saveState}
       layoutId={`movie-poster-${movie.id}`}
       /* The tile is 2:3, so the shared-layout travel is a pure scale. */
@@ -139,17 +135,17 @@ export function MovieDetail({
         as="h2"
         value={movie.title}
         onChange={(val) => onUpdate(movie.id, { title: val })}
-        isEditing={editing}
+        isEditing={isAdmin}
         placeholder="Film title"
         className="type-title mt-2 block"
       />
 
-      {(editing || movie.notes) && (
+      {(isAdmin || movie.notes) && (
         <EditableField
           as="p"
           value={movie.notes}
           onChange={(val) => onUpdate(movie.id, { notes: val })}
-          isEditing={editing}
+          isEditing={isAdmin}
           multiline
           placeholder="Notes"
           className="type-body mt-3 block max-w-2xl text-muted-foreground"
@@ -163,7 +159,7 @@ export function MovieDetail({
               key={quote.id}
               className="group/quote relative border-l border-border pl-4"
             >
-              {editing && (
+              {isAdmin && (
                 <button
                   type="button"
                   onClick={() => deleteQuote(quote.id)}
@@ -177,7 +173,7 @@ export function MovieDetail({
                 as="p"
                 value={quote.text}
                 onChange={(val) => updateQuote(quote.id, val)}
-                isEditing={editing}
+                isEditing={isAdmin}
                 multiline
                 placeholder="A line that stayed with you…"
                 className="type-body block text-foreground/85"
@@ -187,7 +183,7 @@ export function MovieDetail({
         </ul>
       )}
 
-      {editing && (
+      {isAdmin && (
         <button
           type="button"
           onClick={addQuote}
@@ -197,7 +193,7 @@ export function MovieDetail({
         </button>
       )}
 
-      {editing && (
+      {isAdmin && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
           <button
             type="button"

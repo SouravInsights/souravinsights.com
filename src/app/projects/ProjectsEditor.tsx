@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
-import { Check, CircleNotch, DotsSixVertical, Plus } from "@phosphor-icons/react";
+import { DotsSixVertical, Plus } from "@phosphor-icons/react";
+import { SavePill } from "@/components/SavePill";
 import { apiJson } from "@/lib/query/api";
 import type { Project, ProjectSection } from "./projects-data";
 import { ProjectRow } from "./ProjectRow";
@@ -191,12 +192,12 @@ export function ProjectsEditor({
 
   return (
     <>
-      {/* The mode explains itself once it is on: a visitor never sees it, and
-          the two things you can do are not obvious from a handle alone. */}
+      {/* Only the owner sees this: a visitor gets the rows alone. The two things
+          you can do are not obvious from a handle, so it says so once. */}
       <p className="mb-6 rounded-lg border border-border bg-foreground/[0.02] px-3 py-2 type-caption text-muted-foreground">
-        <span className="font-medium text-foreground">Reorder mode. </span>
-        Drag the handle to move a project, or drop it into the other list to
-        switch between Main and Smaller things. Changes save on their own.
+        <span className="font-medium text-foreground">Drag to reorder. </span>
+        Or drop a project into the other list to switch between Main and Smaller
+        things. Changes save on their own.
       </p>
 
       <DragDropProvider
@@ -245,25 +246,7 @@ export function ProjectsEditor({
         />
       </DragDropProvider>
 
-      {status !== "idle" && (
-        <div className="fixed bottom-[calc(var(--tabbar-space,0px)+1.5rem)] left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-background/90 px-3 py-1.5 shadow-[0_0_15px_rgba(0,0,0,0.1)] backdrop-blur-md">
-          {status === "saving" ? (
-            <>
-              <CircleNotch className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
-              <span className="text-xs font-medium text-muted-foreground">
-                Saving…
-              </span>
-            </>
-          ) : (
-            <>
-              <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-500" />
-              <span className="text-xs font-medium text-green-700 dark:text-green-500">
-                Saved
-              </span>
-            </>
-          )}
-        </div>
-      )}
+      <SavePill state={status} />
     </>
   );
 }

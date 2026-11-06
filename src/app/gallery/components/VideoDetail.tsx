@@ -61,7 +61,6 @@ export function VideoDetail({
 
   // The editable copy of the clip's words. Kept local so typing never waits on
   // the network; the server is told on blur.
-  const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(video.title);
   const [notes, setNotes] = useState(video.notes);
   const [tags, setTags] = useState(video.tags);
@@ -141,18 +140,10 @@ export function VideoDetail({
     onClose();
   }, [commitTags, onClose]);
 
-  const toggleEdit = useCallback(() => {
-    if (editing) commitTags();
-    setEditing((value) => !value);
-  }, [editing, commitTags]);
-
   return (
     <DetailSheet
       label={title}
       onClose={close}
-      isAdmin={isAdmin}
-      editing={editing}
-      onToggleEdit={toggleEdit}
       saveState={saveState}
       layoutId={`gallery-video-${video.id}`}
       mediaClassName="w-full"
@@ -175,7 +166,7 @@ export function VideoDetail({
         </>
       }
     >
-      {editing ? (
+      {isAdmin ? (
         <>
           <EditableField
             as="h2"

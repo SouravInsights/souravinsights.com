@@ -3,32 +3,38 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { FadeIn } from "@/components/FadeIn";
+import { hasAdminHint } from "@/lib/admin-client";
 import { splitProjects, type Project } from "./projects-data";
 import { ProjectRow } from "./ProjectRow";
 import { ProjectSmallRow } from "./ProjectSmallRow";
 import { ProjectsSkeleton } from "./ProjectsSkeleton";
-import { useProjectsEditing } from "./ProjectsEditing";
 
-// The editor, dnd-kit and all: a chunk only an admin who opens the mode loads.
+// The editor, dnd-kit and all: a chunk only an admin loads.
 const ProjectsEditor = dynamic(
   () => import("./ProjectsEditor").then((mod) => mod.ProjectsEditor),
   { ssr: false }
 );
 
 /**
- * The list, in one of its two states.
+ * The list.
  *
- * View is the page as everyone sees it. Reorder swaps in the same skeleton and
- * the same rows, with drag handles — nothing around it moves.
+ * There is no reorder mode. An admin gets the same page a visitor gets, with
+ * drag handles and editable fields on the rows; a visitor gets the rows without
+ * them. `admin_ui` is a non-secret hint, so the page still renders statically
+ * and the editor — and dnd-kit — loads only for the owner.
  */
 export function ProjectsBody({
   initialProjects,
 }: {
   initialProjects: Project[];
 }) {
-  const { editing } = useProjectsEditing();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [projects, setProjects] = useState(initialProjects);
   const { featured, other, graveyard } = splitProjects(projects);
+
+  useEffect(() => {
+    setIsAdmin(hasAdminHint());
+  }, []);
 
   // For whoever opens the console. The graveyard is at the bottom.
   useEffect(() => {
@@ -41,7 +47,7 @@ export function ProjectsBody({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (editing) {
+  if (isAdmin) {
     return <ProjectsEditor initialData={projects} onChange={setProjects} />;
   }
 
