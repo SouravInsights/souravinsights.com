@@ -6,7 +6,9 @@ import {
   AnimatePresence,
   motion,
   useDragControls,
+  useMotionValue,
   useReducedMotion,
+  useTransform,
 } from "framer-motion";
 import { Check, CircleNotch, Pencil, X } from "@phosphor-icons/react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -99,9 +101,18 @@ export function DetailSheet({
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
-  // Lock the page behind the panel, close on Escape, and focus the close
-  // button. Mount-only: a re-run would fight the user's own focus.
+  // The sheet's own drag offset drives the backdrop, so the page behind fades
+  // as the sheet is pulled away — the way a native sheet behaves.
+  const dragY = useMotionValue(0);
+  const backdropOpacity = useTransform(dragY, [0, 280], [1, 0], {
+    clamp: true,
+  });
+
+  // Lock the page behind the panel, close on Escape, focus the close button,
+  // and hand focus back to whatever opened the sheet. Mount-only: a re-run
+  // would fight the user's own focus.
   useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onCloseRef.current();
     };
@@ -112,6 +123,7 @@ export function DetailSheet({
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      previouslyFocused?.focus?.();
     };
   }, []);
 
@@ -131,8 +143,9 @@ export function DetailSheet({
 
   return createPortal(
     <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-6">
-      <div
+      <motion.div
         className="absolute inset-0 bg-black/40 backdrop-blur-md sm:bg-black/55"
+        style={{ opacity: backdropOpacity }}
         aria-hidden="true"
         onClick={close}
       />
@@ -142,18 +155,20 @@ export function DetailSheet({
         aria-modal="true"
         aria-label={label}
         className="relative flex max-h-[92svh] w-full flex-col sm:max-h-[min(92svh,56rem)] sm:max-w-3xl"
+        style={{ y: dragY }}
         drag={isDesktop ? false : "y"}
         dragListener={false}
         dragControls={dragControls}
         dragConstraints={{ top: 0, bottom: 0 }}
         dragSnapToOrigin
+        dragMomentum={false}
         dragElastic={{ top: 0, bottom: 0.5 }}
         onDragEnd={(_, info) => {
           if (
             info.offset.y > DISMISS_OFFSET ||
             info.velocity.y > DISMISS_VELOCITY
           ) {
-            onClose();
+            close();
           }
         }}
       >
@@ -167,15 +182,17 @@ export function DetailSheet({
         />
 
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-lg sm:rounded-lg">
-          {/* Phone-only grabber. It is also the drag handle. */}
+          {/* Phone-only grabber. A full-width strip with a generous touch
+              target, not just the little pill. It is also the drag handle. */}
           <motion.div
-            className="relative z-20 flex shrink-0 cursor-grab touch-none justify-center pb-1 pt-3 active:cursor-grabbing sm:hidden"
+            className="relative z-20 flex shrink-0 cursor-grab touch-none justify-center pb-2 pt-3 active:cursor-grabbing sm:hidden"
             onPointerDown={(event) => dragControls.start(event)}
             initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={reveal}
+            aria-hidden="true"
           >
-            <span className="h-1 w-9 rounded-full bg-foreground/25" />
+            <span className="h-1.5 w-10 rounded-full bg-foreground/20" />
           </motion.div>
 
           {/* The media head. The frame always carries the shared `layoutId`, so
@@ -220,7 +237,7 @@ export function DetailSheet({
             transition={reveal}
             className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain"
           >
-            <div className="relative px-5 pb-7 pt-5 sm:px-7 sm:pb-8 sm:pt-6">
+            <div className="relative px-5 pt-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] sm:px-7 sm:pt-6 sm:pb-8">
               {meta ? (
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   {meta}
