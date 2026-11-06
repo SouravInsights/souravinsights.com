@@ -1,7 +1,11 @@
 "use server";
 
 import redis from "@/app/lib/redis";
-import { MoviesData, emptyMoviesData } from "@/types/movies";
+import {
+  MoviesData,
+  emptyMoviesData,
+  normalizeMoviesData,
+} from "@/types/movies";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { put } from "@vercel/blob";
 
@@ -9,9 +13,21 @@ const MOVIES_REDIS_KEY = "movies:data";
 
 export async function getMoviesData(): Promise<MoviesData> {
   try {
-    const data = await redis.get<MoviesData>(MOVIES_REDIS_KEY);
-    if (!data) return emptyMoviesData;
-    return data;
+    const raw = await redis.get<MoviesData>(MOVIES_REDIS_KEY);
+    if (!raw) return emptyMoviesData;
+
+    // Records saved by the old shape still carry split prose, tags and links.
+    // Fold them here and write the clean record back, so the store migrates on
+    // first read instead of staying dirty until the next edit.
+    const normalized = normalizeMoviesData(raw);
+    if (JSON.stringify(normalized) !== JSON.stringify(raw)) {
+      try {
+        await redis.set(MOVIES_REDIS_KEY, normalized);
+      } catch (error) {
+        console.error("Error migrating movies data:", error);
+      }
+    }
+    return normalized;
   } catch (error) {
     console.error("Error fetching movies data from Redis:", error);
     return emptyMoviesData;

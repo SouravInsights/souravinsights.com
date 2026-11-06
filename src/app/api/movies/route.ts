@@ -17,7 +17,6 @@ export async function GET() {
         id: movie.id,
         title: movie.title,
         posterData: movie.posterData ?? null,
-        tag: movie.tags?.[0] ?? null,
       }));
 
     return NextResponse.json(

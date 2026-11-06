@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { getMoviesData } from "./actions";
-import { MoviesClient } from "./MoviesClient";
+import { MoviesClient } from "./components/MoviesClient";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 // Reads Redis (a no-store fetch) and the admin cookie, so it can never be

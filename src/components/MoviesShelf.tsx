@@ -15,10 +15,9 @@ interface MoviePreview {
   id: string;
   title: string;
   posterData: string | null;
-  tag: string | null;
 }
 
-/** Compact poster + title + tag. Mirrors the book rows so the two shelves match. */
+/** Compact poster + title. Mirrors the book rows so the two shelves match. */
 function MovieRow({
   movie,
   dimmed,
@@ -53,11 +52,6 @@ function MovieRow({
         <p className="type-caption line-clamp-2 font-medium leading-snug text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
           {movie.title}
         </p>
-        {movie.tag ? (
-          <p className="type-caption mt-1 line-clamp-1 capitalize text-faint-foreground">
-            {movie.tag.replace(/-/g, " ")}
-          </p>
-        ) : null}
       </div>
     </div>
   );
