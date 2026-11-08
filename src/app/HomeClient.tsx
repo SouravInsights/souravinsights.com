@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { XLogo, GithubLogo, Bicycle, Footprints, Coffee, MusicNotes } from "@phosphor-icons/react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
+import { AvatarStickers } from "@/components/AvatarStickers";
 import { Panel } from "@/components/Panel";
 import { FadeIn } from "@/components/FadeIn";
 import { ReadingShelf } from "@/components/ReadingShelf";
@@ -194,6 +195,8 @@ const HeroSection = () => {
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
+            <AvatarStickers />
+
             <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
               <p>
                 Hey there! This is my{" "}

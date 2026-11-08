@@ -43,3 +43,8 @@ next-env.d.ts
 /.cursor/skills
 /.gemini/skills
 /.opencode/skills
+
+# Full-resolution avatar masters: source files for the 512px copies that are
+# actually served. Kept local so a public clone is not carrying ~13MB of
+# personal photos in history.
+avatars-masters/
