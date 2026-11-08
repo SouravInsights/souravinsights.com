@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 const DECK = [
   "/avatars/hat-sunglasses.png",
   "/avatars/peace.png",
-  "/avatars/thinking.png",
+  "/avatars/close-up.png",
 ];
 
 const FRONT = DECK.length - 1;

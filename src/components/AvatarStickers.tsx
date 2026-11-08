@@ -15,6 +15,8 @@ const STICKERS = [
   { src: "/avatars/messy-hair.png", alt: "Me with messy hair and clear glasses", tilt: -4 },
   { src: "/avatars/hat-sunglasses.png", alt: "Me in a bucket hat and sunglasses", tilt: 6 },
   { src: "/avatars/glasses-side.png", alt: "Me in glasses, side profile", tilt: -5 },
+  { src: "/avatars/close-up.png", alt: "Me in black glasses, close up", tilt: 3 },
+  { src: "/avatars/plaid-sunglasses.png", alt: "Me in round sunglasses and a plaid shirt", tilt: -6 },
 ];
 
 /**
