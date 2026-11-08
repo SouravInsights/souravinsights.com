@@ -211,17 +211,22 @@ const HeroSection = () => {
             )}
 
             <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
-              {/* Peek sits at the start of the copy with its control opposite,
-                  and the first paragraph wraps into the space between. */}
+              {/* Sticker and its control share one left float, so the control
+                  reads as belonging to the sticker and the copy wraps beside
+                  the pair. */}
               {stickerVariant === "peek" && (
-                <>
-                  <StickerPeek className="float-left mr-3 -mt-1 mb-1 sm:mr-5" />
+                // Sticker over its control, one narrow column, so it costs the
+                // least width and the copy keeps the room to its right. Side by
+                // side, the pair was wide enough to push the first paragraph
+                // into a column of its own while the rest stayed full width — a
+                // ragged left edge that made the copy read as secondary.
+                <div className="mb-3 flex items-center gap-2 sm:float-left sm:mr-5 sm:mb-2 sm:-mt-1 sm:flex-col sm:items-center sm:gap-1.5">
+                  <StickerPeek />
                   <StickerToggle
                     expanded={false}
                     onToggle={toggleStickerVariant}
-                    className="float-right -mt-1 ml-3"
                   />
-                </>
+                </div>
               )}
               <p>
                 Hey there! This is my{" "}

@@ -70,7 +70,7 @@ export function StickerPeek({ className }: { className?: string }) {
           alt={sticker.alt}
           width={128}
           height={128}
-          className="h-20 w-20 object-contain sm:h-24 sm:w-24"
+          className="h-16 w-16 object-contain sm:h-20 sm:w-20"
         />
       </motion.div>
     </button>
