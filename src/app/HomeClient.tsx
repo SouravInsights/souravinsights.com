@@ -1,15 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
-import { useCallback, useState } from "react";
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
 import { motion } from "framer-motion";
 import { XLogo, GithubLogo, Bicycle, Footprints, Coffee, MusicNotes } from "@phosphor-icons/react";
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
-import { AvatarStickers } from "@/components/AvatarStickers";
-import { StickerPeek } from "@/components/StickerPeek";
-import { StickerToggle } from "@/components/StickerToggle";
+import { StickerDeck } from "@/components/stickers/StickerDeck";
 import { Panel } from "@/components/Panel";
 import { FadeIn } from "@/components/FadeIn";
 import { ReadingShelf } from "@/components/ReadingShelf";
@@ -157,11 +154,6 @@ const myToolkit = {
 
 const HeroSection = () => {
   const feedback = useFeedback();
-  const [stickerVariant, setStickerVariant] = useState<"row" | "peek">("peek");
-
-  const toggleStickerVariant = useCallback(() => {
-    setStickerVariant((current) => (current === "row" ? "peek" : "row"));
-  }, []);
 
   return (
   <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
@@ -203,31 +195,9 @@ const HeroSection = () => {
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
-            {stickerVariant === "row" && (
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <AvatarStickers />
-                <StickerToggle expanded onToggle={toggleStickerVariant} />
-              </div>
-            )}
+            <StickerDeck />
 
             <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
-              {/* Sticker and its control share one left float, so the control
-                  reads as belonging to the sticker and the copy wraps beside
-                  the pair. */}
-              {stickerVariant === "peek" && (
-                // Sticker over its control, one narrow column, so it costs the
-                // least width and the copy keeps the room to its right. Side by
-                // side, the pair was wide enough to push the first paragraph
-                // into a column of its own while the rest stayed full width — a
-                // ragged left edge that made the copy read as secondary.
-                <div className="mb-3 flex items-center gap-2 sm:float-left sm:mr-5 sm:mb-2 sm:-mt-1 sm:flex-col sm:items-center sm:gap-1.5">
-                  <StickerPeek />
-                  <StickerToggle
-                    expanded={false}
-                    onToggle={toggleStickerVariant}
-                  />
-                </div>
-              )}
               <p>
                 Hey there! This is my{" "}
                 <a

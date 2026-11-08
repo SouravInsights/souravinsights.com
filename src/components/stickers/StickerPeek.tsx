@@ -4,23 +4,12 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
+import { STICKERS } from "@/components/stickers/stickers";
 import { cn } from "@/lib/utils";
 
 /**
- * Every sticker the shuffle draws from. Kept here so a new one is a single line.
- */
-const STICKERS = [
-  "/avatars/peace.png",
-  "/avatars/thinking.png",
-  "/avatars/messy-hair.png",
-  "/avatars/hat-sunglasses.png",
-  "/avatars/glasses-side.png",
-  "/avatars/close-up.png",
-  "/avatars/plaid-sunglasses.png",
-];
-
-/**
- * One sticker at a time, swapped on poke.
+ * One sticker at a time, swapped on poke. Not currently mounted; kept as an
+ * alternative to `StickerDeck`.
  *
  * All of them are rendered, stacked, and the swap is a crossfade — not a
  * remount. A single element that remounts per index has nothing on screen while
@@ -55,11 +44,11 @@ export function StickerPeek({ className }: { className?: string }) {
         className
       )}
     >
-      {STICKERS.map((src, i) => {
+      {STICKERS.map((sticker, i) => {
         const active = i === index;
         return (
           <motion.div
-            key={src}
+            key={sticker.src}
             aria-hidden={!active}
             className="absolute inset-0"
             style={{ zIndex: active ? 1 : 0 }}
@@ -80,7 +69,7 @@ export function StickerPeek({ className }: { className?: string }) {
             }
           >
             <Image
-              src={src}
+              src={sticker.src}
               alt=""
               width={128}
               height={128}
