@@ -1,14 +1,25 @@
 "use client";
 
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * The control that flips between showing the whole row and shuffling one.
+ * Three of the stickers, reused at thumbnail size. The control shows the set it
+ * controls, so it reads as part of the stickers rather than UI bolted on.
+ */
+const DECK = [
+  "/avatars/peace.png",
+  "/avatars/thinking.png",
+  "/avatars/hat-sunglasses.png",
+];
+
+/**
+ * The control that flips between the whole row and shuffling one.
  *
- * Deliberately not a button: a bordered icon floating in whitespace read as
- * browser chrome bolted onto the hero. This is a quiet caption that sits with
- * the stickers and says what it will do, so the wit lives in the words and the
- * control is anchored to the thing it changes.
+ * The glyph is a tiny stack of the stickers themselves: gathered when one is
+ * showing, fanned when they are all out, and it leans toward the other shape on
+ * hover. The word beside it says what a click will do, so the wit lives in the
+ * copy and the shape, not in chrome.
  */
 export function StickerToggle({
   expanded,
@@ -26,11 +37,36 @@ export function StickerToggle({
       onClick={onToggle}
       title={expanded ? "Just one" : "See all"}
       className={cn(
-        "type-caption cursor-pointer select-none text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline",
+        "group/toggle inline-flex cursor-pointer select-none items-center gap-2",
         className
       )}
     >
-      {expanded ? "just one" : "see all"}
+      <span className="relative h-5 w-9 shrink-0" aria-hidden="true">
+        {DECK.map((src, i) => (
+          <span
+            key={src}
+            style={{ left: `${i * (expanded ? 7 : 3)}px`, zIndex: i }}
+            className={cn(
+              "absolute top-1/2 block h-5 w-5 -translate-y-1/2 overflow-hidden rounded-[6px] bg-secondary ring-1 ring-black/10 transition-transform duration-200 ease-out dark:ring-white/10",
+              // Lean toward the shape a click would produce.
+              expanded
+                ? "group-hover/toggle:-translate-x-0.5"
+                : "group-hover/toggle:translate-x-1"
+            )}
+          >
+            <Image
+              src={src}
+              alt=""
+              width={20}
+              height={20}
+              className="h-full w-full object-cover"
+            />
+          </span>
+        ))}
+      </span>
+      <span className="type-caption text-muted-foreground underline-offset-4 transition-colors group-hover/toggle:text-foreground group-hover/toggle:underline">
+        {expanded ? "just one" : "see all"}
+      </span>
     </button>
   );
 }
