@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import { useCallback, useState } from "react";
 import Image from "next/image";
 import Macintosh from "@/components/Macintosh";
 import { motion } from "framer-motion";
@@ -7,6 +8,8 @@ import { XLogo, GithubLogo, Bicycle, Footprints, Coffee, MusicNotes } from "@pho
 import LastDeployedInfo from "@/components/LastDeployedInfo";
 import { FavoriteLinks } from "@/components/FavoriteLinks";
 import { AvatarStickers } from "@/components/AvatarStickers";
+import { StickerPeek } from "@/components/StickerPeek";
+import { StickerToggle } from "@/components/StickerToggle";
 import { Panel } from "@/components/Panel";
 import { FadeIn } from "@/components/FadeIn";
 import { ReadingShelf } from "@/components/ReadingShelf";
@@ -154,6 +157,11 @@ const myToolkit = {
 
 const HeroSection = () => {
   const feedback = useFeedback();
+  const [stickerVariant, setStickerVariant] = useState<"row" | "peek">("peek");
+
+  const toggleStickerVariant = useCallback(() => {
+    setStickerVariant((current) => (current === "row" ? "peek" : "row"));
+  }, []);
 
   return (
   <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
@@ -195,9 +203,26 @@ const HeroSection = () => {
         {/* Content section - Reordered for mobile */}
         <div className="order-2 md:order-1 w-full">
           <div className="space-y-6">
-            <AvatarStickers />
+            {stickerVariant === "row" && (
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <AvatarStickers />
+                <StickerToggle expanded onToggle={toggleStickerVariant} />
+              </div>
+            )}
 
             <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
+              {/* Peek sits at the start of the copy with its control opposite,
+                  and the first paragraph wraps into the space between. */}
+              {stickerVariant === "peek" && (
+                <>
+                  <StickerPeek className="float-left mr-3 -mt-1 mb-1 sm:mr-5" />
+                  <StickerToggle
+                    expanded={false}
+                    onToggle={toggleStickerVariant}
+                    className="float-right -mt-1 ml-3"
+                  />
+                </>
+              )}
               <p>
                 Hey there! This is my{" "}
                 <a
