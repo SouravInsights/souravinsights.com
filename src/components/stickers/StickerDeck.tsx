@@ -1,36 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { STICKERS } from "./stickers";
 import { cn } from "@/lib/utils";
 
 const N = STICKERS.length;
-/**
- * Centre-to-centre spacing as a multiple of the box size.
- *
- * Below 1 on purpose: the source PNGs carry ~12% transparent margin on each
- * side (up to 18% on the tightest pose), so spacing the boxes edge-to-edge
- * would leave a visible empty gutter between the stickers that are actually
- * drawn. Overlapping the boxes cancels that padding, so the gap you see is
- * between the artwork, not between the files.
- */
-const RATIO = 0.78;
+/** Sum of the content aspects — the row's width in units of its own height. */
+const SUM_ASPECT = STICKERS.reduce((sum, s) => sum + s.aspect, 0);
+/** Breathing room between stickers, as a fraction of the row height. */
+const GAP_RATIO = 0.12;
+const STORAGE_KEY = "hero-stickers";
 
 /**
  * The stickers are the control.
  *
  * At rest it is a single sticker. Hover the sticker (mouse) or tap it (touch)
- * and the whole set fans out into a row; leave or tap again and it gathers back
- * onto one. Click a sticker in the fan and the row gathers onto *that* one, so
- * the pick is deliberate instead of random.
+ * and the set fans out; leave, or tap again, and it gathers back onto one. A
+ * click on a sticker in the fan gathers the row onto *that* one, so the pick is
+ * deliberate rather than random.
  *
- * Sizing is derived from the measured container, never fixed: the open row
- * spans the full width it is given and the stickers grow to fill it, so a wide
- * column gets big stickers and a phone gets smaller ones rather than the row
- * drifting apart inside a fixed box.
+ * Laid out by content, not by file. The PNGs are trimmed to their artwork and
+ * each carries its own aspect, so every sticker gets a box that matches it: the
+ * row spans the full measured width, the artwork fills its box edge to edge,
+ * and the gap you see is a real gap rather than transparent margin. Before,
+ * ~25% of the row was empty pixels inside the files.
+ *
+ * The choice sticks: whether the row was left open, and which sticker was
+ * picked, are both kept in localStorage and restored on the next visit.
  */
 export function StickerDeck({ className }: { className?: string }) {
   const reduce = useReducedMotion();
@@ -48,12 +47,60 @@ export function StickerDeck({ className }: { className?: string }) {
     return () => ro.disconnect();
   }, []);
 
-  // Row width = (N-1)*GAP + SIZE and GAP = RATIO*SIZE, so SIZE solves to fill.
-  const size = width > 0 ? width / ((N - 1) * RATIO + 1) : 48;
-  const gap = size * RATIO;
+  // Row height solves so that sum(widths) + gaps fills the measured container.
+  const rowH = width > 0 ? width / (SUM_ASPECT + (N - 1) * GAP_RATIO) : 80;
+  const gap = rowH * GAP_RATIO;
+  const widths = useMemo(() => STICKERS.map((s) => s.aspect * rowH), [rowH]);
+  const offsets = useMemo(() => {
+    const xs: number[] = [];
+    let acc = 0;
+    for (let i = 0; i < N; i++) {
+      xs.push(acc);
+      acc += widths[i] + gap;
+    }
+    return xs;
+  }, [widths, gap]);
 
-  const [open, setOpen] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const [hovering, setHovering] = useState(false);
   const [featured, setFeatured] = useState(0);
+  const [ready, setReady] = useState(false);
+  // After a pick, the pointer is still over the deck — so hover must not
+  // immediately re-open what the click just gathered. Held until it leaves.
+  const suppressHover = useRef(false);
+
+  // Restore what the visitor left behind.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as { pinned?: unknown; featured?: unknown };
+        if (typeof saved.pinned === "boolean") setPinned(saved.pinned);
+        if (
+          typeof saved.featured === "number" &&
+          saved.featured >= 0 &&
+          saved.featured < N
+        ) {
+          setFeatured(saved.featured);
+        }
+      }
+    } catch {
+      // A blocked or corrupt store just means the default state.
+    }
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ pinned, featured }));
+    } catch {
+      // Ignore: the deck still works, the choice just will not persist.
+    }
+  }, [pinned, featured, ready]);
+
+  // Hover is transient, the click is a decision — the row stays open if either.
+  const open = pinned || hovering;
 
   const transition = reduce
     ? { duration: 0.001 }
@@ -63,22 +110,18 @@ export function StickerDeck({ className }: { className?: string }) {
     (i: number) => {
       feedback.select();
       setFeatured(i);
-      setOpen(false);
+      setPinned(false);
+      suppressHover.current = true;
+      setHovering(false);
     },
     [feedback]
   );
 
-  /**
-   * Where sticker `i` sits right now. One source for art and hit-testing.
-   *
-   * Laid out from the left edge, not centred: the row's first card then shares
-   * the left rail every other element in the section uses, and the closed
-   * sticker does not jump sideways the instant the row opens.
-   */
+  /** Where sticker `i` sits right now. One source for art and hit-testing. */
   const target = (i: number) => {
     if (open) {
       return {
-        x: i * gap,
+        x: offsets[i],
         scale: 1,
         rotate: STICKERS[i].tilt,
         opacity: 1,
@@ -101,17 +144,19 @@ export function StickerDeck({ className }: { className?: string }) {
     <div
       ref={containerRef}
       className={cn("relative w-full", className)}
-      // Just enough for the widest resting tilt (±8°) to clear the box.
-      style={{ height: Math.round(size * 1.15) }}
-      // Leaving the band gathers it. Opening is bound to the stickers, not this
-      // band — the band is full width, so opening here would fire on any pass.
+      // Just enough for the widest resting tilt to clear the box.
+      style={{ height: Math.round(rowH * 1.18) }}
+      // Leaving gathers it. Opening is bound to the stickers, not this band —
+      // the band is full width, so opening here would fire on any pass.
       onPointerLeave={(e) => {
-        if (e.pointerType === "mouse") setOpen(false);
+        if (e.pointerType !== "mouse") return;
+        suppressHover.current = false;
+        setHovering(false);
       }}
       onClick={() => {
-        // Touch (and a deliberated click) toggles.
+        // A click on the deck (not on a sticker) pins the row open or shut.
         feedback.select();
-        setOpen((o) => !o);
+        setPinned((p) => !p);
       }}
     >
       {STICKERS.map((sticker, i) => {
@@ -128,16 +173,21 @@ export function StickerDeck({ className }: { className?: string }) {
               t.live ? "cursor-pointer" : "pointer-events-none"
             )}
             style={{
-              width: size,
-              height: size,
-              marginTop: -size / 2,
+              left: 0,
+              width: Math.round(widths[i]),
+              height: Math.round(rowH),
+              marginTop: -rowH / 2,
               zIndex: t.z,
             }}
             initial={false}
             animate={{ x: t.x, scale: t.scale, rotate: t.rotate, opacity: t.opacity }}
             transition={transition}
+            // The press has to feel like the sticker itself was pushed.
+            whileTap={{ scale: 0.92 }}
             onPointerEnter={(e) => {
-              if (e.pointerType === "mouse") setOpen(true);
+              if (e.pointerType === "mouse" && !suppressHover.current) {
+                setHovering(true);
+              }
             }}
             onClick={(e) => {
               // Only meaningful once the fan is out; otherwise the deck toggles.
@@ -150,8 +200,8 @@ export function StickerDeck({ className }: { className?: string }) {
             <Image
               src={sticker.src}
               alt=""
-              width={256}
-              height={256}
+              width={512}
+              height={Math.round(512 / sticker.aspect)}
               className="h-full w-full object-contain"
             />
           </motion.button>
