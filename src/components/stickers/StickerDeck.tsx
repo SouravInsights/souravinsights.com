@@ -8,8 +8,16 @@ import { STICKERS } from "./stickers";
 import { cn } from "@/lib/utils";
 
 const N = STICKERS.length;
-/** Centre-to-centre spacing as a multiple of sticker size. */
-const RATIO = 1.06;
+/**
+ * Centre-to-centre spacing as a multiple of the box size.
+ *
+ * Below 1 on purpose: the source PNGs carry ~12% transparent margin on each
+ * side (up to 18% on the tightest pose), so spacing the boxes edge-to-edge
+ * would leave a visible empty gutter between the stickers that are actually
+ * drawn. Overlapping the boxes cancels that padding, so the gap you see is
+ * between the artwork, not between the files.
+ */
+const RATIO = 0.78;
 
 /**
  * The stickers are the control.
@@ -93,7 +101,8 @@ export function StickerDeck({ className }: { className?: string }) {
     <div
       ref={containerRef}
       className={cn("relative w-full", className)}
-      style={{ height: Math.round(size * 1.3) }}
+      // Just enough for the widest resting tilt (±8°) to clear the box.
+      style={{ height: Math.round(size * 1.15) }}
       // Leaving the band gathers it. Opening is bound to the stickers, not this
       // band — the band is full width, so opening here would fire on any pass.
       onPointerLeave={(e) => {
