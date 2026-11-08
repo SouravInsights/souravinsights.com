@@ -27,9 +27,4 @@ export const STICKERS: Sticker[] = [
   },
   { src: "/avatars/glasses-side.png", alt: "Me in glasses, side profile", tilt: -5 },
   { src: "/avatars/close-up.png", alt: "Me in black glasses, close up", tilt: 3 },
-  {
-    src: "/avatars/plaid-sunglasses.png",
-    alt: "Me in round sunglasses and a plaid shirt",
-    tilt: -6,
-  },
 ];
