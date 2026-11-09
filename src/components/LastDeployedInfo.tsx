@@ -67,7 +67,7 @@ export function DeployStatusLine({
     : null;
 
   return (
-    <div className="type-caption mt-4 italic">
+    <div className="type-caption mt-4">
       <div className="rule mb-4" aria-hidden="true" />
       {/**
        * Inline flow, not a flex row. `align-middle` seats both marks on the
@@ -75,15 +75,18 @@ export function DeployStatusLine({
        * margins, and it lets the line wrap the whole width instead of hanging
        * off a fixed indent.
        *
-       * Sizes encode the hierarchy: the rocket is a quiet 14px (it inherits the
-       * caption's muted colour), the weather illustration is 24px. Meteocons pad
-       * their 128 viewBox, so a 24px box draws a ~15px cloud — visually the
-       * largest mark on the line, which is the point.
+       * The block stays a 13px caption under the prose, so it never competes
+       * with the argument above it. The marks are sized for legibility, not
+       * prominence: the rocket is 16px, the weather illustration 32px.
+       * Meteocons pad their 128 viewBox, so a 32px box draws a ~20px cloud —
+       * big enough that the SMIL animation is readable in passing, which the
+       * old 24px (~15px cloud) was not. Italic is gone for the same reason:
+       * 13px italic muted is the least legible text on the page.
        */}
       <p>
         <RocketLaunch
           aria-hidden="true"
-          className="mr-1.5 inline-block h-3.5 w-3.5 align-middle"
+          className="mr-1.5 inline-block h-4 w-4 align-middle"
         />
         {deploymentInfo && (
           <>
@@ -99,7 +102,7 @@ export function DeployStatusLine({
               rel="noopener noreferrer"
               className="text-green-700 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
             >
-              <Spotify fontSize={16} className="mx-1" />
+              <Spotify fontSize={18} className="mx-1" />
               {songInfo.name}
             </a>
           </>
@@ -111,7 +114,7 @@ export function DeployStatusLine({
             {weatherDescription(weatherInfo.code, weatherInfo.isDay)}
             <WeatherIcon
               slug={weatherSlug(weatherInfo.code, weatherInfo.isDay)}
-              size={24}
+              size={32}
               className="ml-1 inline-block align-middle"
             />
             {" at "}
