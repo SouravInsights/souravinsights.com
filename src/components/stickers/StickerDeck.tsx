@@ -12,6 +12,8 @@ const N = STICKERS.length;
 const SUM_ASPECT = STICKERS.reduce((sum, s) => sum + s.aspect, 0);
 /** Breathing room between stickers, as a fraction of the row height. */
 const GAP_RATIO = 0.12;
+/** Extra lean, in degrees, a poked sticker rocks into. */
+const POKE_LEAN = 7;
 const STORAGE_KEY = "hero-stickers";
 
 /**
@@ -21,6 +23,10 @@ const STORAGE_KEY = "hero-stickers";
  * and the set fans out; leave, or tap again, and it gathers back onto one. A
  * click on a sticker in the fan gathers the row onto *that* one, so the pick is
  * deliberate rather than random.
+ *
+ * In the fan, pointing at a sticker (mouse) or pressing it (touch) *pokes* it:
+ * it rocks further into its own tilt and rings down, and its neighbours flinch
+ * off it. Rotation only — the artwork is a face, so nothing scales or warps.
  *
  * Laid out by content, not by file. The PNGs are trimmed to their artwork and
  * each carries its own aspect, so every sticker gets a box that matches it: the
@@ -63,6 +69,9 @@ export function StickerDeck({ className }: { className?: string }) {
 
   const [pinned, setPinned] = useState(false);
   const [hovering, setHovering] = useState(false);
+  // The sticker the pointer is on (mouse) or the finger is pressing (touch).
+  // This is the play: the fan pokes the sticker under the pointer.
+  const [active, setActive] = useState<number | null>(null);
   const [featured, setFeatured] = useState(0);
   const [ready, setReady] = useState(false);
   // After a pick, the pointer is still over the deck — so hover must not
@@ -105,6 +114,14 @@ export function StickerDeck({ className }: { className?: string }) {
   const transition = reduce
     ? { duration: 0.001 }
     : { type: "spring" as const, stiffness: 320, damping: 30 };
+  // The poke. A deliberately underdamped spring: it overshoots the lean and
+  // rings down over ~0.5s, so the sticker rocks to a stop instead of gliding
+  // there. Bounce is normally rationed; this is the site's one playful surface,
+  // so it earns it. The physics ARE the wobble — nothing is keyframed, so the
+  // motion stays interruptible and carries velocity across re-entries.
+  const poke = reduce
+    ? { duration: 0.001 }
+    : { type: "spring" as const, duration: 0.5, bounce: 0.4 };
 
   const pick = useCallback(
     (i: number) => {
@@ -113,6 +130,7 @@ export function StickerDeck({ className }: { className?: string }) {
       setPinned(false);
       suppressHover.current = true;
       setHovering(false);
+      setActive(null);
     },
     [feedback]
   );
@@ -120,12 +138,20 @@ export function StickerDeck({ className }: { className?: string }) {
   /** Where sticker `i` sits right now. One source for art and hit-testing. */
   const target = (i: number) => {
     if (open) {
+      const poked = i === active;
+      // A poke is felt by the row: the neighbours flinch off it.
+      const neighbour = active !== null && Math.abs(i - active) === 1;
+      const away = active === null ? 0 : Math.sign(i - active);
       return {
         x: offsets[i],
         scale: 1,
-        rotate: STICKERS[i].tilt,
+        // Poked, it rocks further into its own tilt. Rotation only: the art is
+        // a face, and any non-uniform scale warps it.
+        rotate: poked
+          ? STICKERS[i].tilt + (STICKERS[i].tilt < 0 ? -POKE_LEAN : POKE_LEAN)
+          : STICKERS[i].tilt + (neighbour ? away * 2 : 0),
         opacity: 1,
-        z: i,
+        z: poked ? 200 : i,
         live: true,
       };
     }
@@ -152,6 +178,7 @@ export function StickerDeck({ className }: { className?: string }) {
         if (e.pointerType !== "mouse") return;
         suppressHover.current = false;
         setHovering(false);
+        setActive(null);
       }}
       onClick={() => {
         // A click on the deck (not on a sticker) pins the row open or shut.
@@ -180,15 +207,34 @@ export function StickerDeck({ className }: { className?: string }) {
               zIndex: t.z,
             }}
             initial={false}
-            animate={{ x: t.x, scale: t.scale, rotate: t.rotate, opacity: t.opacity }}
-            transition={transition}
-            // The press has to feel like the sticker itself was pushed.
-            whileTap={{ scale: 0.92 }}
-            onPointerEnter={(e) => {
-              if (e.pointerType === "mouse" && !suppressHover.current) {
-                setHovering(true);
-              }
+            animate={{
+              x: t.x,
+              scale: t.scale,
+              rotate: t.rotate,
+              opacity: t.opacity,
             }}
+            // The poked sticker wobbles; everything else settles calmly.
+            transition={i === active ? poke : transition}
+            onPointerEnter={(e) => {
+              if (e.pointerType !== "mouse" || suppressHover.current) return;
+              setHovering(true);
+              setActive(i);
+            }}
+            onPointerLeave={(e) => {
+              if (e.pointerType !== "mouse") return;
+              setActive((current) => (current === i ? null : current));
+            }}
+            // Touch has no hover, so the press carries the poke: the sticker
+            // recoils under the finger before the tap gathers the row.
+            onPointerDown={(e) => {
+              if (e.pointerType === "mouse") return;
+              setActive(i);
+            }}
+            onPointerUp={(e) => {
+              if (e.pointerType === "mouse") return;
+              setActive((current) => (current === i ? null : current));
+            }}
+            onPointerCancel={() => setActive(null)}
             onClick={(e) => {
               // Only meaningful once the fan is out; otherwise the deck toggles.
               if (open) {
