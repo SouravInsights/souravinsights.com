@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import type { SVGProps } from "react";
 import { format } from "date-fns";
-import { CalendarBlank, CloudRain, CloudSnow, CloudLightning, CloudFog, Cloud, Sun } from "@phosphor-icons/react";
+import { RocketLaunch } from "@phosphor-icons/react";
+import { WeatherIcon } from "@/components/icons/weather";
+import { weatherSlug } from "@/lib/weather";
 
 interface DeploymentInfo {
   createdAt: string;
@@ -19,6 +21,8 @@ interface WeatherInfo {
   description: string;
   temperature: number;
   city: string;
+  code: number;
+  isDay: boolean;
 }
 
 const Spotify = (props: SVGProps<SVGSVGElement>) => (
@@ -100,37 +104,6 @@ export default function DeploymentStatus() {
     ? format(new Date(deploymentInfo.createdAt), "h:mm a")
     : null;
 
-  // Get the appropriate weather icon based on the description
-  const getWeatherIcon = (description: string) => {
-    const desc = description.toLowerCase();
-    if (desc.includes("rain") || desc.includes("shower"))
-      return (
-        <CloudRain size={16} className="inline-block ml-1 text-blue-500" />
-      );
-    if (desc.includes("snow"))
-      return (
-        <CloudSnow size={16} className="inline-block ml-1 text-blue-200" />
-      );
-    if (desc.includes("thunder") || desc.includes("lightning"))
-      return (
-        <CloudLightning
-          size={16}
-          className="inline-block ml-1 text-yellow-500"
-        />
-      );
-    if (desc.includes("drizzl"))
-      return (
-        <CloudFog size={16} className="inline-block ml-1 text-blue-400" />
-      );
-    if (desc.includes("cloud") || desc.includes("overcast"))
-      return <Cloud size={16} className="inline-block ml-1 text-gray-400" />;
-    if (desc.includes("mist") || desc.includes("fog"))
-      return <Cloud size={16} className="inline-block ml-1 text-gray-300" />;
-    if (desc.includes("clear") || desc.includes("sunny"))
-      return <Sun size={16} className="inline-block ml-1 text-yellow-500" />;
-    return <Cloud size={16} className="inline-block ml-1 text-gray-400" />;
-  };
-
   // Get a more relatable weather description
   const getWeatherDescription = (description: string) => {
     const desc = description.toLowerCase();
@@ -148,47 +121,61 @@ export default function DeploymentStatus() {
   return (
     <div className="type-caption mt-4 italic">
       <div className="rule mb-4" aria-hidden="true" />
-      <div className="flex items-start">
-        <CalendarBlank className="w-4 h-4 mt-0.5 text-green-700 dark:text-green-500 flex-shrink-0 mr-2" />
-        <div className="flex flex-wrap">
-          <span>
-            {deploymentInfo && (
-              <>
-                This site was last deployed on {formattedDate} at {formattedTime}
-              </>
-            )}
-            {songInfo && (
-              <>
-                {deploymentInfo ? " while listening to " : "Currently listening to "}
-                <a
-                  href={songInfo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green-700 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
-                >
-                  <Spotify fontSize={16} className="mx-1" />
-                  {songInfo.name}
-                </a>
-              </>
-            )}
-            {weatherInfo && (
-              <>
-                {deploymentInfo || songInfo ? ". " : ""}
-                {deploymentInfo ? "The weather was " : "The weather is "}
-                {getWeatherDescription(weatherInfo.description)}
-                {getWeatherIcon(weatherInfo.description)}
-                {" at "}
-                <span className="font-medium">
-                  {Math.round(weatherInfo.temperature)}°C
-                </span>
-                {" in "}
-                <span className="font-medium">{weatherInfo.city}</span>
-                {"."}
-              </>
-            )}
-          </span>
-        </div>
-      </div>
+      {/**
+       * Inline flow, not a flex row. `align-middle` seats both marks on the
+       * text's optical centre, which is steadier than nudging a flex child with
+       * margins, and it lets the line wrap the whole width instead of hanging
+       * off a fixed indent.
+       *
+       * Sizes encode the hierarchy: the rocket is a quiet 14px (it inherits the
+       * caption's muted colour), the weather illustration is 24px. Meteocons pad
+       * their 128 viewBox, so a 24px box draws a ~15px cloud — visually the
+       * largest mark on the line, which is the point.
+       */}
+      <p>
+        <RocketLaunch
+          aria-hidden="true"
+          className="mr-1.5 inline-block h-3.5 w-3.5 align-middle"
+        />
+        {deploymentInfo && (
+          <>
+            This site was last deployed on {formattedDate} at {formattedTime}
+          </>
+        )}
+        {songInfo && (
+          <>
+            {deploymentInfo ? " while listening to " : "Currently listening to "}
+            <a
+              href={songInfo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
+            >
+              <Spotify fontSize={16} className="mx-1" />
+              {songInfo.name}
+            </a>
+          </>
+        )}
+        {weatherInfo && (
+          <>
+            {deploymentInfo || songInfo ? ". " : ""}
+            {deploymentInfo ? "The weather was " : "The weather is "}
+            {getWeatherDescription(weatherInfo.description)}
+            <WeatherIcon
+              slug={weatherSlug(weatherInfo.code, weatherInfo.isDay)}
+              size={24}
+              className="ml-1 inline-block align-middle"
+            />
+            {" at "}
+            <span className="font-medium">
+              {Math.round(weatherInfo.temperature)}°C
+            </span>
+            {" in "}
+            <span className="font-medium">{weatherInfo.city}</span>
+            {"."}
+          </>
+        )}
+      </p>
     </div>
   );
 }

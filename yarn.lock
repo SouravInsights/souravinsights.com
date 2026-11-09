@@ -1116,6 +1116,16 @@
   dependencies:
     "@types/mdx" "^2.0.0"
 
+"@meteocons/svg-static@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@meteocons/svg-static/-/svg-static-0.1.0.tgz#8edf2246ef51b9be5994e446b920d32b35c1878d"
+  integrity sha512-dnuXOkt1W5q+XZbyj54dzjuBcKmsC0eLv51IVaW9kzzvzwnhwv9KgNXHKgpvmdN6cX2stMo+k95iMFbcyM4x5Q==
+
+"@meteocons/svg@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@meteocons/svg/-/svg-0.1.0.tgz#c0a0f0310012bc06d7c3dde942f639ee3ccfe6d4"
+  integrity sha512-Z/40RR6YzIjdN8qLUzRcZDaEYHfekU5rnHTH45EDVZQF1NyldIRpiFprcUKduIv4VK0kd6Uy+OOya4NWwuc2Bg==
+
 "@microsoft/fetch-event-source@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@microsoft/fetch-event-source/-/fetch-event-source-2.0.1.tgz#9ceecc94b49fbaa15666e38ae8587f64acce007d"

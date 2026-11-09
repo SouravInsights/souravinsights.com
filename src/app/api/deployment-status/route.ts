@@ -55,6 +55,8 @@ export async function GET() {
       description: string;
       temperature: number;
       city: string;
+      code: number;
+      isDay: boolean;
     } = null;
 
     if (weatherApiKey && weatherQ) {
@@ -70,6 +72,10 @@ export async function GET() {
           description: weatherJson?.current?.condition?.text ?? "",
           temperature: Number(weatherJson?.current?.temp_c ?? 0),
           city: weatherJson?.location?.name ?? String(weatherQ),
+          // The code, not the prose: it is what the icon maps on. `is_day`
+          // picks sun vs moon for the clear and thundery codes.
+          code: Number(weatherJson?.current?.condition?.code ?? 1006),
+          isDay: Number(weatherJson?.current?.is_day ?? 1) === 1,
         };
       }
     }
