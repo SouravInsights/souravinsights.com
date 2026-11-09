@@ -34,6 +34,7 @@ const DEPLOY: DeploymentInfo = {
 const SONG: SongInfo = {
   name: "Everlong",
   url: "https://open.spotify.com/track/0",
+  isPlaying: true,
 };
 
 /**

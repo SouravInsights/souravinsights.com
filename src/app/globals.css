@@ -394,6 +394,43 @@ html[data-resizing="true"] .app-shell * {
   }
 }
 
+/*
+  Now-playing ripple
+  ------------------
+  The Spotify mark is a green disc with three cut-out waves. The waves are
+  drawn separately so they can fade against the disc in a staggered loop —
+  the banner's only "this is playing" cue. Opacity only: no layout, no paint
+  of the surrounding line. Reduced motion leaves the mark static.
+*/
+.spotify-wave {
+  fill: hsl(var(--background));
+  transform-box: view-box;
+  transform-origin: center;
+  animation: spotify-wave 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+.spotify-wave-2 {
+  animation-delay: 0.18s;
+}
+.spotify-wave-3 {
+  animation-delay: 0.36s;
+}
+@keyframes spotify-wave {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.06);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spotify-wave {
+    animation: none;
+  }
+}
+
 
 /*
   Shipstack screen geometry

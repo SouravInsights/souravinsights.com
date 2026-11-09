@@ -49,10 +49,11 @@ export type WeatherSlug = (typeof WEATHER_SLUGS)[number];
  * The banner's words for each icon kind. Placed next to the slug map so the
  * copy and the drawing answer to the same code and cannot drift apart.
  *
- * The sentence frame is `It was …`, which is why these are adjectives and
- * participles (`raining`, `sunny`, `pouring`) and not the noun WeatherAPI
- * sends. `The weather was haze` was the old failure; this map cannot produce
- * it, because every entry has to read after `It was`.
+ * The sentence frame is `It was …` when a deploy exists and `It is …`
+ * otherwise, which is why these are adjectives and participles (`raining`,
+ * `sunny`, `pouring`) and not the noun WeatherAPI sends. `The weather was
+ * haze` was the old failure; this map cannot produce it, because every entry
+ * has to read after `It was` / `It is`.
  */
 const WEATHER_PHRASES: Record<WeatherSlug, string> = {
   "clear-day": "sunny",

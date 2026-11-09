@@ -167,7 +167,6 @@ One mechanism for the whole site (`src/lib/admin-auth.ts`):
 - Admin writes authenticate with `requireAdmin(request)`: the session cookie
   (same-origin) or `Authorization: Bearer $ADMIN_SECRET` for curl/MCP. One helper, no
   per-route copies.
-- `/api/spotify-refresh` was public with no caller; now gated the same way.
 
 ## Admin: hide links from the page itself
 
