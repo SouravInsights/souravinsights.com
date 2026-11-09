@@ -1,23 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { SVGProps } from "react";
 import { format } from "date-fns";
 import { RocketLaunch } from "@phosphor-icons/react";
 import { WeatherIcon } from "@/components/icons/weather";
-import { weatherSlug } from "@/lib/weather";
+import { weatherDescription, weatherSlug } from "@/lib/weather";
 
-interface DeploymentInfo {
+export interface DeploymentInfo {
   createdAt: string;
   url: string;
 }
 
-interface SongInfo {
+export interface SongInfo {
   name: string;
   url: string;
 }
 
-interface WeatherInfo {
+export interface WeatherInfo {
+  /** WeatherAPI's own prose. Kept in the payload, but the copy is drawn from
+      `code` so the words and the icon can never disagree. */
   description: string;
   temperature: number;
   city: string;
@@ -41,12 +43,96 @@ const Spotify = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+/**
+ * The sentence itself, with no data of its own. Split out of the fetching
+ * component so the exact copy is renderable from fixtures — see the dev sheet
+ * at `/dev/weather`.
+ */
+export function DeployStatusLine({
+  deploymentInfo,
+  songInfo,
+  weatherInfo,
+}: {
+  deploymentInfo: DeploymentInfo | null;
+  songInfo: SongInfo | null;
+  weatherInfo: WeatherInfo | null;
+}) {
+  if (!deploymentInfo && !weatherInfo && !songInfo) return null;
+
+  const formattedDate = deploymentInfo
+    ? format(new Date(deploymentInfo.createdAt), "MMMM d, yyyy")
+    : null;
+  const formattedTime = deploymentInfo
+    ? format(new Date(deploymentInfo.createdAt), "h:mm a")
+    : null;
+
+  return (
+    <div className="type-caption mt-4 italic">
+      <div className="rule mb-4" aria-hidden="true" />
+      {/**
+       * Inline flow, not a flex row. `align-middle` seats both marks on the
+       * text's optical centre, which is steadier than nudging a flex child with
+       * margins, and it lets the line wrap the whole width instead of hanging
+       * off a fixed indent.
+       *
+       * Sizes encode the hierarchy: the rocket is a quiet 14px (it inherits the
+       * caption's muted colour), the weather illustration is 24px. Meteocons pad
+       * their 128 viewBox, so a 24px box draws a ~15px cloud — visually the
+       * largest mark on the line, which is the point.
+       */}
+      <p>
+        <RocketLaunch
+          aria-hidden="true"
+          className="mr-1.5 inline-block h-3.5 w-3.5 align-middle"
+        />
+        {deploymentInfo && (
+          <>
+            This site was last deployed on {formattedDate} at {formattedTime}
+          </>
+        )}
+        {songInfo && (
+          <>
+            {deploymentInfo ? " while listening to " : "Currently listening to "}
+            <a
+              href={songInfo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-700 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
+            >
+              <Spotify fontSize={16} className="mx-1" />
+              {songInfo.name}
+            </a>
+          </>
+        )}
+        {weatherInfo && (
+          <>
+            {deploymentInfo || songInfo ? ". " : ""}
+            {deploymentInfo ? "It was " : "It is "}
+            {weatherDescription(weatherInfo.code, weatherInfo.isDay)}
+            <WeatherIcon
+              slug={weatherSlug(weatherInfo.code, weatherInfo.isDay)}
+              size={24}
+              className="ml-1 inline-block align-middle"
+            />
+            {" at "}
+            <span className="font-medium">
+              {Math.round(weatherInfo.temperature)}°C
+            </span>
+            {" in "}
+            <span className="font-medium">{weatherInfo.city}</span>
+            {"."}
+          </>
+        )}
+      </p>
+    </div>
+  );
+}
+
 export default function DeploymentStatus() {
   const [deploymentInfo, setDeploymentInfo] = useState<DeploymentInfo | null>(
     null
   );
   const [songInfo, setSongInfo] = useState<SongInfo | null>(null);
-
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -92,90 +178,11 @@ export default function DeploymentStatus() {
     );
   }
 
-  if (!deploymentInfo && !weatherInfo && !songInfo) {
-    return null;
-  }
-
-  // Format the deployment date
-  const formattedDate = deploymentInfo
-    ? format(new Date(deploymentInfo.createdAt), "MMMM d, yyyy")
-    : null;
-  const formattedTime = deploymentInfo
-    ? format(new Date(deploymentInfo.createdAt), "h:mm a")
-    : null;
-
-  // Get a more relatable weather description
-  const getWeatherDescription = (description: string) => {
-    const desc = description.toLowerCase();
-    if (desc.includes("mist") || desc.includes("fog")) return "foggy";
-    if (desc.includes("rain") && desc.includes("heavy")) return "pouring";
-    if (desc.includes("rain")) return "rainy";
-    if (desc.includes("drizzl")) return "drizzling";
-    if (desc.includes("snow")) return "snowing";
-    if (desc.includes("thunder")) return "stormy";
-    if (desc.includes("cloud") || desc.includes("overcast")) return "cloudy";
-    if (desc.includes("clear") || desc.includes("sunny")) return "sunny";
-    return description.toLowerCase();
-  };
-
   return (
-    <div className="type-caption mt-4 italic">
-      <div className="rule mb-4" aria-hidden="true" />
-      {/**
-       * Inline flow, not a flex row. `align-middle` seats both marks on the
-       * text's optical centre, which is steadier than nudging a flex child with
-       * margins, and it lets the line wrap the whole width instead of hanging
-       * off a fixed indent.
-       *
-       * Sizes encode the hierarchy: the rocket is a quiet 14px (it inherits the
-       * caption's muted colour), the weather illustration is 24px. Meteocons pad
-       * their 128 viewBox, so a 24px box draws a ~15px cloud — visually the
-       * largest mark on the line, which is the point.
-       */}
-      <p>
-        <RocketLaunch
-          aria-hidden="true"
-          className="mr-1.5 inline-block h-3.5 w-3.5 align-middle"
-        />
-        {deploymentInfo && (
-          <>
-            This site was last deployed on {formattedDate} at {formattedTime}
-          </>
-        )}
-        {songInfo && (
-          <>
-            {deploymentInfo ? " while listening to " : "Currently listening to "}
-            <a
-              href={songInfo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-700 dark:text-green-500 hover:underline font-medium inline-flex items-baseline"
-            >
-              <Spotify fontSize={16} className="mx-1" />
-              {songInfo.name}
-            </a>
-          </>
-        )}
-        {weatherInfo && (
-          <>
-            {deploymentInfo || songInfo ? ". " : ""}
-            {deploymentInfo ? "The weather was " : "The weather is "}
-            {getWeatherDescription(weatherInfo.description)}
-            <WeatherIcon
-              slug={weatherSlug(weatherInfo.code, weatherInfo.isDay)}
-              size={24}
-              className="ml-1 inline-block align-middle"
-            />
-            {" at "}
-            <span className="font-medium">
-              {Math.round(weatherInfo.temperature)}°C
-            </span>
-            {" in "}
-            <span className="font-medium">{weatherInfo.city}</span>
-            {"."}
-          </>
-        )}
-      </p>
-    </div>
+    <DeployStatusLine
+      deploymentInfo={deploymentInfo}
+      songInfo={songInfo}
+      weatherInfo={weatherInfo}
+    />
   );
 }

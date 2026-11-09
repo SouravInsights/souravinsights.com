@@ -45,6 +45,76 @@ export const WEATHER_SLUGS = [
 
 export type WeatherSlug = (typeof WEATHER_SLUGS)[number];
 
+/**
+ * The banner's words for each icon kind. Placed next to the slug map so the
+ * copy and the drawing answer to the same code and cannot drift apart.
+ *
+ * The sentence frame is `It was …`, which is why these are adjectives and
+ * participles (`raining`, `sunny`, `pouring`) and not the noun WeatherAPI
+ * sends. `The weather was haze` was the old failure; this map cannot produce
+ * it, because every entry has to read after `It was`.
+ */
+const WEATHER_PHRASES: Record<WeatherSlug, string> = {
+  "clear-day": "sunny",
+  "clear-night": "clear",
+  "partly-cloudy-day": "partly cloudy",
+  "partly-cloudy-night": "partly cloudy",
+  cloudy: "cloudy",
+  overcast: "overcast",
+  haze: "hazy",
+  dust: "dusty",
+  "wind-dust": "dusty and windy",
+  mist: "misty",
+  smoke: "smoky",
+  fog: "foggy",
+  drizzle: "drizzling",
+  rain: "raining",
+  "extreme-rain": "pouring",
+  sleet: "sleeting",
+  "extreme-sleet": "sleeting heavily",
+  snow: "snowing",
+  "extreme-snow": "snowing heavily",
+  "wind-snow": "snowing and blowing",
+  hail: "hailing",
+  "extreme-hail": "hailing heavily",
+  "thunderstorms-day": "stormy",
+  "thunderstorms-night": "stormy",
+  "thunderstorms-rain": "stormy with rain",
+  "thunderstorms-snow": "stormy with snow",
+};
+
+/**
+ * What the banner says the weather was. Keyed on the code like the icon is,
+ * with a handful of overrides where the code is more specific than the icon
+ * kind it collapses into — a sandstorm is not just "dusty and windy".
+ */
+export function weatherDescription(code: number, isDay: boolean): string {
+  switch (code) {
+    case 1021:
+      return "a dust storm";
+    case 1024:
+      return "a sandstorm";
+    case 1027:
+      return "a severe sandstorm";
+    case 1039:
+      return "smoggy";
+    case 1042:
+      return "thick with smog";
+    case 1117:
+      return "a blizzard";
+    case 1147:
+      return "foggy and freezing";
+    case 1168:
+    case 1171:
+      return "freezing drizzle";
+    case 1198:
+    case 1201:
+      return "freezing rain";
+    default:
+      return WEATHER_PHRASES[weatherSlug(code, isDay)];
+  }
+}
+
 export function weatherSlug(code: number, isDay: boolean): WeatherSlug {
   switch (code) {
     // Clear / partly cloudy — the only codes that depend on the sun.
@@ -105,10 +175,9 @@ export function weatherSlug(code: number, isDay: boolean): WeatherSlug {
     case 1243:
     case 1246:
       return "extreme-rain";
-    // Sleet / ice pellets
+    // Sleet — the mixed rain/snow kind
     case 1069:
     case 1204:
-    case 1237:
     case 1249:
       return "sleet";
     case 1207:
@@ -130,7 +199,8 @@ export function weatherSlug(code: number, isDay: boolean): WeatherSlug {
     case 1114:
     case 1117:
       return "wind-snow";
-    // Ice-pellet showers
+    // Ice pellets — round, so the pellet icon, not the rain/snow sleet icon
+    case 1237:
     case 1261:
       return "hail";
     case 1264:
