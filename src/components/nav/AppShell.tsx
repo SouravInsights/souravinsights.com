@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BookOpen, BookOpenText, BookmarkSimple, Stack, BracketsCurly, FilmSlate, Code, FilmStrip, GameController, GithubLogo, House, LinkedinLogo, EnvelopeSimple, DotsThree, SidebarSimple, Sparkle, XLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
+import { BookOpen, BookOpenText, BookmarkSimple, Stack, BracketsCurly, FilmSlate, FilmStrip, GameController, GithubLogo, House, LinkedinLogo, EnvelopeSimple, DotsThree, SidebarSimple, Sparkle, XLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
 import Oneko from "@/components/oneko";
@@ -26,6 +26,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { CopyButton } from "@/components/CopyButton";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
@@ -201,23 +203,98 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+interface Social {
+  href: string;
+  /** What the copy control writes. The email copies the bare address, because
+      a pasted `mailto:` is not what anyone wants in a chat or a form. */
+  copy: string;
+  label: string;
+  icon: PhosphorIcon;
+}
+
 /** The rail's foot carries what the footer used to: the socials and a way to
     write. Icons with a title, because they are never words. */
-const socials = [
-  { href: "https://github.com/souravinsights", label: "GitHub", icon: GithubLogo },
+const socials: Social[] = [
+  {
+    href: "https://github.com/souravinsights",
+    copy: "https://github.com/souravinsights",
+    label: "GitHub",
+    icon: GithubLogo,
+  },
   {
     href: "https://linkedin.com/in/souravinsights",
+    copy: "https://linkedin.com/in/souravinsights",
     label: "LinkedIn",
     icon: LinkedinLogo,
   },
-  { href: "https://twitter.com/souravinsights", label: "Twitter", icon: XLogo },
-  { href: "mailto:souravinsights@gmail.com", label: "Email me", icon: EnvelopeSimple },
   {
-    href: "https://github.com/SouravInsights/souravinsights.com",
-    label: "Source code",
-    icon: Code,
+    href: "https://twitter.com/souravinsights",
+    copy: "https://twitter.com/souravinsights",
+    label: "Twitter",
+    icon: XLogo,
+  },
+  {
+    href: "mailto:souravinsights@gmail.com",
+    copy: "souravinsights@gmail.com",
+    label: "Email",
+    icon: EnvelopeSimple,
   },
 ];
+
+/**
+ * One social link. Its copy control lives in the tooltip, because the rail has
+ * no room for a second control beside a 32px icon and a chip on the icon's
+ * corner covers the link it belongs to. Radix keeps the tooltip alive while the
+ * pointer crosses the gap to that control.
+ */
+function SocialButton({ social }: { social: Social }) {
+  const feedback = useFeedback();
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          asChild
+          variant="ghost"
+          size="icon-sm"
+          className="text-muted-foreground"
+        >
+          <a
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={social.label}
+            className="group/social"
+          >
+            <social.icon
+              weight="regular"
+              className="transition-transform duration-200 group-hover/social:scale-110 group-hover/social:-translate-y-0.5"
+            />
+          </a>
+        </Button>
+      </TooltipTrigger>
+
+      <TooltipContent
+        side="right"
+        /* No exit animation: moving down the column opens the next tooltip
+           before the last has faded, and two tooltips anchored to stacked
+           icons read as one welded blob. */
+        /* The copy button is taller than a line of text, so the tooltip needs
+           less of the default padding to end up the same 34px as the nav's
+           label-only tooltips — otherwise it reads as the heavy one. */
+        className="flex items-center gap-2 !py-1 data-[state=closed]:!animate-none"
+      >
+        <span>{social.label}</span>
+        <CopyButton
+          value={social.copy}
+          label={social.label}
+          iconOnly
+          onCopied={feedback.press}
+        />
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 function SiteRail({
   pathname,
@@ -323,33 +400,13 @@ function SiteRail({
           the cat still walks the rail. Only the footer is fenced: a keep-out
           over the nav rows would leave it no rail at all. */}
       <SidebarFooter data-oneko-zone="avoid" className="gap-2 p-2">
-        {/* The socials wrap among themselves. The two switches used to sit at the
-            end of this same flow, so in the open rail the seventh icon — the
-            theme toggle — dropped onto a line of its own, under nothing in
-            particular. */}
+        {/* The socials wrap among themselves, each with its copy control in
+            the tooltip. The two switches used to sit at the end of this same
+            flow, so in the open rail the seventh icon — the theme toggle —
+            dropped onto a line of its own, under nothing in particular. */}
         <div className="flex flex-wrap items-center justify-center gap-0.5">
           {socials.map((social) => (
-            <Button
-              key={social.label}
-              asChild
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground"
-            >
-              <a
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.label}
-                title={social.label}
-                className="group/social"
-              >
-                <social.icon
-                  weight="regular"
-                  className="transition-transform duration-200 group-hover/social:scale-110 group-hover/social:-translate-y-0.5"
-                />
-              </a>
-            </Button>
+            <SocialButton key={social.label} social={social} />
           ))}
         </div>
 
@@ -553,6 +610,51 @@ function MoreSheet({
                 </Link>
               );
             })}
+          </div>
+
+          {/* A phone has no rail, so the sheet carries the socials — one row
+              of pairs, not a list. The sheet is a menu; five more rows would
+              turn it into a page. The link is the action and the copy is the
+              afterthought, so the link wears a filled square and the copy is a
+              quiet glyph beside it: identical weight and colour read as eight
+              buttons of equal rank. */}
+          <div className="mt-1 border-t border-border px-2 pt-2.5">
+            <span className="type-caption text-faint-foreground">Connect</span>
+            <div className="mt-1 flex items-center justify-between">
+              {socials.map((social) => (
+                <div key={social.label} className="flex items-center gap-1">
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="icon-sm"
+                    className="bg-secondary text-foreground transition-transform active:scale-95"
+                  >
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      title={social.label}
+                      onClick={onNavigate}
+                      className="group/social"
+                    >
+                      <social.icon
+                        size={16}
+                        weight="regular"
+                        className="transition-transform duration-200 group-hover/social:scale-110"
+                      />
+                    </a>
+                  </Button>
+                  <CopyButton
+                    value={social.copy}
+                    label={social.label}
+                    iconOnly
+                    onCopied={onNavigate}
+                    className="!text-faint-foreground"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mt-1 flex items-center justify-between border-t border-border px-2 pt-2.5">

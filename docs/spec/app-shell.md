@@ -46,9 +46,32 @@ md+                                        <md
   follows it.
 - **Both draw from one list** (`destinations` + `elsewhere` in AppShell). The
   phone shows the four with `tab: true`; More opens the rest, the three
-  non-section pages, and the theme and sound switches.
+  non-section pages, the socials, and the theme and sound switches.
 - The footer stays for content pages and is skipped where a screen owns the
   whole frame (`/play`, `/cv`, `/curio`).
+
+## The socials, and copying them
+
+The rail's foot and the More sheet draw the same `socials` list, so the two
+cannot drift. Each link stays a link — click opens it — and gains a copy control,
+so taking an address costs one click instead of a tab, or the browser's own
+long-press menu on a phone. (The phone's sheet carried no socials at all before
+this; it does now.)
+
+The rail has no room for a second control beside a 32px icon, and a chip on the
+icon's corner covers the link it belongs to. So the copy control lives in the
+link's tooltip, which the tooltip primitive positions outside the icon: hover the
+icon and the label and the copy button appear. The copy is pointer-only there —
+the link itself stays keyboard-reachable, but Radix closes a tooltip when its
+trigger blurs, so the copy button inside it cannot be Tabbed to. Forcing the
+tooltip open on focus was tried and removed: clicking a link leaves focus on it,
+so one tooltip stuck open while the next opened, and two welded together. The
+phone has no hover, so the sheet gives the socials a single row of icon-plus-copy
+pairs. They are a row and not a list on purpose: the sheet is a menu, and five
+more rows would turn it into a page. The link wears a filled square there and
+the copy is a quiet glyph beside it, so open and copy do not read as buttons of
+equal rank. The email copies the bare address, not its `mailto:` scheme, because
+that is what ends up pasted.
 
 ## The contract
 
