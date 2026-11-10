@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { BookOpen, BookOpenText, BookmarkSimple, Stack, BracketsCurly, FilmSlate, FilmStrip, GameController, GithubLogo, House, LinkedinLogo, EnvelopeSimple, DotsThree, SidebarSimple, Sparkle, XLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
@@ -28,6 +29,7 @@ import {
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CopyButton } from "@/components/CopyButton";
+import { STICKERS } from "@/components/stickers/stickers";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
@@ -296,6 +298,54 @@ function SocialButton({ social }: { social: Social }) {
   );
 }
 
+/**
+ * The face in the rail's brand row.
+ *
+ * One sticker at a time, cycling while the row is held and stopping where the
+ * pointer leaves. The rail is the site's chrome, so its one bit of personality
+ * lives on the thing the eye lands on first: reaching for the collapse control
+ * shuffles the face, and nothing else in the shell moves.
+ *
+ * Every sticker is mounted and cross-faded rather than swapped by `key`, so a
+ * change never flashes a fresh image request. They are `next/image` thumbnails,
+ * which matters here: the cut-outs are ~300KB each, and this mark renders on
+ * every page of the site.
+ */
+function BrandMark({ index, reduce }: { index: number; reduce: boolean }) {
+  return (
+    <span
+      className="relative h-11 w-11 shrink-0"
+      aria-hidden="true"
+    >
+      {STICKERS.map((sticker, i) => (
+        <motion.span
+          key={sticker.src}
+          className="absolute inset-0"
+          initial={false}
+          animate={{
+            opacity: i === index ? 1 : 0,
+            scale: i === index ? 1 : 0.4,
+            rotate: i === index ? 0 : -8,
+          }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { type: "spring", stiffness: 700, damping: 26 }
+          }
+        >
+          <Image
+            src={sticker.src}
+            alt=""
+            width={96}
+            height={96}
+            className="h-full w-full object-contain"
+          />
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
 function SiteRail({
   pathname,
   onNavigate,
@@ -305,6 +355,20 @@ function SiteRail({
 }) {
   const rail = useRail();
   const { open, toggleSidebar } = useSidebar();
+  const reduce = useReducedMotion();
+  const [face, setFace] = useState(0);
+  const [hovering, setHovering] = useState(false);
+
+  // Shuffle the face while the row is held and stop where the pointer leaves.
+  // Reduced motion settles on one face instead of cycling.
+  useEffect(() => {
+    if (!hovering || reduce) return;
+    const id = window.setInterval(
+      () => setFace((current) => (current + 1) % STICKERS.length),
+      400
+    );
+    return () => window.clearInterval(id);
+  }, [hovering, reduce]);
 
   return (
     <Sidebar collapsible="icon">
@@ -318,7 +382,11 @@ function SiteRail({
           One button, not a mark plus a target beside it: a row that does one
           thing cannot be misread, and the chevron is what says which thing. In
           icon mode there is no room for the chevron, so the tooltip carries it
-          and the whole 76px column is the target. */}
+          and the whole 76px column is the target.
+
+          The mark is the sticker set, and while the row is hovered the faces
+          cycle. It is the shell's only wink, and it costs nothing: the face is
+          decorative, and the button still only toggles. */}
       <SidebarHeader className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
@@ -328,23 +396,17 @@ function SiteRail({
                 onNavigate();
                 toggleSidebar();
               }}
+              onPointerEnter={() => {
+                setHovering(true);
+                setFace((current) => (current + 1) % STICKERS.length);
+              }}
+              onPointerLeave={() => setHovering(false)}
               tooltip="Expand navigation"
               aria-expanded={open}
               aria-label={open ? "Collapse navigation" : "Expand navigation"}
-              className="gap-2.5 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:!size-9 group-data-[collapsible=icon]:!p-1"
+              className="gap-2.5 hover:!bg-transparent active:!bg-transparent group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:!p-1"
             >
-              <Image
-                src="/si-logo.png"
-                alt=""
-                width={56}
-                height={56}
-                priority
-                /* Pixel art: without `pixelated` the browser invents shades
-                   between the blocks and the face turns to mush at 28px. The
-                   ring is for dark mode, where a light-backed mark would sit
-                   on the card with no edge to hold it. */
-                className="h-7 w-7 shrink-0 rounded-md object-cover ring-1 ring-black/10 [image-rendering:pixelated] dark:ring-white/15"
-              />
+              <BrandMark index={face} reduce={reduce ?? false} />
               <span className="truncate font-mono transition-opacity shell-transition group-data-[collapsible=icon]:opacity-0">
                 Sourav
               </span>

@@ -144,9 +144,16 @@ Where the toggle lives is part of the same problem, because a control nobody
 finds is a control that does not exist. It is the **brand row**: the mark is the
 button, with `PanelLeftClose` beside it while there is room to show it and the
 tooltip carrying the meaning in icon mode, where the whole 76px column is the
-target. Before, the mark was a link home — which the Home row one item below
-already does — and the only toggle was a `PanelLeft` buried in the footer's row
-of five social icons. `Cmd/Ctrl+B` and the edge strip still work.
+target. The mark itself is the site's sticker set: while the row is hovered the
+faces cycle in with a spring, and the shuffle stops where the pointer leaves. It
+is the shell's only wink, and free because the face is decorative and the button
+still only toggles. The row also drops the menu button's hover wash: a rectangle
+behind a transparent cut-out is the box the mark exists to avoid. The cut-outs
+are ~300KB each, so the mark draws `next/image` thumbnails rather than the full
+artwork.
+Before, the mark was a link home — which the Home row one item below already
+does — and the only toggle was a `PanelLeft` buried in the footer's row of five
+social icons. `Cmd/Ctrl+B` and the edge strip still work.
 
 ## Overlays
 
