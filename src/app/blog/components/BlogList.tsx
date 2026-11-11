@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { PostMetadata } from "../utils/blogUtils";
 import { PageHeader } from "@/components/PageHeader";
 import { FadeIn } from "@/components/FadeIn";
+import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 import { Warning } from "@phosphor-icons/react";
 
 interface BlogListProps {
@@ -25,6 +26,8 @@ const formatPostDate = (date: string) => {
 };
 
 export default function BlogList({ posts }: BlogListProps) {
+  const { isDimmed, getItemProps } = useSpotlight();
+
   return (
     <div>
       <FadeIn y={20} duration={0.3}>
@@ -40,8 +43,12 @@ export default function BlogList({ posts }: BlogListProps) {
             <div key={post.slug}>
               {index > 0 && <div className="rule" aria-hidden="true" />}
               <FadeIn delay={Math.min(index, 12) * 0.03}>
-                <Link href={`/blog/${post.slug}`} className="list-row group">
-                  <span className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors min-w-0">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  {...getItemProps(index)}
+                  className={`list-row group ${spotlightClass(isDimmed(index))}`}
+                >
+                  <span className="type-heading group-hover:text-green-700 dark:group-hover:text-green-500 min-w-0">
                     {post.title}
                   </span>
 

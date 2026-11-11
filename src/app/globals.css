@@ -214,9 +214,14 @@
   }
 
   /* The shared list unit: a title row with an optional quiet meta value.
-     Background only appears on hover, so a list reads as text until touched. */
+     Background only appears on hover, so a list reads as text until touched.
+     Square corners: the band spans the full row. No transition on the
+     background: Vercel's deployment rows swap `bg-background-100` for
+     `hover:bg-gray-100` with no transition, so the paint is instant on both
+     enter and leave. A fade-out leaves a stack of ghost rows behind a fast
+     pointer; instant means only the row under the cursor is ever lit. */
   .list-row {
-    @apply -mx-3 flex flex-col gap-1 rounded-md px-3 py-3.5 transition-colors duration-200 hover:bg-foreground/5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6;
+    @apply -mx-3 flex flex-col gap-1 px-3 py-3.5 hover:bg-foreground/5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6;
   }
 
   /* Hairline rule: a fine dash pattern, kept subtle so dividers read as

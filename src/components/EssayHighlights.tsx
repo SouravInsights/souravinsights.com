@@ -62,7 +62,7 @@ export function EssayHighlights() {
               )}`}
             >
               <h3
-                className={`type-heading min-w-0 line-clamp-2 transition-colors group-hover:text-green-700 dark:group-hover:text-green-500 ${emphasisClass(
+                className={`type-heading min-w-0 line-clamp-2 group-hover:text-green-700 dark:group-hover:text-green-500 ${emphasisClass(
                   index
                 )}`}
               >

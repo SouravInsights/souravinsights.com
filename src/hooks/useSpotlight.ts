@@ -3,8 +3,7 @@
 import { useState } from "react";
 import type { MouseEvent } from "react";
 
-const SPOTLIGHT_TRANSITION =
-  "transition-[filter,opacity,background-color] duration-300";
+const SPOTLIGHT_TRANSITION = "transition-[filter,opacity] duration-300";
 const SPOTLIGHT_DIM = "blur-[1px] opacity-40";
 const SPOTLIGHT_SHARP = "blur-0 opacity-100";
 

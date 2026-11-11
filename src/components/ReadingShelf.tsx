@@ -45,7 +45,7 @@ function BookRow({
         )}
       </div>
       <div className="min-w-0 pt-0.5">
-        <p className="type-caption line-clamp-2 font-medium leading-snug text-foreground transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+        <p className="type-caption line-clamp-2 font-medium leading-snug text-foreground group-hover:text-green-700 dark:group-hover:text-green-500">
           {book.title}
         </p>
         {author ? (
