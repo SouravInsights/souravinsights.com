@@ -5,17 +5,32 @@ import type { MouseEvent } from "react";
 
 const SPOTLIGHT_DIM = "blur-[1px] opacity-40";
 const SPOTLIGHT_SHARP = "blur-0 opacity-100";
+const SPOTLIGHT_TRANSITION = "transition-[filter,opacity] duration-300";
+
+interface SpotlightClassOptions {
+  /**
+   * Fade the blur. Use on dense grids: a single row dims one thing, but a
+   * grid dims many cells at once, and an instant change there reads as a
+   * flash. Single-row lists stay instant.
+   */
+  smooth?: boolean;
+}
 
 /**
  * Shared class string for a spotlightable item. Kept next to the hook so the
  * blur strength lives in one place.
  *
- * No transition: the dim is a pure function of the pointer position. A
+ * Instant by default: the dim is a pure function of the pointer position. A
  * transition makes the blur lag behind a fast pointer, so rows stay blurry
- * while the cursor is already on the next one.
+ * while the cursor is already on the next one. Pass `smooth` for dense grids,
+ * where the same instant change is a flash.
  */
-export function spotlightClass(dimmed: boolean): string {
-  return dimmed ? SPOTLIGHT_DIM : SPOTLIGHT_SHARP;
+export function spotlightClass(
+  dimmed: boolean,
+  { smooth = false }: SpotlightClassOptions = {}
+): string {
+  const dim = dimmed ? SPOTLIGHT_DIM : SPOTLIGHT_SHARP;
+  return smooth ? `${SPOTLIGHT_TRANSITION} ${dim}` : dim;
 }
 
 interface UseSpotlightOptions {

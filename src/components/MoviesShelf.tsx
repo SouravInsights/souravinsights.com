@@ -30,7 +30,7 @@ function MovieRow({
     <div
       title={movie.title}
       {...props}
-      className={`group flex items-start gap-3 ${spotlightClass(dimmed)}`}
+      className={`group flex items-start gap-3 ${spotlightClass(dimmed, { smooth: true })}`}
     >
       <div className="relative aspect-[2/3] w-10 shrink-0 overflow-hidden rounded border border-border bg-secondary">
         {movie.posterData ? (
