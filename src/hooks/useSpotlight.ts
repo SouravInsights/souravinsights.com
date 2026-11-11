@@ -3,16 +3,19 @@
 import { useState } from "react";
 import type { MouseEvent } from "react";
 
-const SPOTLIGHT_TRANSITION = "transition-[filter,opacity] duration-300";
 const SPOTLIGHT_DIM = "blur-[1px] opacity-40";
 const SPOTLIGHT_SHARP = "blur-0 opacity-100";
 
 /**
  * Shared class string for a spotlightable item. Kept next to the hook so the
  * blur strength lives in one place.
+ *
+ * No transition: the dim is a pure function of the pointer position. A
+ * transition makes the blur lag behind a fast pointer, so rows stay blurry
+ * while the cursor is already on the next one.
  */
 export function spotlightClass(dimmed: boolean): string {
-  return `${SPOTLIGHT_TRANSITION} ${dimmed ? SPOTLIGHT_DIM : SPOTLIGHT_SHARP}`;
+  return dimmed ? SPOTLIGHT_DIM : SPOTLIGHT_SHARP;
 }
 
 interface UseSpotlightOptions {
