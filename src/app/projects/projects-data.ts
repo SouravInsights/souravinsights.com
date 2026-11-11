@@ -88,10 +88,10 @@ export const seedProjects: Project[] = [
     position: 0,
   },
   {
-    slug: "spotfree",
-    name: "Spotfree",
+    slug: "rinze",
+    name: "Rinze",
     logo: "/projects/spotfree-logo.png",
-    url: "https://spotfreee.vercel.app/",
+    url: "https://rinze.app",
     tagline: "",
     note: "",
     what: "",
