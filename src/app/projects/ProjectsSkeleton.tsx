@@ -5,7 +5,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 export type SkeletonItem = { key: string; node: ReactNode };
 
 /**
- * The projects page layout: the main list, the "Smaller things" band, and the
+ * The projects page layout: the main list, the "Other things" band, and the
  * graveyard.
  *
  * It takes rendered rows, not projects, so the viewer and the editor hand it the
@@ -47,8 +47,8 @@ export function ProjectsSkeleton({
 
       <section className="mt-16 sm:mt-24">
         <SectionHeader
-          title="Smaller things"
-          description="Older experiments and side projects that didn't need more than a weekend."
+          title="Other things"
+          description="A few other things I built for myself, with craft."
         />
         <div className="flex flex-col">
           {otherItems.map((item, index) => (
