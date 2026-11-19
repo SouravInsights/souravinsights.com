@@ -12,20 +12,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { code } from "@streamdown/code";
 import type { UIMessage } from "ai";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
 import {
   createContext,
-  memo,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
-import { Streamdown } from "streamdown";
+import dynamic from "next/dynamic";
+import type { MessageResponseProps } from "./message-response";
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage["role"];
@@ -316,29 +315,15 @@ export const MessageBranchPage = ({
   );
 };
 
-export type MessageResponseProps = ComponentProps<typeof Streamdown>;
+export type { MessageResponseProps };
 
-// Only the `code` plugin: replies here are prose + links, and the others
-// (cjk, math, mermaid) would install megabytes we never render.
-const streamdownPlugins = { code };
-
-export const MessageResponse = memo(
-  ({ className, ...props }: MessageResponseProps) => (
-    <Streamdown
-      className={cn(
-        "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
-        className
-      )}
-      plugins={streamdownPlugins}
-      {...props}
-    />
-  ),
-  (prevProps, nextProps) =>
-    prevProps.children === nextProps.children &&
-    nextProps.isAnimating === prevProps.isAnimating
+// `ssr: false`: shiki (behind streamdown) is ESM-only, and the insights page
+// server-renders this shell. Loading it client-side keeps `require()` away from
+// it. See message-response.tsx.
+export const MessageResponse = dynamic(
+  () => import("./message-response").then((mod) => mod.MessageResponse),
+  { ssr: false }
 );
-
-MessageResponse.displayName = "MessageResponse";
 
 export type MessageToolbarProps = ComponentProps<"div">;
 
