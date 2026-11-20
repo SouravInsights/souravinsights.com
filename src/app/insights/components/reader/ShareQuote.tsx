@@ -5,18 +5,13 @@ import {
   Check,
   Copy as CopyIcon,
   DownloadSimple,
+  Plus,
   SlidersHorizontal,
   SpinnerGap,
 } from "@phosphor-icons/react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -64,8 +59,8 @@ import {
  *    snap points don't fight the animation, and the active design is chosen from
  *    whichever slide is nearest the centre on scroll.
  *
- * Every control is a shadcn primitive (Select, Switch, Popover, Input, Textarea,
- * Separator, Label, Button, RadioGroup) on this site's tokens.
+ * Every control is a shadcn primitive (Select, Switch, Textarea, Separator,
+ * Label, Button, RadioGroup) on this site's tokens.
  */
 
 interface Props {
@@ -426,13 +421,39 @@ export function ShareQuote({
 
   const set = (patch: Overrides) => setOverrides((all) => ({ ...all, ...patch }));
 
+  /**
+   * The colour roles the current design actually paints. A variant is a preset
+   * for all of them; a hand-picked colour is an override on top. The two must
+   * not disagree: picking a variant clears the colour overrides, and editing a
+   * colour leaves the variant row unselected.
+   */
+  const COLOR_KEYS = ["background", "text", "highlight", "highlightText"] as const;
+  const hasColorOverrides = COLOR_KEYS.some(
+    (key) => overrides[key] !== undefined
+  );
+  const clearColorOverrides = () =>
+    setOverrides((all) => {
+      const next = { ...all };
+      for (const key of COLOR_KEYS) delete next[key];
+      return next;
+    });
+  const clear = (key: keyof Overrides) =>
+    setOverrides((all) => {
+      const next = { ...all };
+      delete next[key];
+      return next;
+    });
+
   const panel = (
     <CustomizePanel
       theme={theme}
+      variant={variant}
       options={options}
       overrides={overrides}
       set={set}
+      clear={clear}
       reset={() => setOverrides({})}
+      clearColors={clearColorOverrides}
       quote={draftQuote}
       setQuote={setDraftQuote}
       title={draftTitle}
@@ -606,25 +627,37 @@ export function ShareQuote({
               })}
             </div>
 
-            {/* The active design's own variants. */}
-            <RadioGroup
-              aria-label={`${theme.name} colors`}
-              value={String(variantIndex)}
-              onValueChange={(value) => setVariantIndex(Number(value))}
-              className="flex h-8 items-center justify-center gap-2.5"
-              style={{ marginTop: -10 }}
-            >
-              {theme.variants.map((v, index) => (
-                <RadioGroupItem
-                  key={v.name}
-                  value={String(index)}
-                  aria-label={v.name}
-                  title={v.name}
-                  style={{ background: v.swatch }}
-                  className="size-7 flex-none overflow-hidden rounded-full border-0 p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-shadow duration-150 hover:shadow-[0_0_0_2px_hsl(var(--card)),0_0_0_3px_hsl(var(--muted-foreground))] data-[state=checked]:shadow-[0_0_0_2px_hsl(var(--card)),0_0_0_3.5px_hsl(var(--foreground))] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] [&_svg]:hidden"
-                />
-              ))}
-            </RadioGroup>
+            {/* The active design's own variants. A hand-picked colour is a
+                custom layer on top of the preset, so the row clears its
+                selection and says so rather than pretending a preset is in
+                force. */}
+            <div className="relative" style={{ marginTop: -10 }}>
+              <RadioGroup
+                aria-label={`${theme.name} colors`}
+                value={hasColorOverrides ? "" : String(variantIndex)}
+                onValueChange={(value) => {
+                  setVariantIndex(Number(value));
+                  clearColorOverrides();
+                }}
+                className="flex h-8 items-center justify-center gap-2.5"
+              >
+                {theme.variants.map((v, index) => (
+                  <RadioGroupItem
+                    key={v.name}
+                    value={String(index)}
+                    aria-label={v.name}
+                    title={v.name}
+                    style={{ background: v.swatch }}
+                    className="size-7 flex-none overflow-hidden rounded-full border-0 p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-shadow duration-150 hover:shadow-[0_0_0_2px_hsl(var(--card)),0_0_0_3px_hsl(var(--muted-foreground))] data-[state=checked]:shadow-[0_0_0_2px_hsl(var(--card)),0_0_0_3.5px_hsl(var(--foreground))] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] [&_svg]:hidden"
+                  />
+                ))}
+              </RadioGroup>
+              {hasColorOverrides && (
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
+                  Custom
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -751,100 +784,99 @@ function Choice<T extends string>({
   );
 }
 
-function ColorRow({
+/**
+ * One colour role, edited in place. No popover: a picker that covers the card
+ * it is changing is the wrong primitive, and on a phone a portalled popover
+ * inside a dialog is one z-index away from being unreachable. The swatches sit
+ * in the panel, under the label they belong to.
+ */
+function ColorField({
   label,
   value,
   onChange,
   presets,
+  valueLabel,
+  gradient,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   presets: string[];
+  valueLabel?: string;
+  /** The design's gradient paint, when it has one. */
+  gradient?: { swatch: string; active: boolean; onSelect: () => void };
 }) {
-  const [open, setOpen] = useState(false);
   const unique = Array.from(new Set(presets));
-  const id = `share-color-${label.toLowerCase()}`;
-
-  // A picked colour is the end of the interaction: close the picker so the
-  // card underneath is visible again. On a phone the popover would otherwise
-  // sit on top of the preview it just changed.
-  const choose = (next: string) => {
-    onChange(next);
-    setOpen(false);
-  };
+  const id = `share-color-${label.toLowerCase().replace(/\s+/g, "-")}`;
+  const gradientActive = gradient?.active ?? false;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          aria-label={`${label} colour: ${value}`}
-          className="-mx-2 flex h-9 w-[calc(100%+16px)] items-center gap-2.5 rounded-[9px] px-2 font-normal hover:bg-foreground/5"
-        >
-          <span
-            className="size-5 shrink-0 overflow-hidden rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
-            style={{ background: value }}
+    <div className="py-1.5">
+      <div className="flex items-center justify-between gap-3">
+        <Label htmlFor={id} className="text-[13px] font-normal text-foreground">
+          {label}
+        </Label>
+        <span className="text-[12px] tabular-nums text-muted-foreground">
+          {valueLabel ?? value.toUpperCase()}
+        </span>
+      </div>
+      <div className="mt-2 flex items-center gap-1.5">
+        {gradient && (
+          <button
+            type="button"
+            onClick={gradient.onSelect}
+            aria-label={`${label}: gradient`}
+            aria-pressed={gradient.active}
+            title="Gradient"
+            style={{ background: gradient.swatch }}
+            className={`size-6 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] ${
+              gradient.active
+                ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                : ""
+            }`}
           />
-          <span className="flex-1 text-left text-[13px] text-foreground">
-            {label}
-          </span>
-          <span className="text-[12px] tabular-nums text-muted-foreground">
-            {value.toUpperCase()}
-          </span>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        side="bottom"
-        collisionPadding={12}
-        className="w-[min(248px,calc(100vw-32px))] p-3"
-      >
-        <div className="grid grid-cols-7 gap-1.5">
-          {unique.map((preset) => {
-            const active = preset.toLowerCase() === value.toLowerCase();
-            return (
-              <button
-                key={preset}
-                type="button"
-                aria-label={preset}
-                aria-pressed={active}
-                title={preset}
-                onClick={() => choose(preset)}
-                style={{ background: preset }}
-                className={`size-7 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] ${
-                  active
-                    ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                    : ""
-                }`}
-              />
-            );
-          })}
-        </div>
-        <Separator className="my-3" />
-        <div className="flex items-center justify-between gap-3">
-          <Label
-            htmlFor={id}
-            className="text-[12px] font-normal text-muted-foreground"
-          >
-            Custom
-          </Label>
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] tabular-nums text-muted-foreground">
-              {value.toUpperCase()}
-            </span>
-            <Input
-              id={id}
-              type="color"
-              value={value}
-              onChange={(event) => onChange(event.target.value)}
-              className="h-7 w-12 cursor-pointer border-0 bg-transparent p-0"
+        )}
+        {unique.map((preset) => {
+          const active =
+            !gradientActive && preset.toLowerCase() === value.toLowerCase();
+          return (
+            <button
+              key={preset}
+              type="button"
+              aria-label={preset}
+              aria-pressed={active}
+              title={preset}
+              onClick={() => onChange(preset)}
+              style={{ background: preset }}
+              className={`size-6 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] ${
+                active
+                  ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                  : ""
+              }`}
             />
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+          );
+        })}
+        <label
+          htmlFor={id}
+          title="Custom colour"
+          className="relative ml-auto size-6 shrink-0 cursor-pointer rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
+          style={{
+            background:
+              "conic-gradient(from 90deg, #f87171, #fbbf24, #4ade80, #38bdf8, #a78bfa, #f87171)",
+          }}
+        >
+          <span className="pointer-events-none absolute inset-[3px] rounded-full bg-background" />
+          <Plus className="pointer-events-none absolute inset-0 m-auto size-3 text-foreground" />
+          <input
+            id={id}
+            type="color"
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            className="absolute inset-0 size-full cursor-pointer opacity-0"
+          />
+        </label>
+      </div>
+    </div>
   );
 }
 
@@ -913,10 +945,13 @@ function TextRow({
 
 function CustomizePanel({
   theme,
+  variant,
   options,
   overrides,
   set,
+  clear,
   reset,
+  clearColors,
   quote,
   setQuote,
   title,
@@ -927,10 +962,13 @@ function CustomizePanel({
   scrolled,
 }: {
   theme: ShareTheme;
+  variant: Variant;
   options: CardOptions;
   overrides: Overrides;
   set: (patch: Overrides) => void;
+  clear: (key: keyof Overrides) => void;
   reset: () => void;
+  clearColors: () => void;
   quote: string;
   setQuote: (value: string) => void;
   title: string;
@@ -941,10 +979,25 @@ function CustomizePanel({
   scrolled: boolean;
 }) {
   const dirty = Object.keys(overrides).length > 0;
-  const backgroundPresets = theme.variants.map((v: Variant) =>
-    v.paint.kind === "solid" ? v.paint.color : v.paint.base
+  const isMarker = theme.style === "marker";
+  const unique = (values: (string | undefined)[]) =>
+    Array.from(new Set(values.filter((v): v is string => !!v)));
+  const backgroundPresets = unique(
+    theme.variants.map((v) =>
+      v.paint.kind === "solid" ? v.paint.color : v.paint.base
+    )
   );
-  const textPresets = Array.from(new Set(theme.variants.map((v) => v.text)));
+  const textPresets = unique(theme.variants.map((v) => v.text));
+  const highlightPresets = unique(theme.variants.map((v) => v.highlight));
+  const quoteTextPresets = unique(theme.variants.map((v) => v.highlightText));
+  const paintIsGradient = options.paint.kind === "mesh";
+  const variantIsGradient = variant.paint.kind === "mesh";
+  const colorOverridden = [
+    "background",
+    "text",
+    "highlight",
+    "highlightText",
+  ].some((key) => overrides[key as keyof Overrides] !== undefined);
 
   return (
     <>
@@ -980,19 +1033,67 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5 pt-2">
-        <ColorRow
+      <div className="mt-4 flex items-center justify-between">
+        <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          Colors
+        </h4>
+        {colorOverridden && (
+          <button
+            type="button"
+            onClick={clearColors}
+            className="text-[12px] font-normal text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+
+      <div className="flex flex-col">
+        <ColorField
           label="Background"
           value={options.background}
+          valueLabel={paintIsGradient ? "Gradient" : undefined}
           onChange={(background) => set({ background })}
           presets={backgroundPresets}
+          gradient={
+            variantIsGradient
+              ? {
+                  swatch: variant.swatch,
+                  active: paintIsGradient,
+                  onSelect: () => clear("background"),
+                }
+              : undefined
+          }
         />
-        <ColorRow
-          label="Text"
-          value={options.text}
-          onChange={(text) => set({ text, highlightText: text })}
-          presets={textPresets}
-        />
+        {isMarker ? (
+          <>
+            <ColorField
+              label="Highlight"
+              value={options.highlight}
+              onChange={(highlight) => set({ highlight })}
+              presets={highlightPresets}
+            />
+            <ColorField
+              label="Quote text"
+              value={options.highlightText}
+              onChange={(highlightText) => set({ highlightText })}
+              presets={quoteTextPresets}
+            />
+            <ColorField
+              label="Footer text"
+              value={options.text}
+              onChange={(text) => set({ text })}
+              presets={textPresets}
+            />
+          </>
+        ) : (
+          <ColorField
+            label="Text"
+            value={options.text}
+            onChange={(text) => set({ text })}
+            presets={textPresets}
+          />
+        )}
       </div>
 
       <div className="mt-4">
