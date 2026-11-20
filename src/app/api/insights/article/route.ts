@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
       urlKey: links.urlKey,
       title: links.title,
       markdown: links.markdown,
+      summary: links.summary,
       wordCount: links.wordCount,
       addedAt: links.addedAt,
     })

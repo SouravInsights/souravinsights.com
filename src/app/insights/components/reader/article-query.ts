@@ -20,6 +20,7 @@ export interface ArticlePayload {
   urlKey: string;
   title: string;
   markdown: string;
+  summary: string | null;
   wordCount: number | null;
   addedAt: string;
   marks: StoredHighlight[];
@@ -44,6 +45,22 @@ export const articleQuery = (urlKey: string) => ({
 export function prefetchArticle(urlKey: string): void {
   void queryClient.prefetchQuery(articleQuery(urlKey));
 }
+
+/**
+ * The Co-Reader's starter questions. Generated once per article server-side and
+ * cached there; on this side they are just another cached read.
+ */
+export const questionsQuery = (urlKey: string) => ({
+  queryKey: qk.articleQuestions(urlKey),
+  queryFn: async () => {
+    const json = await apiJson<{ data: { questions: string[] } }>(
+      "/api/insights/article/questions",
+      { method: "POST", body: JSON.stringify({ urlKey }) }
+    );
+    return json.data.questions;
+  },
+  staleTime: 30 * 60_000,
+});
 
 /** After a highlight write, the cached marks change without a refetch. */
 export function updateArticleMarks(

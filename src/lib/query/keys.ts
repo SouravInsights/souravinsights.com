@@ -17,6 +17,8 @@ export const qk = {
   /** Likes are shared by scope so posts, links and books never collide. */
   likes: (scope: string, id: string) => ["likes", scope, id] as const,
   article: (urlKey: string) => ["article", urlKey] as const,
+  articleQuestions: (urlKey: string) =>
+    ["article", urlKey, "questions"] as const,
   movies: () => ["movies"] as const,
   deployment: () => ["deployment-status"] as const,
   nowPlaying: () => ["spotify", "now-playing"] as const,
