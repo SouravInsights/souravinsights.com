@@ -1,5 +1,4 @@
-import { alpha } from "./hues";
-import type { Paint } from "./hues";
+import { alpha, type Paint } from "@/lib/highlight-palette";
 
 /*
  * The two things a mark draws, and the wave that changes them — ported from

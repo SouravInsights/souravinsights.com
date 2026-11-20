@@ -40,7 +40,7 @@ import {
   type ShareTheme,
   type SizeChoice,
   type Variant,
-} from "./share/cards";
+} from "./cards";
 
 /**
  * Share quote.
@@ -126,18 +126,16 @@ export function ShareQuote({
     "idle"
   );
   const [statusText, setStatusText] = useState("");
-  // Client-only component, so the real answer is available before first paint.
-  const [desktop, setDesktop] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1024px)").matches
-  );
+  // Start narrow, then measure. A `window` read in the initialiser is a
+  // hydration mismatch on a server-rendered page.
+  const [desktop, setDesktop] = useState(false);
 
   activeRef.current = themeId;
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 1024px)");
     const update = () => setDesktop(media.matches);
+    update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Copy, Eraser, Quotes } from "@phosphor-icons/react";
+import { Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
 import {
   useCallback,
   useEffect,
@@ -12,14 +12,8 @@ import {
   type ReactElement,
   type RefObject,
 } from "react";
-import {
-  HUES,
-  cut,
-  paint,
-  snap,
-  type Highlight,
-  type Paint,
-} from "./hues";
+import { HUES, paint, type Paint } from "@/lib/highlight-palette";
+import { cut, snap, type Highlight } from "./hues";
 import { CLEAR, drawBars, playWave, type Under } from "./wave";
 import type { HighlightTick } from "./HighlightTicks";
 
@@ -80,8 +74,8 @@ export interface CreatePayload {
 interface Props {
   /** the element whose <p> children may be highlighted */
   containerRef: RefObject<HTMLElement | null>;
-  /** admin sees the palette; visitors only see the marks */
-  admin: boolean;
+  /** the palette is offered — the owner in the reader, every visitor on the blog */
+  editable: boolean;
   /** marks already stored, located into the paragraphs on mount */
   initialMarks: { id: number; quote: string; occurrence: number; hue: number }[];
   onCreate: (payload: CreatePayload) => Promise<number | null>;
@@ -91,6 +85,8 @@ interface Props {
   onShareQuote: (payload: { quote: string; context: string }) => void;
   /** the discovery popover's way into the Co-Reader's Notes tab */
   onOpenNotebook?: () => void;
+  /** blog-only: copy a `#L12-L18` permalink for the blocks the words sit in */
+  onCopyLink?: (range: Range | null) => Promise<boolean>;
   /** the tick data goes up so the reader can pin the rail outside the scroller */
   onTicks?: (ticks: HighlightTick[]) => void;
 }
@@ -123,7 +119,7 @@ const isDark = () => document.documentElement.classList.contains("dark");
 
 export function Highlights({
   containerRef,
-  admin,
+  editable,
   initialMarks,
   onCreate,
   onRecolor,
@@ -131,6 +127,7 @@ export function Highlights({
   onShareQuote,
   onOpenNotebook,
   onTicks,
+  onCopyLink,
 }: Props): ReactElement | null {
   const reduce = useReducedMotion();
   const paras = useRef<HTMLElement[]>([]);
@@ -451,7 +448,7 @@ export function Highlights({
   /* The same pointup/selectionchange pairing as the original. */
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !admin) return;
+    if (!container || !editable) return;
     let pressing = false;
     let timer = 0;
 
@@ -494,7 +491,7 @@ export function Highlights({
       window.removeEventListener("pointercancel", up);
       document.removeEventListener("selectionchange", changed);
     };
-  }, [admin, containerRef, read]);
+  }, [editable, containerRef, read]);
 
   const close = useCallback((restore: boolean) => {
     const was = live.current.open;
@@ -665,8 +662,23 @@ export function Highlights({
     return quote.trim() ? { quote, context } : null;
   };
 
+  /** The live selection, or the open mark itself — what a permalink names. */
+  const permalinkRange = (): Range | null => {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && sel.rangeCount) return sel.getRangeAt(0);
+    const current = live.current.open;
+    if (current?.kind !== "edit") return null;
+    const span = containerRef.current?.querySelector<HTMLElement>(
+      `[data-hl="${current.id}"]`
+    );
+    if (!span) return null;
+    const range = document.createRange();
+    range.selectNode(span);
+    return range;
+  };
+
   const openMark = (id: number, viaKey: boolean) => {
-    if (!admin) return;
+    if (!editable) return;
     if (!viaKey && !window.getSelection()?.isCollapsed) return;
     setOpen({ kind: "edit", id, viaKey });
   };
@@ -674,7 +686,7 @@ export function Highlights({
   // Clicks on marks open the palette on them (event delegation on the stage).
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !admin) return;
+    if (!container || !editable) return;
     const click = (e: MouseEvent) => {
       const target = (e.target as Element).closest<HTMLElement>("[data-hl]");
       if (target) openMark(Number(target.dataset.hl), false);
@@ -695,7 +707,7 @@ export function Highlights({
       container.removeEventListener("keydown", key);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [admin, containerRef, marks, open]);
+  }, [editable, containerRef, marks, open]);
 
   // A palette opened from the keyboard takes focus to its current colour.
   useEffect(() => {
@@ -727,7 +739,7 @@ export function Highlights({
   const current = open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
   const ordered = [...marks].sort((a, b) => a.para - b.para || a.start - b.start);
 
-  if (!admin && ordered.length === 0) return null;
+  if (!editable && ordered.length === 0) return null;
 
   return (
     <>
@@ -781,6 +793,20 @@ export function Highlights({
                 <Copy aria-hidden="true" className="size-3.5" />
                 Copy
               </button>
+              {onCopyLink && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    void onCopyLink(permalinkRange()).then((ok) =>
+                      setSaid(ok ? "Link copied" : "Could not copy the link")
+                    );
+                  }}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                >
+                  <LinkSimple aria-hidden="true" className="size-3.5" />
+                  Copy link
+                </button>
+              )}
             </div>
 
             <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">

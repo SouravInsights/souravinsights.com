@@ -4,8 +4,8 @@ import React, { useCallback, useRef } from "react";
 import {
   Highlights,
   type CreatePayload,
-} from "./highlights/Highlights";
-import type { HighlightTick } from "./highlights/HighlightTicks";
+} from "@/components/highlight/Highlights";
+import type { HighlightTick } from "@/components/highlight/HighlightTicks";
 import { updateArticleMarks } from "./article-query";
 
 /**
@@ -108,7 +108,7 @@ export function ArticleBody({
       {children}
       <Highlights
         containerRef={containerRef}
-        admin={isAdmin}
+        editable={isAdmin}
         initialMarks={initialHighlights}
         onCreate={onCreate}
         onRecolor={onRecolor}

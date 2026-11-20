@@ -21,9 +21,9 @@ import {
 } from "@phosphor-icons/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArticleBody } from "./ArticleBody";
-import { HighlightTicks, type HighlightTick } from "./highlights/HighlightTicks";
+import { HighlightTicks, type HighlightTick } from "@/components/highlight/HighlightTicks";
 import { CoReader, type Tab } from "./CoReader";
-import { ShareQuote } from "./ShareQuote";
+import { ShareQuote } from "@/components/share-quote/ShareQuote";
 import {
   APPEARANCE_DEFAULT,
   ReaderAppearance,

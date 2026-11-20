@@ -152,7 +152,9 @@ structure, and one `content_hash` tells the refresh when a page changed.
 - **Renders the stored markdown** — always pre-baked, zero request-time fetches, zero cost
   per open. Design bar: seamless, distraction-free, typographically serious.
 - **Highlights.** Selecting text highlights it (component reference:
-  `github.com/SanyamPunia/www` → `components/labs/highlight-wave`). Highlights persist in a
+  `github.com/SanyamPunia/www` → `components/labs/highlight-wave`; the engine
+  lives in `src/components/highlight` and is shared with blog passage marks).
+  Highlights persist in a
   `highlights` table (`link_id`, quoted text, anchor offsets/prefix-suffix, `created_at`).
   **Only the owner writes; everyone reads** — highlights are visible to any visitor.
   Fetchable via API (collected highlights are a personal export). The palette on a mark
@@ -175,7 +177,8 @@ structure, and one `content_hash` tells the refresh when a page changed.
   Starter questions are written once per article from its summary and cached in Redis;
   `POST /api/insights/article/questions` is the only model call. *More like this* is in
   the reference and not built — no related-article signal is wired.
-- **Share quote.** The palette's *Share quote* tool opens a canvas studio: three sizes
+- **Share quote.** The palette's *Share quote* tool opens a canvas studio
+  (`src/components/share-quote`, also used by the blog): three sizes
   (Post, Story, Square) and four designs — **Marker**, **Ember**, **Mesh**, **Bold** —
   each with its own colour variants, so the swatch row changes with the design.
   Customize docks inside the dialog. The card is drawn at export resolution and shown

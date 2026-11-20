@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { HUES } from "./hues";
+import { HUES } from "@/lib/highlight-palette";
 
 /**
  * The highlight map: a small rail pinned to the article's right edge that shows

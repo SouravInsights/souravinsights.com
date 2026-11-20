@@ -21,7 +21,7 @@ import {
   phaseOf,
   type Part,
 } from "@/components/curio/use-curio-chat";
-import { HUES } from "./highlights/hues";
+import { HUES } from "@/lib/highlight-palette";
 import { questionsQuery } from "./article-query";
 import type { StoredHighlight } from "./ArticleBody";
 
