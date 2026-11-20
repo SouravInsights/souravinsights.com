@@ -10,6 +10,7 @@ import ThreeDLikeButton from "./ThreeDLikeButton";
 import ViewCounter from "./ViewCounter";
 import CollapsibleTOC from "./CollapsibleTOC";
 import DraftPostIndicator from "./DraftPostIndicator";
+import PassageLink from "./PassageLink";
 import HackerNewsButton from "./HackerNewsButton";
 import HackerNewsComments from "./HackerNewsComments";
 import {
@@ -307,6 +308,10 @@ export default function BlogPostContent({
 
           {/* Hacker News discussion thread */}
           {post.hnUrl && <HackerNewsComments hnUrl={post.hnUrl} />}
+
+          {/* Passage permalinks: `#L12-L18` highlights a block range, and a
+              text selection offers a link to the blocks it covers. */}
+          {!isDraft && <PassageLink />}
         </article>
 
         {/* Right Sidebar - only rendered when the post actually has headings */}

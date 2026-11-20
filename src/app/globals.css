@@ -716,3 +716,102 @@ html[data-resizing="true"] .app-shell * {
     animation: none;
   }
 }
+
+/*
+  Passage permalinks
+  ------------------
+  `#L12-L18` marks a run of article blocks with a CSS Custom Highlight. Painting
+  a Range instead of a box means the mark follows the text's own line boxes — a
+  highlighter across the passage, not a card behind it — and it reflows with the
+  text for free, with nothing in the React tree touched.
+
+  Warm highlighter, never the green link colour: green on this page means
+  "interactive", so reusing it would make static text read as a link. The two
+  theme values live in one token; highlight pseudo-elements cannot be reached
+  with a `.dark` combinator, but they inherit custom properties from their
+  originating element.
+*/
+:root {
+  --passage-highlight: hsl(48 100% 78% / 0.5);
+}
+.dark {
+  --passage-highlight: hsl(45 70% 60% / 0.16);
+}
+::highlight(passage) {
+  background-color: var(--passage-highlight);
+}
+
+/*
+  The native blue selection fights the amber mark and belongs to no theme on
+  this page. Inside the article only, the selection is the foreground at low
+  alpha, which stays legible over the mark in both themes.
+*/
+#mdx-content-container ::selection {
+  background-color: hsl(var(--foreground) / 0.16);
+  color: hsl(var(--foreground));
+}
+
+/*
+  Passage chip
+  ------------
+  The selection action. A tooltip, not a page control: filled with the
+  foreground colour so it reads as transient chrome, with a caret that ties it
+  to the selection. Enters from 4px toward the selection and settles on a
+  strong ease-out; the caret flips with the placement.
+
+  One animation name for both placements, driven by --chip-shift/--chip-enter,
+  so a placement flip never restarts the entrance.
+*/
+.passage-chip {
+  --chip-shift: 0%;
+  --chip-enter: -4px;
+  transform: translate(-50%, var(--chip-shift));
+  animation: passage-chip-in 140ms var(--ease-out);
+}
+.passage-chip[data-placement="above"] {
+  --chip-shift: -100%;
+  --chip-enter: 4px;
+}
+.passage-chip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  background-color: hsl(var(--foreground));
+}
+.passage-chip[data-placement="below"]::after {
+  top: -3px;
+  transform: translateX(-50%) rotate(45deg);
+}
+.passage-chip[data-placement="above"]::after {
+  bottom: -3px;
+  transform: translateX(-50%) rotate(45deg);
+}
+.passage-chip[data-closing="true"] {
+  animation: none;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .passage-chip,
+  .passage-chip[data-closing="true"] {
+    animation: none;
+    transition: none;
+  }
+}
+@keyframes passage-chip-in {
+  from {
+    opacity: 0;
+    transform: translate(
+        -50%,
+        calc(var(--chip-shift) + var(--chip-enter))
+      )
+      scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, var(--chip-shift)) scale(1);
+  }
+}

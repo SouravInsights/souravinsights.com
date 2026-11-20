@@ -77,6 +77,42 @@ last one had already been shared on HN. A rename now needs no bookkeeping:
 
 The only step is renaming the file. The build does the rest.
 
+## Passage Permalinks
+
+A link can point at one run of blocks in a post, the way a GitHub link points
+at a line range: `/blog/<slug>#L12-L18`.
+
+- Blocks are the direct element children of `#mdx-content-container`, numbered
+  1-based in DOM order. Both ends of a link agree because the reader counts the
+  same DOM, not build-time markers.
+- `#L12` and `#L18-L12` are accepted too. The range is clamped to the post and
+  the first block is scrolled into view. Any other hash (a heading, say) is left
+  to the browser.
+- The range shifts when earlier blocks are added or removed — the same trade
+  GitHub's line links make.
+- Selecting text in the article shows a "Copy link" chip for the blocks the
+  selection covers. That is how a range is authored; nobody counts blocks by
+  hand.
+- Drafts do not get the feature: `DraftPostIndicator` wraps the body in one
+  element, so the block indexing it needs does not exist.
+
+The mark is a CSS Custom Highlight (`::highlight(passage)`) over a `Range`, not
+a tinted box: the paint follows the text's line boxes, so it reads as a
+highlighter and reflows with the text, with nothing in the React tree touched.
+It needs `CSS.highlights` (Chrome 105+, Safari 17.2+, Firefox 140+); without it
+the link still scrolls to the passage, only the mark is missing.
+
+Warm amber, never the link green: green means "interactive" on this page. The
+values live in `--passage-highlight` on `:root` and `.dark` (highlight
+pseudo-elements cannot be reached with a `.dark` combinator but inherit custom
+properties). `PassageLink.tsx` owns the range and the chip; the mark, the chip
+and the article's neutral `::selection` live in `globals.css`.
+
+The chip is portalled to the body and positioned in document coordinates, so it
+scrolls with the passage it points at. A fixed chip would have to chase the
+selection every scroll frame, and hiding it on scroll takes away the action the
+reader just revealed.
+
 ## Questions / Risks
 
 *   **Build Time**: With many sandpacks, build time might increase. I can mitigate this by ensuring `Sandpack` itself isn't running during build (it's client-side only).
