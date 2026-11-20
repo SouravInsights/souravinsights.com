@@ -90,9 +90,10 @@ at a line range: `/blog/<slug>#L12-L18`.
   to the browser.
 - The range shifts when earlier blocks are added or removed — the same trade
   GitHub's line links make.
-- Selecting text in the article shows a "Copy link" chip for the blocks the
-  selection covers. That is how a range is authored; nobody counts blocks by
-  hand.
+- Selecting text in prose opens the reader's highlight palette, whose **Copy
+  link** action authors the range. Other blocks (headings, quotes, code) keep a
+  standalone "Copy link" chip. Nobody counts blocks by hand, and two chips never
+  land on one selection.
 - Drafts do not get the feature: `DraftPostIndicator` wraps the body in one
   element, so the block indexing it needs does not exist.
 
@@ -103,15 +104,35 @@ It needs `CSS.highlights` (Chrome 105+, Safari 17.2+, Firefox 140+); without it
 the link still scrolls to the passage, only the mark is missing.
 
 Warm amber, never the link green: green means "interactive" on this page. The
-values live in `--passage-highlight` on `:root` and `.dark` (highlight
-pseudo-elements cannot be reached with a `.dark` combinator but inherit custom
-properties). `PassageLink.tsx` owns the range and the chip; the mark, the chip
-and the article's neutral `::selection` live in `globals.css`.
+ink and wash come from the reader's palette (`@/lib/highlight-palette`, amber),
+published onto the container as `--passage-ink` / `--passage-wash` by
+`PassageLink` (highlight pseudo-elements cannot be reached with a `.dark`
+combinator but inherit custom properties). `PassageLink.tsx` owns the range and
+the chip; the mark, the chip and the article's neutral `::selection` live in
+`globals.css`.
 
 The chip is portalled to the body and positioned in document coordinates, so it
 scrolls with the passage it points at. A fixed chip would have to chase the
 selection every scroll frame, and hiding it on scroll takes away the action the
 reader just revealed.
+
+## Highlighting and Quotes
+
+Blog posts use the reader's mark engine (`src/components/highlight`, shared with
+`/insights`) and the same share-quote canvas studio
+(`src/components/share-quote`).
+
+- A selection snaps to whole words, then a hue paints the mark. Overlapping
+  marks are cut the way the reader cuts them.
+- The palette carries the eight hues, **Copy**, **Share quote**, **Copy link**
+  and **Remove**. *Share quote* opens the canvas studio with three sizes and
+  four designs.
+- Blog marks are **per visit**. The blog has no highlight table and no owner
+  session, so nothing is written; the marks exist to quote the article, not to
+  fill a notebook. Reader marks stay persisted and owner-only.
+- The engine wraps paragraph text in spans, so it mounts only after hydration:
+  the blog's markdown is server-rendered, and mutating it mid-hydration is a
+  mismatch. The studio mounts with it for the same reason.
 
 ## Questions / Risks
 

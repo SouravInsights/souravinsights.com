@@ -3,14 +3,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, LinkSimple } from "@phosphor-icons/react";
+import { paint } from "@/lib/highlight-palette";
+import { useTheme } from "@/context/ThemeContext";
+import {
+  CONTAINER_ID,
+  blockAt,
+  blocksOf,
+  copyText,
+  parseHash,
+  type Span,
+} from "../utils/passage";
 
 /**
  * Passage permalinks.
  *
  * `#L12-L18` marks a run of top-level blocks in the article body (1-based, DOM
  * order) and scrolls the first into view — the prose equivalent of GitHub's
- * line range. Selecting text offers a one-click "Copy link" for the blocks the
- * selection covers.
+ * line range. Selecting prose gets the highlight palette, which carries the
+ * same link action; other blocks get this chip.
  *
  * The mark is a CSS Custom Highlight over a Range, not a tinted box: the paint
  * follows the text's own line boxes, so it reads as a highlighter across the
@@ -27,39 +37,12 @@ import { Check, LinkSimple } from "@phosphor-icons/react";
  * line links, the range shifts if earlier blocks are added or removed.
  */
 
-const CONTAINER_ID = "mdx-content-container";
 const HIGHLIGHT = "passage";
-const HASH = /^#L(\d+)(?:-L?(\d+))?$/i;
-
-type Span = { start: number; end: number };
+/** The reader's amber, so a mark reads the same on both surfaces. */
+const PASSAGE_HUE = 2;
 
 const canHighlight =
   typeof CSS !== "undefined" && typeof CSS.highlights !== "undefined";
-
-function blocksOf(root: HTMLElement): HTMLElement[] {
-  return Array.from(root.children) as HTMLElement[];
-}
-
-function parseHash(hash: string): Span | null {
-  const match = HASH.exec(hash);
-  if (!match) return null;
-  const first = Number(match[1]);
-  const last = match[2] ? Number(match[2]) : first;
-  if (!Number.isInteger(first) || first < 1) return null;
-  return { start: Math.min(first, last), end: Math.max(first, last) };
-}
-
-function blockAt(root: HTMLElement, node: Node | null): number | null {
-  if (!node) return null;
-  const element =
-    node.nodeType === Node.ELEMENT_NODE
-      ? (node as Element)
-      : node.parentElement;
-  const top = element?.closest(`#${CONTAINER_ID} > *`);
-  if (!top) return null;
-  const index = blocksOf(root).indexOf(top as HTMLElement);
-  return index < 0 ? null : index + 1;
-}
 
 export default function PassageLink() {
   const [menu, setMenu] = useState<{
@@ -72,6 +55,18 @@ export default function PassageLink() {
   const [closing, setClosing] = useState(false);
   const timer = useRef<number | null>(null);
   const out = useRef<number | null>(null);
+  const { isDarkMode } = useTheme();
+
+  // Publish the palette's ink/wash for this theme onto the prose container, so
+  // `::highlight(passage)` paints from the same values reader mode uses.
+  useEffect(() => {
+    const root = document.getElementById(CONTAINER_ID);
+    if (!root) return;
+    const dark = document.documentElement.classList.contains("dark");
+    const { wash, ink } = paint(PASSAGE_HUE, dark);
+    root.style.setProperty("--passage-wash", wash);
+    root.style.setProperty("--passage-ink", ink);
+  }, [isDarkMode]);
 
   const show = useCallback((span: Span | null) => {
     const root = document.getElementById(CONTAINER_ID);
@@ -139,6 +134,16 @@ export default function PassageLink() {
         setMenu(null);
         return;
       }
+      // Prose selections belong to the highlight palette, which carries the
+      // same "Copy link" action. Two chips over one selection is one too many.
+      const inProse = !!(
+        range.startContainer.parentElement?.closest("p") ??
+        range.endContainer.parentElement?.closest("p")
+      );
+      if (inProse) {
+        setMenu(null);
+        return;
+      }
       // Vertical placement uses the whole selection box so the chip never lands
       // on a selected line. Horizontal follows the cursor end: on a
       // multi-paragraph selection the box centre is nowhere near the pointer.
@@ -194,20 +199,7 @@ export default function PassageLink() {
   const copy = useCallback(async () => {
     if (!menu) return;
     const { origin, pathname } = window.location;
-    const url = `${origin}${pathname}#L${menu.span.start}-L${menu.span.end}`;
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      const field = document.createElement("textarea");
-      field.value = url;
-      field.setAttribute("readonly", "");
-      field.style.position = "fixed";
-      field.style.opacity = "0";
-      document.body.appendChild(field);
-      field.select();
-      document.execCommand("copy");
-      field.remove();
-    }
+    await copyText(`${origin}${pathname}#L${menu.span.start}-L${menu.span.end}`);
     setCopied(true);
     if (timer.current) window.clearTimeout(timer.current);
     if (out.current) window.clearTimeout(out.current);

@@ -11,6 +11,7 @@ import ViewCounter from "./ViewCounter";
 import CollapsibleTOC from "./CollapsibleTOC";
 import DraftPostIndicator from "./DraftPostIndicator";
 import PassageLink from "./PassageLink";
+import BlogHighlights from "./BlogHighlights";
 import HackerNewsButton from "./HackerNewsButton";
 import HackerNewsComments from "./HackerNewsComments";
 import {
@@ -41,6 +42,7 @@ export default function BlogPostContent({
   const [isTOCCollapsed, setIsTOCCollapsed] = useState<boolean>(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
+  const proseRef = useRef<HTMLDivElement>(null);
 
   // Extract headings for table of contents
   useEffect(() => {
@@ -285,26 +287,33 @@ export default function BlogPostContent({
             </header>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            id="mdx-content-container"
-            className="prose prose-green max-w-none dark:prose-invert 
-            prose-headings:font-semibold
-            prose-a:text-green-700 dark:prose-a:text-green-500
-            prose-p:text-gray-700 dark:prose-p:text-muted-foreground
-            prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500 
-            prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
-          >
-            {isDraft ? (
-              <DraftPostIndicator previewParagraphs={10}>
-                {content}
-              </DraftPostIndicator>
-            ) : (
-              content
+          <div className="relative">
+            <motion.div
+              ref={proseRef}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              id="mdx-content-container"
+              className="prose prose-green max-w-none dark:prose-invert 
+              prose-headings:font-semibold
+              prose-a:text-green-700 dark:prose-a:text-green-500
+              prose-p:text-gray-700 dark:prose-p:text-muted-foreground
+              prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500 
+              prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
+            >
+              {isDraft ? (
+                <DraftPostIndicator previewParagraphs={10}>
+                  {content}
+                </DraftPostIndicator>
+              ) : (
+                content
+              )}
+            </motion.div>
+
+            {!isDraft && (
+              <BlogHighlights containerRef={proseRef} title={post.title} />
             )}
-          </motion.div>
+          </div>
 
           {/* Hacker News discussion thread */}
           {post.hnUrl && <HackerNewsComments hnUrl={post.hnUrl} />}

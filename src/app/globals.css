@@ -725,20 +725,15 @@ html[data-resizing="true"] .app-shell * {
   highlighter across the passage, not a card behind it — and it reflows with the
   text for free, with nothing in the React tree touched.
 
-  Warm highlighter, never the green link colour: green on this page means
-  "interactive", so reusing it would make static text read as a link. The two
-  theme values live in one token; highlight pseudo-elements cannot be reached
-  with a `.dark` combinator, but they inherit custom properties from their
-  originating element.
+  The ink and wash come from the shared palette (`@/lib/highlight-palette`),
+  the reader's amber, published onto the container by `PassageLink`. Highlight
+  pseudo-elements cannot be reached with a `.dark` combinator, but they inherit
+  custom properties from their originating element. The fallback is the light
+  amber, so the first paint is right before the effect runs.
 */
-:root {
-  --passage-highlight: hsl(48 100% 78% / 0.5);
-}
-.dark {
-  --passage-highlight: hsl(45 70% 60% / 0.16);
-}
 ::highlight(passage) {
-  background-color: var(--passage-highlight);
+  background-color: var(--passage-wash, rgb(242 194 48 / 0.3));
+  color: var(--passage-ink, #7d5600);
 }
 
 /*
