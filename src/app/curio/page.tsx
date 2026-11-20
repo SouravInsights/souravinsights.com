@@ -54,10 +54,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CurioPage() {
+export default function CurioPage({
+  searchParams,
+}: {
+  searchParams?: { q?: string };
+}) {
   // Chips come from the collection itself (scripts/kb-suggestions.ts), not from
   // a hand-written list that drifts into title-echoes.
   const suggestions = getSuggestions();
 
-  return <CurioHome suggestions={suggestions} />;
+  // The insights command palette can hand a typed question over: /curio?q=…
+  // lands with the composer prefilled, one press from an answer.
+  const initialInput =
+    typeof searchParams?.q === "string" ? searchParams.q : "";
+
+  return <CurioHome suggestions={suggestions} initialInput={initialInput} />;
 }

@@ -544,13 +544,15 @@ export function ReaderView({
                       </p>
                     </header>
 
+                    {/* Left-aligned on purpose. A justified paragraph forces every
+                        line to one right edge, and the browser's greedy line-breaker
+                        cannot fill it without rivers — the even edge reads as a cut.
+                        The ragged right is the honest one. */}
                     <div
                       className="prose prose-green mt-8 max-w-none dark:prose-invert
                         prose-headings:font-semibold
                         prose-a:text-green-700 dark:prose-a:text-green-500
                         prose-p:text-gray-700 dark:prose-p:text-muted-foreground
-                        prose-p:text-justify prose-p:hyphens-auto
-                        prose-p:[hyphenate-limit-chars:6_3_2]
                         prose-p:my-[0.75em] prose-p:[font-variant-numeric:oldstyle-nums]
                         prose-h2:mt-[2em] prose-h2:mb-[0.5em] prose-h2:[font-variant-numeric:lining-nums]
                         prose-h3:mt-[1.75em] prose-h3:mb-[0.5em] prose-h3:[font-variant-numeric:lining-nums]

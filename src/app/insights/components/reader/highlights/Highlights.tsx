@@ -89,7 +89,7 @@ interface Props {
   onDelete: (rowId: number) => void;
   /** the palette's Share quote tool hands the words (and their paragraph) up */
   onShareQuote: (payload: { quote: string; context: string }) => void;
-  /** the discovery popover's way into the Co-Reader's Notebook tab */
+  /** the discovery popover's way into the Co-Reader's Notes tab */
   onOpenNotebook?: () => void;
   /** the tick data goes up so the reader can pin the rail outside the scroller */
   onTicks?: (ticks: HighlightTick[]) => void;

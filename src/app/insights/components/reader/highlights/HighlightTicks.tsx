@@ -24,7 +24,7 @@ import { HUES } from "./hues";
  *  - a highlight tick is 2px, `transform-origin: 100%`, and widens to 1.6× on
  *    hover;
  *  - the whole rail is one button that opens a popover listing the highlights,
- *    with a way into the Notebook.
+ *    with a way into Notes.
  *
  * It takes plain data and renders nothing else, so the reader can portal it
  * outside the scroller (which is what makes it sticky) while the highlight
@@ -65,7 +65,7 @@ export function HighlightTicks({
           <PopoverTrigger asChild>
             <button
               type="button"
-              aria-label={`Highlights: ${ticks.length}. Open the Notebook`}
+              aria-label={`Highlights: ${ticks.length}. Open Notes`}
               aria-expanded={open}
               className="group pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg py-4 pl-3 pr-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
@@ -128,7 +128,7 @@ export function HighlightTicks({
                   onClick={onOpenNotebook}
                   className="transition-colors hover:text-foreground"
                 >
-                  Open the Notebook
+                  Open Notes
                 </button>
               )}
             </div>

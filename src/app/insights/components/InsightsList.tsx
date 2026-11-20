@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
-import { ArrowUp, ArrowsDownUp, Check, CaretDown, Clock, ArrowSquareOut, Heart, ClockCounterClockwise, SquaresFour, LinkSimple, List as ListIcon, CircleNotch, MagnifyingGlass, Shuffle, Tag, Trash, X } from "@phosphor-icons/react";
+import { useTheme } from "@/context/ThemeContext";
+import { ArrowUp, ArrowsDownUp, Check, CaretDown, Clock, ArrowSquareOut, Heart, ClockCounterClockwise, SquaresFour, LinkSimple, List as ListIcon, CircleNotch, MagnifyingGlass, Shuffle, Trash, X } from "@phosphor-icons/react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsClientLink } from "../utils/links-data";
 import {
@@ -30,6 +31,8 @@ import {
 import { PreviewLoader } from "@/components/ui/PreviewLoader";
 import { ReaderView } from "./reader/ReaderView";
 import { prefetchArticle } from "./reader/article-query";
+import { InsightsCommandPalette } from "./InsightsCommandPalette";
+import { SORT_LABELS, type SortMode } from "../utils/sort";
 
 interface InsightsListProps {
   groups: InsightsGroup[];
@@ -44,15 +47,6 @@ const ITEMS_PER_PAGE = 60;
 
 /** The hide/unhide API caps a batch at 200; "select all" can be larger. */
 const HIDE_BATCH_LIMIT = 200;
-
-const SORT_LABELS = {
-  newest: "Newest",
-  oldest: "Oldest",
-  liked: "Most liked",
-  shuffle: "Shuffle",
-} as const;
-
-type SortMode = keyof typeof SORT_LABELS;
 
 /** Hostname only, without protocol or `www.`, to hint at the source. */
 const shortDomain = (url: string) => {
@@ -84,17 +78,15 @@ export default function InsightsList({
   isAdmin: initialIsAdmin,
 }: InsightsListProps) {
   const router = useRouter();
+  const { toggleDarkMode } = useTheme();
   // The reader is a view of this page: which article (urlKey) is open, if any.
   const [reading, setReading] = useState<string | null>(null);
   const [readingFocus, setReadingFocus] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchOpen, setSearchOpen] = useState(false);
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
-  const [topicsOpen, setTopicsOpen] = useState(false);
-  const [topicQuery, setTopicQuery] = useState("");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const topicsMenuRef = useRef<HTMLDivElement>(null);
+  const [commandOpen, setCommandOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -129,6 +121,28 @@ export default function InsightsList({
         ),
     [groups]
   );
+
+  /**
+   * How many links each category would show, de-duplicated the same way the
+   * list is. The `All` total counts a URL once even when it was saved to two
+   * categories, so a tab's number always matches what clicking it reveals.
+   */
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: 0 };
+    const seen = new Set<string>();
+    for (const group of sortedGroups) {
+      const deduped = dedupeByUrl(linkData[group.name] ?? []);
+      counts[group.name] = deduped.length;
+      for (const link of deduped) {
+        const key = normalizeUrl(link.url);
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          counts.all += 1;
+        }
+      }
+    }
+    return counts;
+  }, [sortedGroups, linkData]);
 
   const filters = useMemo(
     () => [
@@ -166,14 +180,18 @@ export default function InsightsList({
     return counts;
   }, [activeCategory, sortedGroups, linkData]);
 
-  const topicOptions = useMemo(() => {
-    const all = Array.from(topicCounts.entries()).sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
-    );
-    const query = topicQuery.trim().toLowerCase();
-    if (query) return all.filter(([topic]) => topic.includes(query)).slice(0, 60);
-    return all.filter(([, count]) => count >= 3).slice(0, 40);
-  }, [topicCounts, topicQuery]);
+  /**
+   * The head of the topic distribution, for the palette. The long tail is still
+   * reachable by typing a topic name there, and by search in the list.
+   */
+  const paletteTopics = useMemo(
+    () =>
+      Array.from(topicCounts.entries())
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, 10)
+        .map(([topic, count]) => ({ topic, count })),
+    [topicCounts]
+  );
 
   const toggleTopic = (topic: string) => {
     feedback.select();
@@ -203,6 +221,19 @@ export default function InsightsList({
     // category so a link never appears twice in a view.
     return dedupeByUrl(sortByNewest(source));
   }, [activeCategory, sortedGroups, linkData]);
+
+  // The whole collection, newest first — what the palette searches. It ignores
+  // the active category on purpose: ⌘K should reach every link, not only the
+  // tab you happen to be standing on.
+  const allLinks = useMemo<EnrichedLink[]>(() => {
+    const source = sortedGroups.flatMap((group) =>
+      (linkData[group.name] || []).map((link) => ({
+        ...link,
+        category: group.name,
+      }))
+    );
+    return dedupeByUrl(sortByNewest(source));
+  }, [sortedGroups, linkData]);
 
   const filteredLinks = useMemo(() => {
     let result = links;
@@ -258,24 +289,46 @@ export default function InsightsList({
     };
   }, [sortMenuOpen]);
 
-  // And the topics picker.
+  // ⌘K / Ctrl+K opens the palette; `/` does too, for hands that never leave the
+  // home row. `/` is ignored while typing, so a slash inside the search box
+  // stays a slash.
+  //
+  // Two direct keys on top, and only two: the view and the theme are the things
+  // a visitor changes while browsing, and both are shown in the palette, so they
+  // are learned rather than guessed. Everything else is one word away in the
+  // palette — a page of single-letter bindings is a page of surprises.
   useEffect(() => {
-    if (!topicsOpen) return;
-    const onPointerDown = (event: MouseEvent) => {
-      if (!topicsMenuRef.current?.contains(event.target as Node)) {
-        setTopicsOpen(false);
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.isContentEditable;
+
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((open) => !open);
+        return;
+      }
+      if (typing || commandOpen || reading) return;
+      if (event.key === "/") {
+        event.preventDefault();
+        setCommandOpen(true);
+        return;
+      }
+      if (event.key === "v") {
+        event.preventDefault();
+        setView((current) => (current === "list" ? "grid" : "list"));
+        return;
+      }
+      if (event.key === "t") {
+        event.preventDefault();
+        toggleDarkMode();
       }
     };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setTopicsOpen(false);
-    };
-    document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [topicsOpen]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [commandOpen, reading, toggleDarkMode]);
 
   // Remember the chosen view and sort across visits.
   useEffect(() => {
@@ -353,6 +406,22 @@ export default function InsightsList({
       setReading(null);
     }
   }, []);
+
+  // A palette link opens the way the row does: articles read in place, every
+  // other kind opens at its source.
+  const openFromPalette = (link: EnrichedLink) => {
+    if (link.category === "article") openReader(link);
+    else window.open(hrefFor(link), "_blank", "noopener,noreferrer");
+  };
+
+  const copyPageLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      feedback.press();
+    } catch {
+      feedback.warning();
+    }
+  };
 
   useEffect(() => {
     const onPopState = (event: PopStateEvent) => {
@@ -622,15 +691,31 @@ export default function InsightsList({
   return (
     <PreviewCardProvider>
       <div>
-      {/* App bar — view toggle on the left; filters and search on the right.
-          Sticks to the top of the panel: the frame is a rail on the left and a
-          tab bar at the bottom, so nothing is above it to fight for the edge
-          (the floating navbar used to duck out of the way for this). */}
+      {/* App bar — the collection's categories on the left; view, sort and the
+          command trigger on the right. Sticks to the top of the panel: the
+          frame is a rail on the left and a tab bar at the bottom, so nothing is
+          above it to fight for the edge (the floating navbar used to duck out
+          of the way for this). */}
       <StickyBar>
-        {/* Display choices sit on the left. Batch delete lives in the sort menu
-            instead — it is an admin action, not a view, and on a phone the
-            toolbar has no room to spare. */}
-        <div className={`${searchOpen ? "hidden sm:block" : "block"} shrink-0`}>
+        {/* Category filter — the dropdown the page has always used. */}
+        <div className="flex min-w-0 flex-1 items-center">
+          <FilterMenu
+            label={activeFilterLabel}
+            value={activeCategory}
+            options={filters.map((filter) => ({
+              value: filter.name,
+              label: filter.label,
+            }))}
+            onChange={setActiveCategory}
+            ariaLabel="Filter"
+            align="left"
+          />
+        </div>
+
+        {/* View, sort, and the command trigger. Batch delete lives in the sort
+            menu's admin section — it is an admin action, not a view, and on a
+            phone the toolbar has no room to spare. */}
+        <div className="flex shrink-0 items-center gap-2">
           <SegmentedControl
             options={[
               { value: "list", label: "List view", icon: ListIcon },
@@ -640,119 +725,8 @@ export default function InsightsList({
             onChange={setView}
             layoutId="insights-view-pill"
           />
-        </div>
 
-        {/* Filters + search */}
-        <div
-          className={`flex items-center gap-2 ${searchOpen ? "flex-1" : ""}`}
-        >
-          {!searchOpen && (
-            <>
-              <FilterMenu
-                label={activeFilterLabel}
-                value={activeCategory}
-                options={filters.map((filter) => ({
-                  value: filter.name,
-                  label: filter.label,
-                }))}
-                onChange={setActiveCategory}
-                ariaLabel="Filter"
-              />
-
-              {/* Topics — a picker, not a cloud: the head is listed, the long
-                  tail is a search away. Either-of semantics. */}
-              <div ref={topicsMenuRef} className="relative">
-                <button
-                  type="button"
-                  onClick={() => setTopicsOpen((open) => !open)}
-                  aria-haspopup="dialog"
-                  aria-expanded={topicsOpen}
-                  aria-label="Filter by topic"
-                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
-                >
-                  <Tag className="h-4 w-4 shrink-0 sm:hidden" />
-                  <span className="hidden sm:inline">Topics</span>
-                  {selectedTopics.length > 0 && (
-                    <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
-                      {selectedTopics.length}
-                    </span>
-                  )}
-                  <CaretDown
-                    className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
-                      topicsOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {topicsOpen && (
-                  <div className="absolute right-0 top-full z-30 mt-1 flex max-h-[min(55svh,18rem)] w-[min(72vw,11.5rem)] flex-col overflow-hidden overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5">
-                    <div className="p-1">
-                      <input
-                        type="text"
-                        value={topicQuery}
-                        onChange={(event) => setTopicQuery(event.target.value)}
-                        placeholder="Find a topic"
-                        spellCheck={false}
-                        aria-label="Find a topic"
-                        className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
-                      />
-                    </div>
-                    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-                      {topicOptions.length === 0 ? (
-                        <p className="px-3 py-2 type-caption text-muted-foreground">
-                          No topics match “{topicQuery}”.
-                        </p>
-                      ) : (
-                        topicOptions.map(([topic, count]) => {
-                          const active = selectedTopics.includes(topic);
-                          return (
-                            <button
-                              key={topic}
-                              type="button"
-                              role="option"
-                              aria-selected={active}
-                              onClick={() => toggleTopic(topic)}
-                              className={`flex w-full items-center justify-between gap-1.5 rounded-[3px] px-2 py-1.5 text-left type-caption transition-colors ${
-                                active
-                                  ? "bg-foreground/[0.06] text-foreground"
-                                  : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
-                              }`}
-                            >
-                              <span className="flex min-w-0 items-center gap-2">
-                                <span
-                                  className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] border ${
-                                    active
-                                      ? "border-foreground bg-foreground text-background"
-                                      : "border-muted-foreground/40"
-                                  }`}
-                                >
-                                  {active && <Check className="h-2.5 w-2.5" />}
-                                </span>
-                                <span className="truncate">{topic}</span>
-                              </span>
-                              <span className="shrink-0 tabular-nums text-faint-foreground">
-                                {count}
-                              </span>
-                            </button>
-                          );
-                        })
-                      )}
-                    </div>
-                    {selectedTopics.length > 0 && (
-                      <div className="mt-1 border-t border-border p-1">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedTopics([])}
-                          className="w-full rounded-[3px] px-3 py-1.5 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
-                        >
-                          Clear topics
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Sort — recency, quality, or a shuffle */}
+          {/* Sort — recency, quality, or a shuffle */}
               <div ref={sortMenuRef} className="relative">
                 <button
                   type="button"
@@ -854,45 +828,47 @@ export default function InsightsList({
                   </div>
                 )}
               </div>
-            </>
-          )}
-
-          {/* Mobile: search lives behind an icon until opened. */}
+          {/* Command trigger. The palette is where search, topics and every
+              other command live; the toolbar just opens the door. It wears the
+              same geometry as the sort button beside it — 10/9 height, 3.5px
+              glyph, faint icon — so the row reads as one set of controls.
+              Desktop wears the label, a phone gets the glyph. */}
           <button
             type="button"
             onClick={() => {
               feedback.select();
-              setSearchOpen((open) => !open);
+              setCommandOpen(true);
             }}
-            aria-label={searchOpen ? "Close search" : "Search links"}
-            aria-expanded={searchOpen}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
-          >
-            {searchOpen ? (
-              <X className="h-4 w-4" />
-            ) : (
-              <MagnifyingGlass className="h-4 w-4" />
-            )}
-          </button>
-
-          <div
-            className={`relative ${searchOpen ? "flex-1" : "hidden"} sm:block sm:w-56`}
+            aria-label="Search links or run a command"
+            aria-haspopup="dialog"
+            className="group hidden h-10 w-56 items-center gap-2.5 rounded-lg border border-border px-3 text-left transition-colors hover:bg-foreground/[0.03] sm:inline-flex sm:h-9"
           >
             <MagnifyingGlass
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint-foreground"
               aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 text-faint-foreground transition-colors group-hover:text-muted-foreground"
             />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search…"
-              spellCheck={false}
-              aria-label="Search links"
-              autoFocus={searchOpen}
-              className="h-10 w-full rounded-lg border border-border bg-transparent pl-9 pr-3 text-base outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30 sm:h-9 sm:text-sm"
-            />
-          </div>
+            <span className="min-w-0 flex-1 truncate type-caption text-muted-foreground transition-colors group-hover:text-foreground">
+              Search or jump to…
+            </span>
+            {/* The key hint is a chip, and set in the UI face: the mono face has
+                no ⌘ glyph, so it gets substituted at another size and baseline
+                and lands beside the K looking broken. */}
+            <kbd className="inline-flex h-[18px] shrink-0 items-center rounded-[5px] bg-foreground/[0.06] px-1.5 text-[10px] font-medium tracking-wide text-faint-foreground">
+              ⌘K
+            </kbd>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              feedback.select();
+              setCommandOpen(true);
+            }}
+            aria-label="Search links or run a command"
+            aria-haspopup="dialog"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
+          >
+            <MagnifyingGlass className="h-4 w-4" />
+          </button>
         </div>
 
         <div
@@ -911,9 +887,21 @@ export default function InsightsList({
         />
       )}
 
-      {/* Active topics: only exist when a filter is on — chips as a receipt. */}
-      {selectedTopics.length > 0 && (
+      {/* Active filters: only exist when a filter is on — chips as a receipt,
+          so the list's contents are never a mystery. */}
+      {(selectedTopics.length > 0 || searchTerm.trim() !== "") && (
         <div className="mt-4 flex flex-wrap items-center gap-2 px-3">
+          {searchTerm.trim() !== "" && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
+              aria-label={`Clear search for ${searchTerm}`}
+            >
+              “{searchTerm.trim()}”
+              <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
+            </button>
+          )}
           {selectedTopics.map((topic) => (
             <button
               key={topic}
@@ -928,7 +916,10 @@ export default function InsightsList({
           ))}
           <button
             type="button"
-            onClick={() => setSelectedTopics([])}
+            onClick={() => {
+              setSelectedTopics([]);
+              setSearchTerm("");
+            }}
             className="type-caption text-muted-foreground transition-colors hover:text-foreground"
           >
             Clear
@@ -941,15 +932,16 @@ export default function InsightsList({
         {visibleLinks.length === 0 ? (
           <p className="px-3 py-10 text-center type-caption">
             Nothing matches these filters.
-            {selectedTopics.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setSelectedTopics([])}
-                className="ml-2 font-medium text-foreground underline-offset-4 hover:underline"
-              >
-                Clear topics
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTopics([]);
+                setSearchTerm("");
+              }}
+              className="ml-2 font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Clear filters
+            </button>
           </p>
         ) : view === "list" ? (
           <>
@@ -1111,6 +1103,37 @@ export default function InsightsList({
       )}
 
       </div>
+
+      <InsightsCommandPalette
+        open={commandOpen}
+        onOpenChange={setCommandOpen}
+        links={allLinks}
+        categories={filters.map((filter) => ({
+          value: filter.name,
+          label: filter.label,
+          count: categoryCounts[filter.name] ?? 0,
+        }))}
+        activeCategory={activeCategory}
+        onCategory={setActiveCategory}
+        topics={paletteTopics}
+        selectedTopics={selectedTopics}
+        onToggleTopic={toggleTopic}
+        searchTerm={searchTerm}
+        onClearSearch={() => setSearchTerm("")}
+        onClearTopics={() => setSelectedTopics([])}
+        sort={sort}
+        onSort={setSort}
+        view={view}
+        onView={setView}
+        onSearch={setSearchTerm}
+        onOpenLink={openFromPalette}
+        onCopyPageLink={copyPageLink}
+        isAdmin={isAdmin}
+        onCleanup={() => {
+          if (!cleanup) toggleCleanup();
+        }}
+        shortDomain={shortDomain}
+      />
 
       <AnimatePresence>
         {reading && (

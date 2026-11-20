@@ -47,7 +47,14 @@ const noteLinkClass =
  * The panel on /insights is the opposite trade: a card inside a page about
  * something else, so it stays small and that page keeps its own scroll.
  */
-export function CurioHome({ suggestions }: { suggestions: string[] }) {
+export function CurioHome({
+  suggestions,
+  initialInput = "",
+}: {
+  suggestions: string[];
+  /** Prefills the composer — the insights palette hands a typed question over. */
+  initialInput?: string;
+}) {
   const {
     messages,
     busy,
@@ -67,6 +74,13 @@ export function CurioHome({ suggestions }: { suggestions: string[] }) {
   // Shuffle once per visit so the same chips aren't always first, and on mount
   // rather than during render so server and client agree on the first paint.
   useEffect(() => setChips(shuffled(suggestions)), [suggestions]);
+
+  // A question handed over from the insights palette, prefilled and waiting for
+  // the reader to press send. It is never auto-submitted: a page that starts
+  // spending on load is a page that surprises.
+  useEffect(() => {
+    if (initialInput) setInput(initialInput);
+  }, [initialInput, setInput]);
 
   const started = messages.length > 0;
 

@@ -10,9 +10,8 @@ import redis from "@/app/lib/redis";
 import { PageHeader } from "@/components/PageHeader";
 import { SectionHeader } from "@/components/SectionHeader";
 import { FadeIn } from "@/components/FadeIn";
-import { AskPanel } from "./components/AskPanel";
+import { CurioCta } from "./components/CurioCta";
 import { LinksCountBadge } from "./components/LinksCountBadge";
-import { getSuggestions } from "@/lib/kb/suggestions";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { Metadata } from "next";
 
@@ -49,10 +48,6 @@ export default async function CuratedLinksPage() {
     getInsightsData(),
     redis.hgetall<Record<string, number>>("insights:likes"),
   ]);
-
-  // Chips come from the collection itself (scripts/kb-suggestions.ts), not
-  // from a hand-written list that drifts into title-echoes.
-  const suggestions = getSuggestions();
 
   // Screenshots are captured out of band and cached in Blob; resolving them
   // here means a hover just points at a stored, immutable image.
@@ -117,14 +112,17 @@ export default async function CuratedLinksPage() {
           />
         </FadeIn>
 
+        {/* The agent keeps a footer here and the full screen at /curio. The
+            insights page is for the collection; two products stacked on one
+            scroll made both harder to use. */}
         <div className="mt-8">
-          <AskPanel suggestions={suggestions} />
+          <CurioCta />
         </div>
 
         {/* The collection is a public dataset as well as a page, and this is
-            where curiosity peaks: you have just watched the agent answer from
-            it. The line used to sit at the very bottom of the page in the
-            faintest text tier, where nobody found it. */}
+            where curiosity peaks: you have just seen the door to the agent that
+            answers from it. The line used to sit at the very bottom of the page
+            in the faintest text tier, where nobody found it. */}
         <p className="type-caption mt-4">
           All of this is queryable from outside the site, over{" "}
           <Link href="/api/docs" className={linkClass}>
@@ -141,9 +139,9 @@ export default async function CuratedLinksPage() {
           has the rest.
         </p>
 
-        {/* Browse is a separate mode from Ask, so it gets its own heading and a
-            wider gap than the step above it. Otherwise the two blocks read as
-            one, and the panel's edge touches the list's toolbar. */}
+        {/* Browse gets its own heading and a wider gap than the note above it.
+            Otherwise the two blocks read as one, and the CTA's edge touches the
+            list's toolbar. */}
         <div className="mt-16">
           <SectionHeader title="Browse the collection" />
           {/* Only the fields the list renders are sent to the client (see

@@ -90,7 +90,7 @@ export function CoReader({
         {(
           [
             ["reader", "Co-Reader"],
-            ["notebook", "Notebook"],
+            ["notebook", "Notes"],
           ] as const
         ).map(([id, label]) => (
           <button

@@ -161,7 +161,7 @@ structure, and one `content_hash` tells the refresh when a page changed.
 - **Highlight discovery.** A rail pinned to the article column's right edge shows where
   the highlights are — one tick per highlight, plus the track's own ends — and does not
   scroll with the article. A tick jumps to its passage; the rail opens a list of them
-  with a way into the Notebook. Extracted as `HighlightTicks`, which takes plain data,
+  with a way into Notes. Extracted as `HighlightTicks`, which takes plain data,
   so the highlight engine only measures positions and hands them up.
 - **Highlights feed retrieval (phase 2).** Highlighted spans are the strongest relevance
   signal the collection has; passages containing them get boosted. Revive once ~50 exist —
@@ -170,7 +170,7 @@ structure, and one `content_hash` tells the refresh when a page changed.
   article: it is a second column inside the reader panel, open by default on a desktop
   and a drawer over the article on a phone. Two tabs — **Co-Reader** (the stored
   `summary`, then a conversation scoped to that article's passages via `link_id`, with
-  starter questions above the composer) and **Notebook** (the article's highlights).
+  starter questions above the composer) and **Notes** (the article's highlights).
   The rail sets its text in its own compact UI tier, not the article's reading size.
   Starter questions are written once per article from its summary and cached in Redis;
   `POST /api/insights/article/questions` is the only model call. *More like this* is in
