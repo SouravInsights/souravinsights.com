@@ -5,6 +5,7 @@ import {
   Highlights,
   type CreatePayload,
 } from "./highlights/Highlights";
+import type { HighlightTick } from "./highlights/HighlightTicks";
 import { updateArticleMarks } from "./article-query";
 
 /**
@@ -27,11 +28,17 @@ export function ArticleBody({
   urlKey,
   isAdmin,
   initialHighlights,
+  onShareQuote,
+  onOpenNotebook,
+  onTicks,
   children,
 }: {
   urlKey: string;
   isAdmin: boolean;
   initialHighlights: StoredHighlight[];
+  onShareQuote: (payload: { quote: string; context: string }) => void;
+  onOpenNotebook?: () => void;
+  onTicks?: (ticks: HighlightTick[]) => void;
   children: React.ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,6 +113,9 @@ export function ArticleBody({
         onCreate={onCreate}
         onRecolor={onRecolor}
         onDelete={onDelete}
+        onShareQuote={onShareQuote}
+        onOpenNotebook={onOpenNotebook}
+        onTicks={onTicks}
       />
     </div>
   );

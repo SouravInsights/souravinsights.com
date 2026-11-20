@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Eraser } from "@phosphor-icons/react";
+import { Copy, Eraser, Quotes } from "@phosphor-icons/react";
 import {
   useCallback,
   useEffect,
@@ -21,6 +21,7 @@ import {
   type Paint,
 } from "./hues";
 import { CLEAR, drawBars, playWave, type Under } from "./wave";
+import type { HighlightTick } from "./HighlightTicks";
 
 /*
  * Highlights for the reader — a port of the palette, the bars and the wave
@@ -86,6 +87,12 @@ interface Props {
   onCreate: (payload: CreatePayload) => Promise<number | null>;
   onRecolor: (rowId: number, hue: number) => void;
   onDelete: (rowId: number) => void;
+  /** the palette's Share quote tool hands the words (and their paragraph) up */
+  onShareQuote: (payload: { quote: string; context: string }) => void;
+  /** the discovery popover's way into the Co-Reader's Notebook tab */
+  onOpenNotebook?: () => void;
+  /** the tick data goes up so the reader can pin the rail outside the scroller */
+  onTicks?: (ticks: HighlightTick[]) => void;
 }
 
 function bounds(rects: DOMRect[], stage: DOMRect): Anchor | null {
@@ -121,6 +128,9 @@ export function Highlights({
   onCreate,
   onRecolor,
   onDelete,
+  onShareQuote,
+  onOpenNotebook,
+  onTicks,
 }: Props): ReactElement | null {
   const reduce = useReducedMotion();
   const paras = useRef<HTMLElement[]>([]);
@@ -132,6 +142,7 @@ export function Highlights({
   const [wave, setWave] = useState<WaveRequest | null>(null);
   const [dark, setDark] = useState(false);
   const [said, setSaid] = useState("");
+  const lastTicksKey = useRef("");
 
   const nextId = useRef(1);
   const played = useRef(0);
@@ -271,6 +282,38 @@ export function Highlights({
     drawBars(p, layer);
   };
 
+  /**
+   * The discovery rail: one marker per paragraph that holds a highlight, at the
+   * paragraph's own height in the article. Measured from the DOM rather than
+   * computed from offsets, because line wrapping decides the real position.
+   */
+  const measureTicks = () => {
+    const container = containerRef.current;
+    if (!container) return;
+    const box = container.getBoundingClientRect();
+    if (box.height <= 0) return;
+    const next: HighlightTick[] = [];
+    for (const m of live.current.marks) {
+      const span = container.querySelector<HTMLElement>(`[data-hl="${m.id}"]`);
+      if (!span) continue;
+      const rect = span.getBoundingClientRect();
+      next.push({
+        id: m.id,
+        at: Math.max(
+          0,
+          Math.min(1, (rect.top - box.top + rect.height / 2) / box.height)
+        ),
+        hue: m.hue,
+        quote: textOf(m.para).slice(m.start, m.end),
+      });
+    }
+    next.sort((a, b) => a.at - b.at);
+    const key = next.map((t) => `${t.id}:${t.at.toFixed(4)}`).join(",");
+    if (key === lastTicksKey.current) return;
+    lastTicksKey.current = key;
+    onTicks?.(next);
+  };
+
   /*
    * The bars are redrawn from the marks on every change and every resize, and
    * a pending wave plays on the bars this pass has just drawn.
@@ -300,6 +343,7 @@ export function Highlights({
       const hasDom = paras.current[i]?.querySelector("[data-hl]");
       if (dirty.has(i) || hasDom) rebuildParagraph(i);
     }
+    measureTicks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [marks, dark]);
 
@@ -312,6 +356,7 @@ export function Highlights({
         const layer = layers.current[i];
         if (p && layer) drawBars(p, layer);
       });
+      measureTicks();
     });
     observer.observe(container);
     return () => observer.disconnect();
@@ -595,6 +640,22 @@ export function Highlights({
     window.setTimeout(drop, ms);
   };
 
+  /** the words the open palette is about — a fresh selection or a stored mark */
+  const shareable = (): { quote: string; context: string } | null => {
+    const current = live.current.open;
+    if (!current) return null;
+    if (current.kind === "new") {
+      const context = textOf(current.para);
+      const quote = context.slice(current.start, current.end);
+      return quote.trim() ? { quote, context } : null;
+    }
+    const mark = live.current.marks.find((m) => m.id === current.id);
+    if (!mark) return null;
+    const context = textOf(mark.para);
+    const quote = context.slice(mark.start, mark.end);
+    return quote.trim() ? { quote, context } : null;
+  };
+
   const openMark = (id: number, viaKey: boolean) => {
     if (!admin) return;
     if (!viaKey && !window.getSelection()?.isCollapsed) return;
@@ -673,7 +734,7 @@ export function Highlights({
             animate={{ opacity: 1, scale: 1, transition: ENTER }}
             exit={{ opacity: 0, scale: 0.98, transition: LEAVE }}
             onPointerDown={(e) => e.preventDefault()}
-            className="group absolute z-20 flex select-none items-stretch gap-3 rounded-xl border border-border bg-background p-3 max-sm:gap-2 max-sm:p-2.5"
+            className="group absolute z-20 flex select-none flex-col gap-3 rounded-xl border border-border bg-background p-3 max-sm:gap-2 max-sm:p-2.5"
             style={{ boxShadow: LIFT }}
           >
             <span
@@ -682,74 +743,107 @@ export function Highlights({
               style={{ left: "var(--ax, 50%)" }}
             />
 
-            <fieldset className="m-0 grid min-w-0 grid-cols-3 content-start gap-4 border-0 p-0 max-sm:gap-1.5">
-              <legend className="sr-only">Highlight colour</legend>
-              {HUES.map((hue, i) => (
-                <button
-                  key={hue.name}
-                  type="button"
-                  aria-label={hue.name}
-                  title={hue.name}
-                  aria-pressed={current?.hue === i}
-                  onClick={() => pick(i)}
-                  style={{ backgroundColor: hue.swatch, "--hue": hue.swatch } as CSSProperties}
-                  className="relative size-6 cursor-pointer rounded-full outline-2 outline-transparent outline-offset-2 transition-[outline-color] duration-150 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] aria-pressed:outline-(--hue) focus-visible:outline-(--hue) max-sm:size-9"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0 rounded-full ring-1 ring-foreground/10 ring-inset"
-                  />
-                </button>
-              ))}
+            <div className="flex items-center gap-1 border-b border-border pb-2.5">
               <button
                 type="button"
-                aria-label="Remove highlight"
-                title="Remove highlight"
-                disabled={!current}
-                onClick={remove}
-                className="flex size-6 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent max-sm:size-9"
+                onClick={() => {
+                  const payload = shareable();
+                  if (!payload) return;
+                  close(false);
+                  onShareQuote(payload);
+                }}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
               >
-                <Eraser aria-hidden="true" className="size-3.5" />
+                <Quotes aria-hidden="true" className="size-3.5" />
+                Share quote
               </button>
-            </fieldset>
+              <button
+                type="button"
+                onClick={() => {
+                  const payload = shareable();
+                  if (!payload) return;
+                  void navigator.clipboard.writeText(payload.quote).then(
+                    () => setSaid("Quote copied"),
+                    () => setSaid("Could not reach the clipboard")
+                  );
+                }}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+              >
+                <Copy aria-hidden="true" className="size-3.5" />
+                Copy
+              </button>
+            </div>
 
-            <span aria-hidden="true" className="w-px shrink-0 bg-border" />
+            <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">
+              <fieldset className="m-0 grid min-w-0 grid-cols-3 content-start gap-4 border-0 p-0 max-sm:gap-1.5">
+                <legend className="sr-only">Highlight colour</legend>
+                {HUES.map((hue, i) => (
+                  <button
+                    key={hue.name}
+                    type="button"
+                    aria-label={hue.name}
+                    title={hue.name}
+                    aria-pressed={current?.hue === i}
+                    onClick={() => pick(i)}
+                    style={{ backgroundColor: hue.swatch, "--hue": hue.swatch } as CSSProperties}
+                    className="relative size-6 cursor-pointer rounded-full outline-2 outline-transparent outline-offset-2 transition-[outline-color] duration-150 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] aria-pressed:outline-(--hue) focus-visible:outline-(--hue) max-sm:size-9"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-full ring-1 ring-foreground/10 ring-inset"
+                    />
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  aria-label="Remove highlight"
+                  title="Remove highlight"
+                  disabled={!current}
+                  onClick={remove}
+                  className="flex size-6 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent max-sm:size-9"
+                >
+                  <Eraser aria-hidden="true" className="size-3.5" />
+                </button>
+              </fieldset>
 
-            <div className="flex w-32 min-w-0 flex-col gap-0.5 sm:w-40">
-              {ordered.length === 0 ? (
-                <p className="px-2 py-1 type-caption text-muted-foreground">
-                  No highlights yet
-                </p>
-              ) : (
-                <ul className="-mr-1 flex max-h-28 flex-col gap-0.5 overflow-y-auto pr-1">
-                  {ordered.map((m) => (
-                    <li key={m.id}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          window.getSelection()?.removeAllRanges();
-                          setOpen({ kind: "edit", id: m.id, viaKey: false });
-                          request(m.id, paint(m.hue, dark), m.hue);
-                        }}
-                        className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-left type-caption transition-all duration-150 hover:bg-foreground/5 hover:text-foreground ${
-                          m.id === current?.id
-                            ? "bg-foreground/5 text-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="h-3 w-0.5 shrink-0 rounded-full"
-                          style={{ backgroundColor: HUES[m.hue].swatch }}
-                        />
-                        <span className="truncate">
-                          {textOf(m.para).slice(m.start, m.end)}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <span aria-hidden="true" className="w-px shrink-0 bg-border" />
+
+              <div className="flex w-32 min-w-0 flex-col gap-0.5 sm:w-40">
+                {ordered.length === 0 ? (
+                  <p className="px-2 py-1 type-caption text-muted-foreground">
+                    No highlights yet
+                  </p>
+                ) : (
+                  <ul className="-mr-1 flex max-h-28 flex-col gap-0.5 overflow-y-auto pr-1">
+                    {ordered.map((m) => (
+                      <li key={m.id}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            window.getSelection()?.removeAllRanges();
+                            setOpen({ kind: "edit", id: m.id, viaKey: false });
+                            request(m.id, paint(m.hue, dark), m.hue);
+                          }}
+                          className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-left type-caption transition-all duration-150 hover:bg-foreground/5 hover:text-foreground ${
+                            m.id === current?.id
+                              ? "bg-foreground/5 text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="h-3 w-0.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: HUES[m.hue].swatch }}
+                          />
+                          <span className="truncate">
+                            {textOf(m.para).slice(m.start, m.end)}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -758,6 +852,7 @@ export function Highlights({
       <p aria-live="polite" className="sr-only">
         {said}
       </p>
+
     </>
   );
 }
