@@ -628,21 +628,23 @@ export function ShareQuote({
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex h-[52px] items-center gap-1.5 rounded-b-[14px] border-t border-border bg-background px-3">
-          <Button
+        {/* Actions. The two commands sit together at the right: the tinted one
+            for saving, the solid one for copying, so the primary action reads
+            as primary without a label saying so. */}
+        <div className="flex h-[52px] items-center gap-2 rounded-b-[14px] border-t border-border bg-background px-3">
+          <button
             type="button"
-            variant="ghost"
-            size="sm"
             aria-expanded={customize}
             onClick={() => setCustomize((c) => !c)}
-            className={`gap-2 text-[13px] font-medium ${
-              customize ? "bg-foreground/[0.1] text-foreground" : ""
+            className={`inline-flex h-[30px] items-center gap-1.5 rounded-lg px-3 text-[13.5px] font-medium transition-colors active:scale-[0.96] ${
+              customize
+                ? "bg-foreground/[0.1] text-foreground"
+                : "text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
             }`}
           >
             <SlidersHorizontal className="size-3.5" />
             <span className="hidden sm:inline">Customize</span>
-          </Button>
+          </button>
 
           <div className="flex-1" />
 
@@ -658,41 +660,40 @@ export function ShareQuote({
               {statusText}
             </span>
           )}
-          <Button
+
+          <button
             type="button"
-            variant="secondary"
-            size="sm"
             onClick={save}
             disabled={status === "working"}
-            className="min-w-[108px] gap-2 text-[13px] font-medium"
+            className="inline-flex h-[30px] min-w-[108px] items-center justify-center gap-1.5 rounded-lg bg-foreground/[0.06] px-3 text-[13.5px] font-medium text-foreground transition-[background-color,opacity,scale] duration-150 hover:bg-foreground/[0.1] active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45"
           >
             {status === "working" ? (
-              <SpinnerGap className="size-3.5 animate-spin" />
+              <SpinnerGap className="size-3.5 animate-spin text-muted-foreground" />
             ) : (
-              <DownloadSimple className="size-3.5" />
+              <DownloadSimple className="size-3.5 text-muted-foreground" />
             )}
             Save image
             <kbd className="ml-0.5 hidden font-medium opacity-55 sm:inline">
               ⌘S
             </kbd>
-          </Button>
-          <Button
+          </button>
+
+          <button
             type="button"
-            size="sm"
             onClick={copy}
             disabled={status === "working"}
-            className="min-w-[112px] gap-2 text-[13px] font-semibold"
+            className="inline-flex h-[30px] min-w-[112px] items-center justify-center gap-1.5 rounded-lg bg-foreground px-3 text-[13.5px] font-semibold text-background transition-[background-color,opacity,scale] duration-150 hover:opacity-90 active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45"
           >
             {status === "done" ? (
-              <Check className="size-3.5" />
+              <Check className="size-3.5 opacity-70" />
             ) : (
-              <CopyIcon className="size-3.5" />
+              <CopyIcon className="size-3.5 opacity-70" />
             )}
             Copy image
             <kbd className="ml-0.5 hidden font-medium opacity-55 sm:inline">
               ⌘C
             </kbd>
-          </Button>
+          </button>
         </div>
       </DialogContent>
     </Dialog>
