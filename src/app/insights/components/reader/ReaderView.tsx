@@ -24,6 +24,12 @@ import { ArticleBody } from "./ArticleBody";
 import { HighlightTicks, type HighlightTick } from "./highlights/HighlightTicks";
 import { CoReader, type Tab } from "./CoReader";
 import { ShareQuote } from "./ShareQuote";
+import {
+  APPEARANCE_DEFAULT,
+  ReaderAppearance,
+  appearanceStyle,
+  type Appearance,
+} from "./ReaderAppearance";
 import { articleQuery } from "./article-query";
 
 /**
@@ -44,7 +50,7 @@ import { articleQuery } from "./article-query";
 const prettyWidthFallback = "min(42rem, 94vw)";
 const MIN_WIDTH = 420;
 /** Panel width that keeps the article readable once the rail is docked. */
-const WIDTH_WITH_RAIL = 920;
+const WIDTH_WITH_RAIL = 1000;
 const WIDTH_KEY = "insights:reader-width";
 
 const hostOf = (url: string) => {
@@ -129,6 +135,7 @@ export function ReaderView({
   const [copied, setCopied] = useState(false);
   const [coReaderTab, setCoReaderTab] = useState<Tab>("reader");
   const [ticks, setTicks] = useState<HighlightTick[]>([]);
+  const [appearance, setAppearance] = useState<Appearance>(APPEARANCE_DEFAULT);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
   const lastScrollTop = useRef(0);
@@ -151,6 +158,35 @@ export function ReaderView({
       ?.querySelector<HTMLElement>(`[data-hl="${id}"]`)
       ?.scrollIntoView({ block: "center", behavior: "smooth" });
   }, []);
+
+  // The reading preferences stick across articles and sessions — they are set
+  // once, not per page.
+  useEffect(() => {
+    const stored = window.localStorage.getItem("insights:reader-appearance");
+    if (!stored) return;
+    try {
+      setAppearance({ ...APPEARANCE_DEFAULT, ...JSON.parse(stored) });
+    } catch {
+      // A bad value falls back to the defaults rather than breaking the reader.
+    }
+  }, []);
+
+  const updateAppearance = useCallback((next: Appearance) => {
+    setAppearance(next);
+    window.localStorage.setItem(
+      "insights:reader-appearance",
+      JSON.stringify(next)
+    );
+  }, []);
+
+  // Fullscreen gets one step wider, because the canvas is bigger.
+  const measure = fullscreen
+    ? appearance.width === "wide"
+      ? "max-w-3xl"
+      : "max-w-2xl"
+    : appearance.width === "wide"
+      ? "max-w-2xl"
+      : "max-w-xl";
   // Read once on mount, not through `useMediaQuery`: this panel is client-only,
   // so the real answer is available before the first paint and the rail never
   // flashes as an overlay on a desktop.
@@ -437,6 +473,7 @@ export function ReaderView({
                     </Popover>
                   </>
                 )}
+                <ReaderAppearance value={appearance} onChange={updateAppearance} />
                 <button
                   type="button"
                   onClick={toggleCoReader}
@@ -476,7 +513,7 @@ export function ReaderView({
               <div
                 className={`mx-auto pb-24 pl-5 pt-[4.75rem] sm:pl-7 ${
                   ticks.length > 0 ? "pr-10 sm:pr-12" : "pr-5 sm:pr-7"
-                } ${fullscreen ? "max-w-2xl" : "max-w-xl"}`}
+                } ${measure}`}
               >
                 {failed && (
                   <p className="mt-16 text-center type-body text-muted-foreground">
@@ -558,6 +595,7 @@ export function ReaderView({
                         prose-h3:mt-[1.75em] prose-h3:mb-[0.5em] prose-h3:[font-variant-numeric:lining-nums]
                         prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500
                         prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
+                      style={appearanceStyle(appearance)}
                     >
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
