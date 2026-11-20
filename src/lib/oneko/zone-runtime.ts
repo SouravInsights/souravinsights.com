@@ -62,8 +62,13 @@ export function refreshZones(deps: CatAnimationDeps): boolean {
     return true;
   }
   // A confined region owns movement. Repositioning the cat to the nearest safe
-  // viewport point would yank it out of an off-screen region.
+  // viewport point would yank it out of an off-screen region, so instead put it
+  // inside the region — first paint starts at the viewport's centre, which is
+  // outside the sidebar.
   if (s.wanderCfg) {
+    const bounds = resolveWanderBounds(s);
+    s.wanderBounds = bounds;
+    if (bounds) settleInWander(deps, bounds);
     deps.el.style.visibility = "";
     deps.bubbleEl.style.visibility = "";
     return true;
@@ -111,6 +116,32 @@ export function resolveWanderBounds(s: CatRuntimeState): ObstacleRect | null {
     }
   }
   return cfg.rect && isValidRect(cfg.rect) ? cfg.rect : null;
+}
+
+/** Snap a cat that starts (or lands, after a resize) outside its region. */
+function settleInWander(deps: CatAnimationDeps, bounds: ObstacleRect): void {
+  const s = deps.stateRef.current;
+  const cfg = s.wanderCfg;
+  if (!cfg) return;
+  const margin = Math.max(
+    WANDER_EDGE_MARGIN,
+    catZoneRadius(s.scale) + Math.max(0, cfg.padding ?? 0),
+  );
+  const minX = bounds.left + margin;
+  const maxX = bounds.right - margin;
+  const minY = bounds.top + margin;
+  const maxY = bounds.bottom - margin;
+  if (maxX < minX || maxY < minY) return; // region too narrow to stand in
+  const x = Math.min(Math.max(s.nekoPosX, minX), maxX);
+  const y = Math.min(Math.max(s.nekoPosY, minY), maxY);
+  if (x === s.nekoPosX && y === s.nekoPosY) return;
+  s.nekoPosX = x;
+  s.nekoPosY = y;
+  s.nekoVelX = 0;
+  s.nekoVelY = 0;
+  s.lastPathRecalcFrame = -PATH_RECALC_INTERVAL;
+  deps.el.style.left = `${x - TILE / 2}px`;
+  deps.el.style.top = `${y - TILE / 2}px`;
 }
 
 /**
