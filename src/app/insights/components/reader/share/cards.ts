@@ -421,6 +421,30 @@ function roundRect(
   ctx.closePath();
 }
 
+/**
+ * Curio, in the SVG's own coordinates.
+ *
+ * The viewBox is `2 8 60 48` (`src/components/curio/Curio.tsx`): 60 wide by 48
+ * tall, centred on the bot. The body is one rounded rect; the four limbs are
+ * rects rotated about their own centres. Kept as data so the canvas mark and
+ * the on-page mark cannot drift apart in shape.
+ */
+const CURIO_VIEW = { x: 2, y: 8, w: 60, h: 48 };
+const CURIO_BODY =
+  "M 25 10 L 39 10 C 47.64 10 51 13.36 51 22 L 51 32 C 51 43.52 46.52 48 35 48 L 29 48 C 17.48 48 13 43.52 13 32 L 13 22 C 13 13.36 16.36 10 25 10 Z";
+const CURIO_LIMBS: [number, number, number, number, number, number, number, number][] = [
+  // x, y, w, h, rx, pivotX, pivotY, degrees
+  [7, 18, 10, 8, 4, 12, 22, 30],
+  [47, 18, 10, 8, 4, 52, 22, -30],
+  [18.5, 42.5, 11, 11, 5.5, 24, 48, -18],
+  [34.5, 42.5, 11, 11, 5.5, 40, 48, 18],
+];
+const CURIO_EYES: [number, number, number, number][] = [
+  // x, y, catchlightX, catchlightY
+  [18.5, 22, 21.9, 25.6],
+  [34.5, 22, 37.9, 25.6],
+];
+
 function paintBackground(
   ctx: CanvasRenderingContext2D,
   paint: Paint,
@@ -529,13 +553,17 @@ export function drawCard(
   const topBlock = 0;
 
   /* footer geometry */
-  const titleSize = Math.round(w * 0.027);
-  const pubSize = Math.round(w * 0.025);
-  const markSize = Math.round(w * 0.075);
+  const titleSize = Math.round(w * 0.026);
+  const pubSize = Math.round(w * 0.022);
+  // The mark's square box; the bot inside is 0.8 tall, so its real height is
+  // smaller than the box and it shares a centreline with the text.
+  const markSize = Math.round(w * 0.09);
+  const markGap = Math.round(w * 0.032);
+  const pubGap = Math.round(titleSize * 0.24);
   const footerWidth =
     theme.footer === "center" || !options.showTitle
       ? maxWidth
-      : maxWidth - markSize - Math.round(w * 0.03);
+      : maxWidth - markSize - markGap;
 
   ctx.font = fontString(titleSize, sans, 600);
   const titleLines = options.showTitle
@@ -545,23 +573,25 @@ export function drawCard(
         footerWidth
       ).slice(0, 2)
     : [];
-  ctx.font = fontString(pubSize, sans, 400);
+  // The host is set in mono: on a still image it is the only cue that the
+  // line is a URL and not a byline. Mono reads as address, not prose.
+  const mono = fontStack("mono");
+  ctx.font = fontString(pubSize, mono, 400);
   const pubLines =
     options.showPublication && options.publication
       ? wrapText(ctx, options.publication, footerWidth).slice(0, 1)
       : [];
 
   const titleBlock = titleLines.length * titleSize * 1.35;
-  const pubBlock = pubLines.length ? pubSize * 1.6 : 0;
-  const footerBlock = titleBlock + pubBlock;
-  const markGap = Math.round(w * 0.02);
+  const pubBlock = pubLines.length ? pubGap + pubSize * 1.45 : 0;
+  const textBlock = titleBlock + pubBlock;
   const footerHeight =
     theme.footer === "center"
-      ? footerBlock + (footerBlock ? markGap : 0) + markSize
-      : Math.max(footerBlock, markSize);
+      ? textBlock + (textBlock ? markGap : 0) + markSize
+      : Math.max(textBlock, markSize);
 
   const quoteTop = pad + topBlock;
-  const quoteBottom = h - pad - footerHeight - Math.round(w * 0.05);
+  const quoteBottom = h - pad - footerHeight - Math.round(w * 0.06);
   const quoteHeight = Math.max(quoteBottom - quoteTop, w * 0.2);
 
   /* quote size, stepped down until the block fits */
@@ -648,6 +678,23 @@ export function drawCard(
 
   /* footer */
   const footerTop = h - pad - footerHeight;
+
+  /* A hairline between the words and the attribution, the way a masthead
+     divides from the body. Left footers only: the centred designs are one
+     column, and a rule across them reads as a second baseline. */
+  if (theme.footer === "left" && textBlock > 0) {
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = options.text;
+    ctx.fillRect(
+      pad,
+      footerTop - Math.round(h * 0.03),
+      maxWidth,
+      Math.max(1, Math.round(h * 0.0012))
+    );
+    ctx.restore();
+  }
+
   if (theme.footer === "center") {
     let fy = footerTop;
     ctx.fillStyle = options.text;
@@ -657,16 +704,19 @@ export function drawCard(
       fy += titleSize * 1.35;
     }
     if (pubLines.length) {
-      ctx.globalAlpha = 0.7;
-      ctx.font = fontString(pubSize, family, 400, theme.italicQuote);
+      fy += pubGap;
+      ctx.globalAlpha = 0.68;
+      ctx.font = fontString(pubSize, mono, 400);
       ctx.fillText(pubLines[0].text, (w - pubLines[0].width) / 2, fy);
       ctx.globalAlpha = 1;
-      fy += pubSize * 1.6;
+      fy += pubSize * 1.45;
     }
-    if (titleLines.length || pubLines.length) fy += markGap;
-    drawMark(ctx, (w - markSize) / 2, fy, markSize, options);
+    if (textBlock) fy += markGap;
+    drawCurioMark(ctx, (w - markSize) / 2, fy, markSize, options);
   } else {
-    let fy = footerTop;
+    // Text and mark sit on one centreline, so a one-line title beside a tall
+    // mark never reads as top-aligned by accident.
+    let fy = footerTop + (footerHeight - textBlock) / 2;
     ctx.fillStyle = options.text;
     ctx.font = fontString(titleSize, sans, 600);
     for (const line of titleLines) {
@@ -674,34 +724,70 @@ export function drawCard(
       fy += titleSize * 1.35;
     }
     if (pubLines.length) {
-      ctx.globalAlpha = 0.7;
-      ctx.font = fontString(pubSize, sans, 400);
+      fy += pubGap;
+      ctx.globalAlpha = 0.68;
+      ctx.font = fontString(pubSize, mono, 400);
       ctx.fillText(pubLines[0].text, pad, fy);
       ctx.globalAlpha = 1;
     }
-    drawMark(ctx, w - pad - markSize, h - pad - markSize, markSize, options);
+    drawCurioMark(
+      ctx,
+      w - pad - markSize,
+      footerTop + (footerHeight - markSize) / 2,
+      markSize,
+      options
+    );
   }
 
   ctx.restore();
 }
 
-/** The site's monogram, in the card's own ink and paper. */
-function drawMark(
+/**
+ * Curio, the collection's mark, in the card's own ink and paper.
+ *
+ * The body is the card's ink; the eyes are punched out of it in the paper
+ * colour, with the catchlight back in ink — the same read as the mark on the
+ * site, where dark eyes catch a light on a coloured body.
+ */
+function drawCurioMark(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   size: number,
   options: CardOptions
 ) {
+  const s = size / CURIO_VIEW.w;
+  const drawnH = CURIO_VIEW.h * s;
   ctx.save();
+  ctx.translate(x - CURIO_VIEW.x * s, y + (size - drawnH) / 2 - CURIO_VIEW.y * s);
+  ctx.scale(s, s);
+
   ctx.fillStyle = options.text;
-  roundRect(ctx, x, y, size, size, size * 0.28);
-  ctx.fill();
+  ctx.fill(new Path2D(CURIO_BODY));
+
+  for (const [lx, ly, lw, lh, lr, px, py, deg] of CURIO_LIMBS) {
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate((deg * Math.PI) / 180);
+    ctx.translate(-px, -py);
+    roundRect(ctx, lx, ly, lw, lh, lr);
+    ctx.fill();
+    ctx.restore();
+  }
+
   ctx.fillStyle = options.background;
-  ctx.font = fontString(size * 0.56, sansStack(), 700);
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "center";
-  ctx.fillText("S", x + size / 2, y + size / 2 + size * 0.02);
+  for (const [ex, ey] of CURIO_EYES) {
+    roundRect(ctx, ex, ey, 11, 12, 5.25);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = options.text;
+  for (const [, , cx, cy] of CURIO_EYES) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 1.7, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   ctx.restore();
 }
 
