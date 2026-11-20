@@ -39,6 +39,8 @@ const LIFT = [
 
 const GAP = 12;
 const EDGE = 8;
+/** A mark's removal pass is capped here, however long the quote is. */
+const REMOVE_MS = 420;
 
 interface Anchor {
   x: number;
@@ -641,7 +643,9 @@ export function Highlights({
       paint(mark.hue, dark),
       { ink: base(mark.para), wash: CLEAR },
       HUES[mark.hue].swatch,
-      true
+      true,
+      [],
+      REMOVE_MS
     );
     window.setTimeout(drop, ms);
   };

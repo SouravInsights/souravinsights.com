@@ -142,13 +142,20 @@ export function playWave(
   to: Paint,
   glow: string,
   hold = false,
-  under: readonly Under[] = []
+  under: readonly Under[] = [],
+  maxDuration = 0
 ): number {
   const chars = segmentsOf(para, id).flatMap((segment) =>
     Array.from(segment.querySelectorAll<HTMLElement>("[data-ch]"))
   );
   if (chars.length === 0) return 0;
   const fill = hold ? "both" : "backwards";
+  // Removal can afford to be short: the whole pass is capped, and both the
+  // stagger and the swell shrink with it.
+  const total = (chars.length - 1) * STAGGER + CHAR;
+  const pace = maxDuration > 0 ? Math.min(1, maxDuration / total) : 1;
+  const char = CHAR * pace;
+  const stagger = STAGGER * pace;
 
   for (const c of chars) for (const a of Array.from(c.getAnimations())) a.cancel();
   const was = chars.map((c) => {
@@ -157,8 +164,8 @@ export function playWave(
   });
   chars.forEach((c, i) => {
     c.animate(swell(was[i]?.paint.ink ?? from.ink, to.ink, glow), {
-      duration: CHAR,
-      delay: i * STAGGER,
+      duration: char,
+      delay: i * stagger,
       fill,
     });
   });
@@ -181,8 +188,8 @@ export function playWave(
     });
     if (first < 0) continue;
 
-    const delay = first * STAGGER + CHAR * TRAIL;
-    const duration = Math.max(count * STAGGER, 120);
+    const delay = first * stagger + char * TRAIL;
+    const duration = Math.max(count * stagger, 120);
 
     /*
      * A mark this one was laid over keeps its bar until the front reaches it,
@@ -233,5 +240,5 @@ export function playWave(
     }
   }
 
-  return (chars.length - 1) * STAGGER + CHAR;
+  return (chars.length - 1) * stagger + char;
 }
