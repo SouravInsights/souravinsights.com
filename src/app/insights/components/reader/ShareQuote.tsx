@@ -762,12 +762,25 @@ function ColorRow({
   onChange: (value: string) => void;
   presets: string[];
 }) {
+  const [open, setOpen] = useState(false);
+  const unique = Array.from(new Set(presets));
+  const id = `share-color-${label.toLowerCase()}`;
+
+  // A picked colour is the end of the interaction: close the picker so the
+  // card underneath is visible again. On a phone the popover would otherwise
+  // sit on top of the preview it just changed.
+  const choose = (next: string) => {
+    onChange(next);
+    setOpen(false);
+  };
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           type="button"
           variant="ghost"
+          aria-label={`${label} colour: ${value}`}
           className="-mx-2 flex h-9 w-[calc(100%+16px)] items-center gap-2.5 rounded-[9px] px-2 font-normal hover:bg-foreground/5"
         >
           <span
@@ -782,30 +795,53 @@ function ColorRow({
           </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[248px] p-3">
-        <div className="flex flex-wrap gap-1.5">
-          {presets.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              aria-label={preset}
-              onClick={() => onChange(preset)}
-              style={{ background: preset }}
-              className="size-7 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
-            />
-          ))}
+      <PopoverContent
+        align="start"
+        side="bottom"
+        collisionPadding={12}
+        className="w-[min(248px,calc(100vw-32px))] p-3"
+      >
+        <div className="grid grid-cols-7 gap-1.5">
+          {unique.map((preset) => {
+            const active = preset.toLowerCase() === value.toLowerCase();
+            return (
+              <button
+                key={preset}
+                type="button"
+                aria-label={preset}
+                aria-pressed={active}
+                title={preset}
+                onClick={() => choose(preset)}
+                style={{ background: preset }}
+                className={`size-7 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] ${
+                  active
+                    ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+                    : ""
+                }`}
+              />
+            );
+          })}
         </div>
         <Separator className="my-3" />
-        <div className="flex items-center justify-between">
-          <Label className="text-[12px] font-normal text-muted-foreground">
+        <div className="flex items-center justify-between gap-3">
+          <Label
+            htmlFor={id}
+            className="text-[12px] font-normal text-muted-foreground"
+          >
             Custom
           </Label>
-          <Input
-            type="color"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            className="h-7 w-12 cursor-pointer border-0 bg-transparent p-0"
-          />
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] tabular-nums text-muted-foreground">
+              {value.toUpperCase()}
+            </span>
+            <Input
+              id={id}
+              type="color"
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              className="h-7 w-12 cursor-pointer border-0 bg-transparent p-0"
+            />
+          </div>
         </div>
       </PopoverContent>
     </Popover>
@@ -954,7 +990,7 @@ function CustomizePanel({
         <ColorRow
           label="Text"
           value={options.text}
-          onChange={(text) => set({ text })}
+          onChange={(text) => set({ text, highlightText: text })}
           presets={textPresets}
         />
       </div>
