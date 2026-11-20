@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useTheme } from "@/context/ThemeContext";
-import { ArrowUp, ArrowsDownUp, Check, CaretDown, Clock, ArrowSquareOut, Heart, ClockCounterClockwise, SquaresFour, LinkSimple, List as ListIcon, CircleNotch, MagnifyingGlass, Shuffle, Trash, X } from "@phosphor-icons/react";
+import { ArrowUp, ArrowsDownUp, Check, CaretDown, Clock, ArrowSquareOut, Heart, ClockCounterClockwise, SquaresFour, LinkSimple, List as ListIcon, CircleNotch, MagnifyingGlass, Shuffle, Tag, Trash, X } from "@phosphor-icons/react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsClientLink } from "../utils/links-data";
 import {
@@ -85,7 +85,10 @@ export default function InsightsList({
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [visibleItems, setVisibleItems] = useState(ITEMS_PER_PAGE);
+  const [topicsOpen, setTopicsOpen] = useState(false);
+  const [topicQuery, setTopicQuery] = useState("");
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const topicsMenuRef = useRef<HTMLDivElement>(null);
   const [commandOpen, setCommandOpen] = useState(false);
   const [sort, setSort] = useState<SortMode>("shuffle");
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
@@ -179,6 +182,19 @@ export default function InsightsList({
     }
     return counts;
   }, [activeCategory, sortedGroups, linkData]);
+
+  /**
+   * The picker's visible rows: the head of the distribution, or the matches for
+   * a typed query. The long tail is reachable by typing, never dumped on screen.
+   */
+  const topicOptions = useMemo(() => {
+    const all = Array.from(topicCounts.entries()).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
+    const query = topicQuery.trim().toLowerCase();
+    if (query) return all.filter(([topic]) => topic.includes(query)).slice(0, 60);
+    return all.filter(([, count]) => count >= 3).slice(0, 40);
+  }, [topicCounts, topicQuery]);
 
   /**
    * The head of the topic distribution, for the palette. The long tail is still
@@ -288,6 +304,25 @@ export default function InsightsList({
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [sortMenuOpen]);
+
+  // And the topics picker.
+  useEffect(() => {
+    if (!topicsOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!topicsMenuRef.current?.contains(event.target as Node)) {
+        setTopicsOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setTopicsOpen(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [topicsOpen]);
 
   // ⌘K / Ctrl+K opens the palette; `/` does too, for hands that never leave the
   // home row. `/` is ignored while typing, so a slash inside the search box
@@ -710,6 +745,99 @@ export default function InsightsList({
             ariaLabel="Filter"
             align="left"
           />
+
+          {/* Topics — a picker, not a cloud: the head is listed, the long
+              tail is a search away. Either-of semantics. */}
+          <div ref={topicsMenuRef} className="relative ml-2">
+            <button
+              type="button"
+              onClick={() => setTopicsOpen((open) => !open)}
+              aria-haspopup="dialog"
+              aria-expanded={topicsOpen}
+              aria-label="Filter by topic"
+              className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
+            >
+              <Tag className="h-4 w-4 shrink-0 sm:hidden" />
+              <span className="hidden sm:inline">Topics</span>
+              {selectedTopics.length > 0 && (
+                <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
+                  {selectedTopics.length}
+                </span>
+              )}
+              <CaretDown
+                className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
+                  topicsOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            {topicsOpen && (
+              <div className="absolute left-0 top-full z-30 mt-1 flex max-h-[min(55svh,18rem)] w-[min(72vw,11.5rem)] flex-col overflow-hidden overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5">
+                <div className="p-1">
+                  <input
+                    type="text"
+                    value={topicQuery}
+                    onChange={(event) => setTopicQuery(event.target.value)}
+                    placeholder="Find a topic"
+                    spellCheck={false}
+                    aria-label="Find a topic"
+                    className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
+                  />
+                </div>
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                  {topicOptions.length === 0 ? (
+                    <p className="px-3 py-2 type-caption text-muted-foreground">
+                      No topics match “{topicQuery}”.
+                    </p>
+                  ) : (
+                    topicOptions.map(([topic, count]) => {
+                      const active = selectedTopics.includes(topic);
+                      return (
+                        <button
+                          key={topic}
+                          type="button"
+                          role="option"
+                          aria-selected={active}
+                          onClick={() => toggleTopic(topic)}
+                          className={`flex w-full items-center justify-between gap-1.5 rounded-[3px] px-2 py-1.5 text-left type-caption transition-colors ${
+                            active
+                              ? "bg-foreground/[0.06] text-foreground"
+                              : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                          }`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span
+                              className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] border ${
+                                active
+                                  ? "border-foreground bg-foreground text-background"
+                                  : "border-muted-foreground/40"
+                              }`}
+                            >
+                              {active && <Check className="h-2.5 w-2.5" />}
+                            </span>
+                            <span className="truncate">{topic}</span>
+                          </span>
+                          <span className="shrink-0 tabular-nums text-faint-foreground">
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+                {selectedTopics.length > 0 && (
+                  <div className="mt-1 border-t border-border p-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTopics([])}
+                      className="w-full rounded-[3px] px-3 py-1.5 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
+                    >
+                      Clear topics
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* View, sort, and the command trigger. Batch delete lives in the sort
