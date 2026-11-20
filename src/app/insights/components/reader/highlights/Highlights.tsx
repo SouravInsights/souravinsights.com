@@ -136,6 +136,8 @@ export function Highlights({
   const paras = useRef<HTMLElement[]>([]);
   const layers = useRef<HTMLElement[]>([]);
   const pop = useRef<HTMLDivElement>(null);
+  /** true when the current gesture was a double-click (word, not paragraph) */
+  const wordSelect = useRef(false);
 
   const [marks, setMarks] = useState<Mark[]>([]);
   const [open, setOpen] = useState<Pop | null>(null);
@@ -421,6 +423,12 @@ export function Highlights({
     const [start, end] = snap(text, Math.min(s, e), Math.max(s, e));
     if (end <= start) return null;
 
+    // A double-click selects one word on its way to selecting the paragraph
+    // (the third click). Opening the palette on that word makes it flash a beat
+    // before the paragraph is selected, so hold it back for a single word — a
+    // deliberate drag across a word still gets the palette.
+    if (wordSelect.current && !/\s/.test(text.slice(start, end))) return null;
+
     const same = live.current.marks.find(
       (m) => m.para === para && m.start === start && m.end === end
     );
@@ -456,6 +464,7 @@ export function Highlights({
       if (pop.current?.contains(t)) return;
       if (live.current.open) setOpen(null);
       pressing = container.contains(t);
+      wordSelect.current = e.detail >= 2;
     };
     const up = () => {
       if (!pressing) return;

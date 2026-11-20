@@ -86,6 +86,7 @@ export default function InsightsList({
   const router = useRouter();
   // The reader is a view of this page: which article (urlKey) is open, if any.
   const [reading, setReading] = useState<string | null>(null);
+  const [readingFocus, setReadingFocus] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -333,9 +334,16 @@ export default function InsightsList({
 
   // Open an article in the reader overlay; Back/Escape closes it. History gets
   // an entry so the browser's back button returns to the list exactly as left.
-  const openReader = (link: EnrichedLink) => {
-    window.history.pushState({ reader: link.urlKey }, "");
+  const openReader = (link: EnrichedLink, focus = false) => {
+    // A second click on the row (a double-click) is a request for focus mode,
+    // not a second reader — so it only flips the mode.
+    if (reading === link.urlKey) {
+      setReadingFocus(focus);
+      return;
+    }
+    window.history.pushState({ reader: link.urlKey, focus }, "");
     setReading(link.urlKey);
+    setReadingFocus(focus);
   };
 
   const closeReader = useCallback(() => {
@@ -348,8 +356,9 @@ export default function InsightsList({
 
   useEffect(() => {
     const onPopState = (event: PopStateEvent) => {
-      const state = event.state as { reader?: string } | null;
+      const state = event.state as { reader?: string; focus?: boolean } | null;
       setReading(state?.reader ?? null);
+      setReadingFocus(state?.focus ?? false);
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -967,7 +976,7 @@ export default function InsightsList({
                         href={href}
                         onRead={
                           link.category === "article"
-                            ? () => openReader(link)
+                            ? (focus?: boolean) => openReader(link, focus)
                             : undefined
                         }
                         previewSrc={
@@ -1005,7 +1014,7 @@ export default function InsightsList({
                     href={href}
                     onRead={
                       link.category === "article"
-                        ? () => openReader(link)
+                        ? (focus?: boolean) => openReader(link, focus)
                         : undefined
                     }
                     previewSrc={previewMap[link.url]}
@@ -1109,6 +1118,7 @@ export default function InsightsList({
             key={reading}
             urlKey={reading}
             isAdmin={isAdmin}
+            initialFullscreen={readingFocus}
             onClose={closeReader}
           />
         )}
@@ -1341,7 +1351,8 @@ function LinkRow({
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
-  onRead?: () => void;
+  /** open in the reader; `true` asks for focus mode */
+  onRead?: (focus?: boolean) => void;
 }) {
   const lead = (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-foreground/5">
@@ -1433,6 +1444,14 @@ function LinkRow({
               }
             : undefined
         }
+        onDoubleClick={
+          onRead
+            ? (event) => {
+                event.preventDefault();
+                onRead(true);
+              }
+            : undefined
+        }
         onMouseEnter={
           // Hover warms the article, so the click opens instantly.
           onRead ? () => prefetchArticle(link.urlKey) : undefined
@@ -1489,7 +1508,8 @@ function LinkGridCard({
   selectMode: boolean;
   selected: boolean;
   onToggle: () => void;
-  onRead?: () => void;
+  /** open in the reader; `true` asks for focus mode */
+  onRead?: (focus?: boolean) => void;
 }) {
   const media = (
     <div className="relative aspect-[40/21] w-full overflow-hidden bg-secondary">
@@ -1615,6 +1635,14 @@ function LinkGridCard({
                   event.preventDefault();
                   onRead();
                 }
+              }
+            : undefined
+        }
+        onDoubleClick={
+          onRead
+            ? (event) => {
+                event.preventDefault();
+                onRead(true);
               }
             : undefined
         }

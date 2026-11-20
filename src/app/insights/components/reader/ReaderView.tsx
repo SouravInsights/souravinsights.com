@@ -104,16 +104,19 @@ function ArticleImage({ src, alt }: { src: string; alt?: string }) {
 export function ReaderView({
   urlKey,
   isAdmin,
+  initialFullscreen = false,
   onClose,
 }: {
   urlKey: string;
   isAdmin: boolean;
+  /** open straight into focus mode — a double-click on the row asks for it */
+  initialFullscreen?: boolean;
   onClose: () => void;
 }) {
   // Cache-first: a reopened or hover-warmed article never shows a loader.
   const { data: article, isError: failed } = useQuery(articleQuery(urlKey));
   const [width, setWidth] = useState<number | null>(null);
-  const [fullscreen, setFullscreen] = useState(false);
+  const [fullscreen, setFullscreen] = useState(initialFullscreen);
   const [resizing, setResizing] = useState(false);
   const [coReader, setCoReader] = useState(
     () =>
@@ -127,6 +130,21 @@ export function ReaderView({
   const [coReaderTab, setCoReaderTab] = useState<Tab>("reader");
   const [ticks, setTicks] = useState<HighlightTick[]>([]);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [chromeHidden, setChromeHidden] = useState(false);
+  const lastScrollTop = useRef(0);
+
+  /**
+   * The toolbar gets out of the way on the way down and returns on the way up
+   * or at the top. Reading is the point; the chrome is not.
+   */
+  const onArticleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
+    const top = event.currentTarget.scrollTop;
+    const delta = top - lastScrollTop.current;
+    lastScrollTop.current = top;
+    if (top < 48) setChromeHidden(false);
+    else if (delta > 3) setChromeHidden(true);
+    else if (delta < -3) setChromeHidden(false);
+  }, []);
 
   const jumpToMark = useCallback((id: number) => {
     scrollerRef.current
@@ -345,10 +363,16 @@ export function ReaderView({
             .hljs-deletion{color:#ffdcd7;background-color:#67060c}
           `}</style>
 
-          <div className="flex min-w-0 flex-1 flex-col">
-            {/* One toolbar, every control, no duplicates (it stays put while
-                the article scrolls, so the way out is always one glance away). */}
-            <div className="flex shrink-0 items-center gap-1 border-b border-border/60 bg-background/90 px-2.5 py-2 backdrop-blur sm:px-4">
+          <div className="relative flex min-w-0 flex-1 flex-col">
+            {/* One toolbar, every control. It floats over the article and steps
+                aside while you read, so nothing sits between you and the text. */}
+            <div
+              className={`absolute inset-x-0 top-0 z-20 flex items-center gap-1 border-b border-border/60 bg-background/90 px-2.5 py-2 backdrop-blur transition-[opacity,transform] duration-200 ease-out sm:px-4 ${
+                chromeHidden
+                  ? "pointer-events-none -translate-y-full opacity-0"
+                  : "translate-y-0 opacity-100"
+              }`}
+            >
               <button
                 type="button"
                 onClick={onClose}
@@ -446,12 +470,13 @@ export function ReaderView({
             <div className="relative min-h-0 flex-1">
               <div
                 ref={scrollerRef}
+                onScroll={onArticleScroll}
                 className="h-full overflow-y-auto overscroll-contain"
               >
               <div
-                className={`mx-auto pb-24 pl-5 pt-7 sm:pl-7 ${
+                className={`mx-auto pb-24 pl-5 pt-[4.75rem] sm:pl-7 ${
                   ticks.length > 0 ? "pr-10 sm:pr-12" : "pr-5 sm:pr-7"
-                } ${fullscreen ? "max-w-3xl" : "max-w-2xl"}`}
+                } ${fullscreen ? "max-w-2xl" : "max-w-xl"}`}
               >
                 {failed && (
                   <p className="mt-16 text-center type-body text-muted-foreground">
@@ -524,6 +549,11 @@ export function ReaderView({
                         prose-headings:font-semibold
                         prose-a:text-green-700 dark:prose-a:text-green-500
                         prose-p:text-gray-700 dark:prose-p:text-muted-foreground
+                        prose-p:text-justify prose-p:hyphens-auto
+                        prose-p:[hyphenate-limit-chars:6_3_2]
+                        prose-p:my-[0.75em] prose-p:[font-variant-numeric:oldstyle-nums]
+                        prose-h2:mt-[2em] prose-h2:mb-[0.5em] prose-h2:[font-variant-numeric:lining-nums]
+                        prose-h3:mt-[1.75em] prose-h3:mb-[0.5em] prose-h3:[font-variant-numeric:lining-nums]
                         prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500
                         prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
                     >
