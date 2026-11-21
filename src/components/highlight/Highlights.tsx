@@ -15,7 +15,7 @@ import {
   type RefObject,
 } from "react";
 import { HUES, paint, type Paint } from "@/lib/highlight-palette";
-import { cut, snap, type Highlight } from "./hues";
+import { cut, snap, type HighlightSpan } from "@/lib/highlight-anchor";
 import { CLEAR, drawBars, playWave, type Under } from "./wave";
 import type { HighlightTick } from "./HighlightTicks";
 
@@ -60,7 +60,7 @@ interface WaveRequest {
 }
 
 /** a mark plus its server row id once persistence has answered */
-interface Mark extends Highlight {
+interface Mark extends HighlightSpan {
   rowId?: number;
 }
 
@@ -218,7 +218,7 @@ export function Highlights({
    * characters, the wave's grid. Segment per existing text node so inline
    * elements (links, emphasis) stay intact under the mark.
    */
-  const markDom = (para: HTMLElement, mark: Highlight) => {
+  const markDom = (para: HTMLElement, mark: HighlightSpan) => {
     const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT);
     const nodes: Text[] = [];
     let n: Node | null;
