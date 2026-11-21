@@ -73,14 +73,17 @@ const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(
       >
         {children}
         {arrow && (
-          <Arrow asChild width={28} height={12}>
-            <svg width={28} height={12} viewBox="0 0 28 12" aria-hidden="true">
+          <Arrow asChild width={14} height={7}>
+            <svg
+              width={14}
+              height={7}
+              viewBox="0 0 14 7"
+              aria-hidden="true"
+              className="overflow-visible"
+            >
+              <path d="M1 -1 L7 6 L13 -1 Z" fill="hsl(var(--background))" />
               <path
-                d="M1 0 L14 11 L27 0 Z"
-                fill="hsl(var(--background))"
-              />
-              <path
-                d="M1 0 L14 11 L27 0"
+                d="M1 0 L7 6 L13 0"
                 fill="none"
                 stroke="hsl(var(--border))"
                 strokeWidth="1"

@@ -107,7 +107,8 @@
     "use-stick-to-bottom": "^1.1.6",
     "uuid": "^11.1.0",
     "web-haptics": "^0.0.6",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@sourav/registry": "*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.17",

@@ -7,6 +7,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "../../packages/registry/src/**/*.{ts,tsx}",
     // Streamdown (used to render markdown in the Ask panel) ships its utility
     // classes inside compiled JS, so Tailwind has to scan it — otherwise a
     // reply renders unstyled.
