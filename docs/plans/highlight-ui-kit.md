@@ -21,6 +21,7 @@ wheel listener.
 | Mark maths | `src/lib/highlight-anchor.ts` | extracted |
 | Mark engine | `src/components/highlight/highlight.tsx` | engine, selection, wave hooks |
 | Highlight context | `src/components/highlight/highlight-context.ts` | extracted |
+| Text selection | `src/hooks/use-text-selection.ts` | extracted |
 | Toolbar parts | `src/components/highlight/highlight-toolbar.tsx` | composable exports |
 | Highlight rail | `src/components/highlight/highlight-rail.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
@@ -54,7 +55,8 @@ Done in this refactor:
 - rail geometry moved to `MarkerRail`
 - options panel, variant picker, design rail and footer split from the dialog
 - quote card code split into presets, themes and renderer; fills live in themes
-- highlight toolbar split into context-backed `HighlightToolbar`, `HighlightActions`, `HighlightColors`, `HighlightList` in their own file
+- highlight toolbar split into context-backed parts in `highlight-toolbar.tsx`
+- selection reading, word snapping and anchor measuring moved to `useTextSelection`
 - `cards.ts` split into presets, themes and render; fills live with themes
 
 ## Remaining foundation work
@@ -62,7 +64,6 @@ Done in this refactor:
 ### 1. Highlights
 
 - The toolbar parts are exported; keep their DOM as the default composition.
-- Extract selection reading into `use-text-selection.ts`.
 - Public mark shape:
 
 ```ts
