@@ -27,6 +27,10 @@ export default function Page() {
         !item.name.startsWith("quote"),
     },
     {
+      label: "Blocks",
+      match: (item: RegistryItem) => item.type === "registry:block",
+    },
+    {
       label: "Libs and hooks",
       match: (item: RegistryItem) =>
         item.type === "registry:lib" || item.type === "registry:hook",

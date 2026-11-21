@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "article-highlights",
+  "title": "Article highlights",
+  "description": "Article body, highlight palette, rail and quote dialog wired together.",
+  "dependencies": [
+    "@phosphor-icons/react"
+  ],
+  "registryDependencies": [
+    "https://ui.souravinsights.com/r/highlight.json",
+    "https://ui.souravinsights.com/r/highlight-rail.json",
+    "https://ui.souravinsights.com/r/quote-share-dialog.json"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/article-highlights.tsx",
+      "content": "\"use client\";\n\nimport { useRef, useState, type ReactNode } from \"react\";\nimport { Highlight, type CreatePayload } from \"@/components/highlight/highlight\";\nimport {\n  HighlightRail,\n  type HighlightRailItem,\n} from \"@/components/highlight/highlight-rail\";\nimport { ShareQuoteDialog } from \"@/components/quote/dialog\";\n\nexport interface ArticleHighlightsProps {\n  title: string;\n  publication: string;\n  children: ReactNode;\n}\n\n/** Article body + palette + rail + share dialog, wired with local marks. */\nexport function ArticleHighlights({\n  title,\n  publication,\n  children,\n}: ArticleHighlightsProps) {\n  const articleRef = useRef<HTMLDivElement>(null);\n  const [marks, setMarks] = useState([]);\n  const [ticks, setTicks] = useState<HighlightRailItem[]>([]);\n  const [share, setShare] = useState<{ quote: string; context: string } | null>(\n    null\n  );\n  const nextId = useRef(1);\n\n  const create = async (payload: CreatePayload) => {\n    const id = nextId.current++;\n    setMarks((all) => [...all, { id, ...payload }]);\n    return id;\n  };\n\n  return (\n    <>\n      <div ref={articleRef}>{children}</div>\n      <Highlight\n        containerRef={articleRef}\n        initialMarks={marks}\n        onCreate={create}\n        onRecolor={() => undefined}\n        onDelete={(id) => setMarks((all) => all.filter((mark) => mark.id !== id))}\n        onShareQuote={setShare}\n        onTicks={setTicks}\n      />\n      <HighlightRail\n        ticks={ticks}\n        onJump={(id) => {\n          const mark = document.querySelector<HTMLElement>(`[data-hl=\"${id}\"]`);\n          mark?.scrollIntoView({ block: \"center\", behavior: \"smooth\" });\n        }}\n      />\n      <ShareQuoteDialog\n        open={share !== null}\n        onOpenChange={(open) => {\n          if (!open) setShare(null);\n        }}\n        quote={share?.quote ?? \"\"}\n        context={share?.context ?? \"\"}\n        title={title}\n        publication={publication}\n      />\n    </>\n  );\n}\n",
+      "type": "registry:block",
+      "target": "components/blocks/article-highlights.tsx"
+    }
+  ],
+  "type": "registry:block"
+}

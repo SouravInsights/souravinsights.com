@@ -450,6 +450,44 @@
         "https://ui.souravinsights.com/r/quote-variant-picker.json",
         "tabs"
       ]
+    },
+    {
+      "name": "article-highlights",
+      "type": "registry:block",
+      "title": "Article highlights",
+      "description": "Article body, highlight palette, rail and quote dialog wired together.",
+      "files": [
+        {
+          "path": "src/blocks/article-highlights.tsx",
+          "type": "registry:block",
+          "target": "components/blocks/article-highlights.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
+      "registryDependencies": [
+        "https://ui.souravinsights.com/r/highlight.json",
+        "https://ui.souravinsights.com/r/highlight-rail.json",
+        "https://ui.souravinsights.com/r/quote-share-dialog.json"
+      ]
+    },
+    {
+      "name": "quote-share",
+      "type": "registry:block",
+      "title": "Quote share",
+      "description": "A share button over the quote studio.",
+      "files": [
+        {
+          "path": "src/blocks/quote-share.tsx",
+          "type": "registry:block",
+          "target": "components/blocks/quote-share.tsx"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "https://ui.souravinsights.com/r/quote-share-dialog.json"
+      ]
     }
   ]
 }
