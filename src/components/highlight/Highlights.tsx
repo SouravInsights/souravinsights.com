@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnchoredPanel } from "@/components/ui/anchored-panel";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Swatch, SwatchGroup } from "@/components/ui/swatch";
@@ -30,29 +31,26 @@ import type { HighlightTick } from "./HighlightTicks";
  * a background call that never blocks the wave.
  */
 
-const ENTER = { duration: 0.2, ease: [0.23, 1, 0.32, 1] } as const;
-const LEAVE = { duration: 0.12, ease: [0.4, 0, 1, 1] } as const;
-
-const LIFT = [
-  "0 1px 2px rgb(0 0 0 / 0.06)",
-  "0 8px 16px -6px rgb(0 0 0 / 0.1)",
-  "0 20px 40px -16px rgb(0 0 0 / 0.14)",
-].join(", ");
-
 const GAP = 12;
 const EDGE = 8;
 /** A mark's removal pass is capped here, however long the quote is. */
 const REMOVE_MS = 420;
 
-interface Anchor {
-  x: number;
-  top: number;
-  bottom: number;
-}
-
 type Pop =
-  | { kind: "new"; para: number; start: number; end: number; anchor: Anchor }
-  | { kind: "edit"; id: number; viaKey: boolean };
+  | {
+      kind: "new";
+      para: number;
+      start: number;
+      end: number;
+      /** measured in viewport coordinates, read again on every scroll */
+      anchor: () => DOMRect | null;
+    }
+  | {
+      kind: "edit";
+      id: number;
+      viaKey: boolean;
+      anchor: () => DOMRect | null;
+    };
 
 interface WaveRequest {
   id: number;
@@ -95,7 +93,8 @@ interface Props {
   onTicks?: (ticks: HighlightTick[]) => void;
 }
 
-function bounds(rects: DOMRect[], stage: DOMRect): Anchor | null {
+/** One box around every line of a selection or mark. */
+function unionRect(rects: DOMRect[]): DOMRect | null {
   let l = Number.POSITIVE_INFINITY;
   let r = Number.NEGATIVE_INFINITY;
   let t = Number.POSITIVE_INFINITY;
@@ -108,7 +107,7 @@ function bounds(rects: DOMRect[], stage: DOMRect): Anchor | null {
     b = Math.max(b, rect.bottom);
   }
   if (!Number.isFinite(l)) return null;
-  return { x: (l + r) / 2 - stage.left, top: t - stage.top, bottom: b - stage.top };
+  return new DOMRect(l, t, r - l, b - t);
 }
 
 /** characters of text in `root` before a DOM position */
@@ -155,6 +154,18 @@ export function Highlights({
 
   const textOf = (para: number) => paras.current[para]?.textContent ?? "";
 
+  /** A live box for a mark, unioned across its inline segments. */
+  const anchorForMark = useCallback((id: number) => {
+    return () => {
+      const container = containerRef.current;
+      if (!container) return null;
+      const rects = Array.from(
+        container.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`)
+      ).flatMap((span) => Array.from(span.getClientRects()));
+      return unionRect(rects);
+    };
+  }, [containerRef]);
+
   // Theme flips repaint every mark's ink/wash.
   useEffect(() => {
     const update = () => setDark(document.documentElement.classList.contains("dark"));
@@ -174,7 +185,9 @@ export function Highlights({
     if (!container) return;
     paras.current = Array.from(container.querySelectorAll<HTMLElement>("p"));
     layers.current = paras.current.map((p) => {
-      p.classList.add("relative", "isolate", "reader-kern-off");
+      p.classList.add("relative", "isolate");
+      p.style.fontKerning = "none";
+      p.style.fontVariantLigatures = "none";
       const layer = document.createElement("span");
       layer.setAttribute("aria-hidden", "true");
       layer.className = "-z-10 pointer-events-none absolute inset-0";
@@ -433,21 +446,29 @@ export function Highlights({
     const same = live.current.marks.find(
       (m) => m.para === para && m.start === start && m.end === end
     );
-    if (same) return { kind: "edit", id: same.id, viaKey: false };
+    if (same)
+      return {
+        kind: "edit",
+        id: same.id,
+        viaKey: false,
+        anchor: anchorForMark(same.id),
+      };
 
     // Only the lines belonging to this paragraph: a drag that ran into the next
     // one drags its rects in too, and would place the palette under text that is
     // not selected.
-    const box = el.getBoundingClientRect();
-    const anchor = bounds(
-      Array.from(range.getClientRects()).filter(
-        (rect) => rect.bottom > box.top && rect.top < box.bottom
-      ),
-      container.getBoundingClientRect()
-    );
-    if (!anchor) return null;
+    const anchor = () => {
+      if (!range || !el.isConnected) return null;
+      const box = el.getBoundingClientRect();
+      return unionRect(
+        Array.from(range.getClientRects()).filter(
+          (rect) => rect.bottom > box.top && rect.top < box.bottom
+        )
+      );
+    };
+    if (!anchor()) return null;
     return { kind: "new", para, start, end, anchor };
-  }, [containerRef]);
+  }, [anchorForMark, containerRef]);
 
   /* The same pointup/selectionchange pairing as the original. */
   useEffect(() => {
@@ -463,7 +484,11 @@ export function Highlights({
     const down = (e: PointerEvent) => {
       const t = e.target as Element;
       if (pop.current?.contains(t)) return;
-      if (live.current.open) setOpen(null);
+      if (live.current.open) {
+        setOpen(null);
+        // A stale selection would reopen the palette on pointerup.
+        window.getSelection()?.removeAllRanges();
+      }
       pressing = container.contains(t);
       wordSelect.current = e.detail >= 2;
     };
@@ -509,63 +534,6 @@ export function Highlights({
     }
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close(true);
-    };
-    window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
-  }, [open, close]);
-
-  // Palette positioning, written to the node (needs the palette's own size).
-  useLayoutEffect(() => {
-    const el = pop.current;
-    const container = containerRef.current;
-    if (!open || !el || !container) return;
-    const box = container.getBoundingClientRect();
-
-    let at: Anchor | null = null;
-    if (open.kind === "new") at = open.anchor;
-    else {
-      const mark = container.querySelector<HTMLElement>(`[data-hl="${open.id}"]`);
-      if (mark) at = bounds(Array.from(mark.getClientRects()), box);
-    }
-    if (!at) return;
-
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-
-    // Above or below is decided on SCREEN, not in container coordinates. The
-    // article scrolls inside its panel, so a line near the top of a reader who
-    // has scrolled a long way is still "far down" in container coordinates and
-    // the palette was placed above the viewport, where nobody could see it. The
-    // final position is clamped to the band of the container that is visible.
-    const selectionTop = box.top + at.top;
-    const selectionBottom = box.top + at.bottom;
-    const visibleTop = -box.top + EDGE;
-    const visibleBottom = -box.top + window.innerHeight - EDGE;
-
-    const roomAbove = selectionTop - GAP - h >= EDGE;
-    const roomBelow = selectionBottom + GAP + h <= window.innerHeight - EDGE;
-    const above = roomAbove || !roomBelow;
-
-    const preferred = above ? at.top - GAP - h : at.bottom + GAP;
-    const top = Math.min(
-      Math.max(preferred, visibleTop),
-      Math.max(visibleBottom - h, visibleTop)
-    );
-    const left = Math.min(Math.max(at.x - w / 2, EDGE), Math.max(box.width - w - EDGE, EDGE));
-    const ax = Math.min(Math.max(at.x - left, 16), w - 16);
-
-    el.style.left = `${left}px`;
-    el.style.top = `${top}px`;
-    el.style.transformOrigin = `${ax}px ${above ? "100%" : "0%"}`;
-    el.style.setProperty("--ax", `${ax}px`);
-    el.dataset.side = above ? "top" : "bottom";
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, marks]);
-
   /* ---------------- actions ------------------ */
 
   const request = (id: number, from: Paint, hue: number, under: Under[] = []) => {
@@ -604,7 +572,7 @@ export function Highlights({
         { id, para, start, end, hue },
       ]);
       request(id, { ink: base(para), wash: CLEAR }, hue, under);
-      setOpen({ kind: "edit", id, viaKey: false });
+      setOpen({ kind: "edit", id, viaKey: false, anchor: anchorForMark(id) });
 
       // Persistence never blocks the wave; the row id lands when it lands.
       const before = text.slice(Math.max(0, start - 40), start);
@@ -686,7 +654,7 @@ export function Highlights({
   const openMark = (id: number, viaKey: boolean) => {
     if (!editable) return;
     if (!viaKey && !window.getSelection()?.isCollapsed) return;
-    setOpen({ kind: "edit", id, viaKey });
+    setOpen({ kind: "edit", id, viaKey, anchor: anchorForMark(id) });
   };
 
   // Clicks on marks open the palette on them (event delegation on the stage).
@@ -749,26 +717,22 @@ export function Highlights({
 
   return (
     <>
-      <style>{`
-        .reader-kern-off { font-kerning: none; font-variant-ligatures: none; }
-      `}</style>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            ref={pop}
-            key="palette"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1, transition: ENTER }}
-            exit={{ opacity: 0, scale: 0.98, transition: LEAVE }}
-            onPointerDown={(e) => e.preventDefault()}
-            className="group absolute z-20 flex select-none flex-col gap-3 rounded-xl border border-border bg-background p-3 max-sm:gap-2 max-sm:p-2.5"
-            style={{ boxShadow: LIFT }}
-          >
-            <span
-              aria-hidden="true"
-              className="absolute size-2.5 -translate-x-1/2 rotate-45 border-border bg-background group-data-[side=top]:-bottom-1.5 group-data-[side=top]:border-b group-data-[side=top]:border-r group-data-[side=bottom]:-top-1.5 group-data-[side=bottom]:border-l group-data-[side=bottom]:border-t"
-              style={{ left: "var(--ax, 50%)" }}
-            />
+      <AnchoredPanel
+        open={!!open}
+        onOpenChange={(next) => {
+          if (!next) close(false);
+        }}
+        anchor={open?.anchor ?? null}
+        contentRef={pop}
+        sideOffset={GAP}
+        collisionPadding={EDGE}
+        arrow
+        role="toolbar"
+        aria-label="Highlight options"
+        onPointerDown={(event) => event.preventDefault()}
+        onEscapeKeyDown={() => close(true)}
+        className="group z-20 flex select-none flex-col gap-3 !w-auto !rounded-xl !border-border !bg-background !p-3 !shadow-lg max-sm:gap-2 max-sm:!p-2.5"
+      >
 
             <ButtonGroup className="border-b border-border pb-2.5">
               <Button
@@ -872,7 +836,7 @@ export function Highlights({
                           data-active={m.id === current?.id ? "" : undefined}
                           onClick={() => {
                             window.getSelection()?.removeAllRanges();
-                            setOpen({ kind: "edit", id: m.id, viaKey: false });
+                            setOpen({ kind: "edit", id: m.id, viaKey: false, anchor: anchorForMark(m.id) });
                             request(m.id, paint(m.hue, dark), m.hue);
                           }}
                           className={`h-auto w-full justify-start px-2 py-1 text-left text-[13px] font-normal leading-[1.5] ${
@@ -896,9 +860,7 @@ export function Highlights({
                 )}
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </AnchoredPanel>
 
       <p aria-live="polite" className="sr-only">
         {said}
