@@ -7,13 +7,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { HUES } from "@/lib/highlight-palette";
+import { MarkerRail } from "@/components/ui/marker-rail";
 
 /**
  * The highlight map: a small rail pinned to the article's right edge that shows
@@ -41,10 +36,6 @@ export interface HighlightTick {
   quote: string;
 }
 
-/** The rail's height, and the tick thickness the ends sit on. */
-const RAIL = 200;
-const END = 2;
-
 export function HighlightTicks({
   ticks,
   onJump,
@@ -55,64 +46,27 @@ export function HighlightTicks({
   onOpenNotebook?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [hot, setHot] = useState<number | null>(null);
 
   if (ticks.length === 0) return null;
 
   return (
-    <TooltipProvider delayDuration={150}>
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-[4] w-0">
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              aria-label={`Highlights: ${ticks.length}. Open Notes`}
-              aria-expanded={open}
-              className="group pointer-events-auto absolute right-4 top-1/2 h-auto -translate-y-1/2 cursor-pointer rounded-lg px-0 py-4 pl-3 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <span className="relative block w-3.5" style={{ height: RAIL }}>
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 h-0.5 w-3.5 rounded-full bg-muted-foreground/55 transition-opacity duration-150 group-hover:bg-muted-foreground/80"
-                  style={{ top: 0 }}
-                />
-                {ticks.map((tick) => (
-                  <Tooltip key={tick.id}>
-                    <TooltipTrigger asChild>
-                      <span
-                        aria-label={tick.quote}
-                        onPointerEnter={() => setHot(tick.id)}
-                        onPointerLeave={() => setHot(null)}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          onJump(tick.id);
-                        }}
-                        style={{
-                          top: tick.at * (RAIL - END),
-                          backgroundColor: HUES[tick.hue]?.swatch ?? "#f4e58a",
-                          scale: hot === tick.id ? "1.6 1" : "1 1",
-                        }}
-                        className="absolute right-0 h-0.5 w-3.5 origin-right rounded-full transition-[opacity,scale] duration-150"
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="left"
-                      sideOffset={12}
-                      className="max-w-[18rem] text-[12px] leading-snug"
-                    >
-                      {tick.quote}
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-                <span
-                  aria-hidden="true"
-                  className="absolute right-0 h-0.5 w-3.5 rounded-full bg-muted-foreground/55 transition-opacity duration-150 group-hover:bg-muted-foreground/80"
-                  style={{ top: RAIL - END }}
-                />
-              </span>
-            </Button>
-          </PopoverTrigger>
+    <div className="pointer-events-none absolute inset-y-0 right-0 z-[4] w-0">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div className="pointer-events-auto">
+            <MarkerRail
+              markers={ticks.map((tick) => ({
+                id: tick.id,
+                at: tick.at,
+                color: HUES[tick.hue]?.swatch ?? "#f4e58a",
+                label: tick.quote,
+              }))}
+              onSelect={onJump}
+              ariaLabel={`Highlights: ${ticks.length}. Open Notes`}
+              className="absolute right-4 top-1/2 -translate-y-1/2"
+            />
+          </div>
+        </PopoverTrigger>
 
           <PopoverContent
             side="left"
@@ -138,11 +92,7 @@ export function HighlightTicks({
             </div>
             <ul className="max-h-[60vh] overflow-y-auto p-1 [scrollbar-width:none]">
               {ticks.map((tick) => (
-                <li
-                  key={tick.id}
-                  onPointerEnter={() => setHot(tick.id)}
-                  onPointerLeave={() => setHot(null)}
-                >
+                <li key={tick.id}>
                   <Button
                     type="button"
                     variant="ghost"
@@ -164,7 +114,6 @@ export function HighlightTicks({
             </ul>
           </PopoverContent>
         </Popover>
-      </div>
-    </TooltipProvider>
+    </div>
   );
 }
