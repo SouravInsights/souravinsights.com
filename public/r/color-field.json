@@ -8,7 +8,7 @@
   ],
   "registryDependencies": [
     "button",
-    "color-picker",
+    "https://ui.souravinsights.com/r/color-picker.json",
     "utils"
   ],
   "files": [

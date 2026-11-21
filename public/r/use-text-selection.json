@@ -4,7 +4,7 @@
   "title": "Use text selection",
   "description": "Read a selection as word-snapped paragraph offsets.",
   "registryDependencies": [
-    "highlight-anchor"
+    "https://ui.souravinsights.com/r/highlight-anchor.json"
   ],
   "files": [
     {

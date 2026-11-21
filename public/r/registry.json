@@ -40,7 +40,7 @@
         }
       ],
       "registryDependencies": [
-        "highlight-palette"
+        "https://ui.souravinsights.com/r/highlight-palette.json"
       ]
     },
     {
@@ -55,7 +55,7 @@
         }
       ],
       "registryDependencies": [
-        "highlight-anchor"
+        "https://ui.souravinsights.com/r/highlight-anchor.json"
       ]
     },
     {
@@ -134,7 +134,7 @@
         }
       ],
       "registryDependencies": [
-        "use-reduced-motion",
+        "https://ui.souravinsights.com/r/use-reduced-motion.json",
         "utils"
       ]
     },
@@ -204,7 +204,7 @@
       ],
       "registryDependencies": [
         "button",
-        "color-picker",
+        "https://ui.souravinsights.com/r/color-picker.json",
         "utils"
       ]
     },
@@ -257,17 +257,17 @@
         "@phosphor-icons/react"
       ],
       "registryDependencies": [
-        "anchored-panel",
+        "https://ui.souravinsights.com/r/anchored-panel.json",
         "button",
-        "marker-rail",
+        "https://ui.souravinsights.com/r/marker-rail.json",
         "popover",
-        "swatch",
+        "https://ui.souravinsights.com/r/swatch.json",
         "tooltip",
-        "highlight-anchor",
-        "highlight-palette",
-        "highlight-wave",
-        "use-text-selection",
-        "use-reduced-motion"
+        "https://ui.souravinsights.com/r/highlight-anchor.json",
+        "https://ui.souravinsights.com/r/highlight-palette.json",
+        "https://ui.souravinsights.com/r/highlight-wave.json",
+        "https://ui.souravinsights.com/r/use-text-selection.json",
+        "https://ui.souravinsights.com/r/use-reduced-motion.json"
       ]
     },
     {
@@ -296,7 +296,7 @@
         }
       ],
       "registryDependencies": [
-        "quote-presets"
+        "https://ui.souravinsights.com/r/quote-presets.json"
       ]
     },
     {
@@ -312,8 +312,8 @@
         }
       ],
       "registryDependencies": [
-        "quote-presets",
-        "quote-themes"
+        "https://ui.souravinsights.com/r/quote-presets.json",
+        "https://ui.souravinsights.com/r/quote-themes.json"
       ]
     },
     {
@@ -333,14 +333,14 @@
       ],
       "registryDependencies": [
         "button",
-        "color-field",
-        "inline-edit-field",
+        "https://ui.souravinsights.com/r/color-field.json",
+        "https://ui.souravinsights.com/r/inline-edit-field.json",
         "label",
         "select",
         "separator",
-        "quote-presets",
-        "quote-render",
-        "quote-themes"
+        "https://ui.souravinsights.com/r/quote-presets.json",
+        "https://ui.souravinsights.com/r/quote-render.json",
+        "https://ui.souravinsights.com/r/quote-themes.json"
       ]
     },
     {
@@ -356,10 +356,10 @@
         }
       ],
       "registryDependencies": [
-        "canvas",
-        "quote-presets",
-        "quote-render",
-        "quote-themes"
+        "https://ui.souravinsights.com/r/canvas.json",
+        "https://ui.souravinsights.com/r/quote-presets.json",
+        "https://ui.souravinsights.com/r/quote-render.json",
+        "https://ui.souravinsights.com/r/quote-themes.json"
       ]
     },
     {
@@ -375,10 +375,10 @@
         }
       ],
       "registryDependencies": [
-        "snap-carousel",
-        "quote-presets",
-        "quote-themes",
-        "quote-card"
+        "https://ui.souravinsights.com/r/snap-carousel.json",
+        "https://ui.souravinsights.com/r/quote-presets.json",
+        "https://ui.souravinsights.com/r/quote-themes.json",
+        "https://ui.souravinsights.com/r/quote-card.json"
       ]
     },
     {
@@ -394,8 +394,8 @@
         }
       ],
       "registryDependencies": [
-        "swatch",
-        "quote-themes"
+        "https://ui.souravinsights.com/r/swatch.json",
+        "https://ui.souravinsights.com/r/quote-themes.json"
       ]
     },
     {
@@ -436,15 +436,15 @@
       ],
       "registryDependencies": [
         "dialog",
-        "side-panel",
-        "snap-carousel",
-        "quote-actions",
-        "quote-carousel",
-        "quote-options",
-        "quote-presets",
-        "quote-render",
-        "quote-themes",
-        "quote-variant-picker",
+        "https://ui.souravinsights.com/r/side-panel.json",
+        "https://ui.souravinsights.com/r/snap-carousel.json",
+        "https://ui.souravinsights.com/r/quote-actions.json",
+        "https://ui.souravinsights.com/r/quote-carousel.json",
+        "https://ui.souravinsights.com/r/quote-options.json",
+        "https://ui.souravinsights.com/r/quote-presets.json",
+        "https://ui.souravinsights.com/r/quote-render.json",
+        "https://ui.souravinsights.com/r/quote-themes.json",
+        "https://ui.souravinsights.com/r/quote-variant-picker.json",
         "tabs"
       ]
     }

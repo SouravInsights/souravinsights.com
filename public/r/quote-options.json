@@ -8,14 +8,14 @@
   ],
   "registryDependencies": [
     "button",
-    "color-field",
-    "inline-edit-field",
+    "https://ui.souravinsights.com/r/color-field.json",
+    "https://ui.souravinsights.com/r/inline-edit-field.json",
     "label",
     "select",
     "separator",
-    "quote-presets",
-    "quote-render",
-    "quote-themes"
+    "https://ui.souravinsights.com/r/quote-presets.json",
+    "https://ui.souravinsights.com/r/quote-render.json",
+    "https://ui.souravinsights.com/r/quote-themes.json"
   ],
   "files": [
     {

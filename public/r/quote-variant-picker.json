@@ -4,8 +4,8 @@
   "title": "Quote variant picker",
   "description": "The active design's colour variants.",
   "registryDependencies": [
-    "swatch",
-    "quote-themes"
+    "https://ui.souravinsights.com/r/swatch.json",
+    "https://ui.souravinsights.com/r/quote-themes.json"
   ],
   "files": [
     {

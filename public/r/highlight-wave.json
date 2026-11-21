@@ -4,7 +4,7 @@
   "title": "Highlight wave",
   "description": "Bars and the character wave for a mark.",
   "registryDependencies": [
-    "highlight-palette"
+    "https://ui.souravinsights.com/r/highlight-palette.json"
   ],
   "files": [
     {

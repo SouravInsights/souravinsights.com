@@ -4,7 +4,7 @@
   "title": "Quote themes",
   "description": "The four quote designs, variants and fill helpers.",
   "registryDependencies": [
-    "quote-presets"
+    "https://ui.souravinsights.com/r/quote-presets.json"
   ],
   "files": [
     {

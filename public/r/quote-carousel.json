@@ -4,10 +4,10 @@
   "title": "Quote carousel",
   "description": "The design rail with theme cards and canvas slots.",
   "registryDependencies": [
-    "snap-carousel",
-    "quote-presets",
-    "quote-themes",
-    "quote-card"
+    "https://ui.souravinsights.com/r/snap-carousel.json",
+    "https://ui.souravinsights.com/r/quote-presets.json",
+    "https://ui.souravinsights.com/r/quote-themes.json",
+    "https://ui.souravinsights.com/r/quote-card.json"
   ],
   "files": [
     {

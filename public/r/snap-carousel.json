@@ -4,7 +4,7 @@
   "title": "Snap carousel",
   "description": "A centred scroll-snap rail with a spring glide.",
   "registryDependencies": [
-    "use-reduced-motion",
+    "https://ui.souravinsights.com/r/use-reduced-motion.json",
     "utils"
   ],
   "files": [

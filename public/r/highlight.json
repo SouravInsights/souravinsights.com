@@ -7,17 +7,17 @@
     "@phosphor-icons/react"
   ],
   "registryDependencies": [
-    "anchored-panel",
+    "https://ui.souravinsights.com/r/anchored-panel.json",
     "button",
-    "marker-rail",
+    "https://ui.souravinsights.com/r/marker-rail.json",
     "popover",
-    "swatch",
+    "https://ui.souravinsights.com/r/swatch.json",
     "tooltip",
-    "highlight-anchor",
-    "highlight-palette",
-    "highlight-wave",
-    "use-text-selection",
-    "use-reduced-motion"
+    "https://ui.souravinsights.com/r/highlight-anchor.json",
+    "https://ui.souravinsights.com/r/highlight-palette.json",
+    "https://ui.souravinsights.com/r/highlight-wave.json",
+    "https://ui.souravinsights.com/r/use-text-selection.json",
+    "https://ui.souravinsights.com/r/use-reduced-motion.json"
   ],
   "files": [
     {

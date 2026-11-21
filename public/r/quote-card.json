@@ -4,10 +4,10 @@
   "title": "Quote card",
   "description": "One quote card drawn at export resolution.",
   "registryDependencies": [
-    "canvas",
-    "quote-presets",
-    "quote-render",
-    "quote-themes"
+    "https://ui.souravinsights.com/r/canvas.json",
+    "https://ui.souravinsights.com/r/quote-presets.json",
+    "https://ui.souravinsights.com/r/quote-render.json",
+    "https://ui.souravinsights.com/r/quote-themes.json"
   ],
   "files": [
     {

@@ -4,8 +4,8 @@
   "title": "Quote render",
   "description": "Canvas layout, card drawing and PNG export.",
   "registryDependencies": [
-    "quote-presets",
-    "quote-themes"
+    "https://ui.souravinsights.com/r/quote-presets.json",
+    "https://ui.souravinsights.com/r/quote-themes.json"
   ],
   "files": [
     {
