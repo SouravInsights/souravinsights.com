@@ -8394,11 +8394,6 @@ rc9@^2.1.2:
     defu "^6.1.4"
     destr "^2.0.3"
 
-react-colorful@^5.8.1:
-  version "5.8.1"
-  resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.8.1.tgz#a6ef2a3946e6903883b142720dda80c72f24267f"
-  integrity sha512-oz68bhsnFWnpDf1ZR8daiQbYpXUnM2h2J6hl9Zg2rTpM/DU6vCqe1E+CpqmqLnJucMZetHZeifSAfJ+geN9lcA==
-
 react-day-picker@8.10.1:
   version "8.10.1"
   resolved "https://registry.npmjs.org/react-day-picker/-/react-day-picker-8.10.1.tgz"

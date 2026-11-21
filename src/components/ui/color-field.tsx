@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Eyedropper } from "@phosphor-icons/react";
-import { HexColorInput, HexColorPicker } from "react-colorful";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -31,12 +30,174 @@ type EyeDropperConstructor = new () => {
   open: () => Promise<{ sRGBHex: string }>;
 };
 
+type Hsv = { h: number; s: number; v: number };
+
+const WHEEL = 108;
+
+function hexToHsv(hex: string): Hsv {
+  const match = hex.match(/^#?([0-9a-f]{6})$/i);
+  if (!match) return { h: 0, s: 0, v: 1 };
+  const n = Number.parseInt(match[1], 16);
+  const r = ((n >> 16) & 255) / 255;
+  const g = ((n >> 8) & 255) / 255;
+  const b = (n & 255) / 255;
+  const max = Math.max(r, g, b);
+  const delta = max - Math.min(r, g, b);
+  let h = 0;
+  if (delta) {
+    h =
+      max === r
+        ? ((g - b) / delta) % 6
+        : max === g
+          ? (b - r) / delta + 2
+          : (r - g) / delta + 4;
+    h = (h * 60 + 360) % 360;
+  }
+  return { h, s: max ? delta / max : 0, v: max };
+}
+
+function hsvToHex({ h, s, v }: Hsv): string {
+  const f = (n: number) => {
+    const k = (n + h / 60) % 6;
+    return v - v * s * Math.max(0, Math.min(k, 4 - k, 1));
+  };
+  return (
+    "#" +
+    [f(5), f(3), f(1)]
+      .map((c) => Math.round(c * 255).toString(16).padStart(2, "0"))
+      .join("")
+  );
+}
+
+/** The wheel plus a brightness rail and a hex field. */
+function ColorPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [hsv, setHsv] = React.useState<Hsv>(() => hexToHsv(value));
+  const wheelRef = React.useRef<HTMLDivElement>(null);
+  const [text, setText] = React.useState(value);
+  const editing = React.useRef(false);
+
+  React.useEffect(() => {
+    if (hsvToHex(hsv) !== value.toLowerCase()) setHsv(hexToHsv(value));
+  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  React.useEffect(() => {
+    if (!editing.current) setText(value);
+  }, [value]);
+
+  const update = (next: Hsv) => {
+    setHsv(next);
+    onChange(hsvToHex(next));
+  };
+
+  const point = (event: React.PointerEvent<HTMLDivElement>) => {
+    const box = wheelRef.current?.getBoundingClientRect();
+    if (!box) return;
+    const x = event.clientX - (box.left + box.width / 2);
+    const y = event.clientY - (box.top + box.height / 2);
+    const h = ((Math.atan2(x, -y) * 180) / Math.PI + 360) % 360;
+    const s = Math.min(1, Math.hypot(x, y) / (box.width / 2));
+    update({ ...hsv, h, s });
+  };
+
+  const angle = ((hsv.h - 90) * Math.PI) / 180;
+  const dot = {
+    left: WHEEL / 2 + Math.cos(angle) * hsv.s * (WHEEL / 2),
+    top: WHEEL / 2 + Math.sin(angle) * hsv.s * (WHEEL / 2),
+  };
+
+  return (
+    <div className="flex items-center gap-3.5">
+      <div
+        ref={wheelRef}
+        role="group"
+        aria-label="Colour wheel"
+        onPointerDown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId);
+          point(event);
+        }}
+        onPointerMove={(event) => {
+          if (event.buttons === 1) point(event);
+        }}
+        style={{
+          width: WHEEL,
+          height: WHEEL,
+          background:
+            "radial-gradient(circle closest-side, #fff, transparent), conic-gradient(red, #ff0, #0f0, #0ff, #00f, #f0f, red)",
+        }}
+        className="relative flex-none cursor-crosshair touch-none rounded-full"
+      >
+        <span
+          aria-hidden="true"
+          style={{
+            left: dot.left,
+            top: dot.top,
+            background: hsvToHex({ ...hsv, v: hsv.v || 1 }),
+          }}
+          className="pointer-events-none absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_0_2.5px_#fff,0_0_0_3.5px_rgba(0,0,0,0.25),0_2px_6px_rgba(0,0,0,0.3)]"
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3.5">
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={Math.round(hsv.v * 100)}
+          aria-label="Brightness"
+          onChange={(event) =>
+            update({ ...hsv, v: Number(event.target.value) / 100 })
+          }
+          style={{
+            background: `linear-gradient(to right, #000, ${hsvToHex({ ...hsv, v: 1 })})`,
+          }}
+          className="h-3 w-full cursor-pointer appearance-none rounded-full [&::-moz-range-thumb]:size-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-white [&::-moz-range-track]:h-3 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-transparent [&::-webkit-slider-runnable-track]:h-3 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-transparent [&::-webkit-slider-thumb]:-mt-0.5 [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_0_0_1px_rgba(0,0,0,0.2),0_1px_4px_rgba(0,0,0,0.3)]"
+        />
+
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="size-6 flex-none rounded-md shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.2)]"
+            style={{ background: value }}
+          />
+          <input
+            aria-label="Hex colour"
+            value={text}
+            spellCheck={false}
+            onFocus={() => {
+              editing.current = true;
+            }}
+            onBlur={() => {
+              editing.current = false;
+              setText(value);
+            }}
+            onChange={(event) => {
+              const next = event.target.value.trim();
+              setText(next);
+              const hex = next.startsWith("#") ? next : `#${next}`;
+              if (/^#[0-9a-f]{6}$/i.test(hex)) onChange(hex.toLowerCase());
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") event.currentTarget.blur();
+            }}
+            className="h-7 min-w-0 flex-1 rounded-md border-0 bg-background/60 px-2 font-mono text-[11px] tabular-nums text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * A colour role, edited in place.
  *
- * Closed: one calm row — dot, label, value. Open: the same surface grows into
- * a compact picker, saturation on the left and hue + hex on the right, like the
- * field it belongs to. `react-colorful` owns the colour maths and keyboard.
+ * Closed: one quiet row. Open: the row grows into the picker, with the wheel,
+ * brightness rail and hex on the same surface. No floating panel over the card.
  */
 function ColorField({
   label,
@@ -77,62 +238,39 @@ function ColorField({
       data-slot="color-field"
       data-state={open ? "open" : "closed"}
       className={cn(
-        "rounded-lg",
-        open ? "bg-foreground/[0.055] p-3.5" : "px-0 py-2.5",
+        "-mx-2 rounded-[9px] transition-colors duration-150",
+        open
+          ? "bg-foreground/[0.055]"
+          : "[@media(hover:hover)]:hover:bg-foreground/[0.035]",
         className
       )}
     >
-      <div className="flex items-center gap-2.5">
-        <button
-          type="button"
-          id={id}
-          aria-label={`${label}: ${valueLabel ?? value}`}
-          aria-expanded={open}
-          aria-controls={`${id}-picker`}
-          disabled={!allowCustom}
-          onClick={() => setOpen((current) => !current)}
+      <button
+        type="button"
+        id={id}
+        aria-label={`${label}: ${valueLabel ?? value}`}
+        aria-expanded={open}
+        aria-controls={`${id}-picker`}
+        disabled={!allowCustom}
+        onClick={() => setOpen((current) => !current)}
+        className="flex h-9 w-full items-center gap-2.5 rounded-[9px] px-2 text-left"
+      >
+        <span
           style={{ background: shown }}
-          className={cn(
-            "size-6 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
-            allowCustom && "[@media(hover:hover)]:hover:scale-105"
-          )}
+          className="size-5 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
         />
-
-        <Label
-          htmlFor={id}
-          className="text-[15px] font-normal leading-5 text-foreground"
-        >
+        <Label className="flex-1 text-[13px] font-normal leading-[18px] text-foreground">
           {label}
         </Label>
-
-        <span className="ml-auto text-[13px] tabular-nums text-muted-foreground/90">
+        <span className="text-[12px] tabular-nums text-muted-foreground">
           {valueLabel ?? value.toUpperCase()}
         </span>
-      </div>
+      </button>
 
       {open && (
-        <div id={`${id}-picker`} className="mt-3">
-          <HexColorPicker
-            color={value}
-            onChange={onChange}
-            className={cn(
-              "!h-auto !w-full",
-              "[&.react-colorful]:!grid [&.react-colorful]:!h-auto [&.react-colorful]:!w-full",
-              "[&.react-colorful]:!grid-cols-[80px_1fr] [&.react-colorful]:!gap-3",
-              "[&_.react-colorful__saturation]:!h-20 [&_.react-colorful__saturation]:!border-b-0 [&_.react-colorful__saturation]:!rounded-lg",
-              "[&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!self-center [&_.react-colorful__hue]:!rounded-full",
-              "[&_.react-colorful__pointer]:!size-4 [&_.react-colorful__pointer]:!border-2"
-            )}
-          />
-
-          <div className="mt-2 flex items-center gap-1.5">
-            <HexColorInput
-              color={value}
-              onChange={onChange}
-              prefixed
-              aria-label={`${label} hex value`}
-              className="h-7 min-w-0 flex-1 rounded-md border-0 bg-background/60 px-2 font-mono text-[11px] uppercase tracking-wide text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-            />
+        <div id={`${id}-picker`} className="px-2 pb-3 pt-1">
+          <ColorPicker value={value} onChange={onChange} />
+          <div className="mt-2 flex items-center justify-end gap-1">
             {eyedropper && (
               <Button
                 type="button"
@@ -141,7 +279,7 @@ function ColorField({
                 onClick={pickFromScreen}
                 aria-label={`Pick ${label.toLowerCase()} from the screen`}
                 title="Pick from screen"
-                className="size-7 flex-none text-muted-foreground"
+                className="size-7 text-muted-foreground"
               >
                 <Eyedropper className="size-3.5" />
               </Button>
@@ -157,7 +295,7 @@ function ColorField({
                 title={extra.label}
                 style={{ background: extra.background }}
                 className={cn(
-                  "size-7 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
+                  "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
                   extra.active &&
                     "ring-2 ring-foreground ring-offset-2 ring-offset-background"
                 )}

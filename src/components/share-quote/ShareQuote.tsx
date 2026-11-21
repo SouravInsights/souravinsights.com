@@ -533,8 +533,8 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-12 items-center justify-between gap-3">
-      <Label className="text-[15px] font-normal text-foreground/90">{label}</Label>
+    <div className="flex h-9 items-center justify-between gap-3">
+      <Label className="text-[13px] font-normal text-foreground">{label}</Label>
       {children}
     </div>
   );
@@ -555,7 +555,7 @@ function Choice<T extends string>({
     <Select value={value} onValueChange={(next) => onChange(next as T)}>
       <SelectTrigger
         aria-label={label}
-        className="h-9 w-[128px] flex-none rounded-lg border-0 bg-foreground/[0.075] px-3 text-[13.5px] hover:bg-foreground/[0.11] focus:ring-2 focus:ring-ring/30"
+        className="h-7 w-[116px] flex-none rounded-lg border-0 bg-foreground/[0.055] px-2.5 text-[13px] hover:bg-foreground/[0.09] focus:ring-2 focus:ring-ring/30"
       >
         <SelectValue />
       </SelectTrigger>
@@ -619,7 +619,7 @@ function CustomizePanel({
           scrolled ? "border-border" : "border-transparent"
         }`}
       >
-        <h3 className="text-[16px] font-medium leading-[30px] tracking-[-0.01em] text-foreground">
+        <h3 className="text-[14px] font-semibold leading-[30px] text-foreground">
           Customize
         </h3>
         <div className="flex items-center gap-1">
@@ -646,7 +646,7 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-3.5 flex flex-col gap-2.5">
+      <div className="mt-3 flex flex-col">
         <ColorField
           label="Background"
           value={options.background}
@@ -690,23 +690,33 @@ function CustomizePanel({
         )}
       </div>
 
-      <div className="mt-3 rounded-lg bg-foreground/[0.055] px-3">
-        <Row label="Font">
-          <Choice<FontChoice>
-            label="Font"
-            value={options.font}
-            onChange={(font) => set({ font })}
-            options={[
+      <div className="mt-4">
+        <Select
+          value={options.font}
+          onValueChange={(value) => set({ font: value as FontChoice })}
+        >
+          <SelectTrigger
+            aria-label="Font"
+            className="h-10 w-full rounded-lg border-0 bg-foreground/[0.055] px-3 text-[17px] hover:bg-foreground/[0.08] focus:ring-2 focus:ring-ring/30"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {[
               { value: "serif", label: "Serif" },
               { value: "sans", label: "Sans" },
               { value: "mono", label: "Mono" },
-            ]}
-          />
-        </Row>
+            ].map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="mt-3 rounded-lg bg-foreground/[0.055] px-3">
-        <div className="divide-y divide-border/40">
+      <div className="mt-3">
+        <div>
           <Row label="Size">
             <Choice<SizeChoice>
               label="Size"
@@ -745,8 +755,9 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-3 rounded-lg bg-foreground/[0.055] px-3">
-        <div className="divide-y divide-border/40">
+      <Separator className="mb-1.5 mt-3" />
+
+      <div className="flex flex-col">
           <InlineEditField label="Quote" value={quote} onChange={setQuote} />
           <InlineEditField
             label="Title"
@@ -762,7 +773,6 @@ function CustomizePanel({
             visible={options.showPublication}
             onVisibleChange={(showPublication) => set({ showPublication })}
           />
-        </div>
       </div>
     </>
   );
