@@ -608,6 +608,11 @@ function CustomizePanel({
   scrolled: boolean;
 }) {
   const dirty = Object.keys(overrides).length > 0;
+  const [openColor, setOpenColor] = useState<string | null>(null);
+  const colorOpen = (key: string) => ({
+    open: openColor === key,
+    onOpenChange: (open: boolean) => setOpenColor(open ? key : null),
+  });
   const isMarker = theme.style === "marker";
   const paintIsGradient = options.paint.kind === "mesh";
   const variantIsGradient = variant.paint.kind === "mesh";
@@ -646,8 +651,9 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-3 flex flex-col">
+      <div className="mt-3 flex flex-col gap-1.5">
         <ColorField
+          {...colorOpen("background")}
           label="Background"
           value={options.background}
           valueLabel={paintIsGradient ? "Gradient" : undefined}
@@ -666,16 +672,19 @@ function CustomizePanel({
         {isMarker ? (
           <>
             <ColorField
+              {...colorOpen("highlight")}
               label="Highlight"
               value={options.highlight}
               onChange={(highlight) => set({ highlight })}
             />
             <ColorField
+              {...colorOpen("quoteText")}
               label="Quote text"
               value={options.highlightText}
               onChange={(highlightText) => set({ highlightText })}
             />
             <ColorField
+              {...colorOpen("footerText")}
               label="Footer text"
               value={options.text}
               onChange={(text) => set({ text })}
@@ -683,6 +692,7 @@ function CustomizePanel({
           </>
         ) : (
           <ColorField
+            {...colorOpen("text")}
             label="Text"
             value={options.text}
             onChange={(text) => set({ text })}

@@ -23,6 +23,9 @@ export interface ColorFieldProps {
   /** An extra swatch that is an action, not a preset. */
   extra?: ColorFieldExtra;
   allowCustom?: boolean;
+  /** Controlled open state; omit for a standalone field. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   className?: string;
 }
 
@@ -73,9 +76,15 @@ function hsvToHex({ h, s, v }: Hsv): string {
 function ColorPicker({
   value,
   onChange,
+  eyedropper,
+  onPick,
+  extra,
 }: {
   value: string;
   onChange: (value: string) => void;
+  eyedropper: boolean;
+  onPick: () => Promise<void>;
+  extra?: ColorFieldExtra;
 }) {
   const [hsv, setHsv] = React.useState<Hsv>(() => hexToHsv(value));
   const wheelRef = React.useRef<HTMLDivElement>(null);
@@ -165,28 +174,59 @@ function ColorPicker({
             className="size-6 flex-none rounded-md shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.2)]"
             style={{ background: value }}
           />
-          <input
-            aria-label="Hex colour"
-            value={text}
-            spellCheck={false}
-            onFocus={() => {
-              editing.current = true;
-            }}
-            onBlur={() => {
-              editing.current = false;
-              setText(value);
-            }}
-            onChange={(event) => {
-              const next = event.target.value.trim();
-              setText(next);
-              const hex = next.startsWith("#") ? next : `#${next}`;
-              if (/^#[0-9a-f]{6}$/i.test(hex)) onChange(hex.toLowerCase());
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-            }}
-            className="h-7 min-w-0 flex-1 rounded-md border-0 bg-background/60 px-2 font-mono text-[11px] tabular-nums text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-          />
+          <div className="relative min-w-0 flex-1">
+            <input
+              aria-label="Hex colour"
+              value={text}
+              spellCheck={false}
+              onFocus={() => {
+                editing.current = true;
+              }}
+              onBlur={() => {
+                editing.current = false;
+                setText(value);
+              }}
+              onChange={(event) => {
+                const next = event.target.value.trim();
+                setText(next);
+                const hex = next.startsWith("#") ? next : `#${next}`;
+                if (/^#[0-9a-f]{6}$/i.test(hex)) onChange(hex.toLowerCase());
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+              }}
+              className="h-7 w-full rounded-md border-0 bg-background/60 px-2 pr-8 font-mono text-[11px] tabular-nums text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+            />
+            {eyedropper && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void onPick();
+                }}
+                aria-label="Pick colour from the screen"
+                title="Pick from screen"
+                className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:text-foreground"
+              >
+                <Eyedropper className="size-3.5" />
+              </button>
+            )}
+          </div>
+          {extra && (
+            <button
+              type="button"
+              onClick={extra.onSelect}
+              aria-label={extra.label}
+              aria-pressed={extra.active}
+              title={extra.label}
+              style={{ background: extra.background }}
+              className={cn(
+                "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
+                extra.active &&
+                  "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+              )}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -206,9 +246,16 @@ function ColorField({
   valueLabel,
   extra,
   allowCustom = true,
+  open: controlledOpen,
+  onOpenChange,
   className,
 }: ColorFieldProps) {
-  const [open, setOpen] = React.useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = (next: boolean) => {
+    if (controlledOpen === undefined) setUncontrolledOpen(next);
+    onOpenChange?.(next);
+  };
   const [eyedropper, setEyedropper] = React.useState(false);
   const id = `color-${label.toLowerCase().replace(/\s+/g, "-")}`;
   const shown = extra?.active ? extra.background : value;
@@ -252,7 +299,7 @@ function ColorField({
         aria-expanded={open}
         aria-controls={`${id}-picker`}
         disabled={!allowCustom}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => setOpen(!open)}
         className="flex h-9 w-full items-center gap-2.5 rounded-[9px] px-2 text-left"
       >
         <span
@@ -269,39 +316,14 @@ function ColorField({
 
       {open && (
         <div id={`${id}-picker`} className="px-2 pb-3 pt-1">
-          <ColorPicker value={value} onChange={onChange} />
-          <div className="mt-2 flex items-center justify-end gap-1">
-            {eyedropper && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={pickFromScreen}
-                aria-label={`Pick ${label.toLowerCase()} from the screen`}
-                title="Pick from screen"
-                className="size-7 text-muted-foreground"
-              >
-                <Eyedropper className="size-3.5" />
-              </Button>
-            )}
-            {extra && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={extra.onSelect}
-                aria-label={`${label}: ${extra.label}`}
-                aria-pressed={extra.active}
-                title={extra.label}
-                style={{ background: extra.background }}
-                className={cn(
-                  "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
-                  extra.active &&
-                    "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                )}
-              />
-            )}
-          </div>
+          <ColorPicker
+            value={value}
+            onChange={onChange}
+            eyedropper={eyedropper}
+            onPick={pickFromScreen}
+            extra={extra}
+          />
+
         </div>
       )}
     </div>
