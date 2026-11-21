@@ -118,7 +118,9 @@ function ColorPicker({
     const y = event.clientY - (box.top + box.height / 2);
     const h = ((Math.atan2(x, -y) * 180) / Math.PI + 360) % 360;
     const s = Math.min(1, Math.hypot(x, y) / (box.width / 2));
-    update({ ...hsv, h, s });
+    // At zero brightness every hue is black; a wheel drag means "show me this
+    // hue", so lift the value back to full and let the rail follow.
+    update({ ...hsv, h, s, v: hsv.v || 1 });
   };
 
   const angle = ((hsv.h - 90) * Math.PI) / 180;
