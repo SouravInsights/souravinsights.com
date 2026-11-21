@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Swatch, SwatchGroup } from "@/components/ui/swatch";
 import { Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
 import {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
   type ReactElement,
+  type ReactNode,
+  type Ref,
   type RefObject,
 } from "react";
 import { HUES, paint, type Paint } from "@/lib/highlight-palette";
@@ -90,6 +94,35 @@ interface Props {
   onCopyLink?: (range: Range | null) => Promise<boolean>;
   /** the tick data goes up so the reader can pin the rail outside the scroller */
   onTicks?: (ticks: HighlightRailItem[]) => void;
+  /** Optional composed toolbar; defaults to HighlightToolbar. */
+  children?: ReactNode;
+}
+
+interface HighlightContextValue {
+  open: Pop | null;
+  marks: Mark[];
+  current: Mark | undefined;
+  ordered: Mark[];
+  said: string;
+  setSaid: (text: string) => void;
+  close: (restore: boolean) => void;
+  pick: (hue: number) => void;
+  remove: () => void;
+  selectMark: (id: number) => void;
+  shareable: () => { quote: string; context: string } | null;
+  permalinkRange: () => Range | null;
+  onShareQuote: (payload: { quote: string; context: string }) => void;
+  onCopyLink?: (range: Range | null) => Promise<boolean>;
+  panelRef: Ref<HTMLDivElement>;
+  textOf: (para: number) => string;
+}
+
+const HighlightContext = createContext<HighlightContextValue | null>(null);
+
+function useHighlight() {
+  const context = useContext(HighlightContext);
+  if (!context) throw new Error("Highlight parts must be used inside Highlight");
+  return context;
 }
 
 /** One box around every line of a selection or mark. */
@@ -130,6 +163,7 @@ export function Highlight({
   onOpenNotebook,
   onTicks,
   onCopyLink,
+  children,
 }: Props): ReactElement | null {
   const reduce = useReducedMotion();
   const paras = useRef<HTMLElement[]>([]);
@@ -709,164 +743,227 @@ export function Highlight({
     });
   }, [focusPara]);
 
-  const current = open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
-  const ordered = [...marks].sort((a, b) => a.para - b.para || a.start - b.start);
+  const current =
+    open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
+  const ordered = [...marks].sort(
+    (a, b) => a.para - b.para || a.start - b.start
+  );
 
   if (!editable && ordered.length === 0) return null;
 
+  const selectMark = (id: number) => {
+    const mark = live.current.marks.find((m) => m.id === id);
+    if (!mark) return;
+    window.getSelection()?.removeAllRanges();
+    setOpen({ kind: "edit", id, viaKey: false, anchor: anchorForMark(id) });
+    request(id, paint(mark.hue, dark), mark.hue);
+  };
+
+  const value: HighlightContextValue = {
+    open,
+    marks,
+    current,
+    ordered,
+    said,
+    setSaid,
+    close,
+    pick,
+    remove,
+    selectMark,
+    shareable,
+    permalinkRange,
+    onShareQuote,
+    onCopyLink,
+    panelRef: pop,
+    textOf,
+  };
+
   return (
-    <>
-      <AnchoredPanel
-        open={!!open}
-        onOpenChange={(next) => {
-          if (!next) close(false);
-        }}
-        anchor={open?.anchor ?? null}
-        ref={pop}
-        sideOffset={GAP}
-        collisionPadding={EDGE}
-        arrow
-        role="toolbar"
-        aria-label="Highlight options"
-        onPointerDown={(event) => event.preventDefault()}
-        onEscapeKeyDown={() => close(true)}
-        className="group z-20 flex select-none flex-col gap-3 !w-auto !rounded-xl !border-border !bg-background !p-3 !shadow-lg max-sm:gap-2 max-sm:!p-2.5"
-      >
-
-            <div className="flex items-center gap-1 border-b border-border pb-2.5">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  const payload = shareable();
-                  if (!payload) return;
-                  close(false);
-                  onShareQuote(payload);
-                }}
-                className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-              >
-                <Quotes aria-hidden="true" className="size-3.5" />
-                Share quote
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  const payload = shareable();
-                  if (!payload) return;
-                  void navigator.clipboard.writeText(payload.quote).then(
-                    () => setSaid("Quote copied"),
-                    () => setSaid("Could not reach the clipboard")
-                  );
-                }}
-                className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-              >
-                <Copy aria-hidden="true" className="size-3.5" />
-                Copy
-              </Button>
-              {onCopyLink && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    void onCopyLink(permalinkRange()).then((ok) =>
-                      setSaid(ok ? "Link copied" : "Could not copy the link")
-                    );
-                  }}
-                  className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-                >
-                  <LinkSimple aria-hidden="true" className="size-3.5" />
-                  Copy link
-                </Button>
-              )}
-            </div>
-
-            <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">
-              <div className="grid min-w-0 grid-cols-3 content-start gap-4 max-sm:gap-1.5">
-                <SwatchGroup
-                  aria-label="Highlight colour"
-                  className="contents"
-                  value={current ? String(current.hue) : undefined}
-                  onValueChange={(value) => pick(Number(value))}
-                >
-                  {HUES.map((hue, i) => (
-                    <Swatch
-                      key={hue.name}
-                      value={String(i)}
-                      background={hue.swatch}
-                      label={hue.name}
-                      variant="outline"
-                      style={{ "--hue": hue.swatch } as React.CSSProperties}
-                      className="max-sm:size-9 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] focus-visible:outline-[var(--hue)] data-[state=checked]:outline-[var(--hue)]"
-                    />
-                  ))}
-                </SwatchGroup>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  aria-label="Remove highlight"
-                  title="Remove highlight"
-                  disabled={!current}
-                  onClick={remove}
-                  className="size-6 rounded-full p-0 text-muted-foreground max-sm:size-9"
-                >
-                  <Eraser aria-hidden="true" className="size-3.5" />
-                </Button>
-              </div>
-
-              <span aria-hidden="true" className="w-px shrink-0 bg-border" />
-
-              <div className="flex w-32 min-w-0 flex-col gap-0.5 sm:w-40">
-                {ordered.length === 0 ? (
-                  <p className="px-2 py-1 text-[13px] leading-[1.5] text-muted-foreground">
-                    No highlights yet
-                  </p>
-                ) : (
-                  <ul className="-mr-1 flex max-h-28 flex-col gap-0.5 overflow-y-auto pr-1">
-                    {ordered.map((m) => (
-                      <li key={m.id}>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          data-active={m.id === current?.id ? "" : undefined}
-                          onClick={() => {
-                            window.getSelection()?.removeAllRanges();
-                            setOpen({ kind: "edit", id: m.id, viaKey: false, anchor: anchorForMark(m.id) });
-                            request(m.id, paint(m.hue, dark), m.hue);
-                          }}
-                          className={`h-auto w-full justify-start px-2 py-1 text-left text-[13px] font-normal leading-[1.5] ${
-                            m.id === current?.id
-                              ? "bg-foreground/5 text-foreground"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="h-3 w-0.5 shrink-0 rounded-full"
-                            style={{ backgroundColor: HUES[m.hue].swatch }}
-                          />
-                          <span className="truncate">
-                            {textOf(m.para).slice(m.start, m.end)}
-                          </span>
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-      </AnchoredPanel>
-
+    <HighlightContext.Provider value={value}>
+      {children ?? <HighlightToolbar />}
       <p aria-live="polite" className="sr-only">
         {said}
       </p>
+    </HighlightContext.Provider>
+  );
+}
 
-    </>
+function HighlightToolbar({ children }: { children?: ReactNode }) {
+  const { open, panelRef, close } = useHighlight();
+
+  return (
+    <AnchoredPanel
+      open={!!open}
+      onOpenChange={(next) => {
+        if (!next) close(false);
+      }}
+      anchor={open?.anchor ?? null}
+      ref={panelRef}
+      sideOffset={GAP}
+      collisionPadding={EDGE}
+      arrow
+      role="toolbar"
+      aria-label="Highlight options"
+      onPointerDown={(event) => event.preventDefault()}
+      onEscapeKeyDown={() => close(true)}
+      className="group z-20 flex select-none flex-col gap-3 !w-auto !rounded-xl !border-border !bg-background !p-3 !shadow-lg max-sm:gap-2 max-sm:!p-2.5"
+    >
+      {children ?? (
+        <>
+          <HighlightActions />
+          <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">
+            <HighlightColors />
+            <span aria-hidden="true" className="w-px shrink-0 bg-border" />
+            <HighlightList />
+          </div>
+        </>
+      )}
+    </AnchoredPanel>
+  );
+}
+
+function HighlightActions() {
+  const {
+    shareable,
+    close,
+    onShareQuote,
+    setSaid,
+    permalinkRange,
+    onCopyLink,
+  } = useHighlight();
+
+  return (
+    <div className="flex items-center gap-1 border-b border-border pb-2.5">
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          const payload = shareable();
+          if (!payload) return;
+          close(false);
+          onShareQuote(payload);
+        }}
+        className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+      >
+        <Quotes aria-hidden="true" className="size-3.5" />
+        Share quote
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          const payload = shareable();
+          if (!payload) return;
+          void navigator.clipboard.writeText(payload.quote).then(
+            () => setSaid("Quote copied"),
+            () => setSaid("Could not reach the clipboard")
+          );
+        }}
+        className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+      >
+        <Copy aria-hidden="true" className="size-3.5" />
+        Copy
+      </Button>
+      {onCopyLink && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            void onCopyLink(permalinkRange()).then((ok) =>
+              setSaid(ok ? "Link copied" : "Could not copy the link")
+            );
+          }}
+          className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+        >
+          <LinkSimple aria-hidden="true" className="size-3.5" />
+          Copy link
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function HighlightColors() {
+  const { current, pick, remove } = useHighlight();
+
+  return (
+    <div className="grid min-w-0 grid-cols-3 content-start gap-4 max-sm:gap-1.5">
+      <SwatchGroup
+        aria-label="Highlight colour"
+        className="contents"
+        value={current ? String(current.hue) : undefined}
+        onValueChange={(value) => pick(Number(value))}
+      >
+        {HUES.map((hue, i) => (
+          <Swatch
+            key={hue.name}
+            value={String(i)}
+            background={hue.swatch}
+            label={hue.name}
+            variant="outline"
+            style={{ "--hue": hue.swatch } as React.CSSProperties}
+            className="max-sm:size-9 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] focus-visible:outline-[var(--hue)] data-[state=checked]:outline-[var(--hue)]"
+          />
+        ))}
+      </SwatchGroup>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        aria-label="Remove highlight"
+        title="Remove highlight"
+        disabled={!current}
+        onClick={remove}
+        className="size-6 rounded-full p-0 text-muted-foreground max-sm:size-9"
+      >
+        <Eraser aria-hidden="true" className="size-3.5" />
+      </Button>
+    </div>
+  );
+}
+
+function HighlightList() {
+  const { ordered, current, selectMark, textOf } = useHighlight();
+
+  return (
+    <div className="flex w-32 min-w-0 flex-col gap-0.5 sm:w-40">
+      {ordered.length === 0 ? (
+        <p className="px-2 py-1 text-[13px] leading-[1.5] text-muted-foreground">
+          No highlights yet
+        </p>
+      ) : (
+        <ul className="-mr-1 flex max-h-28 flex-col gap-0.5 overflow-y-auto pr-1">
+          {ordered.map((m) => (
+            <li key={m.id}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                data-active={m.id === current?.id ? "" : undefined}
+                onClick={() => selectMark(m.id)}
+                className={`h-auto w-full justify-start px-2 py-1 text-left text-[13px] font-normal leading-[1.5] ${
+                  m.id === current?.id
+                    ? "bg-foreground/5 text-foreground"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-3 w-0.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: HUES[m.hue].swatch }}
+                />
+                <span className="truncate">
+                  {textOf(m.para).slice(m.start, m.end)}
+                </span>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -881,3 +978,11 @@ function nthIndexOf(text: string, quote: string, occurrence: number): number {
   }
   return at;
 }
+
+export {
+  HighlightActions,
+  HighlightColors,
+  HighlightList,
+  HighlightToolbar,
+  useHighlight,
+};
