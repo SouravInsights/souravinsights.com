@@ -1,7 +1,7 @@
 "use client";
 
 import { Swatch, SwatchGroup } from "@/components/ui/swatch";
-import type { Variant } from "./cards";
+import type { Variant } from "./themes";
 
 export interface QuoteVariantPickerProps {
   variants: Variant[];

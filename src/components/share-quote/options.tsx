@@ -15,14 +15,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import type {
   AlignChoice,
-  CardOptions,
   FontChoice,
-  Overrides,
   PositionChoice,
-  ShareTheme,
   SizeChoice,
-  Variant,
-} from "./cards";
+} from "./presets";
+import type { CardOptions, Overrides } from "./render";
+import type { ShareTheme, Variant } from "./themes";
 
 /* ---------------------------------------------------------------- controls */
 

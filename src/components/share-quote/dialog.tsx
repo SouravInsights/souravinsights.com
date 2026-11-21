@@ -17,16 +17,9 @@ import { QuoteOptions } from "./options";
 import { QuoteCarousel } from "./carousel";
 import { QuoteVariantPicker } from "./variant-picker";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  MODES,
-  THEMES,
-  cardToBlob,
-  drawCard,
-  resolveOptions,
-  themeById,
-  type Mode,
-  type Overrides,
-} from "./cards";
+import { MODES, type Mode } from "./presets";
+import { THEMES, themeById } from "./themes";
+import { cardToBlob, drawCard, resolveOptions, type Overrides } from "./render";
 
 /**
  * Share quote.

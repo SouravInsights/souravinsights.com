@@ -6,7 +6,8 @@ import {
   SnapCarouselContent,
   SnapCarouselItem,
 } from "@/components/ui/snap-carousel";
-import type { Mode, ShareTheme } from "./cards";
+import type { Mode } from "./presets";
+import type { ShareTheme } from "./themes";
 
 const GAP = 29;
 
