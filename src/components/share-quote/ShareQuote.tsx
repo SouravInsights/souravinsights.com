@@ -445,7 +445,7 @@ export function ShareQuote({
                 ))}
               </SwatchGroup>
               {hasColorOverrides && (
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-faint-foreground">
                   Custom
                 </span>
               )}
@@ -534,7 +534,7 @@ function Row({
 }) {
   return (
     <div className="flex h-9 items-center justify-between gap-3">
-      <Label className="text-[13px] font-normal text-foreground/90">{label}</Label>
+      <Label className="text-[13px] font-normal text-foreground/85">{label}</Label>
       {children}
     </div>
   );
@@ -555,7 +555,7 @@ function Choice<T extends string>({
     <Select value={value} onValueChange={(next) => onChange(next as T)}>
       <SelectTrigger
         aria-label={label}
-        className="h-7 w-[116px] flex-none rounded-lg border-0 bg-foreground/[0.055] px-2.5 text-[13px] text-foreground/90 hover:bg-foreground/[0.09] focus:ring-2 focus:ring-ring/30"
+        className="h-7 w-[116px] flex-none rounded-lg border-0 bg-foreground/[0.055] px-2.5 text-[13px] text-foreground/85 hover:bg-foreground/[0.09] focus:ring-2 focus:ring-ring/30"
       >
         <SelectValue />
       </SelectTrigger>
@@ -707,7 +707,7 @@ function CustomizePanel({
         >
           <SelectTrigger
             aria-label="Font"
-            className="h-10 w-full rounded-lg border-0 bg-foreground/[0.055] px-3 text-[17px] text-foreground/90 hover:bg-foreground/[0.08] focus:ring-2 focus:ring-ring/30"
+            className="h-10 w-full rounded-lg border-0 bg-foreground/[0.055] px-3 text-[17px] text-foreground/85 hover:bg-foreground/[0.08] focus:ring-2 focus:ring-ring/30"
           >
             <SelectValue />
           </SelectTrigger>

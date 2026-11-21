@@ -52,14 +52,14 @@ function InlineEditField({
             className="group flex h-auto w-full items-center gap-2.5 rounded-[9px] px-2 py-1.5 text-left font-normal hover:bg-foreground/5"
           >
             <span className="flex min-w-0 flex-1 flex-col gap-px">
-              <span className="text-[13px] leading-[18px] text-foreground/90">
+              <span className="text-[13px] leading-[18px] text-foreground/85">
                 {label}
               </span>
               <span className="truncate text-[12px] leading-4 text-muted-foreground">
                 {value}
               </span>
             </span>
-            <span className="flex-none text-[12px] font-medium text-muted-foreground group-hover:text-foreground">
+            <span className="flex-none text-[12px] font-medium text-muted-foreground/80 group-hover:text-foreground">
               Edit
             </span>
           </Button>

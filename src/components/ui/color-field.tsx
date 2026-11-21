@@ -204,7 +204,7 @@ function ColorPicker({
               onKeyDown={(event) => {
                 if (event.key === "Enter") event.currentTarget.blur();
               }}
-              className="h-7 w-full rounded-md border-0 bg-background/60 px-2 pr-8 font-mono text-[11px] tabular-nums text-foreground/90 outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+              className="h-7 w-full rounded-md border-0 bg-background/60 px-2 pr-8 font-mono text-[11px] tabular-nums text-foreground/80 outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             />
             {eyedropper && (
               <button
@@ -215,7 +215,7 @@ function ColorPicker({
                 }}
                 aria-label="Pick colour from the screen"
                 title="Pick from screen"
-                className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:text-foreground"
+                className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded text-faint-foreground transition-colors hover:text-foreground"
               >
                 <Eyedropper className="size-3.5" />
               </button>
@@ -315,10 +315,10 @@ function ColorField({
           style={{ background: shown }}
           className="size-5 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
         />
-        <Label className="flex-1 text-[13px] font-normal leading-[18px] text-foreground/90">
+        <Label className="flex-1 text-[13px] font-normal leading-[18px] text-foreground/85">
           {label}
         </Label>
-        <span className="text-[12px] tabular-nums text-muted-foreground">
+        <span className="text-[12px] tabular-nums text-faint-foreground">
           {valueLabel ?? value.toUpperCase()}
         </span>
       </button>
