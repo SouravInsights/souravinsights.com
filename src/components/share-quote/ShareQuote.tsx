@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { SidePanel } from "@/components/ui/side-panel";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,7 +78,6 @@ interface Props {
 }
 
 const PANEL_W = 288;
-const STAGE_W = 560;
 const GAP = 29;
 /** Everything in the stage that is not the card: padding + top + chips + gaps. */
 const STAGE_FIXED = 147;
@@ -99,8 +99,6 @@ export function ShareQuote({
   publication,
   context,
 }: Props) {
-  const panelWrapRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const previewRefs = useRef<(HTMLCanvasElement | null)[]>([]);
   const glideRef = useRef<{
@@ -129,19 +127,8 @@ export function ShareQuote({
     "idle"
   );
   const [statusText, setStatusText] = useState("");
-  // Start narrow, then measure. A `window` read in the initialiser is a
-  // hydration mismatch on a server-rendered page.
-  const [desktop, setDesktop] = useState(false);
 
   activeRef.current = themeId;
-
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
-    const update = () => setDesktop(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
 
   // Each open starts from the highlighted words as they are now.
   useEffect(() => {
@@ -151,14 +138,6 @@ export function ShareQuote({
     setDraftPublication(publication);
     setStatus("idle");
   }, [open, quote, title, publication]);
-
-  // The panel wrapper is focusable while collapsed unless it is inert.
-  useEffect(() => {
-    const el = panelWrapRef.current;
-    if (!el) return;
-    if (customize) el.removeAttribute("inert");
-    else el.setAttribute("inert", "");
-  }, [customize, desktop]);
 
   // The band: the card's height, derived from the viewport so the sheet fits.
   useEffect(() => {
@@ -475,57 +454,21 @@ export function ShareQuote({
         <div className="relative flex">
           {/* Customize. On a desktop its column animates width; on a phone it
               slides over the stage, because two columns do not fit. */}
-          {desktop ? (
-            <div
-              ref={panelWrapRef}
-              aria-hidden={!customize}
-              style={{ width: customize ? PANEL_W : 0 }}
-              className="relative order-first shrink-0 overflow-hidden bg-background transition-[width] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)]"
-            >
-              {customize && (
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-px bg-border"
-                />
-              )}
-              <div
-                ref={panelRef}
-                style={{ width: PANEL_W }}
-                onScroll={(event) =>
-                  setPanelScrolled(event.currentTarget.scrollTop > 4)
-                }
-                className="absolute inset-y-0 right-0 overflow-y-auto overscroll-contain bg-background px-4 pb-5 [scrollbar-width:thin]"
-              >
-                {panel}
-              </div>
-            </div>
-          ) : (
-            <div
-              ref={panelWrapRef}
-              aria-hidden={!customize}
-              onScroll={(event) =>
-                setPanelScrolled(event.currentTarget.scrollTop > 4)
-              }
-              style={{
-                translate: customize ? "0" : "-100%",
-                opacity: customize ? 1 : 0,
-                pointerEvents: customize ? "auto" : "none",
-              }}
-              className="absolute inset-y-0 left-0 z-20 w-[288px] overflow-y-auto overscroll-contain bg-background px-4 pb-5 shadow-[12px_0_32px_-12px_rgba(0,0,0,0.4)] transition-[translate,opacity] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] [scrollbar-width:thin]"
-            >
-              {panel}
-            </div>
-          )}
+          <SidePanel
+            open={customize}
+            side="left"
+            width={PANEL_W}
+            onScroll={(event) =>
+              setPanelScrolled(event.currentTarget.scrollTop > 4)
+            }
+            className="px-4 pb-5"
+          >
+            {panel}
+          </SidePanel>
 
           <div
-            className="flex min-w-0 flex-col bg-card transition-[border-radius] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)]"
-            style={{
-              width: desktop ? STAGE_W : `min(${STAGE_W}px, 94vw)`,
-              paddingTop: 14,
-              paddingBottom: 24,
-              borderTopLeftRadius: desktop && customize ? 0 : 14,
-              borderTopRightRadius: 14,
-            }}
+            data-panel-open={customize || undefined}
+            className="flex min-w-0 flex-col bg-card pb-6 pt-3.5 transition-[border-radius] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] w-[min(560px,94vw)] rounded-tl-[14px] data-[panel-open]:lg:rounded-tl-none lg:w-[560px]"
           >
             {/* Size */}
             <div className="flex h-[30px] items-center justify-center">
