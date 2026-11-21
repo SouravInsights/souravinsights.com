@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { Toggle } from "@/components/ui/toggle";
 import { SidePanel } from "@/components/ui/side-panel";
-import { CustomizePanel } from "./customize-panel";
+import { QuoteOptions } from "./options";
 import { QuoteCarousel } from "./carousel";
 import { QuoteVariantPicker } from "./variant-picker";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -270,7 +270,7 @@ export function ShareQuote({
     });
 
   const panel = (
-    <CustomizePanel
+    <QuoteOptions
       theme={theme}
       variant={variant}
       options={options}
