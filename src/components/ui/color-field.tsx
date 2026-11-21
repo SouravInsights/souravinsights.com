@@ -83,7 +83,7 @@ function ColorField({
   return (
     <div
       data-slot="color-field"
-      className={cn("rounded-2xl bg-foreground/[0.045] p-3", className)}
+      className={cn("rounded-lg bg-foreground/[0.045] p-3", className)}
     >
       <div className="flex items-center gap-2.5">
         <button
@@ -120,7 +120,7 @@ function ColorField({
           <HexColorPicker
             color={value}
             onChange={onChange}
-            className="!h-32 !w-full [&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!rounded-full [&_.react-colorful__saturation]:!rounded-xl [&_.react-colorful__pointer]:!size-4 [&_.react-colorful__pointer]:!border-2"
+            className="!h-32 !w-full [&_.react-colorful__hue]:!h-3 [&_.react-colorful__hue]:!rounded-full [&_.react-colorful__saturation]:!rounded-lg [&_.react-colorful__pointer]:!size-4 [&_.react-colorful__pointer]:!border-2"
           />
 
           <div className="mt-3 flex items-center gap-2">

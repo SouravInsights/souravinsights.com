@@ -334,7 +334,7 @@ export function ShareQuote({
             {/* Size */}
             <div className="flex h-[30px] items-center justify-center">
               <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
-                <TabsList className="inline-flex h-auto items-center rounded-[10px] bg-foreground/[0.055] p-[3px]">
+                <TabsList className="inline-flex h-auto items-center rounded-[9px] bg-foreground/[0.055] p-[3px]">
                   {MODES.map((m) => (
                     <TabsTrigger
                       key={m.id}
@@ -705,7 +705,7 @@ function CustomizePanel({
         )}
       </div>
 
-      <div className="mt-2.5 rounded-2xl bg-foreground/[0.045] px-3">
+      <div className="mt-2.5 rounded-lg bg-foreground/[0.045] px-3">
         <Row label="Font">
           <Choice<FontChoice>
             label="Font"
@@ -720,7 +720,7 @@ function CustomizePanel({
         </Row>
       </div>
 
-      <div className="mt-2.5 rounded-2xl bg-foreground/[0.045] px-3">
+      <div className="mt-2.5 rounded-lg bg-foreground/[0.045] px-3">
         <div className="divide-y divide-border/40">
           <Row label="Size">
             <Choice<SizeChoice>
@@ -760,7 +760,7 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-2.5 rounded-2xl bg-foreground/[0.045] px-3">
+      <div className="mt-2.5 rounded-lg bg-foreground/[0.045] px-3">
         <div className="divide-y divide-border/40">
           <InlineEditField label="Quote" value={quote} onChange={setQuote} />
           <InlineEditField
