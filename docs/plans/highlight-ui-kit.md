@@ -20,7 +20,7 @@ wheel listener.
 | Palette | `src/lib/highlight-palette.ts` | extracted |
 | Mark maths | `src/lib/highlight-anchor.ts` | extracted |
 | Mark engine + palette UI | `src/components/highlight/highlight.tsx` | monolith |
-| Highlight rail | `src/components/highlight/HighlightTicks.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
+| Highlight rail | `src/components/highlight/highlight-rail.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
 | Quote studio | `src/components/share-quote/dialog.tsx` | dialog, state, footer |
 | Design rail | `src/components/share-quote/carousel.tsx` | extracted |
@@ -47,7 +47,7 @@ Done in this refactor:
 - carousel extracted without changing its DOM, CSS or motion
 - mark snapping/cutting moved to `highlight-anchor.ts`
 - rail geometry moved to `MarkerRail`
-- quote customizer, variant picker and design rail split from the dialog
+- options panel, variant picker and design rail split from the dialog
 
 ## Remaining foundation work
 
@@ -69,8 +69,8 @@ type HighlightMark = {
 };
 ```
 
-- Rename `HighlightTicks.tsx` to `highlight-rail.tsx` and keep it as the
-  highlight-specific list + Notes action over `MarkerRail`.
+- Keep `highlight-rail.tsx` as the highlight-specific list + Notes action over
+  `MarkerRail`.
 
 ### 2. Quote studio
 
@@ -80,10 +80,9 @@ type HighlightMark = {
   - `quote-presets.ts` — modes, fonts, size/align/position
   - `quote-paint.ts` — `Paint`, `solid`, `mesh`, swatch helpers
 - Extract `canvas.tsx` and `quote-card.tsx`.
-- Split the remaining `ShareQuote.tsx` into:
-  - `share-quote-dialog.tsx` — shell, state, export actions
+- `dialog.tsx` is already the shell + state + export actions.
 - Keep per-theme variant/override state in the dialog.
-- The options panel and variant picker are already separate.
+- The options panel, variant picker and carousel are already separate.
 
 ### 3. Registry and docs
 
@@ -119,6 +118,7 @@ No `XRoot`, no invented verbs. One component family per file.
 - Text tiers: `foreground` title, `foreground/85` labels,
   `muted-foreground` values, `faint-foreground` metadata.
 - No visual change during extraction. If a move needs a class change, stop.
+- Files are kebab-case; exports PascalCase. One family per file.
 
 ## Non-goals
 
