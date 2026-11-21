@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "quote-variant-picker",
+  "title": "Quote variant picker",
+  "description": "The active design's colour variants.",
+  "registryDependencies": [
+    "https://ui.souravinsights.com/r/swatch.json",
+    "https://ui.souravinsights.com/r/quote-themes.json"
+  ],
+  "files": [
+    {
+      "path": "src/components/share-quote/variant-picker.tsx",
+      "content": "\"use client\";\n\nimport { Swatch, SwatchGroup } from \"@/components/ui/swatch\";\nimport type { Variant } from \"./themes\";\n\nexport interface QuoteVariantPickerProps {\n  variants: Variant[];\n  value: number;\n  onValueChange: (index: number) => void;\n  label: string;\n  /** The colours were hand-picked, so no preset is selected. */\n  custom?: boolean;\n}\n\nfunction QuoteVariantPicker({\n  variants,\n  value,\n  onValueChange,\n  label,\n  custom = false,\n}: QuoteVariantPickerProps) {\n  return (\n    <div className=\"relative\" style={{ marginTop: -10 }}>\n      <SwatchGroup\n        aria-label={label}\n        value={custom ? \"\" : String(value)}\n        onValueChange={(next) => onValueChange(Number(next))}\n        className=\"h-8 justify-center gap-2.5\"\n      >\n        {variants.map((variant, index) => (\n          <Swatch\n            key={variant.name}\n            value={String(index)}\n            background={variant.swatch}\n            label={variant.name}\n            variant=\"ring\"\n          />\n        ))}\n      </SwatchGroup>\n      {custom && (\n        <span className=\"pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-faint-foreground\">\n          Custom\n        </span>\n      )}\n    </div>\n  );\n}\n\nexport { QuoteVariantPicker };\n",
+      "type": "registry:ui",
+      "target": "components/quote/variant-picker.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "highlight-anchor",
+  "title": "Highlight anchor",
+  "description": "Word snapping and overlap cutting for paragraph offsets.",
+  "files": [
+    {
+      "path": "src/lib/highlight-anchor.ts",
+      "content": "/*\n * Character offsets inside one paragraph, and how a new mark cuts the marks it\n * overlaps. The palette lives in `@/lib/highlight-palette`.\n */\n\nexport interface HighlightSpan {\n  id: number;\n  para: number;\n  /** character offsets into the paragraph's string, end exclusive */\n  start: number;\n  end: number;\n  hue: number;\n}\n\n/**\n * A selection grown out to whole words and trimmed of the space at either end.\n * Half a word marked is never what a hand dragging across prose meant.\n */\nexport function snap(text: string, start: number, end: number): [number, number] {\n  let s = start;\n  let e = end;\n  while (s > 0 && !/\\s/.test(text[s - 1])) s--;\n  while (e < text.length && !/\\s/.test(text[e])) e++;\n  while (s < e && /\\s/.test(text[s])) s++;\n  while (e > s && /\\s/.test(text[e - 1])) e--;\n  return [s, e];\n}\n\n/**\n * The marks left once a new one is laid over `[start, end)`. A mark the new one\n * overlaps keeps whatever part of it is outside, which can be a piece either\n * side.\n */\nexport function cut(\n  marks: readonly HighlightSpan[],\n  para: number,\n  text: string,\n  start: number,\n  end: number,\n  nextId: () => number\n): HighlightSpan[] {\n  const out: HighlightSpan[] = [];\n  // a piece cut at a word boundary carries the space beside it, which goes\n  const keep = (m: HighlightSpan) => {\n    let { start: s, end: e } = m;\n    while (s < e && /\\s/.test(text[s])) s++;\n    while (e > s && /\\s/.test(text[e - 1])) e--;\n    if (e > s) out.push({ ...m, start: s, end: e });\n  };\n  for (const m of marks) {\n    if (m.para !== para || m.end <= start || m.start >= end) {\n      out.push(m);\n      continue;\n    }\n    if (m.start < start) keep({ ...m, end: start });\n    if (m.end > end) keep({ ...m, id: nextId(), start: end });\n  }\n  return out;\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:lib"
+}

@@ -82,8 +82,9 @@ point to.
 
 1. **Skeleton.** Done: root workspaces + turbo; the current app lives in
    `apps/site` and builds from there. Vercel root must be set to `apps/site`.
-2. **Kit app.** Add `apps/kit` with a minimal docs shell and `/r` static output.
-   Move the `ui` domain. No documentation content yet.
+2. **Kit app.** Added `apps/kit` with a minimal docs shell and `/r` output.
+   Remaining: point `ui.souravinsights.com` at a Vercel project rooted at
+   `apps/kit`.
 3. **Registry package.** Move the kit source into `packages/registry`, make both
    apps consume it, wire the build into `apps/kit/public/r`.
 4. **Docs.** Write examples and API pages against the real installed registry.
