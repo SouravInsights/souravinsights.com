@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Check } from "@phosphor-icons/react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 
 const swatchVariants = cva(
-  "relative flex-none rounded-full border-0 p-0 transition-[box-shadow,outline-color,scale] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [&_svg]:hidden motion-safe:active:scale-95",
+  "group relative flex-none rounded-full border-0 p-0 transition-[box-shadow,outline-color,scale] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [&>span]:hidden motion-safe:active:scale-95",
   {
     variants: {
       variant: {
@@ -62,6 +63,8 @@ function Swatch({
     background: string;
     label: string;
   }) {
+  const selected = variant ?? "ring";
+
   return (
     <RadioGroupItem
       data-slot="swatch"
@@ -70,7 +73,16 @@ function Swatch({
       style={{ background, ...style }}
       className={cn(swatchVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {selected === "ring" && (
+        <Check
+          data-check=""
+          aria-hidden="true"
+          weight="bold"
+          className="pointer-events-none absolute inset-0 m-auto size-3.5 text-white opacity-0 mix-blend-difference transition-opacity duration-150 group-data-[state=checked]:opacity-100"
+        />
+      )}
+    </RadioGroupItem>
   );
 }
 
