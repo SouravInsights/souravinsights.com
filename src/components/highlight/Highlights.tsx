@@ -3,7 +3,6 @@
 import { AnchoredPanel } from "@/components/ui/anchored-panel";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import { Swatch, SwatchGroup } from "@/components/ui/swatch";
 import { Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
 import {
@@ -734,7 +733,7 @@ export function Highlights({
         className="group z-20 flex select-none flex-col gap-3 !w-auto !rounded-xl !border-border !bg-background !p-3 !shadow-lg max-sm:gap-2 max-sm:!p-2.5"
       >
 
-            <ButtonGroup className="border-b border-border pb-2.5">
+            <div className="flex items-center gap-1 border-b border-border pb-2.5">
               <Button
                 type="button"
                 variant="ghost"
@@ -745,7 +744,7 @@ export function Highlights({
                   close(false);
                   onShareQuote(payload);
                 }}
-                className="h-7 px-2 text-[13px] font-normal text-muted-foreground"
+                className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
               >
                 <Quotes aria-hidden="true" className="size-3.5" />
                 Share quote
@@ -762,7 +761,7 @@ export function Highlights({
                     () => setSaid("Could not reach the clipboard")
                   );
                 }}
-                className="h-7 px-2 text-[13px] font-normal text-muted-foreground"
+                className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
               >
                 <Copy aria-hidden="true" className="size-3.5" />
                 Copy
@@ -777,13 +776,13 @@ export function Highlights({
                       setSaid(ok ? "Link copied" : "Could not copy the link")
                     );
                   }}
-                  className="h-7 px-2 text-[13px] font-normal text-muted-foreground"
+                  className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
                 >
                   <LinkSimple aria-hidden="true" className="size-3.5" />
                   Copy link
                 </Button>
               )}
-            </ButtonGroup>
+            </div>
 
             <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">
               <div className="grid min-w-0 grid-cols-3 content-start gap-4 max-sm:gap-1.5">
@@ -799,8 +798,9 @@ export function Highlights({
                       value={String(i)}
                       background={hue.swatch}
                       label={hue.name}
-                      size="sm"
-                      className="max-sm:size-9"
+                      variant="outline"
+                      style={{ "--hue": hue.swatch } as React.CSSProperties}
+                      className="max-sm:size-9 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] focus-visible:outline-[var(--hue)] data-[state=checked]:outline-[var(--hue)]"
                     />
                   ))}
                 </SwatchGroup>

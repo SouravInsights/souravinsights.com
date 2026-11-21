@@ -11,6 +11,8 @@ import {
 } from "@phosphor-icons/react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ColorField } from "@/components/ui/color-field";
+import { InlineEditField } from "@/components/ui/inline-edit-field";
 import { Kbd } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
 import { Swatch, SwatchGroup } from "@/components/ui/swatch";
@@ -26,7 +28,6 @@ import { Separator } from "@/components/ui/separator";
 import { SidePanel } from "@/components/ui/side-panel";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
   MODES,
@@ -592,6 +593,7 @@ export function ShareQuote({
                     value={String(index)}
                     background={v.swatch}
                     label={v.name}
+                    variant="ring"
                   />
                 ))}
               </SwatchGroup>
@@ -725,162 +727,6 @@ function Choice<T extends string>({
   );
 }
 
-/**
- * One colour role, edited in place. No popover: a picker that covers the card
- * it is changing is the wrong primitive, and on a phone a portalled popover
- * inside a dialog is one z-index away from being unreachable. The swatches sit
- * in the panel, under the label they belong to.
- */
-function ColorField({
-  label,
-  value,
-  onChange,
-  presets,
-  valueLabel,
-  gradient,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  presets: string[];
-  valueLabel?: string;
-  /** The design's gradient paint, when it has one. */
-  gradient?: { swatch: string; active: boolean; onSelect: () => void };
-}) {
-  const unique = Array.from(new Set(presets));
-  const id = `share-color-${label.toLowerCase().replace(/\s+/g, "-")}`;
-  const gradientActive = gradient?.active ?? false;
-
-  return (
-    <div className="py-1.5">
-      <div className="flex items-center justify-between gap-3">
-        <Label htmlFor={id} className="text-[13px] font-normal text-foreground">
-          {label}
-        </Label>
-        <span className="text-[12px] tabular-nums text-muted-foreground">
-          {valueLabel ?? value.toUpperCase()}
-        </span>
-      </div>
-      <div className="mt-2 flex items-center gap-1.5">
-        {gradient && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={gradient.onSelect}
-            aria-label={`${label}: gradient`}
-            aria-pressed={gradient.active}
-            title="Gradient"
-            style={{ background: gradient.swatch }}
-            className={cn(
-              "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
-              gradient.active &&
-                "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-            )}
-          />
-        )}
-        <SwatchGroup
-          value={gradientActive ? "" : value}
-          onValueChange={onChange}
-          className="gap-1.5"
-        >
-          {unique.map((preset) => (
-            <Swatch
-              key={preset}
-              value={preset}
-              background={preset}
-              label={preset}
-              size="sm"
-            />
-          ))}
-        </SwatchGroup>
-        <label
-          htmlFor={id}
-          title="Custom colour"
-          className="relative ml-auto size-6 shrink-0 cursor-pointer rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
-          style={{
-            background:
-              "conic-gradient(from 90deg, #f87171, #fbbf24, #4ade80, #38bdf8, #a78bfa, #f87171)",
-          }}
-        >
-          <span className="pointer-events-none absolute inset-[3px] rounded-full bg-background" />
-          <Plus className="pointer-events-none absolute inset-0 m-auto size-3 text-foreground" />
-          <input
-            id={id}
-            type="color"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            className="absolute inset-0 size-full cursor-pointer opacity-0"
-          />
-        </label>
-      </div>
-    </div>
-  );
-}
-
-/** One editable field: label, value, an Edit hint, and an optional switch. */
-function TextRow({
-  label,
-  value,
-  onChange,
-  show,
-  onToggle,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  show?: boolean;
-  onToggle?: (checked: boolean) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  return (
-    <div className="-ml-2 flex min-h-11 items-center gap-3">
-      <div className="min-w-0 flex-1">
-        {editing ? (
-          <Textarea
-            autoFocus
-            value={value}
-            rows={2}
-            spellCheck={false}
-            onChange={(event) => onChange(event.target.value)}
-            onBlur={() => setEditing(false)}
-            className="min-h-0 resize-none bg-foreground/[0.06] px-2 py-1.5 text-[12.5px] leading-snug"
-          />
-        ) : (
-          <Button
-            type="button"
-            variant="ghost"
-            aria-label={`Edit ${label.toLowerCase()}`}
-            onClick={() => setEditing(true)}
-            className="group flex h-auto w-full items-center gap-2.5 rounded-[9px] px-2 py-1.5 text-left font-normal hover:bg-foreground/5"
-          >
-            <span className="flex min-w-0 flex-1 flex-col gap-px">
-              <span className="text-[13px] leading-[18px] text-foreground">
-                {label}
-              </span>
-              <span className="truncate text-[12px] leading-4 text-muted-foreground">
-                {value}
-              </span>
-            </span>
-            <span className="flex-none text-[12px] font-medium text-muted-foreground group-hover:text-foreground">
-              Edit
-            </span>
-          </Button>
-        )}
-      </div>
-      <div className="flex w-7 flex-none justify-end">
-        {onToggle !== undefined && (
-          <Switch
-            aria-label={`Show ${label.toLowerCase()}`}
-            checked={!!show}
-            onCheckedChange={onToggle}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
 function CustomizePanel({
   theme,
   variant,
@@ -995,10 +841,11 @@ function CustomizePanel({
           valueLabel={paintIsGradient ? "Gradient" : undefined}
           onChange={(background) => set({ background })}
           presets={backgroundPresets}
-          gradient={
+          extra={
             variantIsGradient
               ? {
-                  swatch: variant.swatch,
+                  background: variant.swatch,
+                  label: "Gradient",
                   active: paintIsGradient,
                   onSelect: () => clear("background"),
                 }
@@ -1092,20 +939,20 @@ function CustomizePanel({
       <Separator className="mb-1.5 mt-3" />
 
       <div className="flex flex-col">
-        <TextRow label="Quote" value={quote} onChange={setQuote} />
-        <TextRow
+        <InlineEditField label="Quote" value={quote} onChange={setQuote} />
+        <InlineEditField
           label="Title"
           value={title}
           onChange={setTitle}
-          show={options.showTitle}
-          onToggle={(showTitle) => set({ showTitle })}
+          visible={options.showTitle}
+          onVisibleChange={(showTitle) => set({ showTitle })}
         />
-        <TextRow
+        <InlineEditField
           label="Publication"
           value={publication}
           onChange={setPublication}
-          show={options.showPublication}
-          onToggle={(showPublication) => set({ showPublication })}
+          visible={options.showPublication}
+          onVisibleChange={(showPublication) => set({ showPublication })}
         />
       </div>
     </>
