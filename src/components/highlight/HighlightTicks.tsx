@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -63,16 +64,17 @@ export function HighlightTicks({
       <div className="pointer-events-none absolute inset-y-0 right-0 z-[4] w-0">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               aria-label={`Highlights: ${ticks.length}. Open Notes`}
               aria-expanded={open}
-              className="group pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg py-4 pl-3 pr-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="group pointer-events-auto absolute right-4 top-1/2 h-auto -translate-y-1/2 cursor-pointer rounded-lg px-0 py-4 pl-3 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring"
             >
               <span className="relative block w-3.5" style={{ height: RAIL }}>
                 <span
                   aria-hidden="true"
-                  className="absolute right-0 h-0.5 w-3.5 rounded-full bg-faint-foreground opacity-55 transition-opacity duration-150 group-hover:opacity-80"
+                  className="absolute right-0 h-0.5 w-3.5 rounded-full bg-muted-foreground/55 transition-opacity duration-150 group-hover:bg-muted-foreground/80"
                   style={{ top: 0 }}
                 />
                 {ticks.map((tick) => (
@@ -105,11 +107,11 @@ export function HighlightTicks({
                 ))}
                 <span
                   aria-hidden="true"
-                  className="absolute right-0 h-0.5 w-3.5 rounded-full bg-faint-foreground opacity-55 transition-opacity duration-150 group-hover:opacity-80"
+                  className="absolute right-0 h-0.5 w-3.5 rounded-full bg-muted-foreground/55 transition-opacity duration-150 group-hover:bg-muted-foreground/80"
                   style={{ top: RAIL - END }}
                 />
               </span>
-            </button>
+            </Button>
           </PopoverTrigger>
 
           <PopoverContent
@@ -123,13 +125,15 @@ export function HighlightTicks({
                 {ticks.length} Highlight{ticks.length === 1 ? "" : "s"}
               </span>
               {onOpenNotebook && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={onOpenNotebook}
-                  className="transition-colors hover:text-foreground"
+                  className="h-auto p-0 text-[12px] font-medium text-muted-foreground hover:bg-transparent hover:text-foreground"
                 >
                   Open Notes
-                </button>
+                </Button>
               )}
             </div>
             <ul className="max-h-[60vh] overflow-y-auto p-1 [scrollbar-width:none]">
@@ -139,10 +143,12 @@ export function HighlightTicks({
                   onPointerEnter={() => setHot(tick.id)}
                   onPointerLeave={() => setHot(null)}
                 >
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => onJump(tick.id)}
-                    className="flex w-full items-start gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors hover:bg-foreground/5"
+                    className="flex h-auto w-full items-start justify-start gap-2.5 whitespace-normal rounded-md px-2.5 py-2 text-left"
                   >
                     <span
                       aria-hidden="true"
@@ -152,7 +158,7 @@ export function HighlightTicks({
                     <span className="text-[13px] leading-[1.5] text-foreground">
                       {tick.quote}
                     </span>
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>
