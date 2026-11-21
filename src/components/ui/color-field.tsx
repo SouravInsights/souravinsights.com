@@ -90,18 +90,25 @@ function ColorPicker({
   const wheelRef = React.useRef<HTMLDivElement>(null);
   const [text, setText] = React.useState(value);
   const editing = React.useRef(false);
+  /** The last hex this picker emitted; do not echo it back into HSV. */
+  const emitted = React.useRef<string | null>(null);
 
   React.useEffect(() => {
-    if (hsvToHex(hsv) !== value.toLowerCase()) setHsv(hexToHsv(value));
-  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+    const next = value.toLowerCase();
+    if (next === emitted.current) return;
+    emitted.current = next;
+    setHsv(hexToHsv(next));
+  }, [value]);
 
   React.useEffect(() => {
     if (!editing.current) setText(value);
   }, [value]);
 
   const update = (next: Hsv) => {
+    const hex = hsvToHex(next);
+    emitted.current = hex;
     setHsv(next);
-    onChange(hsvToHex(next));
+    onChange(hex);
   };
 
   const point = (event: React.PointerEvent<HTMLDivElement>) => {
