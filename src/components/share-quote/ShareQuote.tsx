@@ -329,7 +329,7 @@ export function ShareQuote({
 
           <div
             data-panel-open={customize || undefined}
-            className="flex min-w-0 flex-col bg-card pb-6 pt-3.5 transition-[border-radius] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] w-[min(560px,94vw)] rounded-tl-[14px] data-[panel-open]:lg:rounded-tl-none lg:w-[560px]"
+            className="flex min-w-0 flex-col bg-background pb-6 pt-3.5 transition-[border-radius] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] w-[min(560px,94vw)] rounded-tl-[14px] data-[panel-open]:lg:rounded-tl-none lg:w-[560px]"
           >
             {/* Size */}
             <div className="flex h-[30px] items-center justify-center">
