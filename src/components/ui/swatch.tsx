@@ -14,14 +14,14 @@ const swatchVariants = cva(
         ring: [
           "size-7 overflow-hidden outline-2 outline-transparent outline-offset-2",
           "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
-          "[@media(hover:hover)]:hover:outline-foreground/20",
+          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-foreground/20",
           "data-[state=checked]:outline-foreground data-[state=checked]:scale-105",
         ],
         /** Highlight colours: a coloured outline with a hairline inner ring. */
         outline: [
           "size-6 outline-2 outline-transparent outline-offset-2",
           "before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:ring-1 before:ring-foreground/10 before:ring-inset",
-          "[@media(hover:hover)]:hover:outline-foreground/25",
+          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-foreground/25",
         ],
         /** Preset colours: lift on hover, ring on selection. */
         scale: [
