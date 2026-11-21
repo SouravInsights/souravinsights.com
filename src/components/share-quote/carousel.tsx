@@ -7,7 +7,11 @@ import {
   SnapCarouselItem,
 } from "@/components/ui/snap-carousel";
 import type { Mode } from "./presets";
+import type { Overrides } from "./render";
 import type { ShareTheme } from "./themes";
+import { QuoteCard, type QuoteContent } from "./quote-card";
+
+const NO_OVERRIDES: Overrides = {};
 
 const GAP = 29;
 
@@ -19,7 +23,9 @@ export interface QuoteCarouselProps {
   band: number;
   frameWidth: number;
   frameHeight: number;
-  previewRefs: React.MutableRefObject<(HTMLCanvasElement | null)[]>;
+  content: QuoteContent;
+  variantByTheme: Record<string, number>;
+  overridesByTheme: Record<string, Overrides>;
 }
 
 /** The design rail: cards in a spring carousel, one active design. */
@@ -31,7 +37,9 @@ function QuoteCarousel({
   band,
   frameWidth,
   frameHeight,
-  previewRefs,
+  content,
+  variantByTheme,
+  overridesByTheme,
 }: QuoteCarouselProps) {
   const pointerStart = React.useRef<{ x: number; y: number } | null>(null);
   const lastScroll = React.useRef(0);
@@ -90,12 +98,16 @@ function QuoteCarousel({
               className="group cursor-pointer"
             >
               <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05)] group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.14)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1)] dark:group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1),0_10px_28px_-6px_rgba(0,0,0,0.6)]">
-                <canvas
-                  ref={(el) => {
-                    previewRefs.current[index] = el;
-                  }}
+                <QuoteCard
+                  mode={mode}
+                  theme={theme}
+                  variant={
+                    theme.variants[variantByTheme[theme.id] ?? 0] ??
+                    theme.variants[0]
+                  }
+                  overrides={overridesByTheme[theme.id] ?? NO_OVERRIDES}
+                  content={content}
                   style={{ width: frameWidth, height: frameHeight }}
-                  aria-label={`${theme.name} design preview`}
                   className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2"
                 />
               </div>

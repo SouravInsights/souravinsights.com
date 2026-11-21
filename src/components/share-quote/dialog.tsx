@@ -10,7 +10,7 @@ import { QuoteActions } from "./actions";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MODES, type Mode } from "./presets";
 import { THEMES, themeById } from "./themes";
-import { cardToBlob, drawCard, resolveOptions, type Overrides } from "./render";
+import { cardToBlob, resolveOptions, type Overrides } from "./render";
 
 /**
  * Share quote.
@@ -48,7 +48,6 @@ const PANEL_W = 288;
 const STAGE_FIXED = 147;
 const BAND_MIN = 220;
 const BAND_MAX = 460;
-const DPR = 2;
 const NO_OVERRIDES: Overrides = {};
 
 export function ShareQuoteDialog({
@@ -59,7 +58,6 @@ export function ShareQuoteDialog({
   publication,
   context,
 }: Props) {
-  const previewRefs = useRef<(HTMLCanvasElement | null)[]>([]);
 
   const [mode, setMode] = useState<Mode>("story");
   const [themeId, setThemeId] = useState(THEMES[0].id);
@@ -124,51 +122,6 @@ export function ShareQuoteDialog({
   const frameW = Math.round(band * (dims.width / dims.height));
 
   const chooseTheme = useCallback((id: string) => setThemeId(id), []);
-
-  /* ------------------------------------------------------------- painting */
-
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    const paint = () => {
-      if (cancelled) return;
-      const scale = (frameW * DPR) / dims.width;
-      THEMES.forEach((t, index) => {
-        const canvas = previewRefs.current[index];
-        const ctx = canvas?.getContext("2d");
-        if (!canvas || !ctx) return;
-        canvas.width = Math.round(dims.width * scale);
-        canvas.height = Math.round(dims.height * scale);
-        ctx.setTransform(scale, 0, 0, scale, 0, 0);
-        drawCard(
-          ctx,
-          mode,
-          t,
-          resolveOptions(
-            t,
-            t.variants[variantByTheme[t.id] ?? 0] ?? t.variants[0],
-            overridesByTheme[t.id] ?? NO_OVERRIDES,
-            content
-          )
-        );
-      });
-    };
-    paint();
-    // Canvas ignores page fonts until they are ready; repaint once they are.
-    void document.fonts?.ready.then(paint);
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    open,
-    mode,
-    themeId,
-    variantByTheme,
-    overridesByTheme,
-    content,
-    dims,
-    frameW,
-  ]);
 
   const flash = useCallback((text: string, ok: boolean) => {
     setStatus(ok ? "done" : "error");
@@ -333,7 +286,9 @@ export function ShareQuoteDialog({
               band={band}
               frameWidth={frameW}
               frameHeight={frameH}
-              previewRefs={previewRefs}
+              content={content}
+              variantByTheme={variantByTheme}
+              overridesByTheme={overridesByTheme}
             />
 
             <QuoteVariantPicker
