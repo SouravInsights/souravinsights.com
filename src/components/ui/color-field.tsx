@@ -294,7 +294,7 @@ function ColorField({
       data-slot="color-field"
       data-state={open ? "open" : "closed"}
       className={cn(
-        "-mx-2 rounded-lg transition-colors duration-150",
+        "-mx-2 rounded-md transition-colors duration-150",
         open
           ? "bg-foreground/[0.055]"
           : "[@media(hover:hover)]:hover:bg-foreground/[0.035]",
@@ -309,7 +309,7 @@ function ColorField({
         aria-controls={`${id}-picker`}
         disabled={!allowCustom}
         onClick={() => setOpen(!open)}
-        className="flex h-9 w-full items-center gap-2.5 rounded-lg px-2 text-left"
+        className="flex h-9 w-full items-center gap-2.5 rounded-md px-2 text-left"
       >
         <span
           style={{ background: shown }}

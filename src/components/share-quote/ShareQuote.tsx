@@ -334,13 +334,13 @@ export function ShareQuote({
             {/* Size */}
             <div className="flex h-[30px] items-center justify-center">
               <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
-                <TabsList className="inline-flex h-auto items-center rounded-lg bg-foreground/[0.055] p-[3px]">
+                <TabsList className="inline-flex h-auto items-center rounded-md bg-foreground/[0.055] p-[3px]">
                   {MODES.map((m) => (
                     <TabsTrigger
                       key={m.id}
                       value={m.id}
                       title={m.tip}
-                      className="h-[24px] rounded-md px-4 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                      className="h-[24px] rounded-sm px-4 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                     >
                       {m.label}
                     </TabsTrigger>
@@ -462,7 +462,7 @@ export function ShareQuote({
             aria-label="Customize"
             pressed={customize}
             onPressedChange={setCustomize}
-            className="h-8 gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-muted-foreground transition-colors active:scale-[0.97] data-[state=on]:bg-foreground/[0.1] data-[state=on]:text-foreground"
+            className="h-8 gap-1.5 rounded-md px-3 text-[13.5px] font-medium text-muted-foreground transition-colors active:scale-[0.97] data-[state=on]:bg-foreground/[0.1] data-[state=on]:text-foreground"
           >
             <SlidersHorizontal className="size-3.5" />
             <span className="hidden sm:inline">Customize</span>
@@ -488,7 +488,7 @@ export function ShareQuote({
             variant="secondary"
             onClick={save}
             disabled={status === "working"}
-            className="h-8 min-w-[108px] gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-foreground"
+            className="h-8 min-w-[108px] gap-1.5 rounded-md px-3 text-[13.5px] font-medium text-foreground"
           >
             {status === "working" ? (
               <SpinnerGap className="size-3.5 animate-spin text-muted-foreground" />
@@ -505,7 +505,7 @@ export function ShareQuote({
             type="button"
             onClick={copy}
             disabled={status === "working"}
-            className="h-8 min-w-[112px] gap-1.5 rounded-lg bg-foreground px-3 text-[13.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.97]"
+            className="h-8 min-w-[112px] gap-1.5 rounded-md bg-foreground px-3 text-[13.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.97]"
           >
             {status === "done" ? (
               <Check className="size-3.5 opacity-70" />
@@ -555,7 +555,7 @@ function Choice<T extends string>({
     <Select value={value} onValueChange={(next) => onChange(next as T)}>
       <SelectTrigger
         aria-label={label}
-        className="h-7 w-[116px] flex-none rounded-lg border-0 bg-foreground/[0.055] px-2.5 text-[13px] text-foreground/85 hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-ring/30"
+        className="h-7 w-[116px] flex-none rounded-md border-0 bg-foreground/[0.055] px-2.5 text-[13px] text-foreground/85 hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-ring/30"
       >
         <SelectValue />
       </SelectTrigger>
@@ -707,7 +707,7 @@ function CustomizePanel({
         >
           <SelectTrigger
             aria-label="Font"
-            className="h-10 w-full rounded-lg border-0 bg-foreground/[0.055] px-3 text-[17px] text-foreground/85 hover:bg-foreground/[0.08] focus-visible:ring-2 focus-visible:ring-ring/30"
+            className="h-10 w-full rounded-md border-0 bg-foreground/[0.055] px-3 text-[17px] text-foreground/85 hover:bg-foreground/[0.08] focus-visible:ring-2 focus-visible:ring-ring/30"
           >
             <SelectValue />
           </SelectTrigger>
