@@ -52,7 +52,7 @@ function InlineEditField({
             className="group flex h-auto w-full items-center gap-2.5 rounded-[9px] px-2 py-1.5 text-left font-normal hover:bg-foreground/5"
           >
             <span className="flex min-w-0 flex-1 flex-col gap-px">
-              <span className="text-[13px] leading-[18px] text-foreground">
+              <span className="text-[13px] leading-[18px] text-foreground/90">
                 {label}
               </span>
               <span className="truncate text-[12px] leading-4 text-muted-foreground">

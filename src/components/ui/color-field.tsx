@@ -204,7 +204,7 @@ function ColorPicker({
               onKeyDown={(event) => {
                 if (event.key === "Enter") event.currentTarget.blur();
               }}
-              className="h-7 w-full rounded-md border-0 bg-background/60 px-2 pr-8 font-mono text-[11px] tabular-nums text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+              className="h-7 w-full rounded-md border-0 bg-background/60 px-2 pr-8 font-mono text-[11px] tabular-nums text-foreground/90 outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             />
             {eyedropper && (
               <button
@@ -315,7 +315,7 @@ function ColorField({
           style={{ background: shown }}
           className="size-5 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
         />
-        <Label className="flex-1 text-[13px] font-normal leading-[18px] text-foreground">
+        <Label className="flex-1 text-[13px] font-normal leading-[18px] text-foreground/90">
           {label}
         </Label>
         <span className="text-[12px] tabular-nums text-muted-foreground">
