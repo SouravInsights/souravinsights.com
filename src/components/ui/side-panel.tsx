@@ -75,9 +75,12 @@ function SidePanel({
       />
       <div
         data-slot="side-panel-content"
+        data-state={open ? "open" : "closed"}
         onScroll={onScroll}
         className={cn(
           "w-[var(--side-panel-width)] bg-card [scrollbar-width:thin]",
+          "transition-opacity duration-200 ease-out motion-reduce:transition-none",
+          open ? "opacity-100" : "opacity-0",
           left ? "lg:absolute lg:inset-y-0 lg:right-0" : "lg:absolute lg:inset-y-0 lg:left-0",
           "lg:overflow-y-auto lg:overscroll-contain",
           className
