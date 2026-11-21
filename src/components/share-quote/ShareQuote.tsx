@@ -11,10 +11,10 @@ import {
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
-import { Swatch, SwatchGroup } from "@/components/ui/swatch";
 import { Toggle } from "@/components/ui/toggle";
 import { SidePanel } from "@/components/ui/side-panel";
-import { QuoteCustomizer } from "./quote-customizer";
+import { QuoteCustomizer } from "./customizer";
+import { QuoteVariantPicker } from "./variant-picker";
 import {
   SnapCarousel,
   SnapCarouselContent,
@@ -418,39 +418,16 @@ export function ShareQuote({
               </SnapCarouselContent>
             </SnapCarousel>
 
-            {/* The active design's own variants. A hand-picked colour is a
-                custom layer on top of the preset, so the row clears its
-                selection and says so rather than pretending a preset is in
-                force. */}
-            <div className="relative" style={{ marginTop: -10 }}>
-              <SwatchGroup
-                aria-label={`${theme.name} colors`}
-                value={hasColorOverrides ? "" : String(variantIndex)}
-                onValueChange={(value) => {
-                  setVariantByTheme((all) => ({
-                    ...all,
-                    [themeId]: Number(value),
-                  }));
-                  clearColorOverrides();
-                }}
-                className="h-8 justify-center gap-2.5"
-              >
-                {theme.variants.map((v, index) => (
-                  <Swatch
-                    key={v.name}
-                    value={String(index)}
-                    background={v.swatch}
-                    label={v.name}
-                    variant="ring"
-                  />
-                ))}
-              </SwatchGroup>
-              {hasColorOverrides && (
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-faint-foreground">
-                  Custom
-                </span>
-              )}
-            </div>
+            <QuoteVariantPicker
+              variants={theme.variants}
+              value={variantIndex}
+              onValueChange={(index) => {
+                setVariantByTheme((all) => ({ ...all, [themeId]: index }));
+                clearColorOverrides();
+              }}
+              label={`${theme.name} colors`}
+              custom={hasColorOverrides}
+            />
           </div>
         </div>
 
