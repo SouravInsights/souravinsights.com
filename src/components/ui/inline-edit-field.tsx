@@ -55,11 +55,11 @@ function InlineEditField({
               <span className="text-[13px] leading-[18px] text-foreground/85">
                 {label}
               </span>
-              <span className="truncate text-[12px] leading-4 text-muted-foreground">
+              <span className="truncate text-[12px] leading-4 text-muted-foreground/80">
                 {value}
               </span>
             </span>
-            <span className="flex-none text-[12px] font-medium text-muted-foreground/80 group-hover:text-foreground">
+            <span className="flex-none text-[12px] font-medium text-faint-foreground group-hover:text-foreground">
               Edit
             </span>
           </Button>
