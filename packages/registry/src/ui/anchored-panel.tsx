@@ -73,11 +73,21 @@ const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(
       >
         {children}
         {arrow && (
-          <Arrow
-            width={12}
-            height={6}
-            className="fill-background stroke-border stroke-1"
-          />
+          <Arrow asChild width={28} height={12}>
+            <svg width={28} height={12} viewBox="0 0 28 12" aria-hidden="true">
+              <path
+                d="M1 0 L14 11 L27 0 Z"
+                fill="hsl(var(--background))"
+              />
+              <path
+                d="M1 0 L14 11 L27 0"
+                fill="none"
+                stroke="hsl(var(--border))"
+                strokeWidth="1"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Arrow>
         )}
       </PopoverContent>
     </Popover>
