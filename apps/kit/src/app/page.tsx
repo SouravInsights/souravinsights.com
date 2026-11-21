@@ -45,6 +45,10 @@ export default function Page() {
         <pre>
           <code>npx shadcn@latest add https://ui.souravinsights.com/r/highlight.json</code>
         </pre>
+        <p className="note">
+          Built on Radix primitives. If your project is on Base UI, initialize
+          with <code>npx shadcn@latest init -b radix</code> first.
+        </p>
       </header>
 
       {groups.map((group) => {

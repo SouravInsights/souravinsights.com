@@ -44,6 +44,17 @@
   font-size: 12.5px;
 }
 
+.note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.note code {
+  color: var(--text);
+}
+
 .group {
   margin-top: 48px;
 }

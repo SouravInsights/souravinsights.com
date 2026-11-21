@@ -4,9 +4,9 @@ import * as React from "react";
 import {
   Popover,
   PopoverAnchor,
-  PopoverArrow,
   PopoverContent,
 } from "@/components/ui/popover";
+import { Arrow } from "@radix-ui/react-popover";
 import {
   useAnchoredPanel,
   type AnchoredPanelAnchor,
@@ -73,7 +73,7 @@ const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(
       >
         {children}
         {arrow && (
-          <PopoverArrow
+          <Arrow
             width={12}
             height={6}
             className="fill-background stroke-border stroke-1"

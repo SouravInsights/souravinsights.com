@@ -93,7 +93,10 @@ type HighlightMark = {
 ### 3. Registry and docs
 
 - `registry.json` exists and names the libs, hooks and UI items.
-- Verify every item installs into a blank app.
+- Verified: `highlight` and `quote-share-dialog` install and typecheck in a
+  Radix-based blank Next app.
+- The kit uses Radix primitives; Base UI projects must initialize with
+  `npx shadcn@latest init -b radix`.
 - Add blocks: `article-highlights`, `quote-share`.
 - `shadcn build` → `public/r/*.json`.
 - Docs: minimal article, custom toolbar, persisted marks, quote card only.

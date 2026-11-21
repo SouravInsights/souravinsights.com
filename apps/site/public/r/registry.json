@@ -105,6 +105,9 @@
       "registryDependencies": [
         "popover",
         "utils"
+      ],
+      "dependencies": [
+        "@radix-ui/react-popover"
       ]
     },
     {
