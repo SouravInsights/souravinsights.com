@@ -80,8 +80,8 @@ point to.
 
 ## Phases
 
-1. **Skeleton.** Root workspaces + turbo; move the current app to `apps/site`.
-   Verify the site builds and deploys from that root.
+1. **Skeleton.** Done: root workspaces + turbo; the current app lives in
+   `apps/site` and builds from there. Vercel root must be set to `apps/site`.
 2. **Kit app.** Add `apps/kit` with a minimal docs shell and `/r` static output.
    Move the `ui` domain. No documentation content yet.
 3. **Registry package.** Move the kit source into `packages/registry`, make both
