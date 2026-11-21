@@ -22,7 +22,8 @@ wheel listener.
 | Mark engine + palette UI | `src/components/highlight/highlight.tsx` | monolith |
 | Highlight rail | `src/components/highlight/highlight-rail.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
-| Quote studio | `src/components/share-quote/dialog.tsx` | dialog, state, footer |
+| Quote studio | `src/components/share-quote/dialog.tsx` | dialog + state |
+| Quote actions | `src/components/share-quote/actions.tsx` | extracted |
 | Design rail | `src/components/share-quote/carousel.tsx` | extracted |
 | Quote options | `src/components/share-quote/options.tsx` | extracted |
 | Variant picker | `src/components/share-quote/variant-picker.tsx` | extracted |
@@ -49,7 +50,8 @@ Done in this refactor:
 - carousel extracted without changing its DOM, CSS or motion
 - mark snapping/cutting moved to `highlight-anchor.ts`
 - rail geometry moved to `MarkerRail`
-- options panel, variant picker and design rail split from the dialog
+- options panel, variant picker, design rail and footer split from the dialog
+- quote card code split into presets, themes and renderer; fills live in themes
 - `cards.ts` split into presets, themes and render; fills live with themes
 
 ## Remaining foundation work
@@ -78,7 +80,7 @@ type HighlightMark = {
 ### 2. Quote studio
 
 - Extract `canvas.tsx` and `quote-card.tsx`.
-- `dialog.tsx` is already the shell + state + export actions.
+- `dialog.tsx` is the shell + state; `actions.tsx` owns the footer.
 - Keep per-theme variant/override state in the dialog.
 - The options panel, variant picker and carousel are already separate.
 
@@ -117,6 +119,8 @@ No `XRoot`, no invented verbs. One component family per file.
   `muted-foreground` values, `faint-foreground` metadata.
 - No visual change during extraction. If a move needs a class change, stop.
 - Files are kebab-case; exports PascalCase. One family per file.
+- Forward refs where a primitive wraps a DOM node; add `data-slot`.
+- Use named slots (`actions`) instead of layout-specific props.
 
 ## Non-goals
 
