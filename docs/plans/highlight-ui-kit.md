@@ -26,7 +26,10 @@ wheel listener.
 | Design rail | `src/components/share-quote/carousel.tsx` | extracted |
 | Quote options | `src/components/share-quote/options.tsx` | extracted |
 | Variant picker | `src/components/share-quote/variant-picker.tsx` | extracted |
-| Card renderer/themes | `src/components/share-quote/cards.ts` | 810-line monolith |
+| Card fills | `src/components/share-quote/fills.ts` | extracted |
+| Presets | `src/components/share-quote/presets.ts` | extracted |
+| Themes | `src/components/share-quote/themes.ts` | extracted |
+| Card renderer | `src/components/share-quote/render.ts` | extracted |
 | Carousel primitive | `src/components/ui/snap-carousel.tsx` | extracted |
 | Selection panel | `src/components/ui/anchored-panel.tsx` + hook | extracted |
 | Customize panel shell | `src/components/ui/side-panel.tsx` | extracted |
@@ -48,6 +51,7 @@ Done in this refactor:
 - mark snapping/cutting moved to `highlight-anchor.ts`
 - rail geometry moved to `MarkerRail`
 - options panel, variant picker and design rail split from the dialog
+- `cards.ts` split into fills, presets, themes and render
 
 ## Remaining foundation work
 
@@ -74,11 +78,6 @@ type HighlightMark = {
 
 ### 2. Quote studio
 
-- Split `cards.ts` into:
-  - `quote-render.ts` — `drawCard`, `cardToBlob`, `resolveOptions`
-  - `quote-themes.ts` — `THEMES`, `ShareTheme`, `Variant`
-  - `quote-presets.ts` — modes, fonts, size/align/position
-  - `quote-paint.ts` — `Paint`, `solid`, `mesh`, swatch helpers
 - Extract `canvas.tsx` and `quote-card.tsx`.
 - `dialog.tsx` is already the shell + state + export actions.
 - Keep per-theme variant/override state in the dialog.
