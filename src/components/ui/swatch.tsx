@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 
 const swatchVariants = cva(
-  "group relative flex-none rounded-full border-0 p-0 transition-[box-shadow,outline-color,scale] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [&>span]:hidden motion-safe:active:scale-95",
+  "group relative flex-none rounded-full border-0 p-0 transition-[box-shadow,outline-color,scale] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [&>span]:hidden",
   {
     variants: {
       variant: {
@@ -16,7 +16,7 @@ const swatchVariants = cva(
           "size-7 overflow-hidden outline-2 outline-transparent outline-offset-2",
           "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
           "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-foreground/20",
-          "data-[state=checked]:outline-foreground data-[state=checked]:scale-105",
+          "data-[state=checked]:outline-foreground",
         ],
         /** Highlight colours: a coloured outline with a hairline inner ring. */
         outline: [
