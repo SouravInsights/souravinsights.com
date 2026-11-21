@@ -91,6 +91,7 @@ const BAND_MIN = 220;
 const BAND_MAX = 460;
 const DPR = 2;
 const THEME_IDS = THEMES.map((theme) => theme.id);
+const NO_OVERRIDES: Overrides = {};
 
 export function ShareQuote({
   open,
@@ -106,8 +107,12 @@ export function ShareQuote({
 
   const [mode, setMode] = useState<Mode>("story");
   const [themeId, setThemeId] = useState(THEMES[0].id);
-  const [variantIndex, setVariantIndex] = useState(0);
-  const [overrides, setOverrides] = useState<Overrides>({});
+  const [variantByTheme, setVariantByTheme] = useState<Record<string, number>>(
+    {}
+  );
+  const [overridesByTheme, setOverridesByTheme] = useState<
+    Record<string, Overrides>
+  >({});
   const [customize, setCustomize] = useState(false);
   const [band, setBand] = useState(367);
   const [panelScrolled, setPanelScrolled] = useState(false);
@@ -141,6 +146,8 @@ export function ShareQuote({
   }, [open]);
 
   const theme = themeById(themeId);
+  const variantIndex = variantByTheme[themeId] ?? 0;
+  const overrides = overridesByTheme[themeId] ?? NO_OVERRIDES;
   const variant = theme.variants[variantIndex] ?? theme.variants[0];
   const content = useMemo(
     () => ({
@@ -160,11 +167,7 @@ export function ShareQuote({
   const frameH = band;
   const frameW = Math.round(band * (dims.width / dims.height));
 
-  const chooseTheme = useCallback((id: string) => {
-    setThemeId(id);
-    setVariantIndex(0);
-    setOverrides({});
-  }, []);
+  const chooseTheme = useCallback((id: string) => setThemeId(id), []);
 
   /* ------------------------------------------------------------- painting */
 
@@ -187,8 +190,8 @@ export function ShareQuote({
           t,
           resolveOptions(
             t,
-            t.id === themeId ? variant : t.variants[0],
-            t.id === themeId ? overrides : {},
+            t.variants[variantByTheme[t.id] ?? 0] ?? t.variants[0],
+            overridesByTheme[t.id] ?? NO_OVERRIDES,
             content
           )
         );
@@ -200,7 +203,16 @@ export function ShareQuote({
     return () => {
       cancelled = true;
     };
-  }, [open, mode, themeId, variant, overrides, content, dims, frameW]);
+  }, [
+    open,
+    mode,
+    themeId,
+    variantByTheme,
+    overridesByTheme,
+    content,
+    dims,
+    frameW,
+  ]);
 
   const flash = useCallback((text: string, ok: boolean) => {
     setStatus(ok ? "done" : "error");
@@ -256,7 +268,11 @@ export function ShareQuote({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, save, copy]);
 
-  const set = (patch: Overrides) => setOverrides((all) => ({ ...all, ...patch }));
+  const set = (patch: Overrides) =>
+    setOverridesByTheme((all) => ({
+      ...all,
+      [themeId]: { ...(all[themeId] ?? {}), ...patch },
+    }));
 
   /**
    * The colour roles the current design actually paints. A variant is a preset
@@ -269,16 +285,16 @@ export function ShareQuote({
     (key) => overrides[key] !== undefined
   );
   const clearColorOverrides = () =>
-    setOverrides((all) => {
-      const next = { ...all };
+    setOverridesByTheme((all) => {
+      const next = { ...(all[themeId] ?? {}) };
       for (const key of COLOR_KEYS) delete next[key];
-      return next;
+      return { ...all, [themeId]: next };
     });
   const clear = (key: keyof Overrides) =>
-    setOverrides((all) => {
-      const next = { ...all };
+    setOverridesByTheme((all) => {
+      const next = { ...(all[themeId] ?? {}) };
       delete next[key];
-      return next;
+      return { ...all, [themeId]: next };
     });
 
   const panel = (
@@ -289,7 +305,9 @@ export function ShareQuote({
       overrides={overrides}
       set={set}
       clear={clear}
-      reset={() => setOverrides({})}
+      reset={() =>
+        setOverridesByTheme((all) => ({ ...all, [themeId]: {} }))
+      }
       quote={draftQuote}
       setQuote={setDraftQuote}
       title={draftTitle}
@@ -429,7 +447,10 @@ export function ShareQuote({
                 aria-label={`${theme.name} colors`}
                 value={hasColorOverrides ? "" : String(variantIndex)}
                 onValueChange={(value) => {
-                  setVariantIndex(Number(value));
+                  setVariantByTheme((all) => ({
+                    ...all,
+                    [themeId]: Number(value),
+                  }));
                   clearColorOverrides();
                 }}
                 className="h-8 justify-center gap-2.5"

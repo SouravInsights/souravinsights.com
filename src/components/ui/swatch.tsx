@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Check } from "@phosphor-icons/react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 
@@ -13,10 +12,10 @@ const swatchVariants = cva(
       variant: {
         /** Quote designs: a crisp outline with a gap, like a selected radio. */
         ring: [
-          "size-7 overflow-hidden outline-2 outline-transparent outline-offset-2",
+          "size-7 overflow-hidden ring-offset-2 ring-offset-background",
           "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
-          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-[hsl(var(--foreground)/0.2)]",
-          "focus-visible:outline-[hsl(var(--foreground))] data-[state=checked]:outline-[hsl(var(--foreground))]",
+          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-2 [@media(hover:hover)]:data-[state=unchecked]:hover:outline-[hsl(var(--foreground)/0.2)] [@media(hover:hover)]:data-[state=unchecked]:hover:outline-offset-2",
+          "focus-visible:ring-2 focus-visible:ring-[hsl(var(--foreground))] data-[state=checked]:ring-2 data-[state=checked]:ring-[hsl(var(--foreground))]",
         ],
         /** Highlight colours: a coloured outline with a hairline inner ring. */
         outline: [
@@ -63,8 +62,6 @@ function Swatch({
     background: string;
     label: string;
   }) {
-  const selected = variant ?? "ring";
-
   return (
     <RadioGroupItem
       data-slot="swatch"
@@ -73,16 +70,7 @@ function Swatch({
       style={{ background, ...style }}
       className={cn(swatchVariants({ variant }), className)}
       {...props}
-    >
-      {selected === "ring" && (
-        <Check
-          data-check=""
-          aria-hidden="true"
-          weight="bold"
-          className="pointer-events-none absolute inset-0 m-auto size-3.5 text-white opacity-0 mix-blend-difference transition-opacity duration-150 group-data-[state=checked]:opacity-100"
-        />
-      )}
-    </RadioGroupItem>
+    />
   );
 }
 
