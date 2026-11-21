@@ -185,7 +185,7 @@ export function ShareQuote({
     if (!g) return;
     cancelAnimationFrame(g.raf);
     glideRef.current = null;
-    if (carouselRef.current) delete carouselRef.current.dataset.gliding;
+    carouselRef.current?.classList.remove("qs-gliding");
   }, []);
 
   /** The spring that replaces `scrollIntoView` — snap is off while it runs. */
@@ -204,7 +204,7 @@ export function ShareQuote({
         return;
       }
       if (Math.abs(el.scrollLeft - target) < 1) return;
-      el.dataset.gliding = "true";
+      el.classList.add("qs-gliding");
       const g = {
         x: el.scrollLeft,
         v: 0,
@@ -448,7 +448,24 @@ export function ShareQuote({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
 
-      <DialogContent className="flex w-auto max-w-[96vw] flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-background p-0 text-foreground shadow-2xl [&>button]:z-30 [&>button]:right-3 [&>button]:top-3.5 [&>button]:text-muted-foreground [&>button]:hover:text-foreground">
+      <style>{`
+        @keyframes qs-palette-in { from { opacity: 0; scale: .97 } }
+        @keyframes qs-palette-out { to { opacity: 0; scale: .98 } }
+        .qs-carousel { scroll-snap-type: x mandatory; }
+        .qs-carousel.qs-gliding { scroll-snap-type: none; }
+        .qs-slide {
+          scroll-snap-align: center;
+          scroll-snap-stop: always;
+          transition: scale 240ms cubic-bezier(.2,0,0,1), opacity 150ms ease-out;
+        }
+        .qs-slide[data-peek="before"] { transform-origin: 100%; scale: .92; }
+        .qs-slide[data-peek="after"]  { transform-origin: 0;    scale: .92; }
+        .qs-slide[data-peek="before"]:hover,
+        .qs-slide[data-peek="after"]:hover { scale: .95; }
+        @media (prefers-reduced-motion: reduce) { .qs-slide { transition: none } }
+      `}</style>
+
+      <DialogContent className="flex w-auto max-w-[96vw] flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-background p-0 text-foreground shadow-2xl data-[state=open]:!animate-[qs-palette-in_200ms_cubic-bezier(0.32,0.72,0,1)_backwards] data-[state=closed]:!animate-[qs-palette-out_150ms_ease-in_forwards] [&>button]:z-30 [&>button]:right-3 [&>button]:top-3.5 [&>button]:text-muted-foreground [&>button]:hover:text-foreground">
         <DialogTitle className="sr-only">Share quote</DialogTitle>
 
         <div className="relative flex">
@@ -497,7 +514,7 @@ export function ShareQuote({
               aria-roledescription="carousel"
               aria-label="Styles"
               onScroll={onCarouselScroll}
-              className="no-scrollbar relative flex snap-x snap-mandatory items-center overflow-x-auto overflow-y-hidden outline-none [overscroll-behavior-x:contain] data-[gliding=true]:snap-none"
+              className="qs-carousel no-scrollbar relative flex items-center overflow-x-auto overflow-y-hidden outline-none [overscroll-behavior-x:contain]"
               style={{
                 gap: GAP,
                 marginTop: GAP - 12,
@@ -528,38 +545,28 @@ export function ShareQuote({
                         y: event.clientY,
                       })
                     }
-                    className="group relative flex-none snap-center snap-always transition-transform duration-200 ease-out motion-reduce:transition-none data-[peek=before]:origin-[100%] data-[peek=before]:scale-[0.92] data-[peek=after]:origin-[0] data-[peek=after]:scale-[0.92] data-[peek=before]:hover:scale-[0.95] data-[peek=after]:hover:scale-[0.95]"
+                    onClick={(event) => {
+                      const start = pointerStart.current;
+                      const still =
+                        !start ||
+                        Math.hypot(event.clientX - start.x, event.clientY - start.y) <
+                          4;
+                      const recent = performance.now() - lastScroll.current < 150;
+                      if (active || !still || recent) return;
+                      chooseTheme(t.id);
+                    }}
+                    className="qs-slide group relative flex-none cursor-pointer"
                   >
-                    <button
-                      type="button"
-                      aria-label={`Use the ${t.name} design`}
-                      aria-pressed={active}
-                      onClick={(event) => {
-                        const start = pointerStart.current;
-                        const still =
-                          !start ||
-                          Math.hypot(
-                            event.clientX - start.x,
-                            event.clientY - start.y
-                          ) < 4;
-                        const recent =
-                          performance.now() - lastScroll.current < 150;
-                        if (active || !still || recent) return;
-                        chooseTheme(t.id);
-                      }}
-                      className="block h-full w-full cursor-pointer rounded-md p-0 text-left"
-                    >
-                      <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05)] group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.14)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1)] dark:group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1),0_10px_28px_-6px_rgba(0,0,0,0.6)]">
-                        <canvas
-                          ref={(el) => {
-                            previewRefs.current[index] = el;
-                          }}
-                          style={{ width: frameW, height: frameH }}
-                          aria-label={`${t.name} design preview`}
-                          className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2"
-                        />
-                      </div>
-                    </button>
+                    <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05)] group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.14)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1)] dark:group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1),0_10px_28px_-6px_rgba(0,0,0,0.6)]">
+                      <canvas
+                        ref={(el) => {
+                          previewRefs.current[index] = el;
+                        }}
+                        style={{ width: frameW, height: frameH }}
+                        aria-label={`${t.name} design preview`}
+                        className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2"
+                      />
+                    </div>
                   </div>
                 );
               })}
