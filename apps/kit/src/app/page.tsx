@@ -62,7 +62,7 @@ export default function Page() {
                 <a
                   key={item.name}
                   className={styles.item}
-                  href={`https://ui.souravinsights.com/r/${item.name}.json`}
+                  href={`/docs/${item.name}`}
                 >
                   <span className={styles.itemTitle}>{item.title ?? item.name}</span>
                   {item.description && (

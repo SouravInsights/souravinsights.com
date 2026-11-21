@@ -122,3 +122,99 @@
 .footer code {
   color: var(--text);
 }
+
+.doc {
+  width: min(920px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 56px 0 96px;
+}
+
+.back {
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+.docHead {
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.docHead h1 {
+  margin: 20px 0 0;
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.docDesc {
+  max-width: 36rem;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.docCode {
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 12.5px;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.meta h2,
+.files h2 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.meta ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meta li {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.files {
+  margin-top: 40px;
+}
+
+.file {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.file span:last-child {
+  flex: none;
+  color: var(--faint, #71717a);
+}
