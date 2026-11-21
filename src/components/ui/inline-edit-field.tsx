@@ -31,7 +31,10 @@ function InlineEditField({
   const [editing, setEditing] = React.useState(false);
 
   return (
-    <div className={cn("flex min-h-11 items-center gap-3 -ml-2", className)}>
+    <div
+      data-slot="inline-edit-field"
+      className={cn("flex min-h-11 items-center gap-3 -ml-2", className)}
+    >
       <div className="min-w-0 flex-1">
         {editing ? (
           <Textarea

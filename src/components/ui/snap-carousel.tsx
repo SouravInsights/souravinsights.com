@@ -210,12 +210,13 @@ function SnapCarousel({
 export interface SnapCarouselContentProps
   extends React.HTMLAttributes<HTMLDivElement> {}
 
-function SnapCarouselContent({
-  className,
-  style,
-  onScroll,
-  ...props
-}: SnapCarouselContentProps) {
+const SnapCarouselContent = React.forwardRef<
+  HTMLDivElement,
+  SnapCarouselContentProps
+>(function SnapCarouselContent(
+  { className, style, onScroll, ...props },
+  forwardedRef
+) {
   const {
     value,
     items,
@@ -282,7 +283,11 @@ function SnapCarouselContent({
 
   return (
     <div
-      ref={contentRef}
+      ref={(node) => {
+        contentRef.current = node;
+        if (typeof forwardedRef === "function") forwardedRef(node);
+        else if (forwardedRef) forwardedRef.current = node;
+      }}
       data-slot="snap-carousel-content"
       onScroll={onRailScroll}
       onTouchStart={stopGlide}
@@ -294,19 +299,21 @@ function SnapCarouselContent({
       {...props}
     />
   );
-}
+});
+SnapCarouselContent.displayName = "SnapCarouselContent";
 
 export interface SnapCarouselItemProps
   extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
 }
 
-function SnapCarouselItem({
-  value,
-  className,
-  children,
-  ...props
-}: SnapCarouselItemProps) {
+const SnapCarouselItem = React.forwardRef<
+  HTMLDivElement,
+  SnapCarouselItemProps
+>(function SnapCarouselItem(
+  { value, className, children, ...props },
+  forwardedRef
+) {
   const { value: active, items } = useSnapCarousel();
   const index = items.indexOf(value);
   const activeIndex = items.indexOf(active);
@@ -314,6 +321,10 @@ function SnapCarouselItem({
 
   return (
     <div
+      ref={(node) => {
+        if (typeof forwardedRef === "function") forwardedRef(node);
+        else if (forwardedRef) forwardedRef.current = node;
+      }}
       data-slot="snap-carousel-item"
       data-value={value}
       data-peek={peek}
@@ -326,6 +337,7 @@ function SnapCarouselItem({
       {children}
     </div>
   );
-}
+});
+SnapCarouselItem.displayName = "SnapCarouselItem";
 
 export { SnapCarousel, SnapCarouselContent, SnapCarouselItem, useSnapCarousel };

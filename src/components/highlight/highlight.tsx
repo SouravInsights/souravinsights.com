@@ -722,7 +722,7 @@ export function Highlight({
           if (!next) close(false);
         }}
         anchor={open?.anchor ?? null}
-        contentRef={pop}
+        ref={pop}
         sideOffset={GAP}
         collisionPadding={EDGE}
         arrow

@@ -24,8 +24,6 @@ export interface AnchoredPanelProps
   anchor: AnchoredPanelAnchor;
   sideOffset?: number;
   arrow?: boolean;
-  /** The panel itself, for focus and contains() checks. */
-  contentRef?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -34,27 +32,31 @@ export interface AnchoredPanelProps
  * Radix owns positioning (via a virtual anchor), collision handling, arrow
  * placement, outside dismissal and Escape. The panel only owns its skin.
  */
-function AnchoredPanel({
-  open,
-  onOpenChange,
-  anchor,
-  sideOffset = 8,
-  arrow = false,
-  contentRef,
-  className,
-  children,
-  onOpenAutoFocus,
-  onCloseAutoFocus,
-  collisionPadding = 8,
-  ...props
-}: AnchoredPanelProps) {
+const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(
+  function AnchoredPanel(
+    {
+      open,
+      onOpenChange,
+      anchor,
+      sideOffset = 8,
+      arrow = false,
+      className,
+      children,
+      onOpenAutoFocus,
+      onCloseAutoFocus,
+      collisionPadding = 8,
+      ...props
+    },
+    ref
+  ) {
   const virtualRef = useAnchoredPanel(anchor);
 
   return (
     <Popover open={open} onOpenChange={onOpenChange} modal={false}>
       <PopoverAnchor virtualRef={virtualRef} />
       <PopoverContent
-        ref={contentRef}
+        ref={ref}
+        data-slot="anchored-panel"
         side="top"
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
@@ -79,7 +81,9 @@ function AnchoredPanel({
         )}
       </PopoverContent>
     </Popover>
-  );
-}
+    );
+  }
+);
+AnchoredPanel.displayName = "AnchoredPanel";
 
 export { AnchoredPanel };

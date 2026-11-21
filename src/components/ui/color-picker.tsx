@@ -87,7 +87,9 @@ function ColorPicker({ value, onChange, children }: ColorPickerProps) {
 
   return (
     <Context.Provider value={{ value, onChange, hsv, update }}>
-      <div className="flex items-center gap-3.5">{children}</div>
+      <div data-slot="color-picker" className="flex items-center gap-3.5">
+        {children}
+      </div>
     </Context.Provider>
   );
 }
@@ -117,6 +119,7 @@ function ColorPickerWheel() {
   return (
     <div
       ref={wheelRef}
+      data-slot="color-picker-wheel"
       role="group"
       aria-label="Colour wheel"
       onPointerDown={(event) => {
@@ -153,6 +156,7 @@ function ColorPickerSide({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      data-slot="color-picker-side"
       className={cn("flex min-w-0 flex-1 flex-col gap-3.5", className)}
       {...props}
     />
@@ -168,6 +172,7 @@ function ColorPickerBrightness() {
       min={0}
       max={100}
       value={Math.round(hsv.v * 100)}
+      data-slot="color-picker-brightness"
       aria-label="Brightness"
       onChange={(event) => update({ ...hsv, v: Number(event.target.value) / 100 })}
       style={{
@@ -180,7 +185,7 @@ function ColorPickerBrightness() {
 
 export interface ColorPickerHexProps {
   /** Rendered after the input, e.g. the design's gradient action. */
-  trailing?: React.ReactNode;
+  actions?: React.ReactNode;
   /** Show the screen picker when the browser supports it. */
   eyedropper?: boolean;
 }
@@ -189,7 +194,7 @@ type EyeDropperConstructor = new () => {
   open: () => Promise<{ sRGBHex: string }>;
 };
 
-function ColorPickerHex({ trailing, eyedropper = true }: ColorPickerHexProps) {
+function ColorPickerHex({ actions, eyedropper = true }: ColorPickerHexProps) {
   const { value, onChange } = useColorPicker();
   const [text, setText] = React.useState(value);
   const [canPick, setCanPick] = React.useState(false);
@@ -220,7 +225,7 @@ function ColorPickerHex({ trailing, eyedropper = true }: ColorPickerHexProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div data-slot="color-picker-hex" className="flex items-center gap-2">
       <span
         aria-hidden="true"
         className="size-6 flex-none rounded-md shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.2)]"
@@ -265,7 +270,7 @@ function ColorPickerHex({ trailing, eyedropper = true }: ColorPickerHexProps) {
           </Button>
         )}
       </div>
-      {trailing}
+      {actions}
     </div>
   );
 }

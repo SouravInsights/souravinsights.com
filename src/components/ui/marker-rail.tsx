@@ -48,6 +48,7 @@ function MarkerRail({
       <Button
         type="button"
         variant="ghost"
+        data-slot="marker-rail"
         aria-label={ariaLabel}
         className={cn(
           "group h-auto cursor-pointer rounded-lg px-0 py-4 pl-3 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring",

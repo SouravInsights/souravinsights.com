@@ -9,7 +9,6 @@ import {
   ColorPickerSide,
   ColorPickerWheel,
 } from "@/components/ui/color-picker";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 export interface ColorFieldExtra {
@@ -89,9 +88,9 @@ function ColorField({
           style={{ background: shown }}
           className="size-5 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]"
         />
-        <Label className="flex-1 text-[13px] font-normal leading-[18px] text-foreground/85">
+        <span className="flex-1 text-[13px] font-normal leading-[18px] text-foreground/85">
           {label}
-        </Label>
+        </span>
         <span className="text-[12px] tabular-nums text-faint-foreground">
           {valueLabel ?? value.toUpperCase()}
         </span>
@@ -104,7 +103,7 @@ function ColorField({
             <ColorPickerSide>
               <ColorPickerBrightness />
               <ColorPickerHex
-                trailing={
+                actions={
                   extra ? (
                     <Button
                       type="button"
