@@ -11,8 +11,10 @@ import {
 } from "@phosphor-icons/react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Swatch, SwatchGroup } from "@/components/ui/swatch";
+import { Toggle } from "@/components/ui/toggle";
 import {
   Select,
   SelectContent,
@@ -24,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
   MODES,
   THEMES,
@@ -630,26 +633,24 @@ export function ShareQuote({
                 selection and says so rather than pretending a preset is in
                 force. */}
             <div className="relative" style={{ marginTop: -10 }}>
-              <RadioGroup
+              <SwatchGroup
                 aria-label={`${theme.name} colors`}
                 value={hasColorOverrides ? "" : String(variantIndex)}
                 onValueChange={(value) => {
                   setVariantIndex(Number(value));
                   clearColorOverrides();
                 }}
-                className="flex h-8 items-center justify-center gap-2.5"
+                className="h-8 justify-center gap-2.5"
               >
                 {theme.variants.map((v, index) => (
-                  <RadioGroupItem
+                  <Swatch
                     key={v.name}
                     value={String(index)}
-                    aria-label={v.name}
-                    title={v.name}
-                    style={{ background: v.swatch }}
-                    className="size-7 flex-none overflow-hidden rounded-full border-0 p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] transition-shadow duration-150 hover:shadow-[0_0_0_2px_hsl(var(--card)),0_0_0_3px_hsl(var(--muted-foreground))] data-[state=checked]:shadow-[0_0_0_2px_hsl(var(--card)),0_0_0_3.5px_hsl(var(--foreground))] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] [&_svg]:hidden"
+                    background={v.swatch}
+                    label={v.name}
                   />
                 ))}
-              </RadioGroup>
+              </SwatchGroup>
               {hasColorOverrides && (
                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
                   Custom
@@ -663,19 +664,16 @@ export function ShareQuote({
             for saving, the solid one for copying, so the primary action reads
             as primary without a label saying so. */}
         <div className="flex h-[52px] items-center gap-2 rounded-b-[14px] border-t border-border bg-background px-3">
-          <button
+          <Toggle
             type="button"
-            aria-expanded={customize}
-            onClick={() => setCustomize((c) => !c)}
-            className={`inline-flex h-[30px] items-center gap-1.5 rounded-lg px-3 text-[13.5px] font-medium transition-colors active:scale-[0.96] ${
-              customize
-                ? "bg-foreground/[0.1] text-foreground"
-                : "text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
-            }`}
+            aria-label="Customize"
+            pressed={customize}
+            onPressedChange={setCustomize}
+            className="h-[30px] gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-muted-foreground transition-colors active:scale-[0.96] data-[state=on]:bg-foreground/[0.1] data-[state=on]:text-foreground"
           >
             <SlidersHorizontal className="size-3.5" />
             <span className="hidden sm:inline">Customize</span>
-          </button>
+          </Toggle>
 
           <div className="flex-1" />
 
@@ -692,11 +690,12 @@ export function ShareQuote({
             </span>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={save}
             disabled={status === "working"}
-            className="inline-flex h-[30px] min-w-[108px] items-center justify-center gap-1.5 rounded-lg bg-foreground/[0.06] px-3 text-[13.5px] font-medium text-foreground transition-[background-color,opacity,scale] duration-150 hover:bg-foreground/[0.1] active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45"
+            className="h-[30px] min-w-[108px] gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-foreground"
           >
             {status === "working" ? (
               <SpinnerGap className="size-3.5 animate-spin text-muted-foreground" />
@@ -704,16 +703,16 @@ export function ShareQuote({
               <DownloadSimple className="size-3.5 text-muted-foreground" />
             )}
             Save image
-            <kbd className="ml-0.5 hidden font-medium opacity-55 sm:inline">
+            <Kbd className="ml-0.5 hidden bg-transparent p-0 font-sans text-[11px] font-medium text-current opacity-55 sm:inline-flex">
               ⌘S
-            </kbd>
-          </button>
+            </Kbd>
+          </Button>
 
-          <button
+          <Button
             type="button"
             onClick={copy}
             disabled={status === "working"}
-            className="inline-flex h-[30px] min-w-[112px] items-center justify-center gap-1.5 rounded-lg bg-foreground px-3 text-[13.5px] font-semibold text-background transition-[background-color,opacity,scale] duration-150 hover:opacity-90 active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45"
+            className="h-[30px] min-w-[112px] gap-1.5 rounded-lg bg-foreground px-3 text-[13.5px] font-semibold text-background hover:bg-foreground/90"
           >
             {status === "done" ? (
               <Check className="size-3.5 opacity-70" />
@@ -721,10 +720,10 @@ export function ShareQuote({
               <CopyIcon className="size-3.5 opacity-70" />
             )}
             Copy image
-            <kbd className="ml-0.5 hidden font-medium opacity-55 sm:inline">
+            <Kbd className="ml-0.5 hidden bg-transparent p-0 font-sans text-[11px] font-medium text-current opacity-55 sm:inline-flex">
               ⌘C
-            </kbd>
-          </button>
+            </Kbd>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -820,40 +819,37 @@ function ColorField({
       </div>
       <div className="mt-2 flex items-center gap-1.5">
         {gradient && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={gradient.onSelect}
             aria-label={`${label}: gradient`}
             aria-pressed={gradient.active}
             title="Gradient"
             style={{ background: gradient.swatch }}
-            className={`size-6 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] ${
-              gradient.active
-                ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                : ""
-            }`}
+            className={cn(
+              "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
+              gradient.active &&
+                "ring-2 ring-foreground ring-offset-2 ring-offset-background"
+            )}
           />
         )}
-        {unique.map((preset) => {
-          const active =
-            !gradientActive && preset.toLowerCase() === value.toLowerCase();
-          return (
-            <button
+        <SwatchGroup
+          value={gradientActive ? "" : value}
+          onValueChange={onChange}
+          className="gap-1.5"
+        >
+          {unique.map((preset) => (
+            <Swatch
               key={preset}
-              type="button"
-              aria-label={preset}
-              aria-pressed={active}
-              title={preset}
-              onClick={() => onChange(preset)}
-              style={{ background: preset }}
-              className={`size-6 flex-none rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)] ${
-                active
-                  ? "ring-2 ring-foreground ring-offset-2 ring-offset-background"
-                  : ""
-              }`}
+              value={preset}
+              background={preset}
+              label={preset}
+              size="sm"
             />
-          );
-        })}
+          ))}
+        </SwatchGroup>
         <label
           htmlFor={id}
           title="Custom colour"
@@ -1036,13 +1032,15 @@ function CustomizePanel({
           Colors
         </h4>
         {colorOverridden && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={clearColors}
-            className="text-[12px] font-normal text-muted-foreground transition-colors hover:text-foreground"
+            className="h-auto p-0 text-[12px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
           >
             Reset
-          </button>
+          </Button>
         )}
       </div>
 

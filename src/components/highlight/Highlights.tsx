@@ -1,6 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Swatch, SwatchGroup } from "@/components/ui/swatch";
 import { Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
 import {
   useCallback,
@@ -8,7 +11,6 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type CSSProperties,
   type ReactElement,
   type RefObject,
 } from "react";
@@ -768,22 +770,26 @@ export function Highlights({
               style={{ left: "var(--ax, 50%)" }}
             />
 
-            <div className="flex items-center gap-1 border-b border-border pb-2.5">
-              <button
+            <ButtonGroup className="border-b border-border pb-2.5">
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   const payload = shareable();
                   if (!payload) return;
                   close(false);
                   onShareQuote(payload);
                 }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                className="h-7 px-2 text-[13px] font-normal text-muted-foreground"
               >
                 <Quotes aria-hidden="true" className="size-3.5" />
                 Share quote
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   const payload = shareable();
                   if (!payload) return;
@@ -792,78 +798,84 @@ export function Highlights({
                     () => setSaid("Could not reach the clipboard")
                   );
                 }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                className="h-7 px-2 text-[13px] font-normal text-muted-foreground"
               >
                 <Copy aria-hidden="true" className="size-3.5" />
                 Copy
-              </button>
+              </Button>
               {onCopyLink && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     void onCopyLink(permalinkRange()).then((ok) =>
                       setSaid(ok ? "Link copied" : "Could not copy the link")
                     );
                   }}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  className="h-7 px-2 text-[13px] font-normal text-muted-foreground"
                 >
                   <LinkSimple aria-hidden="true" className="size-3.5" />
                   Copy link
-                </button>
+                </Button>
               )}
-            </div>
+            </ButtonGroup>
 
             <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">
-              <fieldset className="m-0 grid min-w-0 grid-cols-3 content-start gap-4 border-0 p-0 max-sm:gap-1.5">
-                <legend className="sr-only">Highlight colour</legend>
-                {HUES.map((hue, i) => (
-                  <button
-                    key={hue.name}
-                    type="button"
-                    aria-label={hue.name}
-                    title={hue.name}
-                    aria-pressed={current?.hue === i}
-                    onClick={() => pick(i)}
-                    style={{ backgroundColor: hue.swatch, "--hue": hue.swatch } as CSSProperties}
-                    className="relative size-6 cursor-pointer rounded-full outline-2 outline-transparent outline-offset-2 transition-[outline-color] duration-150 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] aria-pressed:outline-(--hue) focus-visible:outline-(--hue) max-sm:size-9"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 rounded-full ring-1 ring-foreground/10 ring-inset"
+              <div className="grid min-w-0 grid-cols-3 content-start gap-4 max-sm:gap-1.5">
+                <SwatchGroup
+                  aria-label="Highlight colour"
+                  className="contents"
+                  value={current ? String(current.hue) : undefined}
+                  onValueChange={(value) => pick(Number(value))}
+                >
+                  {HUES.map((hue, i) => (
+                    <Swatch
+                      key={hue.name}
+                      value={String(i)}
+                      background={hue.swatch}
+                      label={hue.name}
+                      size="sm"
+                      className="max-sm:size-9"
                     />
-                  </button>
-                ))}
-                <button
+                  ))}
+                </SwatchGroup>
+                <Button
                   type="button"
+                  variant="outline"
+                  size="icon"
                   aria-label="Remove highlight"
                   title="Remove highlight"
                   disabled={!current}
                   onClick={remove}
-                  className="flex size-6 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent max-sm:size-9"
+                  className="size-6 rounded-full p-0 text-muted-foreground max-sm:size-9"
                 >
                   <Eraser aria-hidden="true" className="size-3.5" />
-                </button>
-              </fieldset>
+                </Button>
+              </div>
 
               <span aria-hidden="true" className="w-px shrink-0 bg-border" />
 
               <div className="flex w-32 min-w-0 flex-col gap-0.5 sm:w-40">
                 {ordered.length === 0 ? (
-                  <p className="px-2 py-1 type-caption text-muted-foreground">
+                  <p className="px-2 py-1 text-[13px] leading-[1.5] text-muted-foreground">
                     No highlights yet
                   </p>
                 ) : (
                   <ul className="-mr-1 flex max-h-28 flex-col gap-0.5 overflow-y-auto pr-1">
                     {ordered.map((m) => (
                       <li key={m.id}>
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="sm"
+                          data-active={m.id === current?.id ? "" : undefined}
                           onClick={() => {
                             window.getSelection()?.removeAllRanges();
                             setOpen({ kind: "edit", id: m.id, viaKey: false });
                             request(m.id, paint(m.hue, dark), m.hue);
                           }}
-                          className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-left type-caption transition-all duration-150 hover:bg-foreground/5 hover:text-foreground ${
+                          className={`h-auto w-full justify-start px-2 py-1 text-left text-[13px] font-normal leading-[1.5] ${
                             m.id === current?.id
                               ? "bg-foreground/5 text-foreground"
                               : "text-muted-foreground"
@@ -877,7 +889,7 @@ export function Highlights({
                           <span className="truncate">
                             {textOf(m.para).slice(m.start, m.end)}
                           </span>
-                        </button>
+                        </Button>
                       </li>
                     ))}
                   </ul>
