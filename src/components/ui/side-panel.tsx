@@ -47,7 +47,7 @@ function SidePanel({
       aria-hidden={!open}
       style={{ "--side-panel-width": `${width}px` } as React.CSSProperties}
       className={cn(
-        "absolute inset-y-0 z-20 w-[var(--side-panel-width)] overflow-hidden bg-background shadow-[12px_0_32px_-12px_rgba(0,0,0,0.4)] transition-[translate,opacity] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+        "absolute inset-y-0 z-20 w-[var(--side-panel-width)] overflow-hidden bg-background shadow-[12px_0_32px_-12px_rgba(0,0,0,0.4)] transition-[transform,opacity] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
         left ? "left-0" : "right-0",
         "lg:relative lg:inset-auto lg:z-auto lg:w-0 lg:shadow-none lg:transition-[width]",
         open
