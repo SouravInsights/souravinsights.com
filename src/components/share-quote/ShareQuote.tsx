@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { Toggle } from "@/components/ui/toggle";
 import { SidePanel } from "@/components/ui/side-panel";
-import { QuoteCustomizer } from "./customizer";
+import { CustomizePanel } from "./customize-panel";
 import { QuoteVariantPicker } from "./variant-picker";
 import {
   SnapCarousel,
@@ -278,7 +278,7 @@ export function ShareQuote({
     });
 
   const panel = (
-    <QuoteCustomizer
+    <CustomizePanel
       theme={theme}
       variant={variant}
       options={options}

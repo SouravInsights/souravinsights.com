@@ -23,7 +23,7 @@ wheel listener.
 | Highlight rail | `src/components/highlight/HighlightTicks.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
 | Quote studio | `src/components/share-quote/ShareQuote.tsx` | dialog + stage + footer |
-| Quote customizer | `src/components/share-quote/customizer.tsx` | extracted |
+| Customize panel | `src/components/share-quote/customize-panel.tsx` | extracted |
 | Variant picker | `src/components/share-quote/variant-picker.tsx` | extracted |
 | Card renderer/themes | `src/components/share-quote/cards.ts` | 810-line monolith |
 | Carousel primitive | `src/components/ui/snap-carousel.tsx` | extracted |
@@ -83,7 +83,7 @@ type HighlightMark = {
   - `carousel.tsx` — theme cards and carousel
   - `share-quote-dialog.tsx` — shell, state, export actions
 - Keep per-theme variant/override state in the dialog.
-- The customizer and variant picker are already separate.
+- The customize panel and variant picker are already separate.
 
 ### 3. Registry and docs
 
@@ -103,7 +103,7 @@ type HighlightMark = {
 | `QuoteCard` | `quote-card.tsx` |
 | `QuoteCarousel` | `quote-carousel.tsx` |
 | `QuoteVariantPicker` | `variant-picker.tsx` |
-| `QuoteCustomizer` | `customizer.tsx` |
+| `CustomizePanel` | `customize-panel.tsx` |
 | `ShareQuoteDialog` | `share-quote-dialog.tsx` |
 | `ColorField`, `ColorPicker` | existing |
 | `SnapCarousel`, `SidePanel`, `AnchoredPanel`, `Swatch` | existing |

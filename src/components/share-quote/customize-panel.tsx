@@ -75,7 +75,7 @@ function Choice<T extends string>({
   );
 }
 
-function QuoteCustomizer({
+function CustomizePanel({
   theme,
   variant,
   options,
@@ -289,4 +289,4 @@ function QuoteCustomizer({
   );
 }
 
-export { QuoteCustomizer };
+export { CustomizePanel };
