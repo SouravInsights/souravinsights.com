@@ -22,7 +22,9 @@ wheel listener.
 | Mark engine + palette UI | `src/components/highlight/Highlights.tsx` | monolith |
 | Highlight rail | `src/components/highlight/HighlightTicks.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
-| Quote studio | `src/components/share-quote/ShareQuote.tsx` | 810-line monolith |
+| Quote studio | `src/components/share-quote/ShareQuote.tsx` | dialog + stage + footer |
+| Quote customizer | `src/components/share-quote/customizer.tsx` | extracted |
+| Variant picker | `src/components/share-quote/variant-picker.tsx` | extracted |
 | Card renderer/themes | `src/components/share-quote/cards.ts` | 810-line monolith |
 | Carousel primitive | `src/components/ui/snap-carousel.tsx` | extracted |
 | Selection panel | `src/components/ui/anchored-panel.tsx` + hook | extracted |
@@ -44,6 +46,7 @@ Done in this refactor:
 - carousel extracted without changing its DOM, CSS or motion
 - mark snapping/cutting moved to `highlight-anchor.ts`
 - rail geometry moved to `MarkerRail`
+- quote customizer and variant picker split from the dialog
 
 ## Remaining foundation work
 
@@ -76,12 +79,11 @@ type HighlightMark = {
   - `quote-presets.ts` — modes, fonts, size/align/position
   - `quote-paint.ts` — `Paint`, `solid`, `mesh`, swatch helpers
 - Extract `canvas.tsx` and `quote-card.tsx`.
-- Split `ShareQuote.tsx` into:
-  - `quote-carousel.tsx` — carousel + cards + variant picker
-  - `quote-variant-picker.tsx`
-  - `quote-customizer.tsx` — current panel content
+- Split the remaining `ShareQuote.tsx` into:
+  - `carousel.tsx` — theme cards and carousel
   - `share-quote-dialog.tsx` — shell, state, export actions
 - Keep per-theme variant/override state in the dialog.
+- The customizer and variant picker are already separate.
 
 ### 3. Registry and docs
 
@@ -100,8 +102,8 @@ type HighlightMark = {
 | `useTextSelection` | `use-text-selection.ts` |
 | `QuoteCard` | `quote-card.tsx` |
 | `QuoteCarousel` | `quote-carousel.tsx` |
-| `QuoteVariantPicker` | `quote-variant-picker.tsx` |
-| `QuoteCustomizer` | `quote-customizer.tsx` |
+| `QuoteVariantPicker` | `variant-picker.tsx` |
+| `QuoteCustomizer` | `customizer.tsx` |
 | `ShareQuoteDialog` | `share-quote-dialog.tsx` |
 | `ColorField`, `ColorPicker` | existing |
 | `SnapCarousel`, `SidePanel`, `AnchoredPanel`, `Swatch` | existing |
