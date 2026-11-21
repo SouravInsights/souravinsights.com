@@ -27,7 +27,7 @@ import { MarkerRail } from "@/components/ui/marker-rail";
  * engine keeps owning the marks.
  */
 
-export interface HighlightTick {
+export interface HighlightRailItem {
   /** the mark's row id, and the `data-hl` value on the marked span */
   id: number;
   /** 0..1 down the article */
@@ -36,12 +36,12 @@ export interface HighlightTick {
   quote: string;
 }
 
-export function HighlightTicks({
+export function HighlightRail({
   ticks,
   onJump,
   onOpenNotebook,
 }: {
-  ticks: HighlightTick[];
+  ticks: HighlightRailItem[];
   onJump: (id: number) => void;
   onOpenNotebook?: () => void;
 }) {

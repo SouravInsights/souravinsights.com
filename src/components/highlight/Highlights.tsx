@@ -17,7 +17,7 @@ import {
 import { HUES, paint, type Paint } from "@/lib/highlight-palette";
 import { cut, snap, type HighlightSpan } from "@/lib/highlight-anchor";
 import { CLEAR, drawBars, playWave, type Under } from "./wave";
-import type { HighlightTick } from "./HighlightTicks";
+import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
 
 /*
  * Highlights for the reader — a port of the palette, the bars and the wave
@@ -89,7 +89,7 @@ interface Props {
   /** blog-only: copy a `#L12-L18` permalink for the blocks the words sit in */
   onCopyLink?: (range: Range | null) => Promise<boolean>;
   /** the tick data goes up so the reader can pin the rail outside the scroller */
-  onTicks?: (ticks: HighlightTick[]) => void;
+  onTicks?: (ticks: HighlightRailItem[]) => void;
 }
 
 /** One box around every line of a selection or mark. */
@@ -307,7 +307,7 @@ export function Highlights({
     if (!container) return;
     const box = container.getBoundingClientRect();
     if (box.height <= 0) return;
-    const next: HighlightTick[] = [];
+    const next: HighlightRailItem[] = [];
     for (const m of live.current.marks) {
       const span = container.querySelector<HTMLElement>(`[data-hl="${m.id}"]`);
       if (!span) continue;

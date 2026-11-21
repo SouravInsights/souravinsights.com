@@ -21,7 +21,7 @@ import {
 } from "@phosphor-icons/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArticleBody } from "./ArticleBody";
-import { HighlightTicks, type HighlightTick } from "@/components/highlight/HighlightTicks";
+import { HighlightRail, type HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { CoReader, type Tab } from "./CoReader";
 import { ShareQuote } from "@/components/share-quote/ShareQuote";
 import {
@@ -134,7 +134,7 @@ export function ReaderView({
   );
   const [copied, setCopied] = useState(false);
   const [coReaderTab, setCoReaderTab] = useState<Tab>("reader");
-  const [ticks, setTicks] = useState<HighlightTick[]>([]);
+  const [ticks, setTicks] = useState<HighlightRailItem[]>([]);
   const [appearance, setAppearance] = useState<Appearance>(APPEARANCE_DEFAULT);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [chromeHidden, setChromeHidden] = useState(false);
@@ -644,7 +644,7 @@ export function ReaderView({
                   margin left to sit in. */}
               {!coReader && (
                 <div className="pointer-events-none absolute inset-0 z-[4]">
-                  <HighlightTicks
+                  <HighlightRail
                     ticks={ticks}
                     onJump={jumpToMark}
                     onOpenNotebook={() => {

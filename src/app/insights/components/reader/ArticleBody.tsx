@@ -5,7 +5,7 @@ import {
   Highlights,
   type CreatePayload,
 } from "@/components/highlight/Highlights";
-import type { HighlightTick } from "@/components/highlight/HighlightTicks";
+import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { updateArticleMarks } from "./article-query";
 
 /**
@@ -38,7 +38,7 @@ export function ArticleBody({
   initialHighlights: StoredHighlight[];
   onShareQuote: (payload: { quote: string; context: string }) => void;
   onOpenNotebook?: () => void;
-  onTicks?: (ticks: HighlightTick[]) => void;
+  onTicks?: (ticks: HighlightRailItem[]) => void;
   children: React.ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
