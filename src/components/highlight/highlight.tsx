@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { unionRect, useTextSelection } from "@/hooks/use-text-selection";
 import {
   useCallback,
   useEffect,
@@ -76,31 +77,6 @@ interface Props {
 }
 
 
-
-/** One box around every line of a selection or mark. */
-function unionRect(rects: DOMRect[]): DOMRect | null {
-  let l = Number.POSITIVE_INFINITY;
-  let r = Number.NEGATIVE_INFINITY;
-  let t = Number.POSITIVE_INFINITY;
-  let b = Number.NEGATIVE_INFINITY;
-  for (const rect of rects) {
-    if (rect.width < 1) continue;
-    l = Math.min(l, rect.left);
-    r = Math.max(r, rect.right);
-    t = Math.min(t, rect.top);
-    b = Math.max(b, rect.bottom);
-  }
-  if (!Number.isFinite(l)) return null;
-  return new DOMRect(l, t, r - l, b - t);
-}
-
-/** characters of text in `root` before a DOM position */
-function offsetIn(root: Node, node: Node, offset: number): number {
-  const range = document.createRange();
-  range.setStart(root, 0);
-  range.setEnd(node, offset);
-  return range.toString().length;
-}
 
 const isDark = () => document.documentElement.classList.contains("dark");
 
@@ -398,35 +374,16 @@ export function Highlight({
 
   /* ---------------- reading a selection ------------------ */
 
+  const readSelection = useTextSelection({
+    containerRef,
+    paragraphs: paras,
+    wordSelect,
+  });
+
   const read = useCallback((): Pop | null => {
-    const container = containerRef.current;
-    const sel = window.getSelection();
-    if (!container || !sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
-    const range = sel.getRangeAt(0);
-
-    // The paragraph the selection touches, not one that contains both ends.
-    // A drag that runs past a paragraph's end is the normal case on a phone
-    // (the handle lands on the next line), and demanding both ends inside one
-    // paragraph returned nothing at all for it.
-    const para = paras.current.findIndex((p) => range.intersectsNode(p));
-    const el = paras.current[para];
-    if (!el) return null;
-    const text = textOf(para);
-
-    const s = el.contains(range.startContainer)
-      ? offsetIn(el, range.startContainer, range.startOffset)
-      : 0;
-    const e = el.contains(range.endContainer)
-      ? offsetIn(el, range.endContainer, range.endOffset)
-      : text.length;
-    const [start, end] = snap(text, Math.min(s, e), Math.max(s, e));
-    if (end <= start) return null;
-
-    // A double-click selects one word on its way to selecting the paragraph
-    // (the third click). Opening the palette on that word makes it flash a beat
-    // before the paragraph is selected, so hold it back for a single word — a
-    // deliberate drag across a word still gets the palette.
-    if (wordSelect.current && !/\s/.test(text.slice(start, end))) return null;
+    const selection = readSelection();
+    if (!selection) return null;
+    const { para, start, end, anchor } = selection;
 
     const same = live.current.marks.find(
       (m) => m.para === para && m.start === start && m.end === end
@@ -439,21 +396,9 @@ export function Highlight({
         anchor: anchorForMark(same.id),
       };
 
-    // Only the lines belonging to this paragraph: a drag that ran into the next
-    // one drags its rects in too, and would place the palette under text that is
-    // not selected.
-    const anchor = () => {
-      if (!range || !el.isConnected) return null;
-      const box = el.getBoundingClientRect();
-      return unionRect(
-        Array.from(range.getClientRects()).filter(
-          (rect) => rect.bottom > box.top && rect.top < box.bottom
-        )
-      );
-    };
     if (!anchor()) return null;
     return { kind: "new", para, start, end, anchor };
-  }, [anchorForMark, containerRef]);
+  }, [anchorForMark, readSelection]);
 
   /* The same pointup/selectionchange pairing as the original. */
   useEffect(() => {
