@@ -15,21 +15,21 @@ const swatchVariants = cva(
         ring: [
           "size-7 overflow-hidden outline-2 outline-transparent outline-offset-2",
           "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
-          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-foreground/20",
-          "data-[state=checked]:outline-foreground",
+          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-[hsl(var(--foreground)/0.2)]",
+          "focus-visible:outline-[hsl(var(--foreground))] data-[state=checked]:outline-[hsl(var(--foreground))]",
         ],
         /** Highlight colours: a coloured outline with a hairline inner ring. */
         outline: [
           "size-6 outline-2 outline-transparent outline-offset-2",
-          "before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:ring-1 before:ring-foreground/10 before:ring-inset",
-          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-foreground/25",
+          "before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:ring-1 before:ring-[hsl(var(--foreground)/0.1)] before:ring-inset",
+          "[@media(hover:hover)]:data-[state=unchecked]:hover:outline-[hsl(var(--foreground)/0.25)]",
         ],
         /** Preset colours: lift on hover, ring on selection. */
         scale: [
           "size-6",
           "shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
           "[@media(hover:hover)]:hover:scale-110",
-          "data-[state=checked]:ring-2 data-[state=checked]:ring-foreground data-[state=checked]:ring-offset-2 data-[state=checked]:ring-offset-background",
+          "data-[state=checked]:ring-2 data-[state=checked]:ring-[hsl(var(--foreground))] data-[state=checked]:ring-offset-2 data-[state=checked]:ring-offset-background",
         ],
       },
     },

@@ -55,7 +55,7 @@ function SidePanel({
       }
       onScroll={onScroll}
       className={cn(
-        "absolute inset-y-0 z-20 w-[var(--side-panel-width)] overflow-y-auto overscroll-contain bg-background shadow-[12px_0_32px_-12px_rgba(0,0,0,0.4)] [scrollbar-width:thin]",
+        "absolute inset-y-0 z-20 w-[var(--side-panel-width)] overflow-y-auto overscroll-contain bg-card shadow-[12px_0_32px_-12px_rgba(0,0,0,0.4)] [scrollbar-width:thin]",
         "transition-[translate,opacity] duration-[260ms] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
         "[translate:var(--side-panel-shift)] lg:[translate:0]",
         left ? "left-0" : "right-0",
@@ -77,7 +77,7 @@ function SidePanel({
         data-slot="side-panel-content"
         onScroll={onScroll}
         className={cn(
-          "w-[var(--side-panel-width)] bg-background [scrollbar-width:thin]",
+          "w-[var(--side-panel-width)] bg-card [scrollbar-width:thin]",
           left ? "lg:absolute lg:inset-y-0 lg:right-0" : "lg:absolute lg:inset-y-0 lg:left-0",
           "lg:overflow-y-auto lg:overscroll-contain",
           className

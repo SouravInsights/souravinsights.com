@@ -309,7 +309,7 @@ export function ShareQuote({
         @keyframes qs-palette-out { to { opacity: 0; scale: .98 } }
       `}</style>
 
-      <DialogContent className="flex w-auto max-w-[96vw] flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-background p-0 text-foreground shadow-2xl data-[state=open]:!animate-[qs-palette-in_200ms_cubic-bezier(0.32,0.72,0,1)_backwards] data-[state=closed]:!animate-[qs-palette-out_150ms_ease-in_forwards] [&>button]:z-30 [&>button]:right-3 [&>button]:top-3.5 [&>button]:text-muted-foreground [&>button]:hover:text-foreground">
+      <DialogContent className="flex w-auto max-w-[96vw] flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-card p-0 text-foreground shadow-2xl data-[state=open]:!animate-[qs-palette-in_200ms_cubic-bezier(0.32,0.72,0,1)_backwards] data-[state=closed]:!animate-[qs-palette-out_150ms_ease-in_forwards] [&>button]:z-30 [&>button]:right-3 [&>button]:top-3.5 [&>button]:text-muted-foreground [&>button]:hover:text-foreground">
         <DialogTitle className="sr-only">Share quote</DialogTitle>
 
         <div className="relative flex">
@@ -456,13 +456,13 @@ export function ShareQuote({
         {/* Actions. The two commands sit together at the right: the tinted one
             for saving, the solid one for copying, so the primary action reads
             as primary without a label saying so. */}
-        <div className="flex h-[52px] items-center gap-2 rounded-b-[14px] border-t border-border bg-background px-3">
+        <div className="flex h-[52px] items-center gap-2 rounded-b-[14px] border-t border-border bg-card px-3">
           <Toggle
             type="button"
             aria-label="Customize"
             pressed={customize}
             onPressedChange={setCustomize}
-            className="h-8 gap-1.5 rounded-md px-3 text-[13.5px] font-medium text-muted-foreground transition-colors active:scale-[0.97] data-[state=on]:bg-foreground/[0.1] data-[state=on]:text-foreground"
+            className="h-8 gap-1.5 rounded-md px-3 text-[13.5px] font-medium text-muted-foreground transition-colors hover:!bg-foreground/[0.08] hover:text-foreground active:scale-[0.97] data-[state=on]:!bg-foreground/[0.08] data-[state=on]:text-foreground"
           >
             <SlidersHorizontal className="size-3.5" />
             <span className="hidden sm:inline">Customize</span>
@@ -488,7 +488,7 @@ export function ShareQuote({
             variant="secondary"
             onClick={save}
             disabled={status === "working"}
-            className="h-8 min-w-[108px] gap-1.5 rounded-md px-3 text-[13.5px] font-medium text-foreground"
+            className="h-8 min-w-[108px] gap-1.5 rounded-md !bg-foreground/[0.06] px-3 text-[13.5px] font-medium text-foreground hover:!bg-foreground/[0.08]"
           >
             {status === "working" ? (
               <SpinnerGap className="size-3.5 animate-spin text-muted-foreground" />
@@ -620,7 +620,7 @@ function CustomizePanel({
   return (
     <>
       <div
-        className={`sticky top-0 z-[1] -mx-4 flex items-center justify-between border-b bg-background px-4 pb-2.5 pt-3.5 transition-colors duration-150 ${
+        className={`sticky top-0 z-[1] -mx-4 flex items-center justify-between border-b bg-card px-4 pb-2.5 pt-3.5 transition-colors duration-150 ${
           scrolled ? "border-border" : "border-transparent"
         }`}
       >
