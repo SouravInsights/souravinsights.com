@@ -26,9 +26,8 @@ wheel listener.
 | Design rail | `src/components/share-quote/carousel.tsx` | extracted |
 | Quote options | `src/components/share-quote/options.tsx` | extracted |
 | Variant picker | `src/components/share-quote/variant-picker.tsx` | extracted |
-| Card fills | `src/components/share-quote/fills.ts` | extracted |
 | Presets | `src/components/share-quote/presets.ts` | extracted |
-| Themes | `src/components/share-quote/themes.ts` | extracted |
+| Themes + fills | `src/components/share-quote/themes.ts` | extracted |
 | Card renderer | `src/components/share-quote/render.ts` | extracted |
 | Carousel primitive | `src/components/ui/snap-carousel.tsx` | extracted |
 | Selection panel | `src/components/ui/anchored-panel.tsx` + hook | extracted |
@@ -51,7 +50,7 @@ Done in this refactor:
 - mark snapping/cutting moved to `highlight-anchor.ts`
 - rail geometry moved to `MarkerRail`
 - options panel, variant picker and design rail split from the dialog
-- `cards.ts` split into fills, presets, themes and render
+- `cards.ts` split into presets, themes and render; fills live with themes
 
 ## Remaining foundation work
 
