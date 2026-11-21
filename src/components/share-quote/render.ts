@@ -1,372 +1,19 @@
 /*
- * The quote cards: three sizes, four designs, drawn on a canvas.
- *
- * Canvas rather than DOM-to-image on purpose. The export has to be exactly the
- * preview, and a canvas is the one surface where those two are the same object —
- * no screenshot library, no foreignObject font bugs, no second renderer to keep
- * in step. The cost is that text is laid out by hand (wrapping, baseline), which
- * is a few small helpers, not a framework.
- *
- * A design is a way of setting a quote; a *variant* is that design in one set of
- * colours. The circular controls are the active design's own variants, so the row
- * under the card changes with the card — a marker gets marker colours, a gradient
- * poster gets gradients. Four designs, not a dozen.
+ * Text layout, card drawing and PNG export. One canvas is the preview and the
+ * export, so the two cannot drift.
  */
 
-export type Mode = "post" | "story" | "square";
-export type FontChoice = "serif" | "sans" | "mono";
-export type SizeChoice = "small" | "medium" | "large";
-export type AlignChoice = "left" | "center";
-export type PositionChoice = "top" | "middle" | "bottom";
-
-export const MODES: {
-  id: Mode;
-  label: string;
-  width: number;
-  height: number;
-  /** what the size is for — the segmented control's tooltip */
-  tip: string;
-}[] = [
-  {
-    id: "post",
-    label: "Post",
-    width: 1080,
-    height: 1350,
-    tip: "4:5 · 1080 × 1350 · Feed, Threads, LinkedIn",
-  },
-  {
-    id: "story",
-    label: "Story",
-    width: 1080,
-    height: 1920,
-    tip: "9:16 · 1080 × 1920 · Stories, Reels, TikTok",
-  },
-  {
-    id: "square",
-    label: "Square",
-    width: 1080,
-    height: 1080,
-    tip: "1:1 · 1080 × 1080 · Feed, X, Bluesky",
-  },
-];
-
-interface MeshBlob {
-  x: number;
-  y: number;
-  r: number;
-  color: string;
-}
-
-export type Paint =
-  | { kind: "solid"; color: string }
-  | { kind: "mesh"; base: string; blobs: MeshBlob[] };
-
-const solid = (color: string): Paint => ({ kind: "solid", color });
-const mesh = (base: string, blobs: MeshBlob[]): Paint => ({ kind: "mesh", base, blobs });
-/** a gradient's circular control */
-const grad = (...colors: string[]) =>
-  `linear-gradient(135deg, ${colors.join(", ")})`;
-/** a paper control with an ink dot in its middle */
-const dot = (accent: string, base: string) =>
-  `radial-gradient(circle, ${accent} 0 21%, ${base} 22%)`;
-
-export interface Variant {
-  name: string;
-  /** CSS fill for the circular control (a colour or a gradient) */
-  swatch: string;
-  paint: Paint;
-  /** the footer's ink, and the quote's ink unless it sits on a marker */
-  text: string;
-  /** the marker pen behind the words */
-  highlight?: string;
-  /** the words' colour on the marker */
-  highlightText?: string;
-}
-
-export interface ShareTheme {
-  id: string;
-  name: string;
-  /** how the design sets the quote */
-  style: "marker" | "plain" | "quote" | "bold";
-  /** the faded page behind the words */
-  faded?: boolean;
-  footer: "left" | "center";
-  font: FontChoice;
-  size: SizeChoice;
-  align: AlignChoice;
-  position: PositionChoice;
-  showTitle: boolean;
-  showPublication: boolean;
-  uppercaseTitle?: boolean;
-  uppercaseQuote?: boolean;
-  italicQuote?: boolean;
-  quoteMarks?: boolean;
-  variants: Variant[];
-}
-
-const INK = "#141414";
-const PAPER = "#faf8f2";
-const NIGHT = "#0b0b0b";
-const NIGHT_TEXT = "#f5f0e8";
-
-/** Marker: a pen run behind the words, on paper or on black. */
-const markerVariants: Variant[] = [
-  {
-    name: "Cream",
-    swatch: "#f4e58a",
-    paint: solid(PAPER),
-    text: INK,
-    highlight: "#f4e58a",
-    highlightText: INK,
-  },
-  {
-    name: "Tangerine",
-    swatch: "#f5a35c",
-    paint: solid(NIGHT),
-    text: NIGHT_TEXT,
-    highlight: "#f5a35c",
-    highlightText: INK,
-  },
-  {
-    name: "Sun",
-    swatch: "#f2c230",
-    paint: solid(NIGHT),
-    text: NIGHT_TEXT,
-    highlight: "#f2c230",
-    highlightText: INK,
-  },
-  {
-    name: "Mint",
-    swatch: "#8fe0b0",
-    paint: solid(NIGHT),
-    text: NIGHT_TEXT,
-    highlight: "#8fe0b0",
-    highlightText: INK,
-  },
-  {
-    name: "Sky",
-    swatch: "#8ecdf7",
-    paint: solid(NIGHT),
-    text: NIGHT_TEXT,
-    highlight: "#8ecdf7",
-    highlightText: INK,
-  },
-  {
-    name: "Violet",
-    swatch: "#bfa6f5",
-    paint: solid(NIGHT),
-    text: NIGHT_TEXT,
-    highlight: "#bfa6f5",
-    highlightText: INK,
-  },
-  {
-    name: "Rose",
-    swatch: "#f5a9cb",
-    paint: solid(NIGHT),
-    text: NIGHT_TEXT,
-    highlight: "#f5a9cb",
-    highlightText: INK,
-  },
-];
-
-/** Ember: a dark gradient poster, one light for each mood. */
-const emberVariants: Variant[] = [
-  {
-    name: "Wine",
-    swatch: grad("#9c1f1f", "#6b1f4a", "#2a0a10"),
-    paint: mesh("#2a0a10", [
-      { x: 0.85, y: 0.05, r: 0.85, color: "#9c1f1f" },
-      { x: 0.1, y: 0.9, r: 0.9, color: "#5e1440" },
-    ]),
-    text: "#f3ece0",
-  },
-  {
-    name: "Amber",
-    swatch: grad("#d9822b", "#7a3a12", "#1a0f05"),
-    paint: mesh("#1a0f05", [
-      { x: 0.8, y: 0.1, r: 0.85, color: "#d9822b" },
-      { x: 0.15, y: 0.85, r: 0.9, color: "#7a3a12" },
-    ]),
-    text: "#f7efe2",
-  },
-  {
-    name: "Forest",
-    swatch: grad("#2f8a55", "#0f5a45", "#04140e"),
-    paint: mesh("#04140e", [
-      { x: 0.8, y: 0.1, r: 0.85, color: "#2f8a55" },
-      { x: 0.15, y: 0.9, r: 0.9, color: "#0f5a45" },
-    ]),
-    text: "#eaf5ee",
-  },
-  {
-    name: "Ocean",
-    swatch: grad("#2a8fb8", "#1f3f7a", "#050f1c"),
-    paint: mesh("#050f1c", [
-      { x: 0.85, y: 0.1, r: 0.85, color: "#2a8fb8" },
-      { x: 0.1, y: 0.9, r: 0.9, color: "#1f3f7a" },
-    ]),
-    text: "#e6f2f7",
-  },
-  {
-    name: "Indigo",
-    swatch: grad("#6a5ae0", "#2f2478", "#0a0818"),
-    paint: mesh("#0a0818", [
-      { x: 0.8, y: 0.12, r: 0.85, color: "#6a5ae0" },
-      { x: 0.15, y: 0.88, r: 0.9, color: "#2f2478" },
-    ]),
-    text: "#eceaf7",
-  },
-  {
-    name: "Noir",
-    swatch: grad("#3a3a3a", "#151515", "#050505"),
-    paint: mesh("#050505", [
-      { x: 0.8, y: 0.15, r: 0.8, color: "#343434" },
-      { x: 0.2, y: 0.9, r: 0.9, color: "#1a1a1a" },
-    ]),
-    text: "#efece6",
-  },
-];
-
-/** Mesh: a bright wash across the card. */
-const meshVariants: Variant[] = [
-  {
-    name: "Grove",
-    swatch: grad("#7ed957", "#2fa8c9", "#0a1a12"),
-    paint: mesh("#07120d", [
-      { x: 0.85, y: 0.08, r: 0.9, color: "#7ed957" },
-      { x: 0.12, y: 0.92, r: 0.95, color: "#2fa8c9" },
-    ]),
-    text: "#f2f7f4",
-  },
-  {
-    name: "Blush",
-    swatch: grad("#ff7a9c", "#c9407a", "#1a0810"),
-    paint: mesh("#160610", [
-      { x: 0.85, y: 0.1, r: 0.9, color: "#ff7a9c" },
-      { x: 0.12, y: 0.9, r: 0.95, color: "#c9407a" },
-    ]),
-    text: "#fdeef4",
-  },
-  {
-    name: "Cobalt",
-    swatch: grad("#4a8cf7", "#2b3ea8", "#050a1a"),
-    paint: mesh("#050a1a", [
-      { x: 0.85, y: 0.1, r: 0.9, color: "#4a8cf7" },
-      { x: 0.12, y: 0.9, r: 0.95, color: "#2b3ea8" },
-    ]),
-    text: "#eaf1fd",
-  },
-  {
-    name: "Orchid",
-    swatch: grad("#c86bf0", "#6a2bb0", "#0c0618"),
-    paint: mesh("#0c0618", [
-      { x: 0.85, y: 0.1, r: 0.9, color: "#c86bf0" },
-      { x: 0.12, y: 0.9, r: 0.95, color: "#6a2bb0" },
-    ]),
-    text: "#f4ecfb",
-  },
-  {
-    name: "Sunset",
-    swatch: grad("#ff9a4a", "#e0432f", "#1a0a06"),
-    paint: mesh("#1a0a06", [
-      { x: 0.85, y: 0.1, r: 0.9, color: "#ff9a4a" },
-      { x: 0.12, y: 0.9, r: 0.95, color: "#e0432f" },
-    ]),
-    text: "#fdf0e8",
-  },
-];
-
-/** Bold: a shout, in one ink on paper. */
-const CREAM = "#f0ece2";
-const boldVariants: Variant[] = [
-  { name: "Ink", swatch: dot("#2b3ea8", CREAM), paint: solid(CREAM), text: "#2b3ea8" },
-  { name: "Crimson", swatch: dot("#c0392b", CREAM), paint: solid(CREAM), text: "#c0392b" },
-  { name: "Plain", swatch: dot(INK, CREAM), paint: solid(CREAM), text: INK },
-  { name: "Forest", swatch: dot("#1f7a4d", CREAM), paint: solid(CREAM), text: "#1f7a4d" },
-  {
-    name: "Cobalt",
-    swatch: dot("#ffffff", "#2b5cf6"),
-    paint: solid("#2b5cf6"),
-    text: "#ffffff",
-  },
-];
-
-export const THEMES: ShareTheme[] = [
-  {
-    id: "marker",
-    name: "Marker",
-    style: "marker",
-    footer: "left",
-    font: "serif",
-    size: "large",
-    align: "left",
-    position: "middle",
-    showTitle: true,
-    showPublication: true,
-    variants: markerVariants,
-  },
-  {
-    id: "ember",
-    name: "Ember",
-    style: "plain",
-    footer: "left",
-    font: "serif",
-    size: "large",
-    align: "left",
-    position: "middle",
-    showTitle: true,
-    showPublication: true,
-    variants: emberVariants,
-  },
-  {
-    id: "mesh",
-    name: "Mesh",
-    style: "plain",
-    footer: "center",
-    font: "serif",
-    size: "large",
-    align: "center",
-    position: "middle",
-    showTitle: true,
-    showPublication: true,
-    variants: meshVariants,
-  },
-  {
-    id: "bold",
-    name: "Bold",
-    style: "bold",
-    footer: "left",
-    font: "sans",
-    size: "large",
-    align: "left",
-    position: "middle",
-    showTitle: true,
-    showPublication: true,
-    uppercaseQuote: true,
-    uppercaseTitle: true,
-    variants: boldVariants,
-  },
-];
-
-export const themeById = (id: string): ShareTheme =>
-  THEMES.find((theme) => theme.id === id) ?? THEMES[0];
-
-/* ------------------------------------------------------------------ text */
-
-/** The site's own sans stack, read off the body so canvas matches the page. */
-function sansStack(): string {
-  if (typeof document === "undefined") return "system-ui, sans-serif";
-  const family = getComputedStyle(document.body).fontFamily;
-  return family || "system-ui, sans-serif";
-}
-
-export function fontStack(choice: FontChoice): string {
-  if (choice === "sans") return sansStack();
-  if (choice === "mono")
-    return "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-  // The excerpt face.
-  return "'New York', ui-serif, Georgia, 'Times New Roman', serif";
-}
+import {
+  MODES,
+  fontStack,
+  sansStack,
+  type AlignChoice,
+  type FontChoice,
+  type Mode,
+  type PositionChoice,
+  type SizeChoice,
+} from "./presets";
+import { solid, type Fill, type ShareTheme, type Variant } from "./themes";
 
 function fontString(
   size: number,
@@ -401,7 +48,7 @@ function wrapText(
   return out;
 }
 
-/* --------------------------------------------------------------- painting */
+/* ----------------------------------------------------------------- drawing */
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -445,16 +92,16 @@ const CURIO_EYES: [number, number, number, number][] = [
   [34.5, 22, 37.9, 25.6],
 ];
 
-function paintBackground(
+function fillBackground(
   ctx: CanvasRenderingContext2D,
-  paint: Paint,
+  fill: Fill,
   w: number,
   h: number
 ) {
-  ctx.fillStyle = paint.kind === "solid" ? paint.color : paint.base;
+  ctx.fillStyle = fill.kind === "solid" ? fill.color : fill.base;
   ctx.fillRect(0, 0, w, h);
-  if (paint.kind !== "mesh") return;
-  for (const blob of paint.blobs) {
+  if (fill.kind !== "mesh") return;
+  for (const blob of fill.blobs) {
     const gradient = ctx.createRadialGradient(
       blob.x * w,
       blob.y * h,
@@ -478,7 +125,7 @@ export interface CardOptions {
   publication: string;
   /** the surrounding article text, for the faded-backdrop design */
   context: string;
-  paint: Paint;
+  fill: Fill;
   background: string;
   text: string;
   highlight: string;
@@ -503,8 +150,8 @@ export function resolveOptions(
   content: Pick<CardOptions, "quote" | "title" | "publication" | "context">
 ): CardOptions {
   const base: Omit<CardOptions, "quote" | "title" | "publication" | "context"> = {
-    paint: variant.paint,
-    background: variant.paint.kind === "solid" ? variant.paint.color : variant.paint.base,
+    fill: variant.fill,
+    background: variant.fill.kind === "solid" ? variant.fill.color : variant.fill.base,
     text: variant.text,
     highlight: variant.highlight ?? "#f4e58a",
     highlightText: variant.highlightText ?? variant.text,
@@ -518,7 +165,7 @@ export function resolveOptions(
   const merged = { ...base, ...overrides };
   // A hand-picked colour is flat, whatever the variant painted.
   if (overrides.background !== undefined) {
-    merged.paint = solid(overrides.background);
+    merged.fill = solid(overrides.background);
   }
   return { ...merged, ...content };
 }
@@ -543,7 +190,7 @@ export function drawCard(
 
   ctx.save();
   ctx.clearRect(0, 0, w, h);
-  paintBackground(ctx, options.paint, w, h);
+  fillBackground(ctx, options.fill, w, h);
 
   const pad = Math.round(w * 0.085);
   const maxWidth = w - pad * 2;

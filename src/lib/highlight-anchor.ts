@@ -1,39 +1,15 @@
 /*
- * The reader's mark math: character offsets inside one paragraph, and how a
- * new mark cuts the marks it overlaps. The palette itself is shared with the
- * blog and lives in `@/lib/highlight-palette`.
+ * Character offsets inside one paragraph, and how a new mark cuts the marks it
+ * overlaps. The palette lives in `@/lib/highlight-palette`.
  */
 
-export interface Highlight {
+export interface HighlightSpan {
   id: number;
   para: number;
   /** character offsets into the paragraph's string, end exclusive */
   start: number;
   end: number;
   hue: number;
-}
-
-/** the article-side identity of a mark: where it lives and what it says */
-export interface LocatedMark extends Highlight {
-  quote: string;
-}
-
-export interface Segment {
-  text: string;
-  mark: Highlight | null;
-}
-
-/** a paragraph cut at its marks, in reading order */
-export function segments(text: string, marks: readonly Highlight[]): Segment[] {
-  const out: Segment[] = [];
-  let at = 0;
-  for (const m of [...marks].sort((a, b) => a.start - b.start)) {
-    if (m.start > at) out.push({ text: text.slice(at, m.start), mark: null });
-    out.push({ text: text.slice(m.start, m.end), mark: m });
-    at = m.end;
-  }
-  if (at < text.length) out.push({ text: text.slice(at), mark: null });
-  return out;
 }
 
 /**
@@ -56,16 +32,16 @@ export function snap(text: string, start: number, end: number): [number, number]
  * side.
  */
 export function cut(
-  marks: readonly Highlight[],
+  marks: readonly HighlightSpan[],
   para: number,
   text: string,
   start: number,
   end: number,
   nextId: () => number
-): Highlight[] {
-  const out: Highlight[] = [];
+): HighlightSpan[] {
+  const out: HighlightSpan[] = [];
   // a piece cut at a word boundary carries the space beside it, which goes
-  const keep = (m: Highlight) => {
+  const keep = (m: HighlightSpan) => {
     let { start: s, end: e } = m;
     while (s < e && /\s/.test(text[s])) s++;
     while (e > s && /\s/.test(text[e - 1])) e--;

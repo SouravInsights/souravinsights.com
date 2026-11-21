@@ -1,21 +1,28 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { unionRect, useTextSelection } from "@/hooks/use-text-selection";
 import {
   useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
-  type CSSProperties,
   type ReactElement,
+  type ReactNode,
   type RefObject,
 } from "react";
 import { HUES, paint, type Paint } from "@/lib/highlight-palette";
-import { cut, snap, type Highlight } from "./hues";
+import { cut, snap, type HighlightSpan } from "@/lib/highlight-anchor";
 import { CLEAR, drawBars, playWave, type Under } from "./wave";
-import type { HighlightTick } from "./HighlightTicks";
+import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
+import {
+  HighlightContext,
+  type HighlightContextValue,
+  type HighlightMark as Mark,
+  type HighlightOpen as Pop,
+} from "./highlight-context";
+import { HighlightToolbar } from "./highlight-toolbar";
 
 /*
  * Highlights for the reader — a port of the palette, the bars and the wave
@@ -28,29 +35,8 @@ import type { HighlightTick } from "./HighlightTicks";
  * a background call that never blocks the wave.
  */
 
-const ENTER = { duration: 0.2, ease: [0.23, 1, 0.32, 1] } as const;
-const LEAVE = { duration: 0.12, ease: [0.4, 0, 1, 1] } as const;
-
-const LIFT = [
-  "0 1px 2px rgb(0 0 0 / 0.06)",
-  "0 8px 16px -6px rgb(0 0 0 / 0.1)",
-  "0 20px 40px -16px rgb(0 0 0 / 0.14)",
-].join(", ");
-
-const GAP = 12;
-const EDGE = 8;
 /** A mark's removal pass is capped here, however long the quote is. */
 const REMOVE_MS = 420;
-
-interface Anchor {
-  x: number;
-  top: number;
-  bottom: number;
-}
-
-type Pop =
-  | { kind: "new"; para: number; start: number; end: number; anchor: Anchor }
-  | { kind: "edit"; id: number; viaKey: boolean };
 
 interface WaveRequest {
   id: number;
@@ -58,11 +44,6 @@ interface WaveRequest {
   under: Under[];
   hue: number;
   nonce: number;
-}
-
-/** a mark plus its server row id once persistence has answered */
-interface Mark extends Highlight {
-  rowId?: number;
 }
 
 export interface CreatePayload {
@@ -90,36 +71,16 @@ interface Props {
   /** blog-only: copy a `#L12-L18` permalink for the blocks the words sit in */
   onCopyLink?: (range: Range | null) => Promise<boolean>;
   /** the tick data goes up so the reader can pin the rail outside the scroller */
-  onTicks?: (ticks: HighlightTick[]) => void;
+  onTicks?: (ticks: HighlightRailItem[]) => void;
+  /** Optional composed toolbar; defaults to HighlightToolbar. */
+  children?: ReactNode;
 }
 
-function bounds(rects: DOMRect[], stage: DOMRect): Anchor | null {
-  let l = Number.POSITIVE_INFINITY;
-  let r = Number.NEGATIVE_INFINITY;
-  let t = Number.POSITIVE_INFINITY;
-  let b = Number.NEGATIVE_INFINITY;
-  for (const rect of rects) {
-    if (rect.width < 1) continue;
-    l = Math.min(l, rect.left);
-    r = Math.max(r, rect.right);
-    t = Math.min(t, rect.top);
-    b = Math.max(b, rect.bottom);
-  }
-  if (!Number.isFinite(l)) return null;
-  return { x: (l + r) / 2 - stage.left, top: t - stage.top, bottom: b - stage.top };
-}
 
-/** characters of text in `root` before a DOM position */
-function offsetIn(root: Node, node: Node, offset: number): number {
-  const range = document.createRange();
-  range.setStart(root, 0);
-  range.setEnd(node, offset);
-  return range.toString().length;
-}
 
 const isDark = () => document.documentElement.classList.contains("dark");
 
-export function Highlights({
+export function Highlight({
   containerRef,
   editable,
   initialMarks,
@@ -130,6 +91,7 @@ export function Highlights({
   onOpenNotebook,
   onTicks,
   onCopyLink,
+  children,
 }: Props): ReactElement | null {
   const reduce = useReducedMotion();
   const paras = useRef<HTMLElement[]>([]);
@@ -153,6 +115,18 @@ export function Highlights({
 
   const textOf = (para: number) => paras.current[para]?.textContent ?? "";
 
+  /** A live box for a mark, unioned across its inline segments. */
+  const anchorForMark = useCallback((id: number) => {
+    return () => {
+      const container = containerRef.current;
+      if (!container) return null;
+      const rects = Array.from(
+        container.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`)
+      ).flatMap((span) => Array.from(span.getClientRects()));
+      return unionRect(rects);
+    };
+  }, [containerRef]);
+
   // Theme flips repaint every mark's ink/wash.
   useEffect(() => {
     const update = () => setDark(document.documentElement.classList.contains("dark"));
@@ -172,7 +146,9 @@ export function Highlights({
     if (!container) return;
     paras.current = Array.from(container.querySelectorAll<HTMLElement>("p"));
     layers.current = paras.current.map((p) => {
-      p.classList.add("relative", "isolate", "reader-kern-off");
+      p.classList.add("relative", "isolate");
+      p.style.fontKerning = "none";
+      p.style.fontVariantLigatures = "none";
       const layer = document.createElement("span");
       layer.setAttribute("aria-hidden", "true");
       layer.className = "-z-10 pointer-events-none absolute inset-0";
@@ -204,7 +180,7 @@ export function Highlights({
    * characters, the wave's grid. Segment per existing text node so inline
    * elements (links, emphasis) stay intact under the mark.
    */
-  const markDom = (para: HTMLElement, mark: Highlight) => {
+  const markDom = (para: HTMLElement, mark: HighlightSpan) => {
     const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT);
     const nodes: Text[] = [];
     let n: Node | null;
@@ -293,7 +269,7 @@ export function Highlights({
     if (!container) return;
     const box = container.getBoundingClientRect();
     if (box.height <= 0) return;
-    const next: HighlightTick[] = [];
+    const next: HighlightRailItem[] = [];
     for (const m of live.current.marks) {
       const span = container.querySelector<HTMLElement>(`[data-hl="${m.id}"]`);
       if (!span) continue;
@@ -398,54 +374,31 @@ export function Highlights({
 
   /* ---------------- reading a selection ------------------ */
 
+  const readSelection = useTextSelection({
+    containerRef,
+    paragraphs: paras,
+    wordSelect,
+  });
+
   const read = useCallback((): Pop | null => {
-    const container = containerRef.current;
-    const sel = window.getSelection();
-    if (!container || !sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
-    const range = sel.getRangeAt(0);
-
-    // The paragraph the selection touches, not one that contains both ends.
-    // A drag that runs past a paragraph's end is the normal case on a phone
-    // (the handle lands on the next line), and demanding both ends inside one
-    // paragraph returned nothing at all for it.
-    const para = paras.current.findIndex((p) => range.intersectsNode(p));
-    const el = paras.current[para];
-    if (!el) return null;
-    const text = textOf(para);
-
-    const s = el.contains(range.startContainer)
-      ? offsetIn(el, range.startContainer, range.startOffset)
-      : 0;
-    const e = el.contains(range.endContainer)
-      ? offsetIn(el, range.endContainer, range.endOffset)
-      : text.length;
-    const [start, end] = snap(text, Math.min(s, e), Math.max(s, e));
-    if (end <= start) return null;
-
-    // A double-click selects one word on its way to selecting the paragraph
-    // (the third click). Opening the palette on that word makes it flash a beat
-    // before the paragraph is selected, so hold it back for a single word — a
-    // deliberate drag across a word still gets the palette.
-    if (wordSelect.current && !/\s/.test(text.slice(start, end))) return null;
+    const selection = readSelection();
+    if (!selection) return null;
+    const { para, start, end, anchor } = selection;
 
     const same = live.current.marks.find(
       (m) => m.para === para && m.start === start && m.end === end
     );
-    if (same) return { kind: "edit", id: same.id, viaKey: false };
+    if (same)
+      return {
+        kind: "edit",
+        id: same.id,
+        viaKey: false,
+        anchor: anchorForMark(same.id),
+      };
 
-    // Only the lines belonging to this paragraph: a drag that ran into the next
-    // one drags its rects in too, and would place the palette under text that is
-    // not selected.
-    const box = el.getBoundingClientRect();
-    const anchor = bounds(
-      Array.from(range.getClientRects()).filter(
-        (rect) => rect.bottom > box.top && rect.top < box.bottom
-      ),
-      container.getBoundingClientRect()
-    );
-    if (!anchor) return null;
+    if (!anchor()) return null;
     return { kind: "new", para, start, end, anchor };
-  }, [containerRef]);
+  }, [anchorForMark, readSelection]);
 
   /* The same pointup/selectionchange pairing as the original. */
   useEffect(() => {
@@ -461,7 +414,11 @@ export function Highlights({
     const down = (e: PointerEvent) => {
       const t = e.target as Element;
       if (pop.current?.contains(t)) return;
-      if (live.current.open) setOpen(null);
+      if (live.current.open) {
+        setOpen(null);
+        // A stale selection would reopen the palette on pointerup.
+        window.getSelection()?.removeAllRanges();
+      }
       pressing = container.contains(t);
       wordSelect.current = e.detail >= 2;
     };
@@ -507,63 +464,6 @@ export function Highlights({
     }
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close(true);
-    };
-    window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
-  }, [open, close]);
-
-  // Palette positioning, written to the node (needs the palette's own size).
-  useLayoutEffect(() => {
-    const el = pop.current;
-    const container = containerRef.current;
-    if (!open || !el || !container) return;
-    const box = container.getBoundingClientRect();
-
-    let at: Anchor | null = null;
-    if (open.kind === "new") at = open.anchor;
-    else {
-      const mark = container.querySelector<HTMLElement>(`[data-hl="${open.id}"]`);
-      if (mark) at = bounds(Array.from(mark.getClientRects()), box);
-    }
-    if (!at) return;
-
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-
-    // Above or below is decided on SCREEN, not in container coordinates. The
-    // article scrolls inside its panel, so a line near the top of a reader who
-    // has scrolled a long way is still "far down" in container coordinates and
-    // the palette was placed above the viewport, where nobody could see it. The
-    // final position is clamped to the band of the container that is visible.
-    const selectionTop = box.top + at.top;
-    const selectionBottom = box.top + at.bottom;
-    const visibleTop = -box.top + EDGE;
-    const visibleBottom = -box.top + window.innerHeight - EDGE;
-
-    const roomAbove = selectionTop - GAP - h >= EDGE;
-    const roomBelow = selectionBottom + GAP + h <= window.innerHeight - EDGE;
-    const above = roomAbove || !roomBelow;
-
-    const preferred = above ? at.top - GAP - h : at.bottom + GAP;
-    const top = Math.min(
-      Math.max(preferred, visibleTop),
-      Math.max(visibleBottom - h, visibleTop)
-    );
-    const left = Math.min(Math.max(at.x - w / 2, EDGE), Math.max(box.width - w - EDGE, EDGE));
-    const ax = Math.min(Math.max(at.x - left, 16), w - 16);
-
-    el.style.left = `${left}px`;
-    el.style.top = `${top}px`;
-    el.style.transformOrigin = `${ax}px ${above ? "100%" : "0%"}`;
-    el.style.setProperty("--ax", `${ax}px`);
-    el.dataset.side = above ? "top" : "bottom";
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, marks]);
-
   /* ---------------- actions ------------------ */
 
   const request = (id: number, from: Paint, hue: number, under: Under[] = []) => {
@@ -602,7 +502,7 @@ export function Highlights({
         { id, para, start, end, hue },
       ]);
       request(id, { ink: base(para), wash: CLEAR }, hue, under);
-      setOpen({ kind: "edit", id, viaKey: false });
+      setOpen({ kind: "edit", id, viaKey: false, anchor: anchorForMark(id) });
 
       // Persistence never blocks the wave; the row id lands when it lands.
       const before = text.slice(Math.max(0, start - 40), start);
@@ -684,7 +584,7 @@ export function Highlights({
   const openMark = (id: number, viaKey: boolean) => {
     if (!editable) return;
     if (!viaKey && !window.getSelection()?.isCollapsed) return;
-    setOpen({ kind: "edit", id, viaKey });
+    setOpen({ kind: "edit", id, viaKey, anchor: anchorForMark(id) });
   };
 
   // Clicks on marks open the palette on them (event delegation on the stage).
@@ -740,159 +640,48 @@ export function Highlights({
     });
   }, [focusPara]);
 
-  const current = open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
-  const ordered = [...marks].sort((a, b) => a.para - b.para || a.start - b.start);
+  const current =
+    open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
+  const ordered = [...marks].sort(
+    (a, b) => a.para - b.para || a.start - b.start
+  );
 
   if (!editable && ordered.length === 0) return null;
 
+  const selectMark = (id: number) => {
+    const mark = live.current.marks.find((m) => m.id === id);
+    if (!mark) return;
+    window.getSelection()?.removeAllRanges();
+    setOpen({ kind: "edit", id, viaKey: false, anchor: anchorForMark(id) });
+    request(id, paint(mark.hue, dark), mark.hue);
+  };
+
+  const value: HighlightContextValue = {
+    open,
+    marks,
+    current,
+    ordered,
+    said,
+    setSaid,
+    close,
+    pick,
+    remove,
+    selectMark,
+    shareable,
+    permalinkRange,
+    onShareQuote,
+    onCopyLink,
+    panelRef: pop,
+    textOf,
+  };
+
   return (
-    <>
-      <style>{`
-        .reader-kern-off { font-kerning: none; font-variant-ligatures: none; }
-      `}</style>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            ref={pop}
-            key="palette"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1, transition: ENTER }}
-            exit={{ opacity: 0, scale: 0.98, transition: LEAVE }}
-            onPointerDown={(e) => e.preventDefault()}
-            className="group absolute z-20 flex select-none flex-col gap-3 rounded-xl border border-border bg-background p-3 max-sm:gap-2 max-sm:p-2.5"
-            style={{ boxShadow: LIFT }}
-          >
-            <span
-              aria-hidden="true"
-              className="absolute size-2.5 -translate-x-1/2 rotate-45 border-border bg-background group-data-[side=top]:-bottom-1.5 group-data-[side=top]:border-b group-data-[side=top]:border-r group-data-[side=bottom]:-top-1.5 group-data-[side=bottom]:border-l group-data-[side=bottom]:border-t"
-              style={{ left: "var(--ax, 50%)" }}
-            />
-
-            <div className="flex items-center gap-1 border-b border-border pb-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  const payload = shareable();
-                  if (!payload) return;
-                  close(false);
-                  onShareQuote(payload);
-                }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-              >
-                <Quotes aria-hidden="true" className="size-3.5" />
-                Share quote
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const payload = shareable();
-                  if (!payload) return;
-                  void navigator.clipboard.writeText(payload.quote).then(
-                    () => setSaid("Quote copied"),
-                    () => setSaid("Could not reach the clipboard")
-                  );
-                }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-              >
-                <Copy aria-hidden="true" className="size-3.5" />
-                Copy
-              </button>
-              {onCopyLink && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    void onCopyLink(permalinkRange()).then((ok) =>
-                      setSaid(ok ? "Link copied" : "Could not copy the link")
-                    );
-                  }}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
-                >
-                  <LinkSimple aria-hidden="true" className="size-3.5" />
-                  Copy link
-                </button>
-              )}
-            </div>
-
-            <div className="flex min-w-0 items-stretch gap-3 max-sm:gap-2">
-              <fieldset className="m-0 grid min-w-0 grid-cols-3 content-start gap-4 border-0 p-0 max-sm:gap-1.5">
-                <legend className="sr-only">Highlight colour</legend>
-                {HUES.map((hue, i) => (
-                  <button
-                    key={hue.name}
-                    type="button"
-                    aria-label={hue.name}
-                    title={hue.name}
-                    aria-pressed={current?.hue === i}
-                    onClick={() => pick(i)}
-                    style={{ backgroundColor: hue.swatch, "--hue": hue.swatch } as CSSProperties}
-                    className="relative size-6 cursor-pointer rounded-full outline-2 outline-transparent outline-offset-2 transition-[outline-color] duration-150 hover:outline-[color-mix(in_srgb,var(--hue)_35%,transparent)] aria-pressed:outline-(--hue) focus-visible:outline-(--hue) max-sm:size-9"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 rounded-full ring-1 ring-foreground/10 ring-inset"
-                    />
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  aria-label="Remove highlight"
-                  title="Remove highlight"
-                  disabled={!current}
-                  onClick={remove}
-                  className="flex size-6 cursor-pointer items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-150 hover:bg-foreground/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent max-sm:size-9"
-                >
-                  <Eraser aria-hidden="true" className="size-3.5" />
-                </button>
-              </fieldset>
-
-              <span aria-hidden="true" className="w-px shrink-0 bg-border" />
-
-              <div className="flex w-32 min-w-0 flex-col gap-0.5 sm:w-40">
-                {ordered.length === 0 ? (
-                  <p className="px-2 py-1 type-caption text-muted-foreground">
-                    No highlights yet
-                  </p>
-                ) : (
-                  <ul className="-mr-1 flex max-h-28 flex-col gap-0.5 overflow-y-auto pr-1">
-                    {ordered.map((m) => (
-                      <li key={m.id}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            window.getSelection()?.removeAllRanges();
-                            setOpen({ kind: "edit", id: m.id, viaKey: false });
-                            request(m.id, paint(m.hue, dark), m.hue);
-                          }}
-                          className={`flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-left type-caption transition-all duration-150 hover:bg-foreground/5 hover:text-foreground ${
-                            m.id === current?.id
-                              ? "bg-foreground/5 text-foreground"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="h-3 w-0.5 shrink-0 rounded-full"
-                            style={{ backgroundColor: HUES[m.hue].swatch }}
-                          />
-                          <span className="truncate">
-                            {textOf(m.para).slice(m.start, m.end)}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+    <HighlightContext.Provider value={value}>
+      {children ?? <HighlightToolbar />}
       <p aria-live="polite" className="sr-only">
         {said}
       </p>
-
-    </>
+    </HighlightContext.Provider>
   );
 }
 
@@ -907,3 +696,11 @@ function nthIndexOf(text: string, quote: string, occurrence: number): number {
   }
   return at;
 }
+
+export {
+  HighlightActions,
+  HighlightColors,
+  HighlightList,
+  HighlightToolbar,
+} from "./highlight-toolbar";
+export { useHighlight } from "./highlight-context";

@@ -2,13 +2,13 @@
 
 import { useEffect, useState, type RefObject } from "react";
 import dynamic from "next/dynamic";
-import { Highlights } from "@/components/highlight/Highlights";
+import { Highlight } from "@/components/highlight/highlight";
 import { copyPassageLink } from "../utils/passage";
 
 /** The studio is the heaviest part and only opens on demand. */
-const ShareQuote = dynamic(
+const ShareQuoteDialog = dynamic(
   () =>
-    import("@/components/share-quote/ShareQuote").then((m) => m.ShareQuote),
+    import("@/components/share-quote/dialog").then((m) => m.ShareQuoteDialog),
   { ssr: false }
 );
 
@@ -40,7 +40,7 @@ export default function BlogHighlights({
   return (
     <>
       {ready && (
-        <Highlights
+        <Highlight
           containerRef={containerRef}
           editable
           initialMarks={EMPTY}
@@ -55,7 +55,7 @@ export default function BlogHighlights({
         />
       )}
       {studio && (
-        <ShareQuote
+        <ShareQuoteDialog
           open={share !== null}
           onOpenChange={(open) => {
             if (!open) setShare(null);

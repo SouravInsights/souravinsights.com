@@ -2,10 +2,10 @@
 
 import React, { useCallback, useRef } from "react";
 import {
-  Highlights,
+  Highlight,
   type CreatePayload,
-} from "@/components/highlight/Highlights";
-import type { HighlightTick } from "@/components/highlight/HighlightTicks";
+} from "@/components/highlight/highlight";
+import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { updateArticleMarks } from "./article-query";
 
 /**
@@ -38,7 +38,7 @@ export function ArticleBody({
   initialHighlights: StoredHighlight[];
   onShareQuote: (payload: { quote: string; context: string }) => void;
   onOpenNotebook?: () => void;
-  onTicks?: (ticks: HighlightTick[]) => void;
+  onTicks?: (ticks: HighlightRailItem[]) => void;
   children: React.ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,7 +106,7 @@ export function ArticleBody({
   return (
     <div className="relative" ref={containerRef}>
       {children}
-      <Highlights
+      <Highlight
         containerRef={containerRef}
         editable={isAdmin}
         initialMarks={initialHighlights}

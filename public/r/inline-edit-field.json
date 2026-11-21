@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "inline-edit-field",
+  "title": "Inline edit field",
+  "description": "A meta row that becomes a textarea on click.",
+  "registryDependencies": [
+    "button",
+    "switch",
+    "textarea",
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/inline-edit-field.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { Switch } from \"@/components/ui/switch\";\nimport { Textarea } from \"@/components/ui/textarea\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface InlineEditFieldProps {\n  label: string;\n  value: string;\n  onChange: (value: string) => void;\n  /** Show the visibility switch. */\n  visible?: boolean;\n  onVisibleChange?: (visible: boolean) => void;\n  className?: string;\n}\n\n/**\n * A meta field that reads as text and turns into a textarea on click.\n * The optional switch controls whether the field is drawn on the card.\n */\nfunction InlineEditField({\n  label,\n  value,\n  onChange,\n  visible,\n  onVisibleChange,\n  className,\n}: InlineEditFieldProps) {\n  const [editing, setEditing] = React.useState(false);\n\n  return (\n    <div\n      data-slot=\"inline-edit-field\"\n      className={cn(\"flex min-h-11 items-center gap-3 -ml-2\", className)}\n    >\n      <div className=\"min-w-0 flex-1\">\n        {editing ? (\n          <Textarea\n            autoFocus\n            value={value}\n            rows={2}\n            spellCheck={false}\n            onChange={(event) => onChange(event.target.value)}\n            onBlur={() => setEditing(false)}\n            className=\"min-h-0 resize-none bg-foreground/[0.06] px-2 py-1.5 text-[12.5px] leading-snug\"\n          />\n        ) : (\n          <Button\n            type=\"button\"\n            variant=\"ghost\"\n            aria-label={`Edit ${label.toLowerCase()}`}\n            onClick={() => setEditing(true)}\n            className=\"group flex h-auto w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left font-normal hover:bg-foreground/5\"\n          >\n            <span className=\"flex min-w-0 flex-1 flex-col gap-px\">\n              <span className=\"text-[13px] leading-[18px] text-foreground/85\">\n                {label}\n              </span>\n              <span className=\"truncate text-[12px] leading-4 text-muted-foreground/80\">\n                {value}\n              </span>\n            </span>\n            <span className=\"flex-none text-[12px] font-medium text-faint-foreground group-hover:text-foreground\">\n              Edit\n            </span>\n          </Button>\n        )}\n      </div>\n      <div className=\"flex w-7 flex-none justify-end\">\n        {onVisibleChange !== undefined && (\n          <Switch\n            aria-label={`Show ${label.toLowerCase()}`}\n            checked={!!visible}\n            onCheckedChange={onVisibleChange}\n          />\n        )}\n      </div>\n    </div>\n  );\n}\n\nexport { InlineEditField };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

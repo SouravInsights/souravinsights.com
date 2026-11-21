@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "canvas",
+  "title": "Canvas",
+  "description": "A canvas that owns backing size, DPR and repaint.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/canvas.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface CanvasDrawContext {\n  /** Backing pixels per design pixel. */\n  scale: number;\n  width: number;\n  height: number;\n}\n\nexport interface CanvasProps\n  extends Omit<\n    React.CanvasHTMLAttributes<HTMLCanvasElement>,\n    \"width\" | \"height\"\n  > {\n  /** Design-space width. `draw` paints in this coordinate system. */\n  width: number;\n  /** Design-space height. */\n  height: number;\n  /** Backing pixels per CSS pixel. */\n  pixelRatio?: number;\n  /** Redraw when any of these change. */\n  deps?: React.DependencyList;\n  draw: (ctx: CanvasRenderingContext2D, context: CanvasDrawContext) => void;\n}\n\n/** A canvas that owns its backing size, DPR and repaint loop. */\nconst Canvas = React.forwardRef<HTMLCanvasElement, CanvasProps>(\n  function Canvas(\n    {\n      width,\n      height,\n      pixelRatio = 2,\n      deps = [],\n      draw,\n      className,\n      style,\n      ...props\n    },\n    forwardedRef\n  ) {\n    const localRef = React.useRef<HTMLCanvasElement>(null);\n    const drawRef = React.useRef(draw);\n    drawRef.current = draw;\n\n    React.useImperativeHandle(forwardedRef, () => localRef.current!);\n\n    const paint = React.useCallback(() => {\n      const canvas = localRef.current;\n      if (!canvas) return;\n      const box = canvas.getBoundingClientRect();\n      if (box.width < 1 || box.height < 1) return;\n      const backingW = Math.round(box.width * pixelRatio);\n      const backingH = Math.round(box.height * pixelRatio);\n      if (canvas.width !== backingW) canvas.width = backingW;\n      if (canvas.height !== backingH) canvas.height = backingH;\n      const ctx = canvas.getContext(\"2d\");\n      if (!ctx) return;\n      const scale = backingW / width;\n      ctx.setTransform(scale, 0, 0, scale, 0, 0);\n      drawRef.current(ctx, { scale, width, height });\n    }, [height, pixelRatio, width]);\n\n    React.useLayoutEffect(() => {\n      paint();\n      // eslint-disable-next-line react-hooks/exhaustive-deps\n    }, [paint, ...deps]);\n\n    React.useEffect(() => {\n      const canvas = localRef.current;\n      if (!canvas) return;\n      const observer = new ResizeObserver(paint);\n      observer.observe(canvas);\n      return () => observer.disconnect();\n    }, [paint]);\n\n    React.useEffect(() => {\n      void document.fonts?.ready.then(paint);\n    }, [paint]);\n\n    return (\n      <canvas\n        ref={localRef}\n        data-slot=\"canvas\"\n        width={width}\n        height={height}\n        className={cn(\"block\", className)}\n        style={style}\n        {...props}\n      />\n    );\n  }\n);\nCanvas.displayName = \"Canvas\";\n\nexport { Canvas };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}
