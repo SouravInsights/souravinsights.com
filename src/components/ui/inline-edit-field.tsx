@@ -49,7 +49,7 @@ function InlineEditField({
             variant="ghost"
             aria-label={`Edit ${label.toLowerCase()}`}
             onClick={() => setEditing(true)}
-            className="group flex h-auto w-full items-center gap-2.5 rounded-[9px] px-2 py-1.5 text-left font-normal hover:bg-foreground/5"
+            className="group flex h-auto w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left font-normal hover:bg-foreground/5"
           >
             <span className="flex min-w-0 flex-1 flex-col gap-px">
               <span className="text-[13px] leading-[18px] text-foreground/85">
