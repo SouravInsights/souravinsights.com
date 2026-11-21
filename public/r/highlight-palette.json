@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "highlight-palette",
+  "title": "Highlight palette",
+  "description": "Shared hues, ink and wash values for highlight marks.",
+  "files": [
+    {
+      "path": "src/lib/highlight-palette.ts",
+      "content": "/*\n * The shared highlight palette.\n *\n * Reader mode and blog passage links both mark text, so they paint from one\n * set of hues: a mark should mean the same thing on either surface. Ported\n * from github.com/SanyamPunia/www components/labs/highlight-wave (notes.ts),\n * with honest dark-mode counterparts for its ink/wash pairs.\n */\n\nexport interface Hue {\n  name: string;\n  /** the swatch, and the glow a passing wave throws */\n  swatch: string;\n  /** the text once it is marked (light mode, 5.5:1 on its own wash) */\n  ink: string;\n  /** the bar behind the text, the swatch at low alpha over the page */\n  wash: string;\n}\n\n/** `#rrggbb` at an alpha, since a WAAPI keyframe cannot take a `color-mix()` */\nexport function alpha(hex: string, a: number): string {\n  const n = Number.parseInt(hex.slice(1), 16);\n  return `rgb(${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255} / ${a})`;\n}\n\n/** `#rrggbb` mixed toward white — dark mode's readable ink from the swatch. */\nfunction lighten(hex: string, share: number): string {\n  const n = Number.parseInt(hex.slice(1), 16);\n  const mix = (c: number) => Math.round(c + (255 - c) * share);\n  return `rgb(${mix((n >> 16) & 255)} ${mix((n >> 8) & 255)} ${mix(n & 255)})`;\n}\n\nconst hue = (name: string, swatch: string, ink: string, wash: number) => ({\n  name,\n  swatch,\n  ink,\n  wash: alpha(swatch, wash),\n});\n\n/** Eight hues in wheel order, verbatim from the original. */\nexport const HUES: readonly Hue[] = [\n  hue(\"red\", \"#f2545b\", \"#a3212a\", 0.2),\n  hue(\"orange\", \"#f7883b\", \"#97440b\", 0.22),\n  hue(\"amber\", \"#f2c230\", \"#7d5600\", 0.3),\n  hue(\"green\", \"#3cc370\", \"#156b37\", 0.22),\n  hue(\"cyan\", \"#22bfd3\", \"#0a6773\", 0.22),\n  hue(\"blue\", \"#5a72f2\", \"#2f43b8\", 0.2),\n  hue(\"violet\", \"#a463ee\", \"#6a2bb0\", 0.2),\n  hue(\"pink\", \"#ef6fb1\", \"#a0215f\", 0.2),\n];\n\nexport interface Paint {\n  ink: string;\n  wash: string;\n}\n\n/**\n * The ink/wash a hue paints with in the current theme. Light mode keeps the\n * original's values exactly; dark mode lightens the ink off the swatch and\n * deepens the wash, so a mark reads on dark backgrounds too.\n */\nexport function paint(hueIndex: number, dark: boolean): Paint {\n  const h = HUES[hueIndex];\n  return dark\n    ? { ink: lighten(h.swatch, 0.55), wash: alpha(h.swatch, 0.34) }\n    : { ink: h.ink, wash: h.wash };\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:lib"
+}

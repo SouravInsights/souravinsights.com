@@ -26,6 +26,8 @@ wheel listener.
 | Highlight rail | `src/components/highlight/highlight-rail.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
 | Quote studio | `src/components/share-quote/dialog.tsx` | dialog + state |
+| Quote card | `src/components/share-quote/quote-card.tsx` | extracted |
+| Canvas | `src/components/ui/canvas.tsx` | extracted |
 | Quote actions | `src/components/share-quote/actions.tsx` | extracted |
 | Design rail | `src/components/share-quote/carousel.tsx` | extracted |
 | Quote options | `src/components/share-quote/options.tsx` | extracted |
@@ -58,6 +60,8 @@ Done in this refactor:
 - highlight toolbar split into context-backed parts in `highlight-toolbar.tsx`
 - selection reading, word snapping and anchor measuring moved to `useTextSelection`
 - first `registry.json` manifest with item dependencies
+- `Canvas` / `QuoteCard` extracted; the carousel owns card painting
+- `shadcn build` generates `public/r/*.json`
 - `cards.ts` split into presets, themes and render; fills live with themes
 
 ## Remaining foundation work
@@ -81,7 +85,7 @@ type HighlightMark = {
 
 ### 2. Quote studio
 
-- Extract `canvas.tsx` and `quote-card.tsx`.
+- `canvas.tsx` and `quote-card.tsx` are extracted; the carousel renders them.
 - `dialog.tsx` is the shell + state; `actions.tsx` owns the footer.
 - Keep per-theme variant/override state in the dialog.
 - The options panel, variant picker and carousel are already separate.
@@ -105,6 +109,7 @@ type HighlightMark = {
 | `MarkerRail` | `marker-rail.tsx` |
 | `useTextSelection` | `use-text-selection.ts` |
 | `QuoteCard` | `quote-card.tsx` |
+| `Canvas` | `canvas.tsx` |
 | `QuoteCarousel` | `carousel.tsx` |
 | `QuoteVariantPicker` | `variant-picker.tsx` |
 | `QuoteOptions` | `options.tsx` |

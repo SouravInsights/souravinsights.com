@@ -9,7 +9,10 @@
       "title": "Highlight palette",
       "description": "Shared hues, ink and wash values for highlight marks.",
       "files": [
-        { "path": "src/lib/highlight-palette.ts", "type": "registry:lib", "target": "lib/highlight-palette.ts" }
+        {
+          "path": "src/lib/highlight-palette.ts",
+          "type": "registry:lib"
+        }
       ]
     },
     {
@@ -18,7 +21,10 @@
       "title": "Highlight anchor",
       "description": "Word snapping and overlap cutting for paragraph offsets.",
       "files": [
-        { "path": "src/lib/highlight-anchor.ts", "type": "registry:lib", "target": "lib/highlight-anchor.ts" }
+        {
+          "path": "src/lib/highlight-anchor.ts",
+          "type": "registry:lib"
+        }
       ]
     },
     {
@@ -27,9 +33,15 @@
       "title": "Highlight wave",
       "description": "Bars and the character wave for a mark.",
       "files": [
-        { "path": "src/components/highlight/wave.ts", "type": "registry:lib", "target": "components/highlight/wave.ts" }
+        {
+          "path": "src/components/highlight/wave.ts",
+          "type": "registry:lib",
+          "target": "components/highlight/wave.ts"
+        }
       ],
-      "registryDependencies": ["highlight-palette"]
+      "registryDependencies": [
+        "highlight-palette"
+      ]
     },
     {
       "name": "use-text-selection",
@@ -37,9 +49,14 @@
       "title": "Use text selection",
       "description": "Read a selection as word-snapped paragraph offsets.",
       "files": [
-        { "path": "src/hooks/use-text-selection.ts", "type": "registry:hook", "target": "hooks/use-text-selection.ts" }
+        {
+          "path": "src/hooks/use-text-selection.ts",
+          "type": "registry:hook"
+        }
       ],
-      "registryDependencies": ["highlight-anchor"]
+      "registryDependencies": [
+        "highlight-anchor"
+      ]
     },
     {
       "name": "use-reduced-motion",
@@ -47,7 +64,10 @@
       "title": "Use reduced motion",
       "description": "The reduced-motion media query as a boolean.",
       "files": [
-        { "path": "src/hooks/use-reduced-motion.ts", "type": "registry:hook", "target": "hooks/use-reduced-motion.ts" }
+        {
+          "path": "src/hooks/use-reduced-motion.ts",
+          "type": "registry:hook"
+        }
       ]
     },
     {
@@ -56,9 +76,16 @@
       "title": "Marker rail",
       "description": "A rail of positioned markers with tooltips.",
       "files": [
-        { "path": "src/components/ui/marker-rail.tsx", "type": "registry:ui", "target": "components/ui/marker-rail.tsx" }
+        {
+          "path": "src/components/ui/marker-rail.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "registryDependencies": ["button", "tooltip", "utils"]
+      "registryDependencies": [
+        "button",
+        "tooltip",
+        "utils"
+      ]
     },
     {
       "name": "anchored-panel",
@@ -66,10 +93,19 @@
       "title": "Anchored panel",
       "description": "A popover pinned to a range or rect with no trigger element.",
       "files": [
-        { "path": "src/components/ui/anchored-panel.tsx", "type": "registry:ui", "target": "components/ui/anchored-panel.tsx" },
-        { "path": "src/hooks/use-anchored-panel.ts", "type": "registry:hook", "target": "hooks/use-anchored-panel.ts" }
+        {
+          "path": "src/components/ui/anchored-panel.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "src/hooks/use-anchored-panel.ts",
+          "type": "registry:hook"
+        }
       ],
-      "registryDependencies": ["popover", "utils"]
+      "registryDependencies": [
+        "popover",
+        "utils"
+      ]
     },
     {
       "name": "side-panel",
@@ -77,9 +113,14 @@
       "title": "Side panel",
       "description": "A push panel that overlays on small screens.",
       "files": [
-        { "path": "src/components/ui/side-panel.tsx", "type": "registry:ui", "target": "components/ui/side-panel.tsx" }
+        {
+          "path": "src/components/ui/side-panel.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "registryDependencies": ["utils"]
+      "registryDependencies": [
+        "utils"
+      ]
     },
     {
       "name": "snap-carousel",
@@ -87,9 +128,15 @@
       "title": "Snap carousel",
       "description": "A centred scroll-snap rail with a spring glide.",
       "files": [
-        { "path": "src/components/ui/snap-carousel.tsx", "type": "registry:ui", "target": "components/ui/snap-carousel.tsx" }
+        {
+          "path": "src/components/ui/snap-carousel.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "registryDependencies": ["use-reduced-motion", "utils"]
+      "registryDependencies": [
+        "use-reduced-motion",
+        "utils"
+      ]
     },
     {
       "name": "swatch",
@@ -97,9 +144,30 @@
       "title": "Swatch",
       "description": "A colour swatch and its radio group.",
       "files": [
-        { "path": "src/components/ui/swatch.tsx", "type": "registry:ui", "target": "components/ui/swatch.tsx" }
+        {
+          "path": "src/components/ui/swatch.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "registryDependencies": ["radio-group", "utils"]
+      "registryDependencies": [
+        "radio-group",
+        "utils"
+      ]
+    },
+    {
+      "name": "canvas",
+      "type": "registry:ui",
+      "title": "Canvas",
+      "description": "A canvas that owns backing size, DPR and repaint.",
+      "files": [
+        {
+          "path": "src/components/ui/canvas.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "utils"
+      ]
     },
     {
       "name": "color-picker",
@@ -107,10 +175,18 @@
       "title": "Color picker",
       "description": "Wheel, brightness rail and hex field, with an eyedropper.",
       "files": [
-        { "path": "src/components/ui/color-picker.tsx", "type": "registry:ui", "target": "components/ui/color-picker.tsx" }
+        {
+          "path": "src/components/ui/color-picker.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "dependencies": ["@phosphor-icons/react"],
-      "registryDependencies": ["button", "utils"]
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "utils"
+      ]
     },
     {
       "name": "color-field",
@@ -118,10 +194,19 @@
       "title": "Color field",
       "description": "A colour row that opens into the picker.",
       "files": [
-        { "path": "src/components/ui/color-field.tsx", "type": "registry:ui", "target": "components/ui/color-field.tsx" }
+        {
+          "path": "src/components/ui/color-field.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "dependencies": ["@phosphor-icons/react"],
-      "registryDependencies": ["button", "color-picker", "utils"]
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "color-picker",
+        "utils"
+      ]
     },
     {
       "name": "inline-edit-field",
@@ -129,9 +214,17 @@
       "title": "Inline edit field",
       "description": "A meta row that becomes a textarea on click.",
       "files": [
-        { "path": "src/components/ui/inline-edit-field.tsx", "type": "registry:ui", "target": "components/ui/inline-edit-field.tsx" }
+        {
+          "path": "src/components/ui/inline-edit-field.tsx",
+          "type": "registry:ui"
+        }
       ],
-      "registryDependencies": ["button", "switch", "textarea", "utils"]
+      "registryDependencies": [
+        "button",
+        "switch",
+        "textarea",
+        "utils"
+      ]
     },
     {
       "name": "highlight",
@@ -139,12 +232,30 @@
       "title": "Highlight",
       "description": "Text marks, selection palette and the highlight rail.",
       "files": [
-        { "path": "src/components/highlight/highlight.tsx", "type": "registry:ui", "target": "components/highlight/highlight.tsx" },
-        { "path": "src/components/highlight/highlight-context.ts", "type": "registry:ui", "target": "components/highlight/highlight-context.ts" },
-        { "path": "src/components/highlight/highlight-toolbar.tsx", "type": "registry:ui", "target": "components/highlight/highlight-toolbar.tsx" },
-        { "path": "src/components/highlight/highlight-rail.tsx", "type": "registry:ui", "target": "components/highlight/highlight-rail.tsx" }
+        {
+          "path": "src/components/highlight/highlight.tsx",
+          "type": "registry:ui",
+          "target": "components/highlight/highlight.tsx"
+        },
+        {
+          "path": "src/components/highlight/highlight-context.ts",
+          "type": "registry:ui",
+          "target": "components/highlight/highlight-context.ts"
+        },
+        {
+          "path": "src/components/highlight/highlight-toolbar.tsx",
+          "type": "registry:ui",
+          "target": "components/highlight/highlight-toolbar.tsx"
+        },
+        {
+          "path": "src/components/highlight/highlight-rail.tsx",
+          "type": "registry:ui",
+          "target": "components/highlight/highlight-rail.tsx"
+        }
       ],
-      "dependencies": ["@phosphor-icons/react"],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
       "registryDependencies": [
         "anchored-panel",
         "button",
@@ -155,7 +266,8 @@
         "highlight-anchor",
         "highlight-palette",
         "highlight-wave",
-        "use-text-selection"
+        "use-text-selection",
+        "use-reduced-motion"
       ]
     },
     {
@@ -164,7 +276,11 @@
       "title": "Quote presets",
       "description": "Card sizes, fonts and alignment choices.",
       "files": [
-        { "path": "src/components/share-quote/presets.ts", "type": "registry:lib", "target": "components/quote/presets.ts" }
+        {
+          "path": "src/components/share-quote/presets.ts",
+          "type": "registry:lib",
+          "target": "components/quote/presets.ts"
+        }
       ]
     },
     {
@@ -173,9 +289,15 @@
       "title": "Quote themes",
       "description": "The four quote designs, variants and fill helpers.",
       "files": [
-        { "path": "src/components/share-quote/themes.ts", "type": "registry:lib", "target": "components/quote/themes.ts" }
+        {
+          "path": "src/components/share-quote/themes.ts",
+          "type": "registry:lib",
+          "target": "components/quote/themes.ts"
+        }
       ],
-      "registryDependencies": ["quote-presets"]
+      "registryDependencies": [
+        "quote-presets"
+      ]
     },
     {
       "name": "quote-render",
@@ -183,9 +305,16 @@
       "title": "Quote render",
       "description": "Canvas layout, card drawing and PNG export.",
       "files": [
-        { "path": "src/components/share-quote/render.ts", "type": "registry:lib", "target": "components/quote/render.ts" }
+        {
+          "path": "src/components/share-quote/render.ts",
+          "type": "registry:lib",
+          "target": "components/quote/render.ts"
+        }
       ],
-      "registryDependencies": ["quote-presets", "quote-themes"]
+      "registryDependencies": [
+        "quote-presets",
+        "quote-themes"
+      ]
     },
     {
       "name": "quote-options",
@@ -193,9 +322,15 @@
       "title": "Quote options",
       "description": "Colour, type and text controls for a quote card.",
       "files": [
-        { "path": "src/components/share-quote/options.tsx", "type": "registry:ui", "target": "components/quote/options.tsx" }
+        {
+          "path": "src/components/share-quote/options.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/options.tsx"
+        }
       ],
-      "dependencies": ["@phosphor-icons/react"],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
       "registryDependencies": [
         "button",
         "color-field",
@@ -209,14 +344,42 @@
       ]
     },
     {
+      "name": "quote-card",
+      "type": "registry:ui",
+      "title": "Quote card",
+      "description": "One quote card drawn at export resolution.",
+      "files": [
+        {
+          "path": "src/components/share-quote/quote-card.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/quote-card.tsx"
+        }
+      ],
+      "registryDependencies": [
+        "canvas",
+        "quote-presets",
+        "quote-render",
+        "quote-themes"
+      ]
+    },
+    {
       "name": "quote-carousel",
       "type": "registry:ui",
       "title": "Quote carousel",
       "description": "The design rail with theme cards and canvas slots.",
       "files": [
-        { "path": "src/components/share-quote/carousel.tsx", "type": "registry:ui", "target": "components/quote/carousel.tsx" }
+        {
+          "path": "src/components/share-quote/carousel.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/carousel.tsx"
+        }
       ],
-      "registryDependencies": ["snap-carousel", "quote-presets", "quote-themes"]
+      "registryDependencies": [
+        "snap-carousel",
+        "quote-presets",
+        "quote-themes",
+        "quote-card"
+      ]
     },
     {
       "name": "quote-variant-picker",
@@ -224,9 +387,16 @@
       "title": "Quote variant picker",
       "description": "The active design's colour variants.",
       "files": [
-        { "path": "src/components/share-quote/variant-picker.tsx", "type": "registry:ui", "target": "components/quote/variant-picker.tsx" }
+        {
+          "path": "src/components/share-quote/variant-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/variant-picker.tsx"
+        }
       ],
-      "registryDependencies": ["swatch", "quote-themes"]
+      "registryDependencies": [
+        "swatch",
+        "quote-themes"
+      ]
     },
     {
       "name": "quote-actions",
@@ -234,10 +404,20 @@
       "title": "Quote actions",
       "description": "Customize, save and copy controls.",
       "files": [
-        { "path": "src/components/share-quote/actions.tsx", "type": "registry:ui", "target": "components/quote/actions.tsx" }
+        {
+          "path": "src/components/share-quote/actions.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/actions.tsx"
+        }
       ],
-      "dependencies": ["@phosphor-icons/react"],
-      "registryDependencies": ["button", "kbd", "toggle"]
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "kbd",
+        "toggle"
+      ]
     },
     {
       "name": "quote-share-dialog",
@@ -245,9 +425,15 @@
       "title": "Quote share dialog",
       "description": "The quote studio: stage, carousel, options and export.",
       "files": [
-        { "path": "src/components/share-quote/dialog.tsx", "type": "registry:ui", "target": "components/quote/dialog.tsx" }
+        {
+          "path": "src/components/share-quote/dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/dialog.tsx"
+        }
       ],
-      "dependencies": ["@phosphor-icons/react"],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ],
       "registryDependencies": [
         "dialog",
         "side-panel",
@@ -258,7 +444,8 @@
         "quote-presets",
         "quote-render",
         "quote-themes",
-        "quote-variant-picker"
+        "quote-variant-picker",
+        "tabs"
       ]
     }
   ]

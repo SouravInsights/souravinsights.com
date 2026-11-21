@@ -9,6 +9,8 @@ import {
 import { drawCard, resolveOptions, type Overrides } from "./render";
 import type { ShareTheme, Variant } from "./themes";
 
+const NO_OVERRIDES: Overrides = {};
+
 export interface QuoteContent {
   quote: string;
   title: string;
@@ -31,7 +33,7 @@ export interface QuoteCardProps {
 function QuoteCard({
   theme,
   variant,
-  overrides = {},
+  overrides = NO_OVERRIDES,
   content,
   mode,
   className,
