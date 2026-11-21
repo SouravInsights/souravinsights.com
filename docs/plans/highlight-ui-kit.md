@@ -57,6 +57,7 @@ Done in this refactor:
 - quote card code split into presets, themes and renderer; fills live in themes
 - highlight toolbar split into context-backed parts in `highlight-toolbar.tsx`
 - selection reading, word snapping and anchor measuring moved to `useTextSelection`
+- first `registry.json` manifest with item dependencies
 - `cards.ts` split into presets, themes and render; fills live with themes
 
 ## Remaining foundation work
@@ -87,9 +88,10 @@ type HighlightMark = {
 
 ### 3. Registry and docs
 
-- `registry.json` points at the existing source.
+- `registry.json` exists and names the libs, hooks and UI items.
+- Verify every item installs into a blank app.
+- Add blocks: `article-highlights`, `quote-share`.
 - `shadcn build` → `public/r/*.json`.
-- Blocks: `article-highlights`, `quote-share`.
 - Docs: minimal article, custom toolbar, persisted marks, quote card only.
 
 ## Naming
