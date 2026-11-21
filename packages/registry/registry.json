@@ -34,7 +34,7 @@
       "description": "Bars and the character wave for a mark.",
       "files": [
         {
-          "path": "src/components/highlight/wave.ts",
+          "path": "src/highlight/wave.ts",
           "type": "registry:lib",
           "target": "components/highlight/wave.ts"
         }
@@ -77,7 +77,7 @@
       "description": "A rail of positioned markers with tooltips.",
       "files": [
         {
-          "path": "src/components/ui/marker-rail.tsx",
+          "path": "src/ui/marker-rail.tsx",
           "type": "registry:ui"
         }
       ],
@@ -94,7 +94,7 @@
       "description": "A popover pinned to a range or rect with no trigger element.",
       "files": [
         {
-          "path": "src/components/ui/anchored-panel.tsx",
+          "path": "src/ui/anchored-panel.tsx",
           "type": "registry:ui"
         },
         {
@@ -117,7 +117,7 @@
       "description": "A push panel that overlays on small screens.",
       "files": [
         {
-          "path": "src/components/ui/side-panel.tsx",
+          "path": "src/ui/side-panel.tsx",
           "type": "registry:ui"
         }
       ],
@@ -132,7 +132,7 @@
       "description": "A centred scroll-snap rail with a spring glide.",
       "files": [
         {
-          "path": "src/components/ui/snap-carousel.tsx",
+          "path": "src/ui/snap-carousel.tsx",
           "type": "registry:ui"
         }
       ],
@@ -148,7 +148,7 @@
       "description": "A colour swatch and its radio group.",
       "files": [
         {
-          "path": "src/components/ui/swatch.tsx",
+          "path": "src/ui/swatch.tsx",
           "type": "registry:ui"
         }
       ],
@@ -164,7 +164,7 @@
       "description": "A canvas that owns backing size, DPR and repaint.",
       "files": [
         {
-          "path": "src/components/ui/canvas.tsx",
+          "path": "src/ui/canvas.tsx",
           "type": "registry:ui"
         }
       ],
@@ -179,7 +179,7 @@
       "description": "Wheel, brightness rail and hex field, with an eyedropper.",
       "files": [
         {
-          "path": "src/components/ui/color-picker.tsx",
+          "path": "src/ui/color-picker.tsx",
           "type": "registry:ui"
         }
       ],
@@ -198,7 +198,7 @@
       "description": "A colour row that opens into the picker.",
       "files": [
         {
-          "path": "src/components/ui/color-field.tsx",
+          "path": "src/ui/color-field.tsx",
           "type": "registry:ui"
         }
       ],
@@ -218,7 +218,7 @@
       "description": "A meta row that becomes a textarea on click.",
       "files": [
         {
-          "path": "src/components/ui/inline-edit-field.tsx",
+          "path": "src/ui/inline-edit-field.tsx",
           "type": "registry:ui"
         }
       ],
@@ -236,22 +236,22 @@
       "description": "Text marks, selection palette and the highlight rail.",
       "files": [
         {
-          "path": "src/components/highlight/highlight.tsx",
+          "path": "src/highlight/highlight.tsx",
           "type": "registry:ui",
           "target": "components/highlight/highlight.tsx"
         },
         {
-          "path": "src/components/highlight/highlight-context.ts",
+          "path": "src/highlight/highlight-context.ts",
           "type": "registry:ui",
           "target": "components/highlight/highlight-context.ts"
         },
         {
-          "path": "src/components/highlight/highlight-toolbar.tsx",
+          "path": "src/highlight/highlight-toolbar.tsx",
           "type": "registry:ui",
           "target": "components/highlight/highlight-toolbar.tsx"
         },
         {
-          "path": "src/components/highlight/highlight-rail.tsx",
+          "path": "src/highlight/highlight-rail.tsx",
           "type": "registry:ui",
           "target": "components/highlight/highlight-rail.tsx"
         }
@@ -280,7 +280,7 @@
       "description": "Card sizes, fonts and alignment choices.",
       "files": [
         {
-          "path": "src/components/share-quote/presets.ts",
+          "path": "src/quote/presets.ts",
           "type": "registry:lib",
           "target": "components/quote/presets.ts"
         }
@@ -293,7 +293,7 @@
       "description": "The four quote designs, variants and fill helpers.",
       "files": [
         {
-          "path": "src/components/share-quote/themes.ts",
+          "path": "src/quote/themes.ts",
           "type": "registry:lib",
           "target": "components/quote/themes.ts"
         }
@@ -309,7 +309,7 @@
       "description": "Canvas layout, card drawing and PNG export.",
       "files": [
         {
-          "path": "src/components/share-quote/render.ts",
+          "path": "src/quote/render.ts",
           "type": "registry:lib",
           "target": "components/quote/render.ts"
         }
@@ -326,7 +326,7 @@
       "description": "Colour, type and text controls for a quote card.",
       "files": [
         {
-          "path": "src/components/share-quote/options.tsx",
+          "path": "src/quote/options.tsx",
           "type": "registry:ui",
           "target": "components/quote/options.tsx"
         }
@@ -353,7 +353,7 @@
       "description": "One quote card drawn at export resolution.",
       "files": [
         {
-          "path": "src/components/share-quote/quote-card.tsx",
+          "path": "src/quote/quote-card.tsx",
           "type": "registry:ui",
           "target": "components/quote/quote-card.tsx"
         }
@@ -372,7 +372,7 @@
       "description": "The design rail with theme cards and canvas slots.",
       "files": [
         {
-          "path": "src/components/share-quote/carousel.tsx",
+          "path": "src/quote/carousel.tsx",
           "type": "registry:ui",
           "target": "components/quote/carousel.tsx"
         }
@@ -391,7 +391,7 @@
       "description": "The active design's colour variants.",
       "files": [
         {
-          "path": "src/components/share-quote/variant-picker.tsx",
+          "path": "src/quote/variant-picker.tsx",
           "type": "registry:ui",
           "target": "components/quote/variant-picker.tsx"
         }
@@ -408,7 +408,7 @@
       "description": "Customize, save and copy controls.",
       "files": [
         {
-          "path": "src/components/share-quote/actions.tsx",
+          "path": "src/quote/actions.tsx",
           "type": "registry:ui",
           "target": "components/quote/actions.tsx"
         }
@@ -429,7 +429,7 @@
       "description": "The quote studio: stage, carousel, options and export.",
       "files": [
         {
-          "path": "src/components/share-quote/dialog.tsx",
+          "path": "src/quote/dialog.tsx",
           "type": "registry:ui",
           "target": "components/quote/dialog.tsx"
         }

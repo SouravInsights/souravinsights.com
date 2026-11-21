@@ -12,7 +12,8 @@
     "build": "turbo run build",
     "build:site": "turbo run build --filter=site",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "registry:build": "cd packages/registry && npx shadcn@latest build && rm -rf ../../apps/kit/public/r && cp -R public/r ../../apps/kit/public/r"
   },
   "devDependencies": {
     "turbo": "^2.5.8"

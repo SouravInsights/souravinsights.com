@@ -48,6 +48,7 @@ const withMDX = createMDX({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: { externalDir: true },
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
 
   images: {

@@ -85,8 +85,9 @@ point to.
 2. **Kit app.** Added `apps/kit` with a minimal docs shell and `/r` output.
    Remaining: point `ui.souravinsights.com` at a Vercel project rooted at
    `apps/kit`.
-3. **Registry package.** Move the kit source into `packages/registry`, make both
-   apps consume it, wire the build into `apps/kit/public/r`.
+3. **Registry package.** Done: source lives in `packages/registry`, the site maps
+   its old aliases there, and `yarn registry:build` writes
+   `apps/kit/public/r`.
 4. **Docs.** Write examples and API pages against the real installed registry.
 
 ## Risks

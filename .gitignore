@@ -52,3 +52,6 @@ avatars-masters/
 # turbo
 .turbo
 **/.turbo
+
+# generated registry output (copied into apps/kit/public/r)
+packages/registry/public/
