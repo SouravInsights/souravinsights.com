@@ -2,9 +2,9 @@
 
 import React, { useCallback, useRef } from "react";
 import {
-  Highlights,
+  Highlight,
   type CreatePayload,
-} from "@/components/highlight/Highlights";
+} from "@/components/highlight/highlight";
 import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { updateArticleMarks } from "./article-query";
 
@@ -106,7 +106,7 @@ export function ArticleBody({
   return (
     <div className="relative" ref={containerRef}>
       {children}
-      <Highlights
+      <Highlight
         containerRef={containerRef}
         editable={isAdmin}
         initialMarks={initialHighlights}

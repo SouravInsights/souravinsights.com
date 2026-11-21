@@ -67,7 +67,7 @@ const BAND_MAX = 460;
 const DPR = 2;
 const NO_OVERRIDES: Overrides = {};
 
-export function ShareQuote({
+export function ShareQuoteDialog({
   open,
   onOpenChange,
   quote,

@@ -119,7 +119,7 @@ function offsetIn(root: Node, node: Node, offset: number): number {
 
 const isDark = () => document.documentElement.classList.contains("dark");
 
-export function Highlights({
+export function Highlight({
   containerRef,
   editable,
   initialMarks,

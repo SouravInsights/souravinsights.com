@@ -23,7 +23,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ArticleBody } from "./ArticleBody";
 import { HighlightRail, type HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { CoReader, type Tab } from "./CoReader";
-import { ShareQuote } from "@/components/share-quote/ShareQuote";
+import { ShareQuoteDialog } from "@/components/share-quote/dialog";
 import {
   APPEARANCE_DEFAULT,
   ReaderAppearance,
@@ -682,7 +682,7 @@ export function ReaderView({
       </motion.div>
 
       {article && (
-        <ShareQuote
+        <ShareQuoteDialog
           open={share !== null}
           onOpenChange={(open) => {
             if (!open) setShare(null);

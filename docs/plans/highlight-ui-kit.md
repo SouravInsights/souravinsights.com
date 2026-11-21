@@ -19,10 +19,10 @@ wheel listener.
 | :--- | :--- | :--- |
 | Palette | `src/lib/highlight-palette.ts` | extracted |
 | Mark maths | `src/lib/highlight-anchor.ts` | extracted |
-| Mark engine + palette UI | `src/components/highlight/Highlights.tsx` | monolith |
+| Mark engine + palette UI | `src/components/highlight/highlight.tsx` | monolith |
 | Highlight rail | `src/components/highlight/HighlightTicks.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
-| Quote studio | `src/components/share-quote/ShareQuote.tsx` | dialog, state, footer |
+| Quote studio | `src/components/share-quote/dialog.tsx` | dialog, state, footer |
 | Design rail | `src/components/share-quote/carousel.tsx` | extracted |
 | Quote options | `src/components/share-quote/options.tsx` | extracted |
 | Variant picker | `src/components/share-quote/variant-picker.tsx` | extracted |
@@ -53,7 +53,7 @@ Done in this refactor:
 
 ### 1. Highlights
 
-- Split `Highlights.tsx` into one family file, `highlight.tsx`:
+- Split `highlight.tsx` internally:
   `Highlight`, `HighlightToolbar`, `HighlightColors`, `HighlightActions`,
   `HighlightCopy`, `HighlightShare`, `HighlightLink`, `HighlightRemove`,
   `HighlightList`.
@@ -104,7 +104,7 @@ type HighlightMark = {
 | `QuoteCarousel` | `carousel.tsx` |
 | `QuoteVariantPicker` | `variant-picker.tsx` |
 | `QuoteOptions` | `options.tsx` |
-| `ShareQuoteDialog` | `share-quote-dialog.tsx` |
+| `ShareQuoteDialog` | `dialog.tsx` |
 | `ColorField`, `ColorPicker` | existing |
 | `SnapCarousel`, `SidePanel`, `AnchoredPanel`, `Swatch` | existing |
 
