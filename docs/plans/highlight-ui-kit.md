@@ -18,9 +18,9 @@ wheel listener.
 | Piece | File | State |
 | :--- | :--- | :--- |
 | Palette | `src/lib/highlight-palette.ts` | extracted |
-| Mark maths | `src/components/highlight/hues.ts` | still reader-local |
+| Mark maths | `src/lib/highlight-anchor.ts` | extracted |
 | Mark engine + palette UI | `src/components/highlight/Highlights.tsx` | monolith |
-| Highlight rail | `src/components/highlight/HighlightTicks.tsx` | monolith |
+| Highlight rail | `src/components/highlight/HighlightTicks.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
 | Quote studio | `src/components/share-quote/ShareQuote.tsx` | 810-line monolith |
 | Card renderer/themes | `src/components/share-quote/cards.ts` | 810-line monolith |
@@ -42,13 +42,13 @@ Done in this refactor:
 - colour picker split from colour field; `Button` used throughout
 - variant swatch ring and per-theme variant/override memory
 - carousel extracted without changing its DOM, CSS or motion
+- mark snapping/cutting moved to `highlight-anchor.ts`
+- rail geometry moved to `MarkerRail`
 
 ## Remaining foundation work
 
 ### 1. Highlights
 
-- Move `cut` / `snap` / segment maths out of `hues.ts` into
-  `highlight-anchor.ts`.
 - Split `Highlights.tsx` into one family file, `highlight.tsx`:
   `Highlight`, `HighlightToolbar`, `HighlightColors`, `HighlightActions`,
   `HighlightCopy`, `HighlightShare`, `HighlightLink`, `HighlightRemove`,
@@ -65,8 +65,8 @@ type HighlightMark = {
 };
 ```
 
-- Split the rail: `highlight-rail.tsx` (list + notes action) and
-  `marker-rail.tsx` (data-in geometry, Radix tooltip).
+- Rename `HighlightTicks.tsx` to `highlight-rail.tsx` and keep it as the
+  highlight-specific list + Notes action over `MarkerRail`.
 
 ### 2. Quote studio
 
