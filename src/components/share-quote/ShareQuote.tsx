@@ -14,12 +14,8 @@ import { Kbd } from "@/components/ui/kbd";
 import { Toggle } from "@/components/ui/toggle";
 import { SidePanel } from "@/components/ui/side-panel";
 import { CustomizePanel } from "./customize-panel";
+import { QuoteCarousel } from "./carousel";
 import { QuoteVariantPicker } from "./variant-picker";
-import {
-  SnapCarousel,
-  SnapCarouselContent,
-  SnapCarouselItem,
-} from "@/components/ui/snap-carousel";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   MODES,
@@ -64,13 +60,11 @@ interface Props {
 }
 
 const PANEL_W = 288;
-const GAP = 29;
 /** Everything in the stage that is not the card: padding + top + chips + gaps. */
 const STAGE_FIXED = 147;
 const BAND_MIN = 220;
 const BAND_MAX = 460;
 const DPR = 2;
-const THEME_IDS = THEMES.map((theme) => theme.id);
 const NO_OVERRIDES: Overrides = {};
 
 export function ShareQuote({
@@ -82,8 +76,6 @@ export function ShareQuote({
   context,
 }: Props) {
   const previewRefs = useRef<(HTMLCanvasElement | null)[]>([]);
-  const pointerStart = useRef<{ x: number; y: number } | null>(null);
-  const lastScroll = useRef(0);
 
   const [mode, setMode] = useState<Mode>("story");
   const [themeId, setThemeId] = useState(THEMES[0].id);
@@ -349,74 +341,16 @@ export function ShareQuote({
 
             {/* The designs. The card's height is the band; its width follows the
                 size's aspect, so Post and Square are wider. */}
-            <SnapCarousel
-              items={THEME_IDS}
-              value={themeId}
-              onValueChange={chooseTheme}
-              gap={GAP}
-              recenterKey={`${mode}-${frameW}`}
-            >
-              <SnapCarouselContent
-                tabIndex={0}
-                role="group"
-                aria-roledescription="carousel"
-                aria-label="Styles"
-                onScroll={() => {
-                  lastScroll.current = performance.now();
-                }}
-                style={{
-                  marginTop: GAP - 12,
-                  height: band + 40,
-                  paddingTop: 12,
-                  paddingBottom: 28,
-                  paddingInline: `calc(50% - ${frameW / 2}px)`,
-                }}
-                className="no-scrollbar relative flex items-center overflow-x-auto overflow-y-hidden outline-none [overscroll-behavior-x:contain]"
-              >
-                {THEMES.map((t, index) => {
-                  const active = themeId === t.id;
-                  return (
-                    <SnapCarouselItem
-                      key={t.id}
-                      value={t.id}
-                      aria-label={t.name}
-                      style={{ width: frameW, height: frameH }}
-                      onPointerDown={(event) =>
-                        (pointerStart.current = {
-                          x: event.clientX,
-                          y: event.clientY,
-                        })
-                      }
-                      onClick={(event) => {
-                        const start = pointerStart.current;
-                        const still =
-                          !start ||
-                          Math.hypot(
-                            event.clientX - start.x,
-                            event.clientY - start.y
-                          ) < 4;
-                        const recent =
-                          performance.now() - lastScroll.current < 150;
-                        if (active || !still || recent) return;
-                        chooseTheme(t.id);
-                      }}
-                      className="group cursor-pointer"
-                    >
-                      <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05)] group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.14)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1)] dark:group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1),0_10px_28px_-6px_rgba(0,0,0,0.6)]">
-                        <canvas
-                          ref={(el) => {
-                            previewRefs.current[index] = el;
-                          }}
-                          style={{ width: frameW, height: frameH }}
-                          aria-label={`${t.name} design preview`}
-                          className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2"
-                        />
-                      </div>
-                    </SnapCarouselItem>
-                  );
-                })}
-              </SnapCarouselContent>
-            </SnapCarousel>
+            <QuoteCarousel
+              themes={THEMES}
+              themeId={themeId}
+              onThemeChange={chooseTheme}
+              mode={mode}
+              band={band}
+              frameWidth={frameW}
+              frameHeight={frameH}
+              previewRefs={previewRefs}
+            />
 
             <QuoteVariantPicker
               variants={theme.variants}
