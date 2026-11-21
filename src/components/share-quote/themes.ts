@@ -2,7 +2,6 @@
  * The four quote designs and their colour variants.
  */
 
-import { dot, grad, mesh, solid, type Paint } from "./fills";
 import type {
   AlignChoice,
   FontChoice,
@@ -10,11 +9,31 @@ import type {
   SizeChoice,
 } from "./presets";
 
+export interface MeshBlob {
+  x: number;
+  y: number;
+  r: number;
+  color: string;
+}
+
+export type Fill =
+  | { kind: "solid"; color: string }
+  | { kind: "mesh"; base: string; blobs: MeshBlob[] };
+
+export const solid = (color: string): Fill => ({ kind: "solid", color });
+export const mesh = (base: string, blobs: MeshBlob[]): Fill => ({ kind: "mesh", base, blobs });
+/** a gradient's circular control */
+export const grad = (...colors: string[]) =>
+  `linear-gradient(135deg, ${colors.join(", ")})`;
+/** a paper control with an ink dot in its middle */
+export const dot = (accent: string, base: string) =>
+  `radial-gradient(circle, ${accent} 0 21%, ${base} 22%)`;
+
 export interface Variant {
   name: string;
   /** CSS fill for the circular control (a colour or a gradient) */
   swatch: string;
-  paint: Paint;
+  fill: Fill;
   /** the footer's ink, and the quote's ink unless it sits on a marker */
   text: string;
   /** the marker pen behind the words */
@@ -54,7 +73,7 @@ const markerVariants: Variant[] = [
   {
     name: "Cream",
     swatch: "#f4e58a",
-    paint: solid(PAPER),
+    fill: solid(PAPER),
     text: INK,
     highlight: "#f4e58a",
     highlightText: INK,
@@ -62,7 +81,7 @@ const markerVariants: Variant[] = [
   {
     name: "Tangerine",
     swatch: "#f5a35c",
-    paint: solid(NIGHT),
+    fill: solid(NIGHT),
     text: NIGHT_TEXT,
     highlight: "#f5a35c",
     highlightText: INK,
@@ -70,7 +89,7 @@ const markerVariants: Variant[] = [
   {
     name: "Sun",
     swatch: "#f2c230",
-    paint: solid(NIGHT),
+    fill: solid(NIGHT),
     text: NIGHT_TEXT,
     highlight: "#f2c230",
     highlightText: INK,
@@ -78,7 +97,7 @@ const markerVariants: Variant[] = [
   {
     name: "Mint",
     swatch: "#8fe0b0",
-    paint: solid(NIGHT),
+    fill: solid(NIGHT),
     text: NIGHT_TEXT,
     highlight: "#8fe0b0",
     highlightText: INK,
@@ -86,7 +105,7 @@ const markerVariants: Variant[] = [
   {
     name: "Sky",
     swatch: "#8ecdf7",
-    paint: solid(NIGHT),
+    fill: solid(NIGHT),
     text: NIGHT_TEXT,
     highlight: "#8ecdf7",
     highlightText: INK,
@@ -94,7 +113,7 @@ const markerVariants: Variant[] = [
   {
     name: "Violet",
     swatch: "#bfa6f5",
-    paint: solid(NIGHT),
+    fill: solid(NIGHT),
     text: NIGHT_TEXT,
     highlight: "#bfa6f5",
     highlightText: INK,
@@ -102,7 +121,7 @@ const markerVariants: Variant[] = [
   {
     name: "Rose",
     swatch: "#f5a9cb",
-    paint: solid(NIGHT),
+    fill: solid(NIGHT),
     text: NIGHT_TEXT,
     highlight: "#f5a9cb",
     highlightText: INK,
@@ -114,7 +133,7 @@ const emberVariants: Variant[] = [
   {
     name: "Wine",
     swatch: grad("#9c1f1f", "#6b1f4a", "#2a0a10"),
-    paint: mesh("#2a0a10", [
+    fill: mesh("#2a0a10", [
       { x: 0.85, y: 0.05, r: 0.85, color: "#9c1f1f" },
       { x: 0.1, y: 0.9, r: 0.9, color: "#5e1440" },
     ]),
@@ -123,7 +142,7 @@ const emberVariants: Variant[] = [
   {
     name: "Amber",
     swatch: grad("#d9822b", "#7a3a12", "#1a0f05"),
-    paint: mesh("#1a0f05", [
+    fill: mesh("#1a0f05", [
       { x: 0.8, y: 0.1, r: 0.85, color: "#d9822b" },
       { x: 0.15, y: 0.85, r: 0.9, color: "#7a3a12" },
     ]),
@@ -132,7 +151,7 @@ const emberVariants: Variant[] = [
   {
     name: "Forest",
     swatch: grad("#2f8a55", "#0f5a45", "#04140e"),
-    paint: mesh("#04140e", [
+    fill: mesh("#04140e", [
       { x: 0.8, y: 0.1, r: 0.85, color: "#2f8a55" },
       { x: 0.15, y: 0.9, r: 0.9, color: "#0f5a45" },
     ]),
@@ -141,7 +160,7 @@ const emberVariants: Variant[] = [
   {
     name: "Ocean",
     swatch: grad("#2a8fb8", "#1f3f7a", "#050f1c"),
-    paint: mesh("#050f1c", [
+    fill: mesh("#050f1c", [
       { x: 0.85, y: 0.1, r: 0.85, color: "#2a8fb8" },
       { x: 0.1, y: 0.9, r: 0.9, color: "#1f3f7a" },
     ]),
@@ -150,7 +169,7 @@ const emberVariants: Variant[] = [
   {
     name: "Indigo",
     swatch: grad("#6a5ae0", "#2f2478", "#0a0818"),
-    paint: mesh("#0a0818", [
+    fill: mesh("#0a0818", [
       { x: 0.8, y: 0.12, r: 0.85, color: "#6a5ae0" },
       { x: 0.15, y: 0.88, r: 0.9, color: "#2f2478" },
     ]),
@@ -159,7 +178,7 @@ const emberVariants: Variant[] = [
   {
     name: "Noir",
     swatch: grad("#3a3a3a", "#151515", "#050505"),
-    paint: mesh("#050505", [
+    fill: mesh("#050505", [
       { x: 0.8, y: 0.15, r: 0.8, color: "#343434" },
       { x: 0.2, y: 0.9, r: 0.9, color: "#1a1a1a" },
     ]),
@@ -172,7 +191,7 @@ const meshVariants: Variant[] = [
   {
     name: "Grove",
     swatch: grad("#7ed957", "#2fa8c9", "#0a1a12"),
-    paint: mesh("#07120d", [
+    fill: mesh("#07120d", [
       { x: 0.85, y: 0.08, r: 0.9, color: "#7ed957" },
       { x: 0.12, y: 0.92, r: 0.95, color: "#2fa8c9" },
     ]),
@@ -181,7 +200,7 @@ const meshVariants: Variant[] = [
   {
     name: "Blush",
     swatch: grad("#ff7a9c", "#c9407a", "#1a0810"),
-    paint: mesh("#160610", [
+    fill: mesh("#160610", [
       { x: 0.85, y: 0.1, r: 0.9, color: "#ff7a9c" },
       { x: 0.12, y: 0.9, r: 0.95, color: "#c9407a" },
     ]),
@@ -190,7 +209,7 @@ const meshVariants: Variant[] = [
   {
     name: "Cobalt",
     swatch: grad("#4a8cf7", "#2b3ea8", "#050a1a"),
-    paint: mesh("#050a1a", [
+    fill: mesh("#050a1a", [
       { x: 0.85, y: 0.1, r: 0.9, color: "#4a8cf7" },
       { x: 0.12, y: 0.9, r: 0.95, color: "#2b3ea8" },
     ]),
@@ -199,7 +218,7 @@ const meshVariants: Variant[] = [
   {
     name: "Orchid",
     swatch: grad("#c86bf0", "#6a2bb0", "#0c0618"),
-    paint: mesh("#0c0618", [
+    fill: mesh("#0c0618", [
       { x: 0.85, y: 0.1, r: 0.9, color: "#c86bf0" },
       { x: 0.12, y: 0.9, r: 0.95, color: "#6a2bb0" },
     ]),
@@ -208,7 +227,7 @@ const meshVariants: Variant[] = [
   {
     name: "Sunset",
     swatch: grad("#ff9a4a", "#e0432f", "#1a0a06"),
-    paint: mesh("#1a0a06", [
+    fill: mesh("#1a0a06", [
       { x: 0.85, y: 0.1, r: 0.9, color: "#ff9a4a" },
       { x: 0.12, y: 0.9, r: 0.95, color: "#e0432f" },
     ]),
@@ -219,14 +238,14 @@ const meshVariants: Variant[] = [
 /** Bold: a shout, in one ink on paper. */
 const CREAM = "#f0ece2";
 const boldVariants: Variant[] = [
-  { name: "Ink", swatch: dot("#2b3ea8", CREAM), paint: solid(CREAM), text: "#2b3ea8" },
-  { name: "Crimson", swatch: dot("#c0392b", CREAM), paint: solid(CREAM), text: "#c0392b" },
-  { name: "Plain", swatch: dot(INK, CREAM), paint: solid(CREAM), text: INK },
-  { name: "Forest", swatch: dot("#1f7a4d", CREAM), paint: solid(CREAM), text: "#1f7a4d" },
+  { name: "Ink", swatch: dot("#2b3ea8", CREAM), fill: solid(CREAM), text: "#2b3ea8" },
+  { name: "Crimson", swatch: dot("#c0392b", CREAM), fill: solid(CREAM), text: "#c0392b" },
+  { name: "Plain", swatch: dot(INK, CREAM), fill: solid(CREAM), text: INK },
+  { name: "Forest", swatch: dot("#1f7a4d", CREAM), fill: solid(CREAM), text: "#1f7a4d" },
   {
     name: "Cobalt",
     swatch: dot("#ffffff", "#2b5cf6"),
-    paint: solid("#2b5cf6"),
+    fill: solid("#2b5cf6"),
     text: "#ffffff",
   },
 ];

@@ -13,8 +13,7 @@ import {
   type PositionChoice,
   type SizeChoice,
 } from "./presets";
-import type { ShareTheme, Variant } from "./themes";
-import { solid, type Paint } from "./fills";
+import { solid, type Fill, type ShareTheme, type Variant } from "./themes";
 
 function fontString(
   size: number,
@@ -49,7 +48,7 @@ function wrapText(
   return out;
 }
 
-/* --------------------------------------------------------------- painting */
+/* ----------------------------------------------------------------- drawing */
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -93,16 +92,16 @@ const CURIO_EYES: [number, number, number, number][] = [
   [34.5, 22, 37.9, 25.6],
 ];
 
-function paintBackground(
+function fillBackground(
   ctx: CanvasRenderingContext2D,
-  paint: Paint,
+  fill: Fill,
   w: number,
   h: number
 ) {
-  ctx.fillStyle = paint.kind === "solid" ? paint.color : paint.base;
+  ctx.fillStyle = fill.kind === "solid" ? fill.color : fill.base;
   ctx.fillRect(0, 0, w, h);
-  if (paint.kind !== "mesh") return;
-  for (const blob of paint.blobs) {
+  if (fill.kind !== "mesh") return;
+  for (const blob of fill.blobs) {
     const gradient = ctx.createRadialGradient(
       blob.x * w,
       blob.y * h,
@@ -126,7 +125,7 @@ export interface CardOptions {
   publication: string;
   /** the surrounding article text, for the faded-backdrop design */
   context: string;
-  paint: Paint;
+  fill: Fill;
   background: string;
   text: string;
   highlight: string;
@@ -151,8 +150,8 @@ export function resolveOptions(
   content: Pick<CardOptions, "quote" | "title" | "publication" | "context">
 ): CardOptions {
   const base: Omit<CardOptions, "quote" | "title" | "publication" | "context"> = {
-    paint: variant.paint,
-    background: variant.paint.kind === "solid" ? variant.paint.color : variant.paint.base,
+    fill: variant.fill,
+    background: variant.fill.kind === "solid" ? variant.fill.color : variant.fill.base,
     text: variant.text,
     highlight: variant.highlight ?? "#f4e58a",
     highlightText: variant.highlightText ?? variant.text,
@@ -166,7 +165,7 @@ export function resolveOptions(
   const merged = { ...base, ...overrides };
   // A hand-picked colour is flat, whatever the variant painted.
   if (overrides.background !== undefined) {
-    merged.paint = solid(overrides.background);
+    merged.fill = solid(overrides.background);
   }
   return { ...merged, ...content };
 }
@@ -191,7 +190,7 @@ export function drawCard(
 
   ctx.save();
   ctx.clearRect(0, 0, w, h);
-  paintBackground(ctx, options.paint, w, h);
+  fillBackground(ctx, options.fill, w, h);
 
   const pad = Math.round(w * 0.085);
   const maxWidth = w - pad * 2;

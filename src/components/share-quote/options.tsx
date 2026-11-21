@@ -113,8 +113,8 @@ function QuoteOptions({
     onOpenChange: (open: boolean) => setOpenColor(open ? key : null),
   });
   const isMarker = theme.style === "marker";
-  const paintIsGradient = options.paint.kind === "mesh";
-  const variantIsGradient = variant.paint.kind === "mesh";
+  const fillIsGradient = options.fill.kind === "mesh";
+  const variantIsGradient = variant.fill.kind === "mesh";
 
   return (
     <>
@@ -155,14 +155,14 @@ function QuoteOptions({
           {...colorOpen("background")}
           label="Background"
           value={options.background}
-          valueLabel={paintIsGradient ? "Gradient" : undefined}
+          valueLabel={fillIsGradient ? "Gradient" : undefined}
           onChange={(background) => set({ background })}
           extra={
             variantIsGradient
               ? {
                   background: variant.swatch,
                   label: "Gradient",
-                  active: paintIsGradient,
+                  active: fillIsGradient,
                   onSelect: () => clear("background"),
                 }
               : undefined
