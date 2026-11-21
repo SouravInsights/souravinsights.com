@@ -24,6 +24,11 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { SidePanel } from "@/components/ui/side-panel";
+import {
+  SnapCarousel,
+  SnapCarouselContent,
+  SnapCarouselItem,
+} from "@/components/ui/snap-carousel";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -99,19 +104,9 @@ export function ShareQuote({
   publication,
   context,
 }: Props) {
-  const carouselRef = useRef<HTMLDivElement>(null);
   const previewRefs = useRef<(HTMLCanvasElement | null)[]>([]);
-  const glideRef = useRef<{
-    raf: number;
-    x: number;
-    v: number;
-    target: number;
-    last: number;
-  } | null>(null);
-  const scrollRaf = useRef(0);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
   const lastScroll = useRef(0);
-  const activeRef = useRef(THEMES[0].id);
 
   const [mode, setMode] = useState<Mode>("story");
   const [themeId, setThemeId] = useState(THEMES[0].id);
@@ -127,8 +122,6 @@ export function ShareQuote({
     "idle"
   );
   const [statusText, setStatusText] = useState("");
-
-  activeRef.current = themeId;
 
   // Each open starts from the highlighted words as they are now.
   useEffect(() => {
@@ -171,143 +164,11 @@ export function ShareQuote({
   const frameH = band;
   const frameW = Math.round(band * (dims.width / dims.height));
 
-  /* ---------------------------------------------------------- the carousel */
-
-  const centerOf = useCallback((id: string) => {
-    const el = carouselRef.current;
-    const slide = el?.querySelector<HTMLElement>(`[data-slide="${id}"]`);
-    if (!el || !slide) return null;
-    return slide.offsetLeft + slide.offsetWidth / 2 - el.clientWidth / 2;
+  const chooseTheme = useCallback((id: string) => {
+    setThemeId(id);
+    setVariantIndex(0);
+    setOverrides({});
   }, []);
-
-  const stopGlide = useCallback(() => {
-    const g = glideRef.current;
-    if (!g) return;
-    cancelAnimationFrame(g.raf);
-    glideRef.current = null;
-    if (carouselRef.current) delete carouselRef.current.dataset.gliding;
-  }, []);
-
-  /** The spring that replaces `scrollIntoView` — snap is off while it runs. */
-  const glideTo = useCallback(
-    (id: string) => {
-      const el = carouselRef.current;
-      const target = centerOf(id);
-      if (!el || target === null) return;
-      if (prefersReduced()) {
-        stopGlide();
-        el.scrollLeft = target;
-        return;
-      }
-      if (glideRef.current) {
-        glideRef.current.target = target;
-        return;
-      }
-      if (Math.abs(el.scrollLeft - target) < 1) return;
-      el.dataset.gliding = "true";
-      const g = {
-        x: el.scrollLeft,
-        v: 0,
-        target,
-        last: performance.now(),
-        raf: 0,
-      };
-      glideRef.current = g;
-      const step = (now: number) => {
-        const dt = Math.min(0.05, (now - g.last) / 1000);
-        g.last = now;
-        const a = g.x - g.target;
-        const o = g.v + SPRING * a;
-        const s = Math.exp(-SPRING * dt);
-        g.x = g.target + (a + o * dt) * s;
-        g.v = (o - SPRING * (a + o * dt)) * s;
-        if (Math.abs(g.x - g.target) < 0.5 && Math.abs(g.v) < 30) {
-          el.scrollLeft = g.target;
-          stopGlide();
-        } else {
-          el.scrollLeft = g.x;
-          g.raf = requestAnimationFrame(step);
-        }
-      };
-      g.raf = requestAnimationFrame(step);
-    },
-    [centerOf, stopGlide]
-  );
-
-  const chooseTheme = useCallback(
-    (id: string, glide = true) => {
-      setThemeId(id);
-      setVariantIndex(0);
-      setOverrides({});
-      if (glide) glideTo(id);
-    },
-    [glideTo]
-  );
-
-  /** Whichever slide is nearest the centre becomes active (rAF-throttled). */
-  const onCarouselScroll = useCallback(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    lastScroll.current = performance.now();
-    cancelAnimationFrame(scrollRaf.current);
-    scrollRaf.current = requestAnimationFrame(() => {
-      // While a programmatic glide runs the target is already active.
-      if (glideRef.current) return;
-      const center = el.scrollLeft + el.clientWidth / 2;
-      let nearest = activeRef.current;
-      let best = Infinity;
-      el.querySelectorAll<HTMLElement>("[data-slide]").forEach((slide) => {
-        const d = Math.abs(slide.offsetLeft + slide.offsetWidth / 2 - center);
-        if (d < best) {
-          best = d;
-          nearest = slide.dataset.slide ?? nearest;
-        }
-      });
-      if (nearest !== activeRef.current) chooseTheme(nearest, false);
-    });
-  }, [chooseTheme]);
-
-  // Wheel steps the rail; a horizontal wheel (or a touch) cancels the glide.
-  useEffect(() => {
-    if (!open) return;
-    const el = carouselRef.current;
-    if (!el) return;
-    let gate = 0;
-    const onWheel = (event: WheelEvent) => {
-      const steps = event.deltaMode === 1 || (Math.abs(event.deltaY) >= 50 && event.deltaX === 0);
-      if (!steps) {
-        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) stopGlide();
-        return;
-      }
-      if (event.ctrlKey) return;
-      event.preventDefault();
-      const now = performance.now();
-      if (now < gate) return;
-      gate = now + 200;
-      const ids = Array.from(
-        el.querySelectorAll<HTMLElement>("[data-slide]")
-      ).map((slide) => slide.dataset.slide ?? "");
-      const next = ids[ids.indexOf(activeRef.current) + Math.sign(event.deltaY)];
-      if (next) chooseTheme(next);
-    };
-    const onTouch = () => stopGlide();
-    el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("touchstart", onTouch, { passive: true });
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("touchstart", onTouch);
-    };
-  }, [open, chooseTheme, stopGlide]);
-
-  // Centre the active card instantly on open, on a size change, and on resize.
-  useEffect(() => {
-    if (!open) return;
-    stopGlide();
-    const el = carouselRef.current;
-    const target = centerOf(activeRef.current);
-    if (el && target !== null) el.scrollLeft = target;
-    return stopGlide;
-  }, [open, frameW, mode, centerOf, stopGlide]);
 
   /* ------------------------------------------------------------- painting */
 
@@ -490,80 +351,74 @@ export function ShareQuote({
 
             {/* The designs. The card's height is the band; its width follows the
                 size's aspect, so Post and Square are wider. */}
-            <div
-              ref={carouselRef}
-              tabIndex={0}
-              role="group"
-              aria-roledescription="carousel"
-              aria-label="Styles"
-              onScroll={onCarouselScroll}
-              className="no-scrollbar relative flex snap-x snap-mandatory items-center overflow-x-auto overflow-y-hidden outline-none [overscroll-behavior-x:contain] data-[gliding=true]:snap-none"
-              style={{
-                gap: GAP,
-                marginTop: GAP - 12,
-                height: band + 40,
-                paddingTop: 12,
-                paddingBottom: 28,
-                paddingInline: `calc(50% - ${frameW / 2}px)`,
-              }}
-            >
-              {THEMES.map((t, index) => {
-                const activeIndex = THEMES.findIndex((x) => x.id === themeId);
-                const active = themeId === t.id;
-                const peek =
-                  active ? "on" : index < activeIndex ? "before" : "after";
-                return (
-                  <div
-                    key={t.id}
-                    data-slide={t.id}
-                    data-peek={peek}
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label={t.name}
-                    aria-current={active || undefined}
-                    style={{ width: frameW, height: frameH }}
-                    onPointerDown={(event) =>
-                      (pointerStart.current = {
-                        x: event.clientX,
-                        y: event.clientY,
-                      })
-                    }
-                    className="group relative flex-none snap-center snap-always transition-transform duration-200 ease-out motion-reduce:transition-none data-[peek=before]:origin-[100%] data-[peek=before]:scale-[0.92] data-[peek=after]:origin-[0] data-[peek=after]:scale-[0.92] data-[peek=before]:hover:scale-[0.95] data-[peek=after]:hover:scale-[0.95]"
-                  >
-                    <button
-                      type="button"
-                      aria-label={`Use the ${t.name} design`}
-                      aria-pressed={active}
-                      onClick={(event) => {
-                        const start = pointerStart.current;
-                        const still =
-                          !start ||
-                          Math.hypot(
-                            event.clientX - start.x,
-                            event.clientY - start.y
-                          ) < 4;
-                        const recent =
-                          performance.now() - lastScroll.current < 150;
-                        if (active || !still || recent) return;
-                        chooseTheme(t.id);
-                      }}
-                      className="block h-full w-full cursor-pointer rounded-md p-0 text-left"
+            <SnapCarousel value={themeId} onValueChange={chooseTheme} gap={GAP}>
+              <SnapCarouselContent
+                tabIndex={0}
+                role="group"
+                aria-roledescription="carousel"
+                aria-label="Styles"
+                onScroll={() => {
+                  lastScroll.current = performance.now();
+                }}
+                style={{
+                  marginTop: GAP - 12,
+                  height: band + 40,
+                  paddingTop: 12,
+                  paddingBottom: 28,
+                  paddingInline: `calc(50% - ${frameW / 2}px)`,
+                }}
+              >
+                {THEMES.map((t, index) => {
+                  const active = themeId === t.id;
+                  return (
+                    <SnapCarouselItem
+                      key={t.id}
+                      value={t.id}
+                      aria-label={t.name}
+                      style={{ width: frameW, height: frameH }}
+                      onPointerDown={(event) =>
+                        (pointerStart.current = {
+                          x: event.clientX,
+                          y: event.clientY,
+                        })
+                      }
+                      className="group relative"
                     >
-                      <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05)] group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.14)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1)] dark:group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1),0_10px_28px_-6px_rgba(0,0,0,0.6)]">
-                        <canvas
-                          ref={(el) => {
-                            previewRefs.current[index] = el;
-                          }}
-                          style={{ width: frameW, height: frameH }}
-                          aria-label={`${t.name} design preview`}
-                          className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2"
-                        />
-                      </div>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                      <button
+                        type="button"
+                        aria-label={`Use the ${t.name} design`}
+                        aria-pressed={active}
+                        onClick={(event) => {
+                          const start = pointerStart.current;
+                          const still =
+                            !start ||
+                            Math.hypot(
+                              event.clientX - start.x,
+                              event.clientY - start.y
+                            ) < 4;
+                          const recent =
+                            performance.now() - lastScroll.current < 150;
+                          if (active || !still || recent) return;
+                          chooseTheme(t.id);
+                        }}
+                        className="block h-full w-full cursor-pointer rounded-md p-0 text-left"
+                      >
+                        <div className="relative h-full w-full overflow-hidden rounded-md shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05)] group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.05),0_8px_24px_-6px_rgba(0,0,0,0.14)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1)] dark:group-data-[peek=on]:shadow-[0_0_0_0.5px_rgba(255,255,255,0.1),0_10px_28px_-6px_rgba(0,0,0,0.6)]">
+                          <canvas
+                            ref={(el) => {
+                              previewRefs.current[index] = el;
+                            }}
+                            style={{ width: frameW, height: frameH }}
+                            aria-label={`${t.name} design preview`}
+                            className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2"
+                          />
+                        </div>
+                      </button>
+                    </SnapCarouselItem>
+                  );
+                })}
+              </SnapCarouselContent>
+            </SnapCarousel>
 
             {/* The active design's own variants. A hand-picked colour is a
                 custom layer on top of the preset, so the row clears its
