@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 export type AnchoredPanelAnchor =
   | Range
@@ -25,18 +25,36 @@ function resolve(anchor: AnchoredPanelAnchor): DOMRect | null {
  * `PopoverAnchor`. This turns a range (or a function that measures one) into the
  * measurable virtual element Radix expects, so Popper can still flip, shift and
  * follow the page on scroll.
+ *
+ * The last real rect is kept while the panel animates out. A closing panel with
+ * a null anchor would otherwise jump to 0,0 for one frame — a ghost flash in the
+ * top-left corner.
  */
 export function useAnchoredPanel(anchor: AnchoredPanelAnchor) {
+  const last = useRef<{
+    anchor: AnchoredPanelAnchor;
+    rect: DOMRect | null;
+  }>({ anchor: null, rect: null });
+
   return useMemo(
     () => ({
       current: {
         getBoundingClientRect: () => {
+          if (anchor && last.current.anchor !== anchor) {
+            last.current = { anchor, rect: null };
+          }
           const rect = resolve(anchor);
-          return rect ?? new DOMRect(0, 0, 0, 0);
+          if (rect) last.current.rect = rect;
+          return rect ?? last.current.rect ?? new DOMRect(0, 0, 0, 0);
         },
         getClientRects: () => {
+          if (anchor && last.current.anchor !== anchor) {
+            last.current = { anchor, rect: null };
+          }
           const rect = resolve(anchor);
-          return rect ? [rect] : [];
+          if (rect) last.current.rect = rect;
+          const kept = rect ?? last.current.rect;
+          return kept ? [kept] : [];
         },
         contextElement:
           typeof document === "undefined" ? undefined : document.body,
