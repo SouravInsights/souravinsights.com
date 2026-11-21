@@ -31,7 +31,7 @@ function InlineEditField({
   const [editing, setEditing] = React.useState(false);
 
   return (
-    <div className={cn("flex min-h-12 items-center gap-3", className)}>
+    <div className={cn("flex min-h-[52px] items-center gap-3", className)}>
       <div className="min-w-0 flex-1">
         {editing ? (
           <Textarea
@@ -49,17 +49,17 @@ function InlineEditField({
             variant="ghost"
             aria-label={`Edit ${label.toLowerCase()}`}
             onClick={() => setEditing(true)}
-            className="group flex h-auto w-full items-center gap-2.5 rounded-lg px-0 py-2.5 text-left font-normal hover:bg-transparent"
+            className="group flex h-auto w-full items-center gap-2.5 rounded-lg px-0 py-3 text-left font-normal hover:bg-transparent"
           >
             <span className="flex min-w-0 flex-1 flex-col gap-px">
-              <span className="text-[14px] leading-5 text-foreground/90">
+              <span className="text-[15px] leading-5 text-foreground/90">
                 {label}
               </span>
-              <span className="truncate text-[13px] leading-[18px] text-muted-foreground">
+              <span className="truncate text-[13.5px] leading-[19px] text-muted-foreground/90">
                 {value}
               </span>
             </span>
-            <span className="flex-none text-[12.5px] font-medium text-muted-foreground/80 group-hover:text-foreground">
+            <span className="flex-none text-[13px] font-medium text-muted-foreground/80 group-hover:text-foreground">
               Edit
             </span>
           </Button>

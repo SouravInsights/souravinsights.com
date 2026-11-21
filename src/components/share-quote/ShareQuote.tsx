@@ -533,8 +533,8 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-11 items-center justify-between gap-3">
-      <Label className="text-[14px] font-normal text-foreground/90">{label}</Label>
+    <div className="flex h-12 items-center justify-between gap-3">
+      <Label className="text-[15px] font-normal text-foreground/90">{label}</Label>
       {children}
     </div>
   );
@@ -555,7 +555,7 @@ function Choice<T extends string>({
     <Select value={value} onValueChange={(next) => onChange(next as T)}>
       <SelectTrigger
         aria-label={label}
-        className="h-8 w-[124px] flex-none rounded-lg border-0 bg-foreground/[0.055] px-2.5 text-[13px] hover:bg-foreground/[0.09] focus:ring-2 focus:ring-ring/30"
+        className="h-9 w-[128px] flex-none rounded-lg border-0 bg-foreground/[0.075] px-3 text-[13.5px] hover:bg-foreground/[0.11] focus:ring-2 focus:ring-ring/30"
       >
         <SelectValue />
       </SelectTrigger>
@@ -609,16 +609,6 @@ function CustomizePanel({
 }) {
   const dirty = Object.keys(overrides).length > 0;
   const isMarker = theme.style === "marker";
-  const unique = (values: (string | undefined)[]) =>
-    Array.from(new Set(values.filter((v): v is string => !!v)));
-  const backgroundPresets = unique(
-    theme.variants.map((v) =>
-      v.paint.kind === "solid" ? v.paint.color : v.paint.base
-    )
-  );
-  const textPresets = unique(theme.variants.map((v) => v.text));
-  const highlightPresets = unique(theme.variants.map((v) => v.highlight));
-  const quoteTextPresets = unique(theme.variants.map((v) => v.highlightText));
   const paintIsGradient = options.paint.kind === "mesh";
   const variantIsGradient = variant.paint.kind === "mesh";
 
@@ -629,7 +619,7 @@ function CustomizePanel({
           scrolled ? "border-border" : "border-transparent"
         }`}
       >
-        <h3 className="text-[15px] font-medium leading-[30px] tracking-[-0.01em] text-foreground">
+        <h3 className="text-[16px] font-medium leading-[30px] tracking-[-0.01em] text-foreground">
           Customize
         </h3>
         <div className="flex items-center gap-1">
@@ -656,13 +646,12 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-3.5 flex flex-col gap-2.5">
         <ColorField
           label="Background"
           value={options.background}
           valueLabel={paintIsGradient ? "Gradient" : undefined}
           onChange={(background) => set({ background })}
-          presets={backgroundPresets}
           extra={
             variantIsGradient
               ? {
@@ -680,19 +669,16 @@ function CustomizePanel({
               label="Highlight"
               value={options.highlight}
               onChange={(highlight) => set({ highlight })}
-              presets={highlightPresets}
             />
             <ColorField
               label="Quote text"
               value={options.highlightText}
               onChange={(highlightText) => set({ highlightText })}
-              presets={quoteTextPresets}
             />
             <ColorField
               label="Footer text"
               value={options.text}
               onChange={(text) => set({ text })}
-              presets={textPresets}
             />
           </>
         ) : (
@@ -700,12 +686,11 @@ function CustomizePanel({
             label="Text"
             value={options.text}
             onChange={(text) => set({ text })}
-            presets={textPresets}
           />
         )}
       </div>
 
-      <div className="mt-2.5 rounded-lg bg-foreground/[0.045] px-3">
+      <div className="mt-3 rounded-lg bg-foreground/[0.055] px-3">
         <Row label="Font">
           <Choice<FontChoice>
             label="Font"
@@ -720,7 +705,7 @@ function CustomizePanel({
         </Row>
       </div>
 
-      <div className="mt-2.5 rounded-lg bg-foreground/[0.045] px-3">
+      <div className="mt-3 rounded-lg bg-foreground/[0.055] px-3">
         <div className="divide-y divide-border/40">
           <Row label="Size">
             <Choice<SizeChoice>
@@ -760,7 +745,7 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-2.5 rounded-lg bg-foreground/[0.045] px-3">
+      <div className="mt-3 rounded-lg bg-foreground/[0.055] px-3">
         <div className="divide-y divide-border/40">
           <InlineEditField label="Quote" value={quote} onChange={setQuote} />
           <InlineEditField

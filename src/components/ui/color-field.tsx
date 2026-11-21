@@ -78,7 +78,7 @@ function ColorField({
       data-state={open ? "open" : "closed"}
       className={cn(
         "rounded-lg",
-        open ? "bg-foreground/[0.045] p-3" : "px-0 py-2",
+        open ? "bg-foreground/[0.055] p-3.5" : "px-0 py-2.5",
         className
       )}
     >
@@ -100,12 +100,12 @@ function ColorField({
 
         <Label
           htmlFor={id}
-          className="text-[14px] font-normal leading-5 text-foreground"
+          className="text-[15px] font-normal leading-5 text-foreground"
         >
           {label}
         </Label>
 
-        <span className="ml-auto text-[12px] tabular-nums text-muted-foreground">
+        <span className="ml-auto text-[13px] tabular-nums text-muted-foreground/90">
           {valueLabel ?? value.toUpperCase()}
         </span>
       </div>
