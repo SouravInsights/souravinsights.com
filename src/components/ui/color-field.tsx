@@ -106,7 +106,7 @@ function ColorField({
             title={extra.label}
             style={{ background: extra.background }}
             className={cn(
-              "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
+              "size-6 flex-none rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-[transform,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [@media(hover:hover)]:hover:scale-110 motion-safe:active:scale-95 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
               extra.active &&
                 "ring-2 ring-foreground ring-offset-2 ring-offset-background"
             )}
@@ -140,7 +140,7 @@ function ColorField({
             aria-controls={`${id}-picker`}
             onClick={() => setOpen((current) => !current)}
             className={cn(
-              "relative ml-auto size-6 shrink-0 rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-transform duration-150 hover:scale-110 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
+              "relative ml-auto size-6 shrink-0 rounded-full p-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] transition-[transform,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [@media(hover:hover)]:hover:scale-110 motion-safe:active:scale-95 dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]",
               open && "ring-2 ring-foreground ring-offset-2 ring-offset-background"
             )}
             style={{
