@@ -290,7 +290,6 @@ export function ShareQuote({
       set={set}
       clear={clear}
       reset={() => setOverrides({})}
-      clearColors={clearColorOverrides}
       quote={draftQuote}
       setQuote={setDraftQuote}
       title={draftTitle}
@@ -335,13 +334,13 @@ export function ShareQuote({
             {/* Size */}
             <div className="flex h-[30px] items-center justify-center">
               <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
-                <TabsList className="inline-flex h-auto items-center rounded-[9px] bg-foreground/[0.06] p-[2px]">
+                <TabsList className="inline-flex h-auto items-center rounded-[10px] bg-foreground/[0.055] p-[3px]">
                   {MODES.map((m) => (
                     <TabsTrigger
                       key={m.id}
                       value={m.id}
                       title={m.tip}
-                      className="h-[26px] rounded-[7px] px-3.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-foreground/[0.1] data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                      className="h-[24px] rounded-[7px] px-4 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                     >
                       {m.label}
                     </TabsTrigger>
@@ -463,7 +462,7 @@ export function ShareQuote({
             aria-label="Customize"
             pressed={customize}
             onPressedChange={setCustomize}
-            className="h-[30px] gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-muted-foreground transition-colors active:scale-[0.96] data-[state=on]:bg-foreground/[0.1] data-[state=on]:text-foreground"
+            className="h-8 gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-muted-foreground transition-colors active:scale-[0.97] data-[state=on]:bg-foreground/[0.1] data-[state=on]:text-foreground"
           >
             <SlidersHorizontal className="size-3.5" />
             <span className="hidden sm:inline">Customize</span>
@@ -489,7 +488,7 @@ export function ShareQuote({
             variant="secondary"
             onClick={save}
             disabled={status === "working"}
-            className="h-[30px] min-w-[108px] gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-foreground"
+            className="h-8 min-w-[108px] gap-1.5 rounded-lg px-3 text-[13.5px] font-medium text-foreground"
           >
             {status === "working" ? (
               <SpinnerGap className="size-3.5 animate-spin text-muted-foreground" />
@@ -506,7 +505,7 @@ export function ShareQuote({
             type="button"
             onClick={copy}
             disabled={status === "working"}
-            className="h-[30px] min-w-[112px] gap-1.5 rounded-lg bg-foreground px-3 text-[13.5px] font-semibold text-background hover:bg-foreground/90"
+            className="h-8 min-w-[112px] gap-1.5 rounded-lg bg-foreground px-3 text-[13.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.97]"
           >
             {status === "done" ? (
               <Check className="size-3.5 opacity-70" />
@@ -534,8 +533,8 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-9 items-center justify-between gap-3">
-      <Label className="text-[13px] font-normal text-foreground">{label}</Label>
+    <div className="flex h-11 items-center justify-between gap-3">
+      <Label className="text-[14px] font-normal text-foreground/90">{label}</Label>
       {children}
     </div>
   );
@@ -556,7 +555,7 @@ function Choice<T extends string>({
     <Select value={value} onValueChange={(next) => onChange(next as T)}>
       <SelectTrigger
         aria-label={label}
-        className="h-7 w-[116px] flex-none rounded-lg border-0 bg-foreground/[0.06] px-2.5 text-[13px] hover:bg-foreground/[0.1] focus:ring-2 focus:ring-ring/30"
+        className="h-8 w-[124px] flex-none rounded-lg border-0 bg-foreground/[0.055] px-2.5 text-[13px] hover:bg-foreground/[0.09] focus:ring-2 focus:ring-ring/30"
       >
         <SelectValue />
       </SelectTrigger>
@@ -583,7 +582,6 @@ function CustomizePanel({
   set,
   clear,
   reset,
-  clearColors,
   quote,
   setQuote,
   title,
@@ -600,7 +598,6 @@ function CustomizePanel({
   set: (patch: Overrides) => void;
   clear: (key: keyof Overrides) => void;
   reset: () => void;
-  clearColors: () => void;
   quote: string;
   setQuote: (value: string) => void;
   title: string;
@@ -624,12 +621,6 @@ function CustomizePanel({
   const quoteTextPresets = unique(theme.variants.map((v) => v.highlightText));
   const paintIsGradient = options.paint.kind === "mesh";
   const variantIsGradient = variant.paint.kind === "mesh";
-  const colorOverridden = [
-    "background",
-    "text",
-    "highlight",
-    "highlightText",
-  ].some((key) => overrides[key as keyof Overrides] !== undefined);
 
   return (
     <>
@@ -638,7 +629,7 @@ function CustomizePanel({
           scrolled ? "border-border" : "border-transparent"
         }`}
       >
-        <h3 className="text-[14px] font-semibold leading-[30px] text-foreground">
+        <h3 className="text-[15px] font-medium leading-[30px] tracking-[-0.01em] text-foreground">
           Customize
         </h3>
         <div className="flex items-center gap-1">
@@ -665,24 +656,7 @@ function CustomizePanel({
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
-        <h4 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          Colors
-        </h4>
-        {colorOverridden && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={clearColors}
-            className="h-auto p-0 text-[12px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
-          >
-            Reset
-          </Button>
-        )}
-      </div>
-
-      <div className="flex flex-col">
+      <div className="mt-3 flex flex-col gap-2">
         <ColorField
           label="Background"
           value={options.background}
@@ -731,7 +705,7 @@ function CustomizePanel({
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="mt-2.5 rounded-2xl bg-foreground/[0.045] px-3">
         <Row label="Font">
           <Choice<FontChoice>
             label="Font"
@@ -746,62 +720,64 @@ function CustomizePanel({
         </Row>
       </div>
 
-      <div className="mt-3 flex flex-col">
-        <Row label="Size">
-          <Choice<SizeChoice>
-            label="Size"
-            value={options.size}
-            onChange={(size) => set({ size })}
-            options={[
-              { value: "small", label: "Small" },
-              { value: "medium", label: "Medium" },
-              { value: "large", label: "Large" },
-            ]}
-          />
-        </Row>
-        <Row label="Align">
-          <Choice<AlignChoice>
-            label="Align"
-            value={options.align}
-            onChange={(align) => set({ align })}
-            options={[
-              { value: "left", label: "Left" },
-              { value: "center", label: "Center" },
-            ]}
-          />
-        </Row>
-        <Row label="Position">
-          <Choice<PositionChoice>
-            label="Position"
-            value={options.position}
-            onChange={(position) => set({ position })}
-            options={[
-              { value: "top", label: "Top" },
-              { value: "middle", label: "Middle" },
-              { value: "bottom", label: "Bottom" },
-            ]}
-          />
-        </Row>
+      <div className="mt-2.5 rounded-2xl bg-foreground/[0.045] px-3">
+        <div className="divide-y divide-border/40">
+          <Row label="Size">
+            <Choice<SizeChoice>
+              label="Size"
+              value={options.size}
+              onChange={(size) => set({ size })}
+              options={[
+                { value: "small", label: "Small" },
+                { value: "medium", label: "Medium" },
+                { value: "large", label: "Large" },
+              ]}
+            />
+          </Row>
+          <Row label="Align">
+            <Choice<AlignChoice>
+              label="Align"
+              value={options.align}
+              onChange={(align) => set({ align })}
+              options={[
+                { value: "left", label: "Left" },
+                { value: "center", label: "Center" },
+              ]}
+            />
+          </Row>
+          <Row label="Position">
+            <Choice<PositionChoice>
+              label="Position"
+              value={options.position}
+              onChange={(position) => set({ position })}
+              options={[
+                { value: "top", label: "Top" },
+                { value: "middle", label: "Middle" },
+                { value: "bottom", label: "Bottom" },
+              ]}
+            />
+          </Row>
+        </div>
       </div>
 
-      <Separator className="mb-1.5 mt-3" />
-
-      <div className="flex flex-col">
-        <InlineEditField label="Quote" value={quote} onChange={setQuote} />
-        <InlineEditField
-          label="Title"
-          value={title}
-          onChange={setTitle}
-          visible={options.showTitle}
-          onVisibleChange={(showTitle) => set({ showTitle })}
-        />
-        <InlineEditField
-          label="Publication"
-          value={publication}
-          onChange={setPublication}
-          visible={options.showPublication}
-          onVisibleChange={(showPublication) => set({ showPublication })}
-        />
+      <div className="mt-2.5 rounded-2xl bg-foreground/[0.045] px-3">
+        <div className="divide-y divide-border/40">
+          <InlineEditField label="Quote" value={quote} onChange={setQuote} />
+          <InlineEditField
+            label="Title"
+            value={title}
+            onChange={setTitle}
+            visible={options.showTitle}
+            onVisibleChange={(showTitle) => set({ showTitle })}
+          />
+          <InlineEditField
+            label="Publication"
+            value={publication}
+            onChange={setPublication}
+            visible={options.showPublication}
+            onVisibleChange={(showPublication) => set({ showPublication })}
+          />
+        </div>
       </div>
     </>
   );
