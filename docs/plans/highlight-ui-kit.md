@@ -19,7 +19,8 @@ wheel listener.
 | :--- | :--- | :--- |
 | Palette | `src/lib/highlight-palette.ts` | extracted |
 | Mark maths | `src/lib/highlight-anchor.ts` | extracted |
-| Mark engine + palette UI | `src/components/highlight/highlight.tsx` | monolith |
+| Mark engine + palette UI | `src/components/highlight/highlight.tsx` | engine + context |
+| Toolbar parts | same file | composable exports |
 | Highlight rail | `src/components/highlight/highlight-rail.tsx` + `src/components/ui/marker-rail.tsx` | rail extracted, list still local |
 | Wave | `src/components/highlight/wave.ts` | extracted |
 | Quote studio | `src/components/share-quote/dialog.tsx` | dialog + state |
@@ -52,17 +53,17 @@ Done in this refactor:
 - rail geometry moved to `MarkerRail`
 - options panel, variant picker, design rail and footer split from the dialog
 - quote card code split into presets, themes and renderer; fills live in themes
+- highlight toolbar split into context-backed `HighlightToolbar`, `HighlightActions`, `HighlightColors`, `HighlightList`
 - `cards.ts` split into presets, themes and render; fills live with themes
 
 ## Remaining foundation work
 
 ### 1. Highlights
 
-- Split `highlight.tsx` internally:
-  `Highlight`, `HighlightToolbar`, `HighlightColors`, `HighlightActions`,
-  `HighlightCopy`, `HighlightShare`, `HighlightLink`, `HighlightRemove`,
-  `HighlightList`.
+- The toolbar parts are exported; keep their DOM as the default composition.
 - Extract selection reading into `use-text-selection.ts`.
+- The file is still large; the next cut is the selection hook. A separate
+  toolbar file needs the context in its own module to avoid a cycle.
 - Public mark shape:
 
 ```ts
@@ -95,7 +96,7 @@ type HighlightMark = {
 
 | Public name | File |
 | :--- | :--- |
-| `Highlight`, `HighlightToolbar`, … | `highlight.tsx` |
+| `Highlight`, `HighlightToolbar`, `HighlightActions`, `HighlightColors`, `HighlightList` | `highlight.tsx` |
 | `HighlightRail` | `highlight-rail.tsx` |
 | `MarkerRail` | `marker-rail.tsx` |
 | `useTextSelection` | `use-text-selection.ts` |
