@@ -60,31 +60,39 @@ import thunderstormsRainStill from "@meteocons/svg-static/fill/thunderstorms-rai
 import thunderstormsSnow from "@meteocons/svg/fill/thunderstorms-snow.svg";
 import thunderstormsSnowStill from "@meteocons/svg-static/fill/thunderstorms-snow.svg";
 
+/**
+ * A static SVG import resolves to `{ src, height, width }` under webpack and to
+ * the URL string itself under Turbopack (Next 16). Normalize both so the icon
+ * renders under either bundler.
+ */
+const url = (icon: string | { src: string }): string =>
+  typeof icon === "string" ? icon : icon.src;
+
 export const METEOCONS: Record<WeatherSlug, { animated: string; still: string }> = {
-  "clear-day": { animated: clearDay.src, still: clearDayStill.src },
-  "clear-night": { animated: clearNight.src, still: clearNightStill.src },
-  "partly-cloudy-day": { animated: partlyCloudyDay.src, still: partlyCloudyDayStill.src },
-  "partly-cloudy-night": { animated: partlyCloudyNight.src, still: partlyCloudyNightStill.src },
-  "cloudy": { animated: cloudy.src, still: cloudyStill.src },
-  "overcast": { animated: overcast.src, still: overcastStill.src },
-  "haze": { animated: haze.src, still: hazeStill.src },
-  "dust": { animated: dust.src, still: dustStill.src },
-  "wind-dust": { animated: windDust.src, still: windDustStill.src },
-  "mist": { animated: mist.src, still: mistStill.src },
-  "smoke": { animated: smoke.src, still: smokeStill.src },
-  "fog": { animated: fog.src, still: fogStill.src },
-  "drizzle": { animated: drizzle.src, still: drizzleStill.src },
-  "rain": { animated: rain.src, still: rainStill.src },
-  "extreme-rain": { animated: extremeRain.src, still: extremeRainStill.src },
-  "sleet": { animated: sleet.src, still: sleetStill.src },
-  "extreme-sleet": { animated: extremeSleet.src, still: extremeSleetStill.src },
-  "snow": { animated: snow.src, still: snowStill.src },
-  "extreme-snow": { animated: extremeSnow.src, still: extremeSnowStill.src },
-  "wind-snow": { animated: windSnow.src, still: windSnowStill.src },
-  "hail": { animated: hail.src, still: hailStill.src },
-  "extreme-hail": { animated: extremeHail.src, still: extremeHailStill.src },
-  "thunderstorms-day": { animated: thunderstormsDay.src, still: thunderstormsDayStill.src },
-  "thunderstorms-night": { animated: thunderstormsNight.src, still: thunderstormsNightStill.src },
-  "thunderstorms-rain": { animated: thunderstormsRain.src, still: thunderstormsRainStill.src },
-  "thunderstorms-snow": { animated: thunderstormsSnow.src, still: thunderstormsSnowStill.src },
+  "clear-day": { animated: url(clearDay), still: url(clearDayStill) },
+  "clear-night": { animated: url(clearNight), still: url(clearNightStill) },
+  "partly-cloudy-day": { animated: url(partlyCloudyDay), still: url(partlyCloudyDayStill) },
+  "partly-cloudy-night": { animated: url(partlyCloudyNight), still: url(partlyCloudyNightStill) },
+  "cloudy": { animated: url(cloudy), still: url(cloudyStill) },
+  "overcast": { animated: url(overcast), still: url(overcastStill) },
+  "haze": { animated: url(haze), still: url(hazeStill) },
+  "dust": { animated: url(dust), still: url(dustStill) },
+  "wind-dust": { animated: url(windDust), still: url(windDustStill) },
+  "mist": { animated: url(mist), still: url(mistStill) },
+  "smoke": { animated: url(smoke), still: url(smokeStill) },
+  "fog": { animated: url(fog), still: url(fogStill) },
+  "drizzle": { animated: url(drizzle), still: url(drizzleStill) },
+  "rain": { animated: url(rain), still: url(rainStill) },
+  "extreme-rain": { animated: url(extremeRain), still: url(extremeRainStill) },
+  "sleet": { animated: url(sleet), still: url(sleetStill) },
+  "extreme-sleet": { animated: url(extremeSleet), still: url(extremeSleetStill) },
+  "snow": { animated: url(snow), still: url(snowStill) },
+  "extreme-snow": { animated: url(extremeSnow), still: url(extremeSnowStill) },
+  "wind-snow": { animated: url(windSnow), still: url(windSnowStill) },
+  "hail": { animated: url(hail), still: url(hailStill) },
+  "extreme-hail": { animated: url(extremeHail), still: url(extremeHailStill) },
+  "thunderstorms-day": { animated: url(thunderstormsDay), still: url(thunderstormsDayStill) },
+  "thunderstorms-night": { animated: url(thunderstormsNight), still: url(thunderstormsNightStill) },
+  "thunderstorms-rain": { animated: url(thunderstormsRain), still: url(thunderstormsRainStill) },
+  "thunderstorms-snow": { animated: url(thunderstormsSnow), still: url(thunderstormsSnowStill) },
 };
