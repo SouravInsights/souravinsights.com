@@ -13,7 +13,8 @@
     "start": "next start",
     "inspect": "tsx scripts/kb-inspect.ts",
     "trace": "tsx scripts/kb-trace.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "oxlint --type-aware --type-check .",
+    "typecheck:tsc": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/otel": "^1.0.143",

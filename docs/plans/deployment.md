@@ -99,13 +99,18 @@ Only one of its pieces fits this repo:
 | oxc piece | Use it? | Why |
 | :--- | :--- | :--- |
 | `oxlint` | **yes** | Lints the whole repo in ~0.3s. Replaces ESLint. |
+| `oxlint --type-aware` | **yes** | Type-aware lint rules (no-floating-promises, no-unsafe-type-assertion) via `oxlint-tsgolint`. |
+| `oxlint --type-check` | **yes** | Type-checks with oxc's tsgo checker. Replaces `tsc --noEmit`: same TS2322 errors, ~2s for the whole repo instead of ~10s per app. |
 | `oxc-transform` / `oxc-minify` | no | Next's Turbopack already transforms and minifies with SWC; there is no hook to swap it. |
-| `oxc-resolver` | transitively | `unrs-resolver` is already in the tree through ESLint's import resolver. |
-| type-checking | no | oxc does not type-check. `tsc` (site) and tsgo (kit) do. |
+| `oxc-resolver` | no | Next owns its resolver; it came in transitively through ESLint, which is gone. |
 
 `oxlint` runs from the root with `.oxlintrc.json` (react, nextjs, jsx-a11y,
-import, unicorn, typescript, oxc) via `bun run lint`. ESLint, `eslint-config-next`
-and the flat config are gone.
+import, unicorn, typescript, oxc). `bun run lint` is the fast syntactic pass;
+`bun run typecheck` adds `--type-aware --type-check`. ESLint, `eslint-config-next`,
+the flat config and `tsc` are out of the lint/type path.
+
+`oxfmt` (the formatter) is the one remaining oxc tool worth adopting; a first
+run reformats ~314 files, so it belongs in its own change.
 
 It surfaces ~340 findings the old `core-web-vitals` preset never checked
 (jsx-a11y, unused vars, react-hooks, next). They are warnings, matching the old

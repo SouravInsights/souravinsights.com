@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "oxlint": "^1.94.0",
+    "oxlint-tsgolint": "^7.0.2008",
     "turbo": "^2.5.8"
   },
   "workspaces": [
@@ -30,7 +31,6 @@
     "@sparticuz/chromium",
     "@tailwindcss/oxide",
     "esbuild",
-    "sharp",
-    "unrs-resolver"
+    "sharp"
   ]
 }
