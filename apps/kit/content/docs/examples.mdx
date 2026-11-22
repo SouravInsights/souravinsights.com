@@ -1,0 +1,78 @@
+---
+title: Examples
+description: Four starting points.
+---
+
+## Minimal article
+
+```tsx
+"use client";
+
+import { useRef, useState } from "react";
+import { Highlight, type HighlightMark } from "@/components/highlight/highlight";
+import { ShareQuoteDialog } from "@/components/quote/dialog";
+
+const ref = useRef<HTMLDivElement>(null);
+const [marks, setMarks] = useState<HighlightMark[]>([]);
+const [quote, setQuote] = useState(null);
+
+<div ref={ref}>{content}</div>
+
+<Highlight
+  containerRef={ref}
+  marks={marks}
+  onMarksChange={setMarks}
+  onShareQuote={setQuote}
+/>
+
+<ShareQuoteDialog
+  open={!!quote}
+  onOpenChange={(open) => !open && setQuote(null)}
+  quote={quote?.quote ?? ""}
+  context={quote?.context ?? ""}
+  title={title}
+  publication={publication}
+/>
+```
+
+## Custom toolbar
+
+```tsx
+<Highlight containerRef={ref} marks={marks} onMarksChange={setMarks}>
+  <HighlightToolbar>
+    <HighlightColors />
+    <HighlightActions>
+      <HighlightShare onShare={setQuote} />
+      <HighlightRemove />
+    </HighlightActions>
+    <HighlightList />
+  </HighlightToolbar>
+</Highlight>
+```
+
+## Persisted marks
+
+```tsx
+<Highlight
+  containerRef={ref}
+  initialMarks={saved}
+  onCreate={async (anchor) => api.create(anchor)}
+  onRecolor={(id, hue) => api.recolor(id, hue)}
+  onDelete={(id) => api.remove(id)}
+  onShareQuote={setQuote}
+/>
+```
+
+## Quote card only
+
+```tsx
+import { QuoteCard } from "@/components/quote/quote-card";
+import { THEMES } from "@/components/quote/themes";
+
+<QuoteCard
+  theme={THEMES[0]}
+  variant={THEMES[0].variants[0]}
+  mode="post"
+  content={{ quote, title, publication, context }}
+/>
+```

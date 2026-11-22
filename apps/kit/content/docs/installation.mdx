@@ -1,0 +1,29 @@
+---
+title: Installation
+description: Set up a Radix-based app and add the kit.
+---
+
+The kit is distributed through the shadcn CLI. There is no package to version;
+the files land in your app and you own them.
+
+## Initialize
+
+```bash
+npx shadcn@latest init -b radix
+```
+
+## Add the engine
+
+```bash
+npx shadcn@latest add https://ui.souravinsights.com/r/highlight.json
+```
+
+## Add the quote studio
+
+```bash
+npx shadcn@latest add https://ui.souravinsights.com/r/quote-share-dialog.json
+```
+
+The highlight item pulls the palette, anchors, selection hook, toolbar, rail and
+Radix dependencies. The quote item pulls the carousel, card, canvas, options,
+variant picker and actions.
