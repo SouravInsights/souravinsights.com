@@ -19,15 +19,13 @@ async function getVisitorId(): Promise<string> {
 // A post keeps its stats across renames, so a total is the sum over every slug
 // it has answered on. See `src/lib/post-aliases.ts`.
 async function getTotalViews(slugs: string[]): Promise<number> {
-  const values = await Promise.all(
-    slugs.map((slug) => redis.get<number>(`blog:views:${slug}`))
-  );
+  const values = await Promise.all(slugs.map((slug) => redis.get<number>(`blog:views:${slug}`)));
   return values.reduce<number>((total, value) => total + (value ?? 0), 0);
 }
 
 async function hasViewedAny(slugs: string[], visitorId: string): Promise<boolean> {
   const values = await Promise.all(
-    slugs.map((slug) => redis.get(`blog:views:${slug}:${visitorId}`))
+    slugs.map((slug) => redis.get(`blog:views:${slug}:${visitorId}`)),
   );
   return values.some(Boolean);
 }
@@ -46,10 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ views });
   } catch (error) {
     console.error("Error fetching views:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch views" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch views" }, { status: 500 });
   }
 }
 
@@ -80,9 +75,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ views });
   } catch (error) {
     console.error("Error updating views:", error);
-    return NextResponse.json(
-      { error: "Failed to update views" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update views" }, { status: 500 });
   }
 }

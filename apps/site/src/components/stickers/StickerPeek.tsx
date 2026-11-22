@@ -28,8 +28,7 @@ export function StickerPeek({ className }: { className?: string }) {
     // Never land back on the same sticker — a poke must visibly do something.
     setIndex(
       (current) =>
-        (current + 1 + Math.floor(Math.random() * (STICKERS.length - 1))) %
-        STICKERS.length
+        (current + 1 + Math.floor(Math.random() * (STICKERS.length - 1))) % STICKERS.length,
     );
   }, [feedback]);
 
@@ -41,7 +40,7 @@ export function StickerPeek({ className }: { className?: string }) {
       className={cn(
         // Resting tilt, so it reads as a sticker rather than a floating image.
         "group relative block h-16 w-16 -rotate-[10deg] cursor-pointer select-none transition-transform duration-100 ease-out active:scale-95 sm:h-20 sm:w-20",
-        className
+        className,
       )}
     >
       {STICKERS.map((sticker, i) => {

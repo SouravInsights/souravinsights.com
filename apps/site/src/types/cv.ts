@@ -71,7 +71,8 @@ export const defaultCVData: CVData = {
     linkedin: "linkedin.com/in/souravinsights/",
     twitter: "x.com/souravinsights",
   },
-  about: "Product Engineer with 4+ years of experience building and shipping products end-to-end, from data model and API design to interface and deployment. Proven track record of taking ownership of messy problems across the stack. Currently building open-source developer tooling for WebMCP and writing a handbook on reliable software in the age of AI agents. Thrives in small fast-moving teams and contributes to open-source ecosystems.",
+  about:
+    "Product Engineer with 4+ years of experience building and shipping products end-to-end, from data model and API design to interface and deployment. Proven track record of taking ownership of messy problems across the stack. Currently building open-source developer tooling for WebMCP and writing a handbook on reliable software in the age of AI agents. Thrives in small fast-moving teams and contributes to open-source ecosystems.",
   workExperience: [
     {
       id: "1",
@@ -137,7 +138,7 @@ export const defaultCVData: CVData = {
         "Owned the decentralization workstream: integrated Ceramic into the client stack for decentralized identity and data storage, and built subgraphs on The Graph protocol to query blockchain data efficiently.",
         "Contributed to the backend notification API, designing and implementing GraphQL resolvers with Prisma and PostgreSQL.",
       ],
-    }
+    },
   ],
   projects: [
     {
@@ -204,13 +205,14 @@ export const defaultCVData: CVData = {
       degree: "Bachelor of Technology - BTech, Computer Science Engineering",
       institution: "Gandhi Institute for Technological Advancement",
       location: "Bhubaneswar, India",
-    }
+    },
   ],
   skills: [
     {
       id: "1",
       category: "Languages & Frameworks",
-      items: "TypeScript, JavaScript, React, React Native, Next.js (App Router), Expo, Node.js, TailwindCSS, NativeWind, Shadcn, Radix UI, TanStack, Zustand, Jotai",
+      items:
+        "TypeScript, JavaScript, React, React Native, Next.js (App Router), Expo, Node.js, TailwindCSS, NativeWind, Shadcn, Radix UI, TanStack, Zustand, Jotai",
     },
     {
       id: "2",
@@ -220,7 +222,8 @@ export const defaultCVData: CVData = {
     {
       id: "3",
       category: "Backend & Data",
-      items: "Fastify, PostgreSQL, Drizzle ORM, Neon, TypeBox, Zod, REST / OpenAPI, GraphQL (Relay, Apollo), Prisma, Better Auth, Razorpay, Google Maps API, Resend",
+      items:
+        "Fastify, PostgreSQL, Drizzle ORM, Neon, TypeBox, Zod, REST / OpenAPI, GraphQL (Relay, Apollo), Prisma, Better Auth, Razorpay, Google Maps API, Resend",
     },
     {
       id: "4",
@@ -232,7 +235,8 @@ export const defaultCVData: CVData = {
       category: "Tooling & Infrastructure",
       // Items stay short and name-like so the row keeps its rhythm; the
       // proofs live in the webmcp-stack bullets in Independent projects.
-      items: "Turborepo, GitHub Actions, Docker, Vercel, AWS (Lightsail), Cloudflare (R2, Workers, Image Transformations), CLI dev tools, npm packages, Sentry, BetterStack, PostHog",
+      items:
+        "Turborepo, GitHub Actions, Docker, Vercel, AWS (Lightsail), Cloudflare (R2, Workers, Image Transformations), CLI dev tools, npm packages, Sentry, BetterStack, PostHog",
     },
     {
       id: "6",
@@ -241,8 +245,8 @@ export const defaultCVData: CVData = {
         "Timezone Flexibility: 3+ years working with US-based startups in EST/PST",
         "Communication: Proficient in async updates, Slack, Notion, Linear",
         "Team Experience: Cross-functional collaboration with designers, PMs, and backend engineers",
-        "Culture: Fast-paced startup environments, iterative product development, strong ownership mindset"
+        "Culture: Fast-paced startup environments, iterative product development, strong ownership mindset",
       ],
-    }
-  ]
+    },
+  ],
 };

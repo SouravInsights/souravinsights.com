@@ -27,7 +27,7 @@ export default function HighlightsList({
   const loadMore = async () => {
     const nextPage = page + 1;
     const res = await fetch(
-      `/api/readwise/highlights?bookId=${bookId}&page=${nextPage}&sort=${sortBy}`
+      `/api/readwise/highlights?bookId=${bookId}&page=${nextPage}&sort=${sortBy}`,
     );
     const data = await res.json();
     setHighlights((prev) => [...prev, ...data.results]);
@@ -45,9 +45,7 @@ export default function HighlightsList({
       <div className="mb-4">
         <select
           value={sortBy}
-          onChange={(e) =>
-            handleSortChange(e.target.value as "date" | "location")
-          }
+          onChange={(e) => handleSortChange(e.target.value as "date" | "location")}
           className="bg-white dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded"
         >
           <option value="date">Sort by Date</option>
@@ -71,9 +69,7 @@ export default function HighlightsList({
           )}
           <div className="flex justify-between type-caption text-gray-500 dark:text-gray-400">
             <span>Location: {highlight.location}</span>
-            <span>
-              Date: {new Date(highlight.highlighted_at).toLocaleDateString()}
-            </span>
+            <span>Date: {new Date(highlight.highlighted_at).toLocaleDateString()}</span>
           </div>
           {highlight.tags && highlight.tags.length > 0 && (
             <div className="mt-2">

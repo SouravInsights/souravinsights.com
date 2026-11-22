@@ -76,8 +76,7 @@ ${input.sample}`;
 
 /** What describe answers, per category: squeeze the single page for summary. */
 export const DESCRIBE_PROMPTS: Record<Category, string> = {
-  article:
-    "Capture the thesis and the key claims — the argument, not the wrapper.",
+  article: "Capture the thesis and the key claims — the argument, not the wrapper.",
   publication:
     "Capture what this outlet publishes, who edits or writes it, and its cadence or subscription details if shown.",
   people:
@@ -87,8 +86,7 @@ export const DESCRIBE_PROMPTS: Record<Category, string> = {
   tool: "Capture what it does, who it is for, and its pricing or free tier or open-source status if shown.",
   learning:
     "Capture what it teaches, its structure or table of contents if present, and any FAQ or price nuggets. If the page is thin, the summary says so honestly.",
-  directory:
-    "Capture what the place is and what kind of destinations it points to.",
+  directory: "Capture what the place is and what kind of destinations it points to.",
   other: "Describe what this page is and what it offers.",
 };
 

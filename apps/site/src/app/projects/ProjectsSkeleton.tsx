@@ -36,9 +36,7 @@ export function ProjectsSkeleton({
       <div className="flex flex-col">
         {featuredItems.map((item, index) => (
           <Fragment key={item.key}>
-            {index > 0 && (
-              <div className="rule my-7 sm:my-8" aria-hidden="true" />
-            )}
+            {index > 0 && <div className="rule my-7 sm:my-8" aria-hidden="true" />}
             {item.node}
           </Fragment>
         ))}
@@ -53,9 +51,7 @@ export function ProjectsSkeleton({
         <div className="flex flex-col">
           {otherItems.map((item, index) => (
             <Fragment key={item.key}>
-              {index > 0 && (
-                <div className="rule my-5 sm:my-6" aria-hidden="true" />
-              )}
+              {index > 0 && <div className="rule my-5 sm:my-6" aria-hidden="true" />}
               {item.node}
             </Fragment>
           ))}
@@ -72,9 +68,7 @@ export function ProjectsSkeleton({
           <div className="flex flex-col">
             {graveyardItems.map((item, index) => (
               <Fragment key={item.key}>
-                {index > 0 && (
-                  <div className="rule my-5 sm:my-6" aria-hidden="true" />
-                )}
+                {index > 0 && <div className="rule my-5 sm:my-6" aria-hidden="true" />}
                 {item.node}
               </Fragment>
             ))}

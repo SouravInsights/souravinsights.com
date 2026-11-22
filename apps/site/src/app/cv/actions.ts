@@ -17,9 +17,7 @@ export async function getCVData(): Promise<CVData> {
   }
 }
 
-export async function saveCVData(
-  data: CVData
-): Promise<{ success: boolean; error?: string }> {
+export async function saveCVData(data: CVData): Promise<{ success: boolean; error?: string }> {
   if (!(await isAdminAuthenticated())) {
     return { success: false, error: "Unauthorized" };
   }

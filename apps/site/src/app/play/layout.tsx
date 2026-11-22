@@ -3,8 +3,7 @@ import React from "react";
 import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
 
-const DESCRIPTION =
-  "Play Shipstack. Just Tetris. Fill rows, clear them, chase tetrises.";
+const DESCRIPTION = "Play Shipstack. Just Tetris. Fill rows, clear them, chase tetrises.";
 
 export const metadata: Metadata = {
   title: "Play - Interactive Games & Experiences",
@@ -22,12 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-
-export default function PlayLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PlayLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="transition-colors duration-200">
       <PHProvider>

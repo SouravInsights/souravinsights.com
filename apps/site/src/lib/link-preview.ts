@@ -22,16 +22,11 @@ const BLOB_PATH: Record<PreviewVariant, string> = {
 export const previewKey = (url: string, variant: PreviewVariant = "viewport") =>
   `${CACHE_PREFIX[variant]}:${createHash("sha1").update(url).digest("hex")}`;
 
-const hashFor = (url: string) =>
-  createHash("sha1").update(url).digest("hex");
+const hashFor = (url: string) => createHash("sha1").update(url).digest("hex");
 
 /** Reject if `promise` hasn't settled within `ms`, so a stuck stage can't run
  *  past the route's serverless ceiling and get hard-killed. */
-function withTimeout<T>(
-  promise: Promise<T>,
-  ms: number,
-  message: string
-): Promise<T> {
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(message)), ms);
     promise.then(
@@ -42,7 +37,7 @@ function withTimeout<T>(
       (error) => {
         clearTimeout(timer);
         reject(error);
-      }
+      },
     );
   });
 }
@@ -54,7 +49,7 @@ function withTimeout<T>(
  */
 export async function getPreviewMap(
   urls: string[],
-  variant: PreviewVariant = "viewport"
+  variant: PreviewVariant = "viewport",
 ): Promise<Record<string, string>> {
   const unique = Array.from(new Set(urls.filter(Boolean)));
   if (unique.length === 0) return {};
@@ -72,10 +67,8 @@ export async function getPreviewMap(
   const results = await Promise.all(
     batches.map(
       (batch) =>
-        redis.mget(...batch.map((url) => previewKey(url, variant))) as Promise<
-          (string | null)[]
-        >
-    )
+        redis.mget(...batch.map((url) => previewKey(url, variant))) as Promise<(string | null)[]>,
+    ),
   );
   batches.forEach((batch, batchIndex) => {
     batch.forEach((url, index) => {
@@ -88,18 +81,12 @@ export async function getPreviewMap(
 }
 
 /** Turn a raw capture into the stored WebP for its variant. */
-async function encodePreview(
-  png: Buffer,
-  variant: PreviewVariant
-): Promise<Buffer> {
+async function encodePreview(png: Buffer, variant: PreviewVariant): Promise<Buffer> {
   if (variant === "scroll") {
     // Tall and shown small: fixed width, keep the whole page, cheaper quality.
     // Narrower than the viewport crop because this one can be thousands of px
     // tall — width is what drives the file size here.
-    return sharp(png)
-      .resize({ width: 600 })
-      .webp({ quality: 68, effort: 5 })
-      .toBuffer();
+    return sharp(png).resize({ width: 600 }).webp({ quality: 68, effort: 5 }).toBuffer();
   }
 
   // Shapes the image like briOS: 1200×630 cover cropped from the top so the
@@ -116,7 +103,7 @@ async function encodePreview(
  */
 export async function generatePreview(
   url: string,
-  options: { refresh?: boolean; variant?: PreviewVariant } = {}
+  options: { refresh?: boolean; variant?: PreviewVariant } = {},
 ): Promise<string> {
   const variant = options.variant ?? "viewport";
   const key = previewKey(url, variant);
@@ -130,15 +117,11 @@ export async function generatePreview(
   // Loaded lazily so pages that only read the cache never pull in the browser.
   const png = await withTimeout(
     (async () => {
-      const { captureScreenshot, captureScrollScreenshot } = await import(
-        "@/lib/screenshot"
-      );
-      return variant === "scroll"
-        ? captureScrollScreenshot(url)
-        : captureScreenshot(url);
+      const { captureScreenshot, captureScrollScreenshot } = await import("@/lib/screenshot");
+      return variant === "scroll" ? captureScrollScreenshot(url) : captureScreenshot(url);
     })(),
     45_000,
-    "capture timed out"
+    "capture timed out",
   );
 
   const webp = await encodePreview(png, variant);

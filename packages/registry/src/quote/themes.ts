@@ -2,12 +2,7 @@
  * The four quote designs and their colour variants.
  */
 
-import type {
-  AlignChoice,
-  FontChoice,
-  PositionChoice,
-  SizeChoice,
-} from "./presets";
+import type { AlignChoice, FontChoice, PositionChoice, SizeChoice } from "./presets";
 
 export interface MeshBlob {
   x: number;
@@ -23,8 +18,7 @@ export type Fill =
 export const solid = (color: string): Fill => ({ kind: "solid", color });
 export const mesh = (base: string, blobs: MeshBlob[]): Fill => ({ kind: "mesh", base, blobs });
 /** a gradient's circular control */
-export const grad = (...colors: string[]) =>
-  `linear-gradient(135deg, ${colors.join(", ")})`;
+export const grad = (...colors: string[]) => `linear-gradient(135deg, ${colors.join(", ")})`;
 /** a paper control with an ink dot in its middle */
 export const dot = (accent: string, base: string) =>
   `radial-gradient(circle, ${accent} 0 21%, ${base} 22%)`;
@@ -309,4 +303,3 @@ export const THEMES: ShareTheme[] = [
 
 export const themeById = (id: string): ShareTheme =>
   THEMES.find((theme) => theme.id === id) ?? THEMES[0];
-

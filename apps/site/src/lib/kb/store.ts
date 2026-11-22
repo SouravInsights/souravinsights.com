@@ -24,8 +24,7 @@ export const THIN_WORDS = 200;
 /** Passages go in per page, in batches, so one long page can't blow a statement. */
 const INSERT_BATCH = 50;
 
-const sha256 = (text: string) =>
-  createHash("sha256").update(text).digest("hex");
+const sha256 = (text: string) => createHash("sha256").update(text).digest("hex");
 
 export interface LinkRow {
   id: number;
@@ -46,7 +45,7 @@ export interface LinkRow {
 /** Write the read stage's outcome. Returns the status and whether text changed. */
 export async function saveRead(
   link: LinkRow,
-  read: PageRead | null
+  read: PageRead | null,
 ): Promise<{ status: "ok" | "thin" | "failed"; changed: boolean }> {
   if (!read) {
     await db
@@ -84,7 +83,7 @@ export async function saveRead(
 /** Write the understand stage's outcome. */
 export async function saveUnderstand(
   link: LinkRow,
-  result: { category: Category; topics: string[]; summary: string }
+  result: { category: Category; topics: string[]; summary: string },
 ): Promise<void> {
   await db
     .update(links)
@@ -107,7 +106,7 @@ export async function saveUnderstand(
  */
 export async function savePassages(
   link: LinkRow,
-  opts: { summary: string; units?: ChunkUnit[]; title: string }
+  opts: { summary: string; units?: ChunkUnit[]; title: string },
 ): Promise<number> {
   const passages: {
     content: string;
@@ -145,7 +144,7 @@ export async function savePassages(
         unitType: p.unitType,
         heading: p.heading,
         embedding: embeddings[i + j],
-      }))
+      })),
     );
   }
 
@@ -181,10 +180,7 @@ export interface BuildOutcome {
  * Stages skip themselves when their columns are set, unless `force`.
  * Never throws — one bad page must not stop a run.
  */
-export async function buildLink(
-  link: LinkRow,
-  opts: BuildOptions = {}
-): Promise<BuildOutcome> {
+export async function buildLink(link: LinkRow, opts: BuildOptions = {}): Promise<BuildOutcome> {
   let read: PageRead | null = null;
   let readStatus: BuildOutcome["read"] = "skipped";
   let readDetail: string | undefined;
@@ -259,10 +255,7 @@ export async function buildLink(
       link.source === "web" && link.category && isCategory(link.category)
         ? link.category
         : undefined;
-    opts.onStage?.(
-      "understand",
-      chosen ? `describe (${chosen})` : "classify + describe"
-    );
+    opts.onStage?.("understand", chosen ? `describe (${chosen})` : "classify + describe");
 
     // Metadata comes from the row: saveRead already stored defuddle's own
     // title/description during the read stage.
@@ -278,7 +271,7 @@ export async function buildLink(
         knownTopics: opts.knownTopics ?? [],
         winningSpellings: opts.winningSpellings ?? {},
       },
-      chosen
+      chosen,
     );
 
     // The owner's overrides always win for model-classified rows
@@ -303,9 +296,7 @@ export async function buildLink(
   if (needsEmbed) {
     const mode = EMBEDDING_MODE[link.category as Category] as EmbeddingMode;
     const units =
-      mode === "full" && link.markdown
-        ? chunkMarkdown(link.markdown, { title: link.title })
-        : [];
+      mode === "full" && link.markdown ? chunkMarkdown(link.markdown, { title: link.title }) : [];
     opts.onStage?.("embed", `${units.length + 1} passages`);
     passages = await savePassages(link, {
       title: link.title || link.urlKey,

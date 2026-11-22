@@ -15,11 +15,11 @@ export function QuoteOptionsDemo() {
 
   const content = useMemo(
     () => ({ quote, title, publication, context: "" }),
-    [quote, title, publication]
+    [quote, title, publication],
   );
   const options = useMemo(
     () => resolveOptions(theme, variant, overrides, content),
-    [theme, variant, overrides, content]
+    [theme, variant, overrides, content],
   );
 
   return (

@@ -58,9 +58,7 @@ export function getBlogPosts(): PostMetadata[] {
     return [];
   }
 
-  const fileNames = fs
-    .readdirSync(postsDirectory)
-    .filter((name) => name.endsWith(".mdx"));
+  const fileNames = fs.readdirSync(postsDirectory).filter((name) => name.endsWith(".mdx"));
 
   const allPostsData = fileNames.map((fileName) => {
     // Remove ".mdx" from file name to get slug

@@ -30,7 +30,7 @@ export const articleKey = (urlKey: string) => qk.article(urlKey);
 
 async function fetchArticle(urlKey: string): Promise<ArticlePayload> {
   const json = await apiJson<{ data: ArticlePayload }>(
-    `/api/insights/article?urlKey=${encodeURIComponent(urlKey)}`
+    `/api/insights/article?urlKey=${encodeURIComponent(urlKey)}`,
   );
   return json.data;
 }
@@ -55,7 +55,7 @@ export const questionsQuery = (urlKey: string) => ({
   queryFn: async () => {
     const json = await apiJson<{ data: { questions: string[] } }>(
       "/api/insights/article/questions",
-      { method: "POST", body: JSON.stringify({ urlKey }) }
+      { method: "POST", body: JSON.stringify({ urlKey }) },
     );
     return json.data.questions;
   },
@@ -65,9 +65,9 @@ export const questionsQuery = (urlKey: string) => ({
 /** After a highlight write, the cached marks change without a refetch. */
 export function updateArticleMarks(
   urlKey: string,
-  mutate: (marks: StoredHighlight[]) => StoredHighlight[]
+  mutate: (marks: StoredHighlight[]) => StoredHighlight[],
 ): void {
   queryClient.setQueryData<ArticlePayload>(articleKey(urlKey), (current) =>
-    current ? { ...current, marks: mutate(current.marks) } : current
+    current ? { ...current, marks: mutate(current.marks) } : current,
   );
 }

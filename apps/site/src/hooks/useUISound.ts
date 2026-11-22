@@ -1,11 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import {
-  getAudioContext,
-  initAudioEngine,
-  isAudioEngineReady,
-} from "@/lib/audio/audio-engine";
+import { getAudioContext, initAudioEngine, isAudioEngineReady } from "@/lib/audio/audio-engine";
 import { useSoundSettings } from "@/context/SoundContext";
 import {
   createDenySound,
@@ -17,12 +13,7 @@ import {
   createThudSound,
 } from "@/lib/audio/sound-profiles";
 
-type Synth = (
-  ctx: AudioContext,
-  t: number,
-  volMult: number,
-  pitch: number
-) => void;
+type Synth = (ctx: AudioContext, t: number, volMult: number, pitch: number) => void;
 
 /**
  * Semantic sound effects.
@@ -63,37 +54,28 @@ export function useUISound() {
         synth(ctx, ctx.currentTime, level, pitch);
       }
     },
-    [volume]
+    [volume],
   );
 
   const playSwitch = useCallback(
     (volMult = 1) => playSound(createSwitchSound, volMult),
-    [playSound]
+    [playSound],
   );
   const playPop = useCallback(
     (volMult = 1, pitch = 1) => playSound(createPopSound, volMult, pitch),
-    [playSound]
+    [playSound],
   );
   const playSuccess = useCallback(
     (volMult = 1) => playSound(createSuccessSound, volMult),
-    [playSound]
+    [playSound],
   );
-  const playDeny = useCallback(
-    (volMult = 1) => playSound(createDenySound, volMult),
-    [playSound]
-  );
+  const playDeny = useCallback((volMult = 1) => playSound(createDenySound, volMult), [playSound]);
   const playGameOver = useCallback(
     (volMult = 1) => playSound(createGameOverSound, volMult),
-    [playSound]
+    [playSound],
   );
-  const playThud = useCallback(
-    (volMult = 1) => playSound(createThudSound, volMult),
-    [playSound]
-  );
-  const playSweep = useCallback(
-    (volMult = 1) => playSound(createSweepSound, volMult),
-    [playSound]
-  );
+  const playThud = useCallback((volMult = 1) => playSound(createThudSound, volMult), [playSound]);
+  const playSweep = useCallback((volMult = 1) => playSound(createSweepSound, volMult), [playSound]);
 
   // Stable identity so callers can safely depend on it.
   return useMemo(
@@ -115,6 +97,6 @@ export function useUISound() {
       /** Exposed so a global first-interaction listener can unlock audio early. */
       initAudio: initAudioEngine,
     }),
-    [playSwitch, playPop, playSuccess, playDeny, playGameOver, playThud, playSweep]
+    [playSwitch, playPop, playSuccess, playDeny, playGameOver, playThud, playSweep],
   );
 }

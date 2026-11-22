@@ -4,12 +4,7 @@ import { z } from "zod";
 import { pipelineModel } from "./model";
 import { CATEGORIES, type Category } from "./categories";
 import { cleanTopics } from "./topics";
-import {
-  PROMPT_VERSION,
-  DESCRIBE_PROMPTS,
-  classifyPrompt,
-  describePrompt,
-} from "./prompts";
+import { PROMPT_VERSION, DESCRIBE_PROMPTS, classifyPrompt, describePrompt } from "./prompts";
 
 /**
  * understand — two model calls per link, two different jobs:
@@ -106,7 +101,7 @@ const cap = (markdown: string) =>
  */
 export async function classifyPage(
   model: LanguageModel,
-  input: Omit<UnderstandInput, "author" | "published">
+  input: Omit<UnderstandInput, "author" | "published">,
 ): Promise<ClassifyResult> {
   const sample = sampleOf(input.markdown);
 
@@ -137,7 +132,7 @@ export async function classifyPage(
  */
 export async function describePage(
   model: LanguageModel,
-  input: Omit<UnderstandInput, "site"> & { category: Category }
+  input: Omit<UnderstandInput, "site"> & { category: Category },
 ): Promise<DescribeResult> {
   const { output } = await generateText({
     model,
@@ -164,16 +159,13 @@ export async function describePage(
 export async function understandPage(
   input: UnderstandInput,
   /** A category chosen by hand — skips the classifier entirely. */
-  chosenCategory?: Category
+  chosenCategory?: Category,
 ): Promise<UnderstandResult> {
   let category: Category;
   if (chosenCategory) {
     category = chosenCategory;
   } else {
-    const { category: rawCategory, confidence } = await classifyPage(
-      pipelineModel(),
-      input
-    );
+    const { category: rawCategory, confidence } = await classifyPage(pipelineModel(), input);
     category = confidence === "low" ? "other" : rawCategory;
   }
 

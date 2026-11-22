@@ -26,20 +26,12 @@ import { join } from "node:path";
 import { AwsClient } from "aws4fetch";
 import { neon } from "@neondatabase/serverless";
 
-const {
-  R2_ACCOUNT_ID,
-  R2_ACCESS_KEY_ID,
-  R2_SECRET_ACCESS_KEY,
-  R2_BUCKET,
-  R2_PUBLIC_URL,
-} = process.env;
+const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL } =
+  process.env;
 
-const missing = [
-  "R2_ACCOUNT_ID",
-  "R2_ACCESS_KEY_ID",
-  "R2_SECRET_ACCESS_KEY",
-  "R2_BUCKET",
-].filter((key) => !process.env[key]);
+const missing = ["R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET"].filter(
+  (key) => !process.env[key],
+);
 
 if (missing.length) {
   console.error(`Missing env: ${missing.join(", ")}`);
@@ -61,10 +53,8 @@ const client = new AwsClient({
 
 /** `spotfree-page-builder-ui.mp4` → `spotfree`. */
 const projectOf = (name) => name.split("-")[0];
-const contentType = (name) =>
-  name.endsWith(".webp") ? "image/webp" : "video/mp4";
-const prettify = (stem) =>
-  stem.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+const contentType = (name) => (name.endsWith(".webp") ? "image/webp" : "video/mp4");
+const prettify = (stem) => stem.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 /** The original's date is the recording date; the encode's is only when it ran. */
 const recordedOn = (file) => {
@@ -83,7 +73,7 @@ const probe = (path) => {
       "-show_streams",
       "-show_format",
       path,
-    ]).toString()
+    ]).toString(),
   );
   const video = out.streams.find((stream) => stream.codec_type === "video");
   return {
@@ -129,9 +119,7 @@ for (const file of files) {
   console.log(`✓ ${key}  ${(size / 1e6).toFixed(2)} MB`);
 }
 
-console.log(
-  `\n${uploaded} objects, ${(bytes / 1e6).toFixed(1)} MB → ${R2_BUCKET}`
-);
+console.log(`\n${uploaded} objects, ${(bytes / 1e6).toFixed(1)} MB → ${R2_BUCKET}`);
 console.log(`Public base: ${R2_PUBLIC_URL}`);
 
 if (!process.env.DATABASE_URL) {
@@ -164,7 +152,5 @@ for (const file of clips) {
     on conflict (id) do nothing
     returning id`;
 
-  console.log(
-    inserted.length ? `+ ${stem}` : `= ${stem} (already registered)`
-  );
+  console.log(inserted.length ? `+ ${stem}` : `= ${stem} (already registered)`);
 }

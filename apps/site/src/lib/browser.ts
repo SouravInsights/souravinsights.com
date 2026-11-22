@@ -10,8 +10,7 @@ import puppeteer, { type Browser, type Viewport } from "puppeteer-core";
 
 const LAUNCH_TIMEOUT = 20_000;
 
-const IS_SERVERLESS =
-  !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+const IS_SERVERLESS = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 /** Where Chromium lives: bundled on serverless, a system Chrome locally. */
 export async function getExecutablePath(): Promise<string> {
@@ -33,9 +32,7 @@ export async function getExecutablePath(): Promise<string> {
     }
   }
 
-  throw new Error(
-    "Chrome not found. Install Google Chrome or set CHROME_PATH."
-  );
+  throw new Error("Chrome not found. Install Google Chrome or set CHROME_PATH.");
 }
 
 /** Launch a headless Chromium. The caller is responsible for closing it. */

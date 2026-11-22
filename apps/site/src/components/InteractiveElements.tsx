@@ -53,10 +53,7 @@ Type 'help' to see available commands.`,
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        terminalRef.current &&
-        !terminalRef.current.contains(e.target as Node)
-      ) {
+      if (terminalRef.current && !terminalRef.current.contains(e.target as Node)) {
         setIsFocused(false);
       }
     };
@@ -175,9 +172,7 @@ clear      - Clear terminal`;
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className={`${
-                cmd.isResponse
-                  ? "text-green-700 dark:text-green-500"
-                  : "text-foreground"
+                cmd.isResponse ? "text-green-700 dark:text-green-500" : "text-foreground"
               } transition-colors duration-200`}
             >
               {!cmd.isResponse && (
@@ -191,9 +186,7 @@ clear      - Clear terminal`;
         </div>
 
         <div className="mt-4 flex items-start gap-2">
-          <span className="text-blue-600 dark:text-blue-500 transition-colors duration-200">
-            $
-          </span>
+          <span className="text-blue-600 dark:text-blue-500 transition-colors duration-200">$</span>
           <div className="flex-1 text-foreground transition-colors duration-200">
             {currentCommand}
             <motion.span
@@ -257,9 +250,7 @@ const MatrixRain = () => {
 
     const matrixEffect = () => {
       // Different background fade for light/dark mode
-      ctx.fillStyle = isDarkMode
-        ? "rgba(0, 0, 0, 0.05)"
-        : "rgba(255, 255, 255, 0.05)";
+      ctx.fillStyle = isDarkMode ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Different text color for light/dark mode

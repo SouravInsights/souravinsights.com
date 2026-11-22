@@ -25,13 +25,10 @@ export function LinksCountBadge({ total }: { total: number }) {
     <span
       className={cn(
         "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums transition-opacity duration-150",
-        ready ? "opacity-100" : "opacity-0"
+        ready ? "opacity-100" : "opacity-0",
       )}
     >
-      <Scritto
-        value={value.toLocaleString()}
-        className="font-medium text-foreground"
-      />
+      <Scritto value={value.toLocaleString()} className="font-medium text-foreground" />
       <span className="text-faint-foreground">links</span>
     </span>
   );

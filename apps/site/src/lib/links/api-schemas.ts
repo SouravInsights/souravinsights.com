@@ -19,8 +19,7 @@ export const linksQuerySchema = z.object({
     description: "Opaque cursor from a previous response's meta.next_cursor",
   }),
   url: z.string().url().optional().openapi({
-    description:
-      "Exact lookup by any URL variant — returns the single matching item when present",
+    description: "Exact lookup by any URL variant — returns the single matching item when present",
     example: "https://brandur.org/minimalism",
   }),
 });
@@ -60,17 +59,22 @@ export const categoriesResponseSchema = z.object({
     z.object({
       category: z.string(),
       count: z.number().int(),
-    })
+    }),
   ),
 });
 
 export const searchQuerySchema = z.object({
-  q: z.string().trim().min(2).max(300).openapi({
-    description:
-      "What to look for, in plain words. Matched against the meaning of the " +
-      "pages' contents, not their titles.",
-    example: "a tool to check colour contrast",
-  }),
+  q: z
+    .string()
+    .trim()
+    .min(2)
+    .max(300)
+    .openapi({
+      description:
+        "What to look for, in plain words. Matched against the meaning of the " +
+        "pages' contents, not their titles.",
+      example: "a tool to check colour contrast",
+    }),
   category: z
     .enum(CATEGORIES as unknown as [string, ...string[]])
     .optional()
@@ -116,15 +120,9 @@ export const hideRequestSchema = z.object({
   url: z.string().url().optional().openapi({
     description: "Any URL variant of the link; normalized server-side",
   }),
-  urls: z
-    .array(z.string().url())
-    .min(1)
-    .max(200)
-    .optional()
-    .openapi({
-      description:
-        "Batch form: up to 200 URL variants; each normalized server-side",
-    }),
+  urls: z.array(z.string().url()).min(1).max(200).optional().openapi({
+    description: "Batch form: up to 200 URL variants; each normalized server-side",
+  }),
 });
 
 export const addLinkRequestSchema = z.object({
@@ -133,8 +131,7 @@ export const addLinkRequestSchema = z.object({
     example: "https://brandur.org/minimalism",
   }),
   category: categoryEnum.openapi({
-    description:
-      "The category to file it under. The classifier is skipped for this link.",
+    description: "The category to file it under. The classifier is skipped for this link.",
     example: "article",
   }),
 });

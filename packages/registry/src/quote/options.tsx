@@ -13,24 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import type {
-  AlignChoice,
-  FontChoice,
-  PositionChoice,
-  SizeChoice,
-} from "./presets";
+import type { AlignChoice, FontChoice, PositionChoice, SizeChoice } from "./presets";
 import type { CardOptions, Overrides } from "./render";
 import type { ShareTheme, Variant } from "./themes";
 
 /* ---------------------------------------------------------------- controls */
 
-function Row({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex h-9 items-center justify-between gap-3">
       <Label className="text-[13px] font-normal text-foreground/85">{label}</Label>
@@ -60,11 +49,7 @@ function Choice<T extends string>({
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem
-            key={option.value}
-            value={option.value}
-            className="text-[13px]"
-          >
+          <SelectItem key={option.value} value={option.value} className="text-[13px]">
             {option.label}
           </SelectItem>
         ))}
@@ -123,9 +108,7 @@ function QuoteOptions({
           scrolled ? "border-border" : "border-transparent"
         }`}
       >
-        <h3 className="text-[14px] font-semibold leading-[30px] text-foreground">
-          Customize
-        </h3>
+        <h3 className="text-[14px] font-semibold leading-[30px] text-foreground">Customize</h3>
         <div className="flex items-center gap-1">
           {dirty && (
             <Button
@@ -200,10 +183,7 @@ function QuoteOptions({
       </div>
 
       <div className="mt-4">
-        <Select
-          value={options.font}
-          onValueChange={(value) => set({ font: value as FontChoice })}
-        >
+        <Select value={options.font} onValueChange={(value) => set({ font: value as FontChoice })}>
           <SelectTrigger
             aria-label="Font"
             className="h-10 w-full rounded-md border-0 bg-foreground/[0.055] px-3 text-[17px] text-foreground/85 hover:bg-foreground/[0.08] focus-visible:ring-2 focus-visible:ring-ring/30"
@@ -267,21 +247,21 @@ function QuoteOptions({
       <Separator className="mb-1.5 mt-3" />
 
       <div className="flex flex-col">
-          <InlineEditField label="Quote" value={quote} onChange={setQuote} />
-          <InlineEditField
-            label="Title"
-            value={title}
-            onChange={setTitle}
-            visible={options.showTitle}
-            onVisibleChange={(showTitle) => set({ showTitle })}
-          />
-          <InlineEditField
-            label="Publication"
-            value={publication}
-            onChange={setPublication}
-            visible={options.showPublication}
-            onVisibleChange={(showPublication) => set({ showPublication })}
-          />
+        <InlineEditField label="Quote" value={quote} onChange={setQuote} />
+        <InlineEditField
+          label="Title"
+          value={title}
+          onChange={setTitle}
+          visible={options.showTitle}
+          onVisibleChange={(showTitle) => set({ showTitle })}
+        />
+        <InlineEditField
+          label="Publication"
+          value={publication}
+          onChange={setPublication}
+          visible={options.showPublication}
+          onVisibleChange={(showPublication) => set({ showPublication })}
+        />
       </div>
     </>
   );

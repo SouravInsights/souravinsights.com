@@ -5,8 +5,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { useSpotlight, spotlightClass } from "@/hooks/useSpotlight";
 import { emphasisClass } from "@/lib/emphasis";
 
-const formatDate = (date: string) =>
-  format(new Date(`${date}T00:00:00`), "MMM d, yyyy");
+const formatDate = (date: string) => format(new Date(`${date}T00:00:00`), "MMM d, yyyy");
 
 const ESSAYS = [
   {
@@ -58,12 +57,12 @@ export function EssayHighlights() {
               href={blog.url}
               {...getItemProps(index)}
               className={`list-row group min-h-[4.5rem] sm:items-center ${spotlightClass(
-                isDimmed(index)
+                isDimmed(index),
               )}`}
             >
               <h3
                 className={`type-heading min-w-0 line-clamp-2 group-hover:text-green-700 dark:group-hover:text-green-500 ${emphasisClass(
-                  index
+                  index,
                 )}`}
               >
                 {blog.title}

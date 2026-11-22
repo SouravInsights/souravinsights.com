@@ -75,20 +75,18 @@ export function FavoriteLinks() {
               rel="noopener noreferrer"
               {...getItemProps(index)}
               className={`list-row group min-h-[4.5rem] sm:items-center ${spotlightClass(
-                isDimmed(index)
+                isDimmed(index),
               )}`}
             >
               <h3
                 className={`type-heading min-w-0 line-clamp-2 group-hover:text-green-700 dark:group-hover:text-green-500 ${emphasisClass(
-                  index
+                  index,
                 )}`}
               >
                 {favorite.title}
               </h3>
               <span className="flex shrink-0 items-center gap-2 type-caption">
-                <span className="text-faint-foreground">
-                  {shortDomain(favorite.url)}
-                </span>
+                <span className="text-faint-foreground">{shortDomain(favorite.url)}</span>
                 {favorite.category && (
                   <span className="hidden items-center gap-2 sm:flex">
                     <span aria-hidden="true" className="text-border">

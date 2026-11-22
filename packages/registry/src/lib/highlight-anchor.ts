@@ -37,7 +37,7 @@ export function cut(
   text: string,
   start: number,
   end: number,
-  nextId: () => number
+  nextId: () => number,
 ): HighlightSpan[] {
   const out: HighlightSpan[] = [];
   // a piece cut at a word boundary carries the space beside it, which goes

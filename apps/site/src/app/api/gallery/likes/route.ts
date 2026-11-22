@@ -27,11 +27,7 @@ async function getVisitorId(): Promise<{ id: string; isNew: boolean }> {
   return { id: uuidv4(), isNew: true };
 }
 
-function withVisitorCookie(
-  response: NextResponse,
-  visitorId: string,
-  isNew: boolean
-) {
+function withVisitorCookie(response: NextResponse, visitorId: string, isNew: boolean) {
   if (isNew) {
     response.cookies.set(VISITOR_COOKIE, visitorId, {
       httpOnly: true,
@@ -64,10 +60,7 @@ export async function GET(request: NextRequest) {
     return withVisitorCookie(response, visitorId, isNew);
   } catch (error) {
     console.error("Error fetching gallery likes:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch likes" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch likes" }, { status: 500 });
   }
 }
 
@@ -89,7 +82,7 @@ export async function POST(request: NextRequest) {
           totalLikes: (await redis.hget<number>(COUNTS_HASH, videoId)) ?? 0,
           userLikes: mine,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,9 +99,6 @@ export async function POST(request: NextRequest) {
     return withVisitorCookie(response, visitorId, isNew);
   } catch (error) {
     console.error("Error updating gallery likes:", error);
-    return NextResponse.json(
-      { error: "Failed to update like" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update like" }, { status: 500 });
   }
 }

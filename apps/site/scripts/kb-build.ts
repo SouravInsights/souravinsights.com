@@ -42,10 +42,7 @@ const isTTY = Boolean(process.stdout.isTTY);
  */
 function createProgress(total: number, concurrency: number) {
   const header = `kb-build · ${total} to process · ${concurrency} at a time`;
-  const active = new Map<
-    number,
-    { label: string; stage: string; detail?: string }
-  >();
+  const active = new Map<number, { label: string; stage: string; detail?: string }>();
   let drawn = 0;
 
   const clear = () => {
@@ -60,7 +57,7 @@ function createProgress(total: number, concurrency: number) {
     const lines = [
       header,
       ...Array.from(active.values()).map((e) =>
-        `  ${e.label.padEnd(40)} ${e.stage.padEnd(10)} ${e.detail ?? ""}`.trimEnd()
+        `  ${e.label.padEnd(40)} ${e.stage.padEnd(10)} ${e.detail ?? ""}`.trimEnd(),
       ),
     ];
     process.stdout.write(lines.join("\n") + "\n");
@@ -121,14 +118,16 @@ async function main() {
     // markdown, so nothing is fetched — the new prompt passes over old text.
     conditions.push(isNotNull(links.markdown));
     conditions.push(
-      sql`(${links.promptVersion} is null or ${links.promptVersion} <> ${PROMPT_VERSION})`
+      sql`(${links.promptVersion} is null or ${links.promptVersion} <> ${PROMPT_VERSION})`,
     );
   } else if (statusFilter) {
     conditions.push(inArray(links.readStatus, statusFilter));
   } else if (!force) {
     // Rerunnable: read runs while markdown is missing; everything downstream
     // follows from there, so that one check selects the whole unfinished list.
-    conditions.push(sql`(${links.markdown} is null or ${links.category} is null or ${links.summary} is null)`);
+    conditions.push(
+      sql`(${links.markdown} is null or ${links.category} is null or ${links.summary} is null)`,
+    );
   }
 
   // A render pass on thin rows is a forced re-read; hash comparison keeps
@@ -159,18 +158,17 @@ async function main() {
     .select({ topics: links.topics })
     .from(links)
     .where(isNull(links.hiddenAt));
-  const { vocabulary: knownTopics, winningSpellings } =
-    await buildTopicVocabulary(
-      topicRows.map((r) => r.topics),
-      pipelineModel()
-    );
+  const { vocabulary: knownTopics, winningSpellings } = await buildTopicVocabulary(
+    topicRows.map((r) => r.topics),
+    pipelineModel(),
+  );
   console.log(`topic vocabulary: ${knownTopics.length} known topics`);
 
   const rows: LinkRow[] = await (limit ? query.limit(limit) : query);
   console.log(
     `${rows.length} links to build${force ? " (forced)" : ""}` +
       `${stale ? ` · STALE (prompt < v${PROMPT_VERSION})` : ""}` +
-      `${render ? " · render fallback on" : ""}`
+      `${render ? " · render fallback on" : ""}`,
   );
 
   const tally = { ok: 0, thin: 0, failed: 0, understood: 0, passages: 0, errors: 0 };
@@ -211,25 +209,19 @@ async function main() {
       status = "failed";
       tally.errors++;
       tally.failed++;
-      progress.log(
-        `  ✗ ${row.urlKey}: ${error instanceof Error ? error.message : error}`
-      );
+      progress.log(`  ✗ ${row.urlKey}: ${error instanceof Error ? error.message : error}`);
     }
 
     const n = ++done;
     const width = String(rows.length).length;
     const mark = status === "failed" ? "✗" : status === "thin" ? "⚠" : "✓";
     const label = status === "failed" ? "failed" : status === "thin" ? "thin" : "ok";
-    const reason =
-      status === "failed" && readDetail ? `  ${readDetail}` : "";
+    const reason = status === "failed" && readDetail ? `  ${readDetail}` : "";
     progress.finish(
       row.id,
       `${mark} ${String(n).padStart(width)}/${rows.length}  ` +
         `${row.urlKey.padEnd(40)} ${(row.category ?? "?").padEnd(12)} ` +
-        `${label} · ${passages} passages · ${(
-          (Date.now() - started) /
-          1000
-        ).toFixed(1)}s${reason}`
+        `${label} · ${passages} passages · ${((Date.now() - started) / 1000).toFixed(1)}s${reason}`,
     );
   };
 
@@ -237,7 +229,7 @@ async function main() {
     await Promise.all(
       Array.from({ length: CONCURRENCY }, async (_, worker) => {
         for (let i = worker; i < rows.length; i += CONCURRENCY) await one(rows[i]);
-      })
+      }),
     );
   } finally {
     await closeRenderer().catch(() => undefined);
@@ -250,7 +242,7 @@ async function main() {
   console.log(`\ndone → ok ${tally.ok} · thin ${tally.thin} · failed ${tally.failed}`);
   console.log(
     `understood ${tally.understood} · passages ${tally.passages} · errors ${tally.errors} · ` +
-      `${((Date.now() - startedAt) / 1000).toFixed(1)}s`
+      `${((Date.now() - startedAt) / 1000).toFixed(1)}s`,
   );
   if (stale) console.log(`category flips: ${flips.length} (each listed above)`);
 }

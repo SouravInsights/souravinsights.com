@@ -28,6 +28,6 @@ export function useHaptics() {
       error: () => void trigger("error"),
       warning: () => void trigger("warning"),
     }),
-    [trigger]
+    [trigger],
   );
 }

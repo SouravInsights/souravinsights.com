@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: { code: "invalid_body", message: "Body must be { urlKey, quote, [...] }" } },
-      { status: 400 }
+      { status: 400 },
     );
   }
   const { urlKey, quote, prefix, suffix, occurrence, hue } = parsed.data;
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
   if (!link) {
     return NextResponse.json(
       { error: { code: "not_found", message: "No link matches this urlKey" } },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -63,7 +63,7 @@ export async function PATCH(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: { code: "invalid_body", message: "Body must be { id, hue }" } },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -83,7 +83,7 @@ export async function DELETE(request: NextRequest) {
   if (!Number.isInteger(id) || id <= 0) {
     return NextResponse.json(
       { error: { code: "missing_param", message: "id is required" } },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

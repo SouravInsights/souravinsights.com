@@ -9,10 +9,7 @@ import {
   extractDescription,
   type DiscordMessage,
 } from "@/app/insights/utils/discordApi";
-import {
-  normalizeUrl,
-  snowflakeDate,
-} from "@/app/insights/utils/urlUtils";
+import { normalizeUrl, snowflakeDate } from "@/app/insights/utils/urlUtils";
 import { checkUrlHealth } from "@/lib/links/health";
 import { db } from "@/db";
 import { links } from "@/db/schema";
@@ -65,9 +62,7 @@ export const checkDiscordLinks = schedules.task({
         // Check for new messages
         const newMessages = messages.filter((msg: DiscordMessage) => {
           const messageId = BigInt(msg.id);
-          const lastId = lastMessageId
-            ? BigInt(lastMessageId as string)
-            : BigInt(0);
+          const lastId = lastMessageId ? BigInt(lastMessageId as string) : BigInt(0);
           return messageId > lastId && msg.content.includes("http");
         });
 
@@ -150,7 +145,7 @@ export const checkDiscordLinks = schedules.task({
                 try {
                   await fetch(
                     `${process.env.NEXT_PUBLIC_APP_URL}/api/link-preview?url=${encodeURIComponent(url)}`,
-                    { redirect: "manual" }
+                    { redirect: "manual" },
                   );
                 } catch (error) {
                   logger.warn("Preview warm failed", { url, error });
@@ -166,18 +161,15 @@ export const checkDiscordLinks = schedules.task({
         logger.info("Triggering revalidation");
 
         const result = await logger.trace("revalidate-page", async (span) => {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL}/api/revalidate`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                secret: process.env.REVALIDATE_SECRET,
-              }),
-            }
-          );
+          const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/revalidate`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              secret: process.env.REVALIDATE_SECRET,
+            }),
+          });
 
           if (!response.ok) {
             const text = await response.text();
@@ -186,9 +178,7 @@ export const checkDiscordLinks = schedules.task({
               statusText: response.statusText,
               responseText: text,
             });
-            throw new Error(
-              `Failed to revalidate: ${response.status} ${response.statusText}`
-            );
+            throw new Error(`Failed to revalidate: ${response.status} ${response.statusText}`);
           }
 
           const json = await response.json();

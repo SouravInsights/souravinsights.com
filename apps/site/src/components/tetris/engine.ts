@@ -11,13 +11,7 @@
  * back-to-back and full T-spin recognition, lock delay with move resets,
  * ARE between pieces, block-out and lock-out as top-out conditions.
  */
-import {
-  BLOCK_COLOR_COUNT,
-  createBag,
-  kicksFor,
-  ROTATIONS,
-  type PieceType,
-} from "./pieces";
+import { BLOCK_COLOR_COUNT, createBag, kicksFor, ROTATIONS, type PieceType } from "./pieces";
 
 export const COLS = 10;
 export const ROWS = 24;
@@ -51,8 +45,7 @@ const SOFT_DROP_MIN_MS = 50;
 
 /** Milliseconds per row of gravity, by level (1-indexed, clamped). */
 const GRAVITY_TABLE = [
-  780, 690, 600, 520, 450, 390, 335, 285, 240, 200, 165, 135, 110, 90, 70, 55,
-  45, 38, 32,
+  780, 690, 600, 520, 450, 390, 335, 285, 240, 200, 165, 135, 110, 90, 70, 55, 45, 38, 32,
 ];
 export const MAX_LEVEL = GRAVITY_TABLE.length;
 
@@ -189,10 +182,7 @@ export class TetrisEngine {
   step(dtMs: number): EngineEvent[] {
     if (this.paused) return [];
     if (this.phase === "clearing") {
-      this.clearProgress = Math.min(
-        1,
-        this.clearProgress + dtMs / CLEAR_ANIM_MS
-      );
+      this.clearProgress = Math.min(1, this.clearProgress + dtMs / CLEAR_ANIM_MS);
       if (this.clearProgress >= 1) {
         return this.collapseRows();
       }

@@ -20,12 +20,7 @@ function hexToHsv(hex: string): Hsv {
   const delta = max - Math.min(r, g, b);
   let h = 0;
   if (delta) {
-    h =
-      max === r
-        ? ((g - b) / delta) % 6
-        : max === g
-          ? (b - r) / delta + 2
-          : (r - g) / delta + 4;
+    h = max === r ? ((g - b) / delta) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
     h = (h * 60 + 360) % 360;
   }
   return { h, s: max ? delta / max : 0, v: max };
@@ -39,7 +34,11 @@ function hsvToHex({ h, s, v }: Hsv): string {
   return (
     "#" +
     [f(5), f(3), f(1)]
-      .map((c) => Math.round(c * 255).toString(16).padStart(2, "0"))
+      .map((c) =>
+        Math.round(c * 255)
+          .toString(16)
+          .padStart(2, "0"),
+      )
       .join("")
   );
 }
@@ -150,10 +149,7 @@ function ColorPickerWheel() {
   );
 }
 
-function ColorPickerSide({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function ColorPickerSide({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       data-slot="color-picker-side"
@@ -207,14 +203,12 @@ function ColorPickerHex({ actions, eyedropper = true }: ColorPickerHexProps) {
   React.useEffect(() => {
     setCanPick(
       typeof window !== "undefined" &&
-        "EyeDropper" in (window as unknown as Record<string, unknown>)
+        "EyeDropper" in (window as unknown as Record<string, unknown>),
     );
   }, []);
 
   const pickFromScreen = async () => {
-    const EyeDropper = (
-      window as unknown as { EyeDropper?: EyeDropperConstructor }
-    ).EyeDropper;
+    const EyeDropper = (window as unknown as { EyeDropper?: EyeDropperConstructor }).EyeDropper;
     if (!EyeDropper) return;
     try {
       const result = await new EyeDropper().open();

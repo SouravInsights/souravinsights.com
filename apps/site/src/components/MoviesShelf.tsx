@@ -90,11 +90,7 @@ function Shelf() {
     <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:gap-x-6 sm:gap-y-4">
       {movies.map((movie, index) => (
         <FadeIn key={movie.id} delay={Math.min(index, 12) * 0.03}>
-          <MovieRow
-            movie={movie}
-            dimmed={isDimmed(index)}
-            {...getItemProps(index)}
-          />
+          <MovieRow movie={movie} dimmed={isDimmed(index)} {...getItemProps(index)} />
         </FadeIn>
       ))}
     </div>

@@ -2,12 +2,7 @@
 
 import { useMemo, useRef } from "react";
 
-export type AnchoredPanelAnchor =
-  | Range
-  | Element
-  | DOMRect
-  | (() => DOMRect | null)
-  | null;
+export type AnchoredPanelAnchor = Range | Element | DOMRect | (() => DOMRect | null) | null;
 
 function resolve(anchor: AnchoredPanelAnchor): DOMRect | null {
   if (!anchor) return null;
@@ -56,10 +51,9 @@ export function useAnchoredPanel(anchor: AnchoredPanelAnchor) {
           const kept = rect ?? last.current.rect;
           return kept ? [kept] : [];
         },
-        contextElement:
-          typeof document === "undefined" ? undefined : document.body,
+        contextElement: typeof document === "undefined" ? undefined : document.body,
       },
     }),
-    [anchor]
+    [anchor],
   );
 }

@@ -108,25 +108,14 @@ const Macintosh: React.FC = () => {
           transform="rotate(180 269.014 391.445)"
           fill="#BBB2A2"
         />
-        <g
-          style={{ mixBlendMode: "lighten" }}
-          opacity="0.3"
-          filter="url(#filter1_f_59_101)"
-        >
+        <g style={{ mixBlendMode: "lighten" }} opacity="0.3" filter="url(#filter1_f_59_101)">
           <path
             d="M184.633 398.279H280.106L247.169 377.111H217.291L184.633 398.279Z"
             fill="white"
           />
         </g>
-        <g
-          style={{ mixBlendMode: "darken" }}
-          opacity="0.2"
-          filter="url(#filter2_f_59_101)"
-        >
-          <path
-            d="M184.216 351.484H279.69L246.753 372.652H216.875L184.216 351.484Z"
-            fill="black"
-          />
+        <g style={{ mixBlendMode: "darken" }} opacity="0.2" filter="url(#filter2_f_59_101)">
+          <path d="M184.216 351.484H279.69L246.753 372.652H216.875L184.216 351.484Z" fill="black" />
         </g>
       </g>
       <g filter="url(#filter3_i_59_101)">
@@ -163,202 +152,70 @@ const Macintosh: React.FC = () => {
         />
       </g>
       <g filter="url(#filter5_ddi_59_101)">
-        <rect
-          x="206.549"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="206.549" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter6_ddi_59_101)">
-        <rect
-          x="208.632"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="208.632" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter7_ddi_59_101)">
-        <rect
-          x="210.714"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="210.714" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter8_ddi_59_101)">
-        <rect
-          x="212.796"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="212.796" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter9_ddi_59_101)">
-        <rect
-          x="214.878"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="214.878" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter10_ddi_59_101)">
-        <rect
-          x="216.96"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="216.96" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter11_ddi_59_101)">
-        <rect
-          x="219.042"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="219.042" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter12_ddi_59_101)">
-        <rect
-          x="206.549"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="206.549" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter13_ddi_59_101)">
-        <rect
-          x="208.632"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="208.632" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter14_ddi_59_101)">
-        <rect
-          x="210.714"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="210.714" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter15_ddi_59_101)">
-        <rect
-          x="212.796"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="212.796" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter16_ddi_59_101)">
-        <rect
-          x="214.878"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="214.878" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter17_ddi_59_101)">
-        <rect
-          x="216.96"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="216.96" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter18_ddi_59_101)">
-        <rect
-          x="219.042"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="219.042" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter19_ddi_59_101)">
-        <rect
-          x="206.549"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="206.549" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter20_ddi_59_101)">
-        <rect
-          x="208.632"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="208.632" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter21_ddi_59_101)">
-        <rect
-          x="210.714"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="210.714" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter22_ddi_59_101)">
-        <rect
-          x="212.796"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="212.796" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter23_ddi_59_101)">
-        <rect
-          x="214.878"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="214.878" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter24_ddi_59_101)">
-        <rect
-          x="216.96"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="216.96" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter25_ddi_59_101)">
-        <rect
-          x="219.042"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="219.042" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter26_ddi_59_101)">
-        <rect
-          x="208.632"
-          y="377.286"
-          width="9.5779"
-          height="0.832861"
-          fill="#BCB4A4"
-        />
+        <rect x="208.632" y="377.286" width="9.5779" height="0.832861" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter27_ddi_59_101)">
         <mask id="path-32-inside-1_59_101" fill="white">
@@ -383,112 +240,40 @@ const Macintosh: React.FC = () => {
         />
       </g>
       <g filter="url(#filter29_ddi_59_101)">
-        <rect
-          x="232.785"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="232.785" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter30_ddi_59_101)">
-        <rect
-          x="234.867"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="234.867" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter31_ddi_59_101)">
-        <rect
-          x="236.949"
-          y="371.04"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="236.949" y="371.04" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter32_ddi_59_101)">
-        <rect
-          x="232.785"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="232.785" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter33_ddi_59_101)">
-        <rect
-          x="234.867"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="234.867" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter34_ddi_59_101)">
-        <rect
-          x="236.949"
-          y="373.122"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="236.949" y="373.122" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter35_ddi_59_101)">
-        <rect
-          x="232.785"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="232.785" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter36_ddi_59_101)">
-        <rect
-          x="234.867"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="234.867" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter37_ddi_59_101)">
-        <rect
-          x="236.949"
-          y="375.204"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="236.949" y="375.204" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter38_ddi_59_101)">
-        <rect
-          x="232.785"
-          y="377.286"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="232.785" y="377.286" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter39_ddi_59_101)">
-        <rect
-          x="234.867"
-          y="377.286"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="234.867" y="377.286" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <g filter="url(#filter40_ddi_59_101)">
-        <rect
-          x="236.949"
-          y="377.286"
-          width="1.24929"
-          height="1.24929"
-          fill="#BCB4A4"
-        />
+        <rect x="236.949" y="377.286" width="1.24929" height="1.24929" fill="#BCB4A4" />
       </g>
       <mask
         id="mask1_59_101"
@@ -519,25 +304,11 @@ const Macintosh: React.FC = () => {
             fill="#BBB2A2"
           />
         </g>
-        <g
-          style={{ mixBlendMode: "lighten" }}
-          opacity="0.1"
-          filter="url(#filter42_f_59_101)"
-        >
-          <path
-            d="M225.994 394.328H278.821L260.597 383.26H244.064L225.994 394.328Z"
-            fill="white"
-          />
+        <g style={{ mixBlendMode: "lighten" }} opacity="0.1" filter="url(#filter42_f_59_101)">
+          <path d="M225.994 394.328H278.821L260.597 383.26H244.064L225.994 394.328Z" fill="white" />
         </g>
-        <g
-          style={{ mixBlendMode: "darken" }}
-          opacity="0.2"
-          filter="url(#filter43_f_59_101)"
-        >
-          <path
-            d="M227.758 356.056H276.992L260.007 366.371H244.6L227.758 356.056Z"
-            fill="black"
-          />
+        <g style={{ mixBlendMode: "darken" }} opacity="0.2" filter="url(#filter43_f_59_101)">
+          <path d="M227.758 356.056H276.992L260.007 366.371H244.6L227.758 356.056Z" fill="black" />
         </g>
       </g>
       <g filter="url(#filter44_i_59_101)">
@@ -964,14 +735,7 @@ const Macintosh: React.FC = () => {
         strokeWidth="0.416431"
       />
       <g filter="url(#filter66_i_59_101)">
-        <rect
-          x="235.7"
-          y="333.145"
-          width="2.49858"
-          height="14.1586"
-          rx="0.832861"
-          fill="#181818"
-        />
+        <rect x="235.7" y="333.145" width="2.49858" height="14.1586" rx="0.832861" fill="#181818" />
       </g>
       <rect
         x="235.491"
@@ -1078,12 +842,7 @@ const Macintosh: React.FC = () => {
         strokeWidth="0.416431"
       />
       <g filter="url(#filter72_if_59_101)">
-        <circle
-          cx="34.9802"
-          cy="335.227"
-          r="14.1586"
-          fill="url(#paint0_linear_59_101)"
-        />
+        <circle cx="34.9802" cy="335.227" r="14.1586" fill="url(#paint0_linear_59_101)" />
       </g>
       <circle cx="34.9803" cy="335.227" r="12.9093" fill="black" />
       <path
@@ -1115,12 +874,7 @@ const Macintosh: React.FC = () => {
           />
         </g>
       </g>
-      <rect
-        width="294"
-        height="342.722"
-        rx="9.16147"
-        fill="url(#paint1_linear_59_101)"
-      />
+      <rect width="294" height="342.722" rx="9.16147" fill="url(#paint1_linear_59_101)" />
       <mask
         id="mask2_59_101"
         style={{ maskType: "alpha" }}
@@ -1134,19 +888,8 @@ const Macintosh: React.FC = () => {
       </mask>
       <g mask="url(#mask2_59_101)">
         <rect width="294" height="342.722" rx="9.16147" fill="#CBC2B0" />
-        <rect
-          width="294"
-          height="342.722"
-          rx="9.16147"
-          fill="url(#pattern3)"
-          fillOpacity="0.7"
-        />
-        <rect
-          width="294"
-          height="342.722"
-          rx="9.16147"
-          fill="url(#paint2_linear_59_101)"
-        />
+        <rect width="294" height="342.722" rx="9.16147" fill="url(#pattern3)" fillOpacity="0.7" />
+        <rect width="294" height="342.722" rx="9.16147" fill="url(#paint2_linear_59_101)" />
         <g opacity="0.72" filter="url(#filter76_f_59_101)">
           <path
             d="M-39.9773 -76.2852H334.028L222.05 138.693H68.0526L-39.9773 -76.2852Z"
@@ -1166,14 +909,7 @@ const Macintosh: React.FC = () => {
           />
         </g>
       </g>
-      <rect
-        x="7.07935"
-        y="16.241"
-        width="279.841"
-        height="310.241"
-        rx="4.16431"
-        fill="#D2C9B8"
-      />
+      <rect x="7.07935" y="16.241" width="279.841" height="310.241" rx="4.16431" fill="#D2C9B8" />
       <rect
         x="7.07935"
         y="16.241"
@@ -1211,28 +947,14 @@ const Macintosh: React.FC = () => {
         />
       </mask>
       <g mask="url(#mask3_59_101)">
-        <rect
-          x="24.5693"
-          y="33.7308"
-          width="244.861"
-          height="184.895"
-          fill="#B8AE9B"
-        />
-        <g
-          style={{ mixBlendMode: "lighten" }}
-          opacity="0.7"
-          filter="url(#filter78_f_59_101)"
-        >
+        <rect x="24.5693" y="33.7308" width="244.861" height="184.895" fill="#B8AE9B" />
+        <g style={{ mixBlendMode: "lighten" }} opacity="0.7" filter="url(#filter78_f_59_101)">
           <path
             d="M7.73645 234.138H286.263L202.479 135.965H90.4773L7.73645 234.138Z"
             fill="white"
           />
         </g>
-        <g
-          style={{ mixBlendMode: "darken" }}
-          opacity="0.4"
-          filter="url(#filter79_f_59_101)"
-        >
+        <g style={{ mixBlendMode: "darken" }} opacity="0.4" filter="url(#filter79_f_59_101)">
           <path
             d="M7.73645 19.3641H286.263L202.479 117.538H90.4773L7.73645 19.3641Z"
             fill="black"
@@ -1318,14 +1040,7 @@ const Macintosh: React.FC = () => {
         </g>
       </g>
       <g filter="url(#filter82_f_59_101)">
-        <rect
-          x="24.5693"
-          y="288.17"
-          width="20.8215"
-          height="20.8215"
-          rx="3.33144"
-          fill="#C4C4C4"
-        />
+        <rect x="24.5693" y="288.17" width="20.8215" height="20.8215" rx="3.33144" fill="#C4C4C4" />
         <rect
           x="24.3611"
           y="287.962"
@@ -1337,14 +1052,7 @@ const Macintosh: React.FC = () => {
         />
       </g>
       <g filter="url(#filter83_i_59_101)">
-        <rect
-          x="24.5693"
-          y="288.17"
-          width="20.8215"
-          height="20.8215"
-          rx="3.33144"
-          fill="#C5C0B1"
-        />
+        <rect x="24.5693" y="288.17" width="20.8215" height="20.8215" rx="3.33144" fill="#C5C0B1" />
       </g>
       <g filter="url(#filter84_dd_59_101)">
         <path
@@ -1367,45 +1075,12 @@ const Macintosh: React.FC = () => {
         />
       </mask>
       <g mask="url(#mask5_59_101)">
-        <path
-          d="M27.4843 289.836H42.0593V296.499H27.4843V289.836Z"
-          fill="#61BB46"
-        />
-        <rect
-          x="28.1089"
-          y="296.096"
-          width="13.5189"
-          height="2.08215"
-          fill="#FDB827"
-        />
-        <rect
-          x="28.1089"
-          y="298.178"
-          width="13.5189"
-          height="2.08215"
-          fill="#F5821F"
-        />
-        <rect
-          x="27.9008"
-          y="300.247"
-          width="14.1586"
-          height="2.08215"
-          fill="#E03A3E"
-        />
-        <rect
-          x="28.1089"
-          y="302.343"
-          width="13.5189"
-          height="2.08215"
-          fill="#963D97"
-        />
-        <rect
-          x="28.1089"
-          y="304.425"
-          width="13.5189"
-          height="2.08215"
-          fill="#009DDC"
-        />
+        <path d="M27.4843 289.836H42.0593V296.499H27.4843V289.836Z" fill="#61BB46" />
+        <rect x="28.1089" y="296.096" width="13.5189" height="2.08215" fill="#FDB827" />
+        <rect x="28.1089" y="298.178" width="13.5189" height="2.08215" fill="#F5821F" />
+        <rect x="27.9008" y="300.247" width="14.1586" height="2.08215" fill="#E03A3E" />
+        <rect x="28.1089" y="302.343" width="13.5189" height="2.08215" fill="#963D97" />
+        <rect x="28.1089" y="304.425" width="13.5189" height="2.08215" fill="#009DDC" />
         <g filter="url(#filter85_ii_59_101)">
           <path
             d="M39.4364 298.685C39.4598 301.206 41.6478 302.045 41.672 302.055C41.6535 302.115 41.3224 303.251 40.5193 304.425C39.825 305.439 39.1045 306.45 37.9694 306.471C36.854 306.492 36.4954 305.81 35.2202 305.81C33.9455 305.81 33.547 306.45 32.4912 306.492C31.3956 306.533 30.5612 305.395 29.8612 304.384C28.4308 302.315 27.3376 298.54 28.8054 295.991C29.5346 294.725 30.8377 293.924 32.2521 293.903C33.328 293.883 34.3436 294.627 35.0013 294.627C35.6586 294.627 36.8926 293.732 38.19 293.863C38.7331 293.886 40.2576 294.083 41.2365 295.516C41.1577 295.565 39.4175 296.578 39.4364 298.685V298.685ZM37.3402 292.495C37.9219 291.791 38.3134 290.811 38.2066 289.836C37.3682 289.869 36.3543 290.394 35.7529 291.098C35.2139 291.721 34.7419 292.719 34.8692 293.675C35.8038 293.747 36.7585 293.2 37.3402 292.495"
@@ -1451,21 +1126,13 @@ const Macintosh: React.FC = () => {
           fill="url(#paint5_linear_59_101)"
           mask="url(#path-144-inside-4_59_101)"
         />
-        <g
-          style={{ mixBlendMode: "lighten" }}
-          opacity="0.7"
-          filter="url(#filter87_f_59_101)"
-        >
+        <g style={{ mixBlendMode: "lighten" }} opacity="0.7" filter="url(#filter87_f_59_101)">
           <path
             d="M205.676 296.732H280.788L254.876 276.093H231.37L205.676 296.732Z"
             fill="#FFFDF4"
           />
         </g>
-        <g
-          style={{ mixBlendMode: "lighten" }}
-          opacity="0.7"
-          filter="url(#filter88_f_59_101)"
-        >
+        <g style={{ mixBlendMode: "lighten" }} opacity="0.7" filter="url(#filter88_f_59_101)">
           <path
             d="M131.036 283.621H211.108L233.775 272.561L154.881 272.561L131.036 283.621Z"
             fill="#FFFDF4"
@@ -1512,13 +1179,7 @@ const Macintosh: React.FC = () => {
                 fill="black"
               />
             </g>
-            <rect
-              x="224.04"
-              y="279.841"
-              width="38.3116"
-              height="6.24646"
-              fill="#D2C9B8"
-            />
+            <rect x="224.04" y="279.841" width="38.3116" height="6.24646" fill="#D2C9B8" />
             <g filter="url(#filter94_ii_59_101)">
               <path
                 d="M226.538 265.266C226.538 264.116 227.47 263.184 228.62 263.184H257.771C258.92 263.184 259.853 264.116 259.853 265.266V269.43H225.289C225.979 269.43 226.538 268.871 226.538 268.181V265.266Z"
@@ -1544,16 +1205,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.66572"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.66572" result="effect1_foregroundBlur_59_101" />
         </filter>
         <pattern
           id="pattern0"
@@ -1561,10 +1214,7 @@ const Macintosh: React.FC = () => {
           width="0.22522"
           height="0.787692"
         >
-          <use
-            xlinkHref="#image0_59_101"
-            transform="scale(0.000879765 0.00307692)"
-          />
+          <use xlinkHref="#image0_59_101" transform="scale(0.000879765 0.00307692)" />
         </pattern>
         <filter
           id="filter1_f_59_101"
@@ -1576,16 +1226,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="2.08215"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="2.08215" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter2_f_59_101"
@@ -1597,16 +1239,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="2.08215"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="2.08215" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter3_i_59_101"
@@ -1618,12 +1252,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1639,22 +1268,10 @@ const Macintosh: React.FC = () => {
           <feOffset dy="1.24929" />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.28 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.28 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
-        <pattern
-          id="pattern1"
-          patternContentUnits="objectBoundingBox"
-          width="0.96"
-          height="2.4"
-        >
+        <pattern id="pattern1" patternContentUnits="objectBoundingBox" width="0.96" height="2.4">
           <use xlinkHref="#image0_59_101" transform="scale(0.00375 0.009375)" />
         </pattern>
         <filter
@@ -1674,15 +1291,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1692,10 +1302,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -1716,15 +1323,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter5_ddi_59_101"
@@ -1743,15 +1343,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1761,10 +1354,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -1785,15 +1375,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter6_ddi_59_101"
@@ -1812,15 +1395,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1830,10 +1406,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -1854,15 +1427,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter7_ddi_59_101"
@@ -1881,15 +1447,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1899,10 +1458,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -1923,15 +1479,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter8_ddi_59_101"
@@ -1950,15 +1499,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1968,10 +1510,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -1992,15 +1531,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter9_ddi_59_101"
@@ -2019,15 +1551,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2037,10 +1562,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2061,15 +1583,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter10_ddi_59_101"
@@ -2088,15 +1603,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2106,10 +1614,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2130,15 +1635,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter11_ddi_59_101"
@@ -2157,15 +1655,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2175,10 +1666,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2199,15 +1687,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter12_ddi_59_101"
@@ -2226,15 +1707,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2244,10 +1718,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2268,15 +1739,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter13_ddi_59_101"
@@ -2295,15 +1759,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2313,10 +1770,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2337,15 +1791,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter14_ddi_59_101"
@@ -2364,15 +1811,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2382,10 +1822,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2406,15 +1843,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter15_ddi_59_101"
@@ -2433,15 +1863,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2451,10 +1874,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2475,15 +1895,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter16_ddi_59_101"
@@ -2502,15 +1915,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2520,10 +1926,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2544,15 +1947,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter17_ddi_59_101"
@@ -2571,15 +1967,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2589,10 +1978,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2613,15 +1999,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter18_ddi_59_101"
@@ -2640,15 +2019,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2658,10 +2030,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2682,15 +2051,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter19_ddi_59_101"
@@ -2709,15 +2071,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2727,10 +2082,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2751,15 +2103,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter20_ddi_59_101"
@@ -2778,15 +2123,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2796,10 +2134,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2820,15 +2155,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter21_ddi_59_101"
@@ -2847,15 +2175,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2865,10 +2186,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2889,15 +2207,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter22_ddi_59_101"
@@ -2916,15 +2227,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2934,10 +2238,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -2958,15 +2259,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter23_ddi_59_101"
@@ -2985,15 +2279,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3003,10 +2290,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3027,15 +2311,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter24_ddi_59_101"
@@ -3054,15 +2331,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3072,10 +2342,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3096,15 +2363,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter25_ddi_59_101"
@@ -3123,15 +2383,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3141,10 +2394,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3165,15 +2415,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter26_ddi_59_101"
@@ -3192,15 +2435,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3210,10 +2446,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3234,15 +2467,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter27_ddi_59_101"
@@ -3261,15 +2487,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3279,10 +2498,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3303,15 +2519,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter28_ddi_59_101"
@@ -3330,15 +2539,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3348,10 +2550,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3372,15 +2571,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter29_ddi_59_101"
@@ -3399,15 +2591,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3417,10 +2602,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3441,15 +2623,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter30_ddi_59_101"
@@ -3468,15 +2643,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3486,10 +2654,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3510,15 +2675,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter31_ddi_59_101"
@@ -3537,15 +2695,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3555,10 +2706,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3579,15 +2727,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter32_ddi_59_101"
@@ -3606,15 +2747,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3624,10 +2758,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3648,15 +2779,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter33_ddi_59_101"
@@ -3675,15 +2799,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3693,10 +2810,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3717,15 +2831,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter34_ddi_59_101"
@@ -3744,15 +2851,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3762,10 +2862,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3786,15 +2883,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter35_ddi_59_101"
@@ -3813,15 +2903,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3831,10 +2914,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3855,15 +2935,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter36_ddi_59_101"
@@ -3882,15 +2955,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3900,10 +2966,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3924,15 +2987,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter37_ddi_59_101"
@@ -3951,15 +3007,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -3969,10 +3018,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -3993,15 +3039,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter38_ddi_59_101"
@@ -4020,15 +3059,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4038,10 +3070,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -4062,15 +3091,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter39_ddi_59_101"
@@ -4089,15 +3111,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4107,10 +3122,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -4131,15 +3143,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter40_ddi_59_101"
@@ -4158,15 +3163,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4176,10 +3174,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -4200,15 +3195,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter41_f_59_101"
@@ -4220,16 +3208,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="0.416431"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="0.416431" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter42_f_59_101"
@@ -4241,16 +3221,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.14082"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.14082" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter43_f_59_101"
@@ -4262,16 +3234,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.06321"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.06321" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter44_i_59_101"
@@ -4283,12 +3247,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4304,22 +3263,10 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.47 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.47 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
-        <pattern
-          id="pattern2"
-          patternContentUnits="objectBoundingBox"
-          width="3.525"
-          height="3.525"
-        >
+        <pattern id="pattern2" patternContentUnits="objectBoundingBox" width="3.525" height="3.525">
           <use xlinkHref="#image1_59_101" transform="scale(0.0125)" />
         </pattern>
         <filter
@@ -4332,12 +3279,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4353,15 +3295,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter46_i_59_101"
@@ -4373,12 +3308,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4394,15 +3324,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter47_i_59_101"
@@ -4414,12 +3337,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4435,15 +3353,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter48_i_59_101"
@@ -4455,12 +3366,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4476,15 +3382,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter49_i_59_101"
@@ -4496,12 +3395,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4517,15 +3411,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter50_i_59_101"
@@ -4537,12 +3424,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4558,15 +3440,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter51_i_59_101"
@@ -4578,12 +3453,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4599,15 +3469,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter52_i_59_101"
@@ -4619,12 +3482,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4640,15 +3498,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter53_i_59_101"
@@ -4660,12 +3511,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4681,15 +3527,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter54_i_59_101"
@@ -4701,12 +3540,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4722,15 +3556,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter55_i_59_101"
@@ -4742,12 +3569,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4763,15 +3585,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter56_i_59_101"
@@ -4783,12 +3598,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4804,15 +3614,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter57_i_59_101"
@@ -4824,12 +3627,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4845,15 +3643,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter58_i_59_101"
@@ -4865,12 +3656,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4886,15 +3672,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter59_i_59_101"
@@ -4906,12 +3685,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4927,15 +3701,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter60_i_59_101"
@@ -4947,12 +3714,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -4968,15 +3730,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter61_i_59_101"
@@ -4988,12 +3743,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5009,15 +3759,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter62_i_59_101"
@@ -5029,12 +3772,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5050,15 +3788,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter63_i_59_101"
@@ -5070,12 +3801,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5091,15 +3817,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter64_i_59_101"
@@ -5111,12 +3830,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5132,15 +3846,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter65_i_59_101"
@@ -5152,12 +3859,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5173,15 +3875,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter66_i_59_101"
@@ -5193,12 +3888,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5214,15 +3904,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter67_i_59_101"
@@ -5234,12 +3917,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5255,15 +3933,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter68_i_59_101"
@@ -5275,12 +3946,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5296,15 +3962,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter69_i_59_101"
@@ -5316,12 +3975,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5337,15 +3991,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter70_i_59_101"
@@ -5357,12 +4004,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5378,15 +4020,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter71_i_59_101"
@@ -5398,12 +4033,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5419,15 +4049,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter72_if_59_101"
@@ -5439,12 +4062,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5460,19 +4078,9 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.44 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
-          <feGaussianBlur
-            stdDeviation="0.416431"
-            result="effect2_foregroundBlur_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.44 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
+          <feGaussianBlur stdDeviation="0.416431" result="effect2_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter73_ddi_59_101"
@@ -5492,15 +4100,8 @@ const Macintosh: React.FC = () => {
           />
           <feOffset />
           <feGaussianBlur stdDeviation="0.208215" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5508,10 +4109,7 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -5532,15 +4130,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter74_ddi_59_101"
@@ -5559,15 +4150,8 @@ const Macintosh: React.FC = () => {
             result="hardAlpha"
           />
           <feOffset dy="0.416431" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5577,10 +4161,7 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -5601,15 +4182,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.46 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect3_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.46 0" />
+          <feBlend mode="normal" in2="shape" result="effect3_innerShadow_59_101" />
         </filter>
         <filter
           id="filter75_ddd_59_101"
@@ -5634,11 +4208,7 @@ const Macintosh: React.FC = () => {
             type="matrix"
             values="0 0 0 0 0.1875 0 0 0 0 0.17419 0 0 0 0 0.115625 0 0 0 0.4 0"
           />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5648,10 +4218,7 @@ const Macintosh: React.FC = () => {
           <feOffset dy="8.32861" />
           <feGaussianBlur stdDeviation="3.74788" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -5666,10 +4233,7 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.832861" />
           <feGaussianBlur stdDeviation="2.91501" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0" />
           <feBlend
             mode="normal"
             in2="effect2_dropShadow_59_101"
@@ -5688,10 +4252,7 @@ const Macintosh: React.FC = () => {
           width="0.181303"
           height="0.155529"
         >
-          <use
-            xlinkHref="#image0_59_101"
-            transform="scale(0.000708215 0.000607533)"
-          />
+          <use xlinkHref="#image0_59_101" transform="scale(0.000708215 0.000607533)" />
         </pattern>
         <filter
           id="filter76_f_59_101"
@@ -5703,16 +4264,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="3.74788"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="3.74788" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter77_f_59_101"
@@ -5724,16 +4277,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="3.95609"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="3.95609" result="effect1_foregroundBlur_59_101" />
         </filter>
         <pattern
           id="pattern4"
@@ -5741,10 +4286,7 @@ const Macintosh: React.FC = () => {
           width="0.266667"
           height="0.240537"
         >
-          <use
-            xlinkHref="#image0_59_101"
-            transform="scale(0.00104167 0.000939597)"
-          />
+          <use xlinkHref="#image0_59_101" transform="scale(0.00104167 0.000939597)" />
         </pattern>
         <filter
           id="filter78_f_59_101"
@@ -5756,16 +4298,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="5.20538"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="5.20538" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter79_f_59_101"
@@ -5777,16 +4311,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="5.20538"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="5.20538" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter80_i_59_101"
@@ -5798,12 +4324,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5813,15 +4334,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="1.66572" />
           <feGaussianBlur stdDeviation="1.24929" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter81_f_59_101"
@@ -5833,16 +4347,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.66572"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.66572" result="effect1_foregroundBlur_59_101" />
         </filter>
         <pattern
           id="screen-content-pattern"
@@ -5865,16 +4371,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="0.208215"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="0.208215" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter83_i_59_101"
@@ -5886,12 +4384,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5907,15 +4400,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter84_dd_59_101"
@@ -5940,11 +4426,7 @@ const Macintosh: React.FC = () => {
             type="matrix"
             values="0 0 0 0 0.308333 0 0 0 0 0.286065 0 0 0 0 0.208125 0 0 0 0.4 0"
           />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -5960,10 +4442,7 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
           <feBlend
             mode="normal"
             in2="effect1_dropShadow_59_101"
@@ -5986,12 +4465,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6007,15 +4481,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.832861" />
           <feGaussianBlur stdDeviation="0.312323" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6025,10 +4492,7 @@ const Macintosh: React.FC = () => {
           <feOffset dy="-0.416431" />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.19 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.19 0" />
           <feBlend
             mode="normal"
             in2="effect1_innerShadow_59_101"
@@ -6045,12 +4509,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6060,15 +4519,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.8 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.8 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter87_f_59_101"
@@ -6080,16 +4532,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.66572"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.66572" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter88_f_59_101"
@@ -6101,16 +4545,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.66572"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.66572" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter89_f_59_101"
@@ -6122,16 +4558,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="2.08215"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="2.08215" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter90_f_59_101"
@@ -6143,16 +4571,8 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="1.66572"
-            result="effect1_foregroundBlur_59_101"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="1.66572" result="effect1_foregroundBlur_59_101" />
         </filter>
         <filter
           id="filter91_d_59_101"
@@ -6179,15 +4599,8 @@ const Macintosh: React.FC = () => {
           <feOffset />
           <feGaussianBlur stdDeviation="0.208215" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_59_101" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -6205,12 +4618,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6220,15 +4628,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="-0.832861" />
           <feGaussianBlur stdDeviation="0.832861" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter93_i_59_101"
@@ -6240,12 +4641,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6255,15 +4651,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="1.66572" />
           <feGaussianBlur stdDeviation="0.832861" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
         </filter>
         <filter
           id="filter94_ii_59_101"
@@ -6275,12 +4664,7 @@ const Macintosh: React.FC = () => {
           colorInterpolationFilters="sRGB"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6290,15 +4674,8 @@ const Macintosh: React.FC = () => {
           <feOffset dy="2.08215" />
           <feGaussianBlur stdDeviation="0.624646" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="shape"
-            result="effect1_innerShadow_59_101"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0" />
+          <feBlend mode="normal" in2="shape" result="effect1_innerShadow_59_101" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -6308,10 +4685,7 @@ const Macintosh: React.FC = () => {
           <feOffset dy="0.416431" />
           <feGaussianBlur stdDeviation="0.416431" />
           <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
           <feBlend
             mode="normal"
             in2="effect1_innerShadow_59_101"
@@ -6324,10 +4698,7 @@ const Macintosh: React.FC = () => {
           width="2.15904"
           height="11.9467"
         >
-          <use
-            xlinkHref="#image0_59_101"
-            transform="scale(0.00843374 0.0466667)"
-          />
+          <use xlinkHref="#image0_59_101" transform="scale(0.00843374 0.0466667)" />
         </pattern>
         <linearGradient
           id="paint0_linear_59_101"
@@ -6397,12 +4768,7 @@ const Macintosh: React.FC = () => {
           <stop offset="1" stopColor="white" stopOpacity="0.18" />
         </linearGradient>
         <clipPath id="clip0_59_101">
-          <rect
-            width="294"
-            height="85.3683"
-            fill="white"
-            transform="translate(0 287.754)"
-          />
+          <rect width="294" height="85.3683" fill="white" transform="translate(0 287.754)" />
         </clipPath>
         <clipPath id="clip1_59_101">
           <rect
@@ -6413,14 +4779,7 @@ const Macintosh: React.FC = () => {
           />
         </clipPath>
         <clipPath id="clip2_59_101">
-          <rect
-            x="40.3937"
-            y="54.9691"
-            width="213.212"
-            height="142.419"
-            rx="5.4136"
-            fill="white"
-          />
+          <rect x="40.3937" y="54.9691" width="213.212" height="142.419" rx="5.4136" fill="white" />
         </clipPath>
         <image
           id="image0_59_101"
@@ -6434,12 +4793,7 @@ const Macintosh: React.FC = () => {
           height="282"
           xlinkHref="data:image/png;base64,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"
         />
-        <image
-          id="screen-content-image"
-          width="320"
-          height="320"
-          xlinkHref={currentURI}
-        />
+        <image id="screen-content-image" width="320" height="320" xlinkHref={currentURI} />
       </defs>
     </svg>
   );

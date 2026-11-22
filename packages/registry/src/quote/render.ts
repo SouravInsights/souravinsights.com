@@ -15,19 +15,14 @@ import {
 } from "./presets";
 import { solid, type Fill, type ShareTheme, type Variant } from "./themes";
 
-function fontString(
-  size: number,
-  family: string,
-  weight = 400,
-  italic = false
-): string {
+function fontString(size: number, family: string, weight = 400, italic = false): string {
   return `${italic ? "italic " : ""}${weight} ${size}px ${family}`;
 }
 
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
-  maxWidth: number
+  maxWidth: number,
 ): { text: string; width: number }[] {
   const out: { text: string; width: number }[] = [];
   for (const paragraph of text.split(/\n+/)) {
@@ -56,7 +51,7 @@ function roundRect(
   y: number,
   w: number,
   h: number,
-  r: number
+  r: number,
 ) {
   const rr = Math.max(0, Math.min(r, w / 2, h / 2));
   ctx.beginPath();
@@ -92,12 +87,7 @@ const CURIO_EYES: [number, number, number, number][] = [
   [34.5, 22, 37.9, 25.6],
 ];
 
-function fillBackground(
-  ctx: CanvasRenderingContext2D,
-  fill: Fill,
-  w: number,
-  h: number
-) {
+function fillBackground(ctx: CanvasRenderingContext2D, fill: Fill, w: number, h: number) {
   ctx.fillStyle = fill.kind === "solid" ? fill.color : fill.base;
   ctx.fillRect(0, 0, w, h);
   if (fill.kind !== "mesh") return;
@@ -108,7 +98,7 @@ function fillBackground(
       0,
       blob.x * w,
       blob.y * h,
-      blob.r * w
+      blob.r * w,
     );
     gradient.addColorStop(0, blob.color);
     gradient.addColorStop(1, "transparent");
@@ -138,16 +128,14 @@ export interface CardOptions {
   showPublication: boolean;
 }
 
-export type Overrides = Partial<
-  Omit<CardOptions, "quote" | "title" | "publication" | "context">
->;
+export type Overrides = Partial<Omit<CardOptions, "quote" | "title" | "publication" | "context">>;
 
 /** A variant's colours, with the Customize panel's overrides on top. */
 export function resolveOptions(
   theme: ShareTheme,
   variant: Variant,
   overrides: Overrides,
-  content: Pick<CardOptions, "quote" | "title" | "publication" | "context">
+  content: Pick<CardOptions, "quote" | "title" | "publication" | "context">,
 ): CardOptions {
   const base: Omit<CardOptions, "quote" | "title" | "publication" | "context"> = {
     fill: variant.fill,
@@ -180,7 +168,7 @@ export function drawCard(
   ctx: CanvasRenderingContext2D,
   mode: Mode,
   theme: ShareTheme,
-  options: CardOptions
+  options: CardOptions,
 ) {
   const dims = MODES.find((m) => m.id === mode) ?? MODES[0];
   const w = dims.width;
@@ -208,16 +196,14 @@ export function drawCard(
   const markGap = Math.round(w * 0.032);
   const pubGap = Math.round(titleSize * 0.24);
   const footerWidth =
-    theme.footer === "center" || !options.showTitle
-      ? maxWidth
-      : maxWidth - markSize - markGap;
+    theme.footer === "center" || !options.showTitle ? maxWidth : maxWidth - markSize - markGap;
 
   ctx.font = fontString(titleSize, sans, 600);
   const titleLines = options.showTitle
     ? wrapText(
         ctx,
         theme.uppercaseTitle ? options.title.toUpperCase() : options.title,
-        footerWidth
+        footerWidth,
       ).slice(0, 2)
     : [];
   // The host is set in mono: on a still image it is the only cue that the
@@ -245,8 +231,7 @@ export function drawCard(
   const base = { small: 0.07, medium: 0.086, large: 0.102 }[options.size];
   const raw = theme.quoteMarks ? `\u201C${options.quote}\u201D` : options.quote;
   const quote = theme.uppercaseQuote ? raw.toUpperCase() : raw;
-  const quoteInk =
-    theme.style === "marker" ? options.highlightText : options.text;
+  const quoteInk = theme.style === "marker" ? options.highlightText : options.text;
   let fontSize = Math.round(w * base);
   let lines: { text: string; width: number }[] = [];
   let lineHeight = fontSize * 1.22;
@@ -255,7 +240,7 @@ export function drawCard(
       fontSize,
       family,
       theme.style === "bold" || options.font === "sans" ? 700 : 400,
-      theme.italicQuote
+      theme.italicQuote,
     );
     lines = wrapText(ctx, quote, maxWidth - fontSize * 0.3);
     lineHeight = fontSize * 1.24;
@@ -301,8 +286,7 @@ export function drawCard(
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const lineY = y + i * lineHeight + (lineHeight - rectHeight) / 2;
-      const x =
-        options.align === "center" ? (w - line.width) / 2 - hpad : pad - hpad;
+      const x = options.align === "center" ? (w - line.width) / 2 - hpad : pad - hpad;
       roundRect(ctx, x, lineY, line.width + hpad * 2, rectHeight, fontSize * 0.1);
       ctx.fill();
     }
@@ -315,7 +299,7 @@ export function drawCard(
     fontSize,
     family,
     theme.style === "bold" || options.font === "sans" ? 700 : 400,
-    theme.italicQuote
+    theme.italicQuote,
   );
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -337,7 +321,7 @@ export function drawCard(
       pad,
       footerTop - Math.round(h * 0.03),
       maxWidth,
-      Math.max(1, Math.round(h * 0.0012))
+      Math.max(1, Math.round(h * 0.0012)),
     );
     ctx.restore();
   }
@@ -382,7 +366,7 @@ export function drawCard(
       w - pad - markSize,
       footerTop + (footerHeight - markSize) / 2,
       markSize,
-      options
+      options,
     );
   }
 
@@ -401,7 +385,7 @@ function drawCurioMark(
   x: number,
   y: number,
   size: number,
-  options: CardOptions
+  options: CardOptions,
 ) {
   const s = size / CURIO_VIEW.w;
   const drawnH = CURIO_VIEW.h * s;
@@ -442,7 +426,7 @@ function drawCurioMark(
 export function cardToBlob(
   mode: Mode,
   theme: ShareTheme,
-  options: CardOptions
+  options: CardOptions,
 ): Promise<Blob | null> {
   const dims = MODES.find((m) => m.id === mode) ?? MODES[0];
   const canvas = document.createElement("canvas");

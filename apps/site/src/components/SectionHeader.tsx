@@ -14,11 +14,7 @@ interface SectionHeaderProps {
  * The heading used between sections inside a page. Matches PageHeader so a
  * section never reads louder or quieter than the page it sits on.
  */
-export function SectionHeader({
-  title,
-  description,
-  href,
-}: SectionHeaderProps) {
+export function SectionHeader({ title, description, href }: SectionHeaderProps) {
   return (
     <div className="mb-8">
       {href ? (
@@ -41,9 +37,7 @@ export function SectionHeader({
         </h2>
       )}
       {description ? (
-        <p className="type-caption mt-2 max-w-2xl text-faint-foreground">
-          {description}
-        </p>
+        <p className="type-caption mt-2 max-w-2xl text-faint-foreground">{description}</p>
       ) : null}
       <div className="rule mt-4" aria-hidden="true" />
     </div>

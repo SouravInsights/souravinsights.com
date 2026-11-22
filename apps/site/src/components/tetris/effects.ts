@@ -213,7 +213,7 @@ export class EffectsPool {
     text: string,
     x: number,
     y: number,
-    opts: { tone?: Floater["tone"]; big?: boolean; ttl?: number } = {}
+    opts: { tone?: Floater["tone"]; big?: boolean; ttl?: number } = {},
   ) {
     let slot = this.floaters.find((f) => !f.alive);
     if (!slot) {
@@ -243,10 +243,7 @@ export class EffectsPool {
   kick(magnitude: number) {
     if (this.reducedMotion) return;
     // Never stack shakes upward — the strongest recent one wins.
-    this.shakeMag = Math.max(
-      this.shakeAge < this.shakeTtl ? this.shakeMag * 0.5 : 0,
-      magnitude
-    );
+    this.shakeMag = Math.max(this.shakeAge < this.shakeTtl ? this.shakeMag * 0.5 : 0, magnitude);
     this.shakeAge = 0;
     this.shakeTtl = 150;
   }
@@ -310,7 +307,7 @@ export class EffectsPool {
     ctx: CanvasRenderingContext2D,
     project: (x: number, y: number) => [number, number],
     cellPx: number,
-    palette: { text: string; accent: string; white: string }
+    palette: { text: string; accent: string; white: string },
   ) {
     for (const p of this.particles) {
       if (!p.alive) continue;
@@ -340,16 +337,12 @@ export class EffectsPool {
       ctx.globalAlpha = (t < 0.65 ? 1 : 1 - (t - 0.65) / 0.35) * enter;
       ctx.font = `${f.big ? 700 : 600} ${Math.max(
         11,
-        cellPx * (f.big ? 0.9 : 0.62)
+        cellPx * (f.big ? 0.9 : 0.62),
       )}px ui-monospace, SFMono-Regular, Menlo, monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillStyle =
-        f.tone === "accent"
-          ? palette.accent
-          : f.tone === "dev"
-            ? palette.white
-            : palette.text;
+        f.tone === "accent" ? palette.accent : f.tone === "dev" ? palette.white : palette.text;
       ctx.fillText(f.text, px, py);
     }
     ctx.globalAlpha = 1;

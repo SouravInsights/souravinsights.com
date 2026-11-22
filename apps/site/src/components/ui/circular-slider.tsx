@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-  KeyboardEvent as ReactKeyboardEvent,
-  PointerEvent as ReactPointerEvent,
-} from "react";
+import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 import Scritto from "@scritto/react";
 import { cn } from "@/lib/utils";
@@ -29,13 +26,7 @@ function polar(cx: number, cy: number, radius: number, degrees: number) {
   };
 }
 
-function arcPath(
-  cx: number,
-  cy: number,
-  radius: number,
-  from: number,
-  to: number
-) {
+function arcPath(cx: number, cy: number, radius: number, from: number, to: number) {
   const start = polar(cx, cy, radius, from);
   const end = polar(cx, cy, radius, to);
   const largeArc = to - from > 180 ? 1 : 0;
@@ -98,9 +89,7 @@ export function CircularSlider({
   const [isDragging, setIsDragging] = useState(false);
 
   const center = size / 2;
-  const handleRadius = isDragging
-    ? strokeWidth / 2 + 3
-    : strokeWidth / 2 + 1.5;
+  const handleRadius = isDragging ? strokeWidth / 2 + 3 : strokeWidth / 2 + 1.5;
   // Reserve room for the largest the handle gets, so the ring keeps one radius
   // and the handle can never overflow the viewBox (which clips).
   const radius = center - (strokeWidth / 2 + 3) - 0.5;
@@ -135,7 +124,7 @@ export function CircularSlider({
       const normalised = angle < START_ANGLE ? angle + 360 : angle;
       return (normalised - START_ANGLE) / SWEEP;
     },
-    [deadRadius]
+    [deadRadius],
   );
 
   const applyValue = useCallback(
@@ -150,7 +139,7 @@ export function CircularSlider({
 
       onChange(next);
     },
-    [detent, onChange, onDetent]
+    [detent, onChange, onDetent],
   );
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -177,10 +166,7 @@ export function CircularSlider({
     if (!start) return;
 
     if (!passedThreshold.current) {
-      const travelled = Math.hypot(
-        event.clientX - start.x,
-        event.clientY - start.y
-      );
+      const travelled = Math.hypot(event.clientX - start.x, event.clientY - start.y);
       if (travelled > DRAG_THRESHOLD) passedThreshold.current = true;
     }
 
@@ -260,22 +246,17 @@ export function CircularSlider({
       className={cn(
         "relative shrink-0 touch-none select-none rounded-full outline-none",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-popover",
-        disabled ? "cursor-not-allowed opacity-50" : "cursor-move"
+        disabled ? "cursor-not-allowed opacity-50" : "cursor-move",
       )}
     >
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        aria-hidden="true"
-      >
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
         {/* Decile ticks: the click targets, made visible. */}
         {Array.from({ length: 11 }, (_, index) => {
           const tick = polar(
             center,
             center,
             radius - strokeWidth / 2 - 3,
-            START_ANGLE + (SWEEP * index) / 10
+            START_ANGLE + (SWEEP * index) / 10,
           );
           return (
             <circle
@@ -304,12 +285,7 @@ export function CircularSlider({
             className="stroke-green-500"
           />
         )}
-        <circle
-          cx={handle.x}
-          cy={handle.y}
-          r={handleRadius}
-          className="fill-foreground"
-        />
+        <circle cx={handle.x} cy={handle.y} r={handleRadius} className="fill-foreground" />
       </svg>
 
       <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-medium tabular-nums">

@@ -60,9 +60,7 @@ export default function CollapsibleTOC({
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
-              <span className="font-mono text-sm text-muted-foreground">
-                toc.md
-              </span>
+              <span className="font-mono text-sm text-muted-foreground">toc.md</span>
             </div>
 
             {/* Toggle button */}
@@ -71,9 +69,7 @@ export default function CollapsibleTOC({
               className="p-1.5 rounded-md hover:bg-muted text-muted-foreground transition-colors flex items-center"
               aria-label="Collapse table of contents"
             >
-              <span className="text-xs mr-1 text-muted-foreground">
-                Collapse
-              </span>
+              <span className="text-xs mr-1 text-muted-foreground">Collapse</span>
               <CaretRight size={16} />
             </button>
           </div>
@@ -130,24 +126,16 @@ export default function CollapsibleTOC({
             title="Expand table of contents"
           >
             <div className="flex items-center justify-center">
-              <CaretLeft
-                size={18}
-                className="text-muted-foreground"
-              />
+              <CaretLeft size={18} className="text-muted-foreground" />
             </div>
             <div className="flex flex-col items-center pt-2">
-              <BookOpen
-                size={18}
-                className="text-muted-foreground mb-3"
-              />
+              <BookOpen size={18} className="text-muted-foreground mb-3" />
 
               {/* Small dots to indicate there are multiple items */}
               <div className="flex flex-col space-y-1.5">
                 <div
                   className={`w-1.5 h-1.5 rounded-full ${
-                    activeHeading
-                      ? "bg-green-500"
-                      : "bg-gray-300 dark:bg-gray-600"
+                    activeHeading ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
                   }`}
                 ></div>
                 <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600"></div>

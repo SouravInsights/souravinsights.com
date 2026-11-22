@@ -60,9 +60,7 @@ export async function captureScrollScreenshot(url: string): Promise<Buffer> {
     await sleep(HYDRATE_WAIT);
     // Lazy sections (and the scroll-jacked kind especially) mount only after the
     // network goes quiet; measuring without this catches the shell, not the page.
-    await page
-      .waitForNetworkIdle({ idleTime: 750, timeout: 8_000 })
-      .catch(() => undefined);
+    await page.waitForNetworkIdle({ idleTime: 750, timeout: 8_000 }).catch(() => undefined);
     await waitForAssets(page);
     await primeForScroll(page);
 
@@ -97,9 +95,7 @@ export async function captureScrollScreenshot(url: string): Promise<Buffer> {
       if (scrollTop >= maxScroll) break;
 
       // One frame is enough for a scroll-jacked section; skip its long tail.
-      const jack = scrollJacks.find(
-        (range) => top >= range.start && top < range.end
-      );
+      const jack = scrollJacks.find((range) => top >= range.start && top < range.end);
       if (jack) {
         collapse += Math.max(0, jack.end - (top + step));
         top = Math.min(jack.end, totalHeight);
@@ -110,11 +106,7 @@ export async function captureScrollScreenshot(url: string): Promise<Buffer> {
 
     if (tiles.length === 1) return tiles[0].buffer;
 
-    return stitchTiles(
-      tiles,
-      SCROLL_VIEWPORT.width,
-      Math.max(1, totalHeight - collapse)
-    );
+    return stitchTiles(tiles, SCROLL_VIEWPORT.width, Math.max(1, totalHeight - collapse));
   } finally {
     await browser.close().catch(() => undefined);
   }

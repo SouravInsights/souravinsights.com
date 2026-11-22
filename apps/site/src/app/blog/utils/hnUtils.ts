@@ -184,8 +184,5 @@ export function parseHnHtml(html: string | null | undefined): HnBlock[] {
 
 /** Total number of comments in a (sub)tree. */
 export function countComments(comments: HnComment[]): number {
-  return comments.reduce(
-    (total, comment) => total + 1 + countComments(comment.children),
-    0
-  );
+  return comments.reduce((total, comment) => total + 1 + countComments(comment.children), 0);
 }

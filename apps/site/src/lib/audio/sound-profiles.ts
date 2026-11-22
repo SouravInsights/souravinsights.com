@@ -83,12 +83,7 @@ export function createSwitchSound(ctx: AudioContext, t: number, volMult = 1) {
  * A small reward — the sound of liking something. A round upward bloop with a
  * quiet octave sparkle. `pitch` scales it, so a run of likes can climb.
  */
-export function createPopSound(
-  ctx: AudioContext,
-  t: number,
-  volMult = 1,
-  pitch = 1
-) {
+export function createPopSound(ctx: AudioContext, t: number, volMult = 1, pitch = 1) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = "sine";
@@ -247,11 +242,7 @@ export function createSweepSound(ctx: AudioContext, t: number, volMult = 1) {
 }
 
 /** Three soft, descending notes: disappointed rather than dramatic. */
-export function createGameOverSound(
-  ctx: AudioContext,
-  t: number,
-  volMult = 1
-) {
+export function createGameOverSound(ctx: AudioContext, t: number, volMult = 1) {
   const notes = [740, 622, 494];
   const spacing = 0.13;
 

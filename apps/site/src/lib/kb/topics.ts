@@ -35,14 +35,35 @@ import { z } from "zod";
  */
 const BANNED_TOPICS = new Set([
   // tautologies
-  "software development", "technology", "tech", "coding", "general",
-  "content", "media", "resources",
+  "software development",
+  "technology",
+  "tech",
+  "coding",
+  "general",
+  "content",
+  "media",
+  "resources",
   // packaging words
-  "tutorial", "guide",
+  "tutorial",
+  "guide",
   // category words, including the retired v1 names
-  "article", "blog", "blogs", "publication", "people", "person",
-  "tool", "tools", "learning", "inspiration", "directory", "other",
-  "newsletter", "newsletters", "portfolio", "gallery", "galleries",
+  "article",
+  "blog",
+  "blogs",
+  "publication",
+  "people",
+  "person",
+  "tool",
+  "tools",
+  "learning",
+  "inspiration",
+  "directory",
+  "other",
+  "newsletter",
+  "newsletters",
+  "portfolio",
+  "gallery",
+  "galleries",
   // billing
   "pricing",
 ]);
@@ -58,8 +79,7 @@ const tidyTopic = (topic: string) =>
   topic.toLowerCase().trim().replace(/\s+/g, " ").replace(/\.+$/, "");
 
 /** The identity key of a spelling: just its letters and digits, squashed. */
-const spellingKeyOf = (topic: string) =>
-  tidyTopic(topic).replace(/[^a-z0-9]/g, "");
+const spellingKeyOf = (topic: string) => tidyTopic(topic).replace(/[^a-z0-9]/g, "");
 
 /**
  * Are two spellings the same word? Only what letters can PROVE:
@@ -100,7 +120,7 @@ const sameWordByLetters = (a: string, b: string) => {
 export function cleanTopics(
   topics: string[],
   /** word -> the collection's winning spelling, from buildTopicVocabulary(). */
-  winningSpellings: Record<string, string> = {}
+  winningSpellings: Record<string, string> = {},
 ): string[] {
   // gates 1-4
   const cleaned = topics
@@ -111,7 +131,7 @@ export function cleanTopics(
       (t) =>
         TOPIC_START.test(t) &&
         t.length <= MAX_TOPIC_CHARS &&
-        t.split(" ").length <= MAX_TOPIC_WORDS
+        t.split(" ").length <= MAX_TOPIC_WORDS,
     )
     .filter((t) => !BANNED_TOPICS.has(t));
 
@@ -127,8 +147,8 @@ export function cleanTopics(
         (b) =>
           b !== a &&
           wordsOf(b).length > wordsOf(a).length &&
-          wordsOf(a).every((w) => wordsOf(b).includes(w))
-      )
+          wordsOf(a).every((w) => wordsOf(b).includes(w)),
+      ),
   );
 
   // gate 7
@@ -147,15 +167,10 @@ function countTopicSpellings(rowsTopics: (string[] | null)[]): Map<string, numbe
 }
 
 /** The winner in a cluster: most-used spelling, ties go shorter, then a-z. */
-function pickMostUsedSpelling(
-  spellings: string[],
-  counts: Map<string, number>
-): string {
+function pickMostUsedSpelling(spellings: string[], counts: Map<string, number>): string {
   return spellings.sort(
     (a, b) =>
-      (counts.get(b) ?? 0) - (counts.get(a) ?? 0) ||
-      a.length - b.length ||
-      a.localeCompare(b)
+      (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.length - b.length || a.localeCompare(b),
   )[0];
 }
 
@@ -173,7 +188,7 @@ function clusterByLetters(spellings: string[]): string[][] {
 /** Clusters -> { variant: winningSpelling }; the count picks every winner. */
 function spellingsWinners(
   clusters: string[][],
-  counts: Map<string, number>
+  counts: Map<string, number>,
 ): Record<string, string> {
   const winners: Record<string, string> = {};
   for (const cluster of clusters) {
@@ -192,9 +207,7 @@ function spellingsWinners(
  * coined mid-flight ("data-visualization" on one page, "data visualization"
  * on the next) — pairs the vocabulary map can't know before the run exists.
  */
-export function buildLetterCanonical(
-  rowsTopics: (string[] | null)[]
-): Record<string, string> {
+export function buildLetterCanonical(rowsTopics: (string[] | null)[]): Record<string, string> {
   const counts = countTopicSpellings(rowsTopics);
   return spellingsWinners(clusterByLetters(Array.from(counts.keys())), counts);
 }
@@ -228,7 +241,7 @@ export function buildLetterCanonical(
 export async function buildTopicVocabulary(
   rowsTopics: (string[] | null)[],
   model: LanguageModel,
-  limit = 150
+  limit = 150,
 ): Promise<{ vocabulary: string[]; winningSpellings: Record<string, string> }> {
   const counts = countTopicSpellings(rowsTopics);
   const all = Array.from(counts.keys());
@@ -273,7 +286,7 @@ export async function buildTopicVocabulary(
       }
     } catch (error) {
       console.warn(
-        `  topic curation skipped (${error instanceof Error ? error.message.slice(0, 60) : error}); using letter-proven merges only`
+        `  topic curation skipped (${error instanceof Error ? error.message.slice(0, 60) : error}); using letter-proven merges only`,
       );
     }
   }

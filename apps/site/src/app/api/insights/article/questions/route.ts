@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
         eq(links.urlKey, urlKey),
         eq(links.category, "article"),
         isNull(links.hiddenAt),
-        ne(links.health, "dead")
-      )
+        ne(links.health, "dead"),
+      ),
     )
     .limit(1);
 

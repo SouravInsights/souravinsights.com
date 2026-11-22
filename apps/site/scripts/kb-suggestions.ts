@@ -57,11 +57,50 @@ const SMALL_CATEGORY = 8;
  * three "easing and motion" questions are one door, not three.
  */
 const SUBJECTLESS = new Set([
-  "how", "what", "why", "when", "where", "which", "who", "the", "a", "an",
-  "and", "or", "of", "to", "in", "on", "for", "with", "vs", "versus", "is",
-  "are", "do", "does", "from", "that", "this", "it", "its", "you", "your",
-  "as", "at", "by", "not", "just", "than", "into", "over", "about", "up",
-  "out", "actually", "really",
+  "how",
+  "what",
+  "why",
+  "when",
+  "where",
+  "which",
+  "who",
+  "the",
+  "a",
+  "an",
+  "and",
+  "or",
+  "of",
+  "to",
+  "in",
+  "on",
+  "for",
+  "with",
+  "vs",
+  "versus",
+  "is",
+  "are",
+  "do",
+  "does",
+  "from",
+  "that",
+  "this",
+  "it",
+  "its",
+  "you",
+  "your",
+  "as",
+  "at",
+  "by",
+  "not",
+  "just",
+  "than",
+  "into",
+  "over",
+  "about",
+  "up",
+  "out",
+  "actually",
+  "really",
 ]);
 
 /**
@@ -109,7 +148,7 @@ const OUT = join(
   "..",
   "src",
   "content",
-  "insights-suggestions.json"
+  "insights-suggestions.json",
 );
 
 const ChipSchema = z.object({
@@ -118,24 +157,20 @@ const ChipSchema = z.object({
       kind: z
         .enum(["single", "connection", "theme", "browse"])
         .describe(
-          "single = rests on one saved item · connection = rests on two or three that share a subject · theme = a subject the collection keeps returning to · browse = asks for a SET of saved things of one kind in a domain ('which tools for agent memory')"
+          "single = rests on one saved item · connection = rests on two or three that share a subject · theme = a subject the collection keeps returning to · browse = asks for a SET of saved things of one kind in a domain ('which tools for agent memory')",
         ),
-      question: z
-        .string()
-        .describe("3-8 words, sentence case, no trailing question mark"),
+      question: z.string().describe("3-8 words, sentence case, no trailing question mark"),
       about: z
         .array(z.string())
         .max(3)
         .describe(
-          "For single and connection: the exact title(s) it rests on, copied from the list. Empty for theme and browse."
+          "For single and connection: the exact title(s) it rests on, copied from the list. Empty for theme and browse.",
         ),
       browseCategory: z
         .enum(CATEGORIES)
         .optional()
-        .describe(
-          "For browse only: which kind of thing the question asks for"
-        ),
-    })
+        .describe("For browse only: which kind of thing the question asks for"),
+    }),
   ),
 });
 
@@ -193,7 +228,6 @@ const SYSTEM = [
   "- BAD 'updates on React Native development'",
   "  GOOD 'what breaks when agents write production code'",
 ].join("\n");
-
 
 /**
  * What a visitor wants to know, per category.
@@ -255,9 +289,7 @@ const CHIP_INTENTS: Record<string, string> = {
     "GOOD 'lists of personal blogs worth reading' · 'resource stashes for design",
     "engineers' · 'directories of open-source alternatives'",
   ].join("\n"),
-  other: [
-    "What a reader wonders here: whatever these pages are for.",
-  ].join("\n"),
+  other: ["What a reader wonders here: whatever these pages are for."].join("\n"),
 };
 
 /**
@@ -328,7 +360,7 @@ const CheckSchema = z.object({
       question: z.string(),
       verdict: z.enum(["keep", "drop"]),
       reason: z.string(),
-    })
+    }),
   ),
 });
 
@@ -339,8 +371,7 @@ const CheckSchema = z.object({
  */
 const OPENERS =
   /^(How|What|Why|Which|Where|When|Who|Whose|Does|Do|Is|Are|Can|Should|Would|Will|Did|The|A|An)\b/;
-const sentenceCase = (chip: string): string =>
-  chip.replace(OPENERS, (word) => word.toLowerCase());
+const sentenceCase = (chip: string): string => chip.replace(OPENERS, (word) => word.toLowerCase());
 
 interface Item {
   title: string;
@@ -358,9 +389,7 @@ interface Item {
  * the biggest category misrepresent it.
  */
 function quotaTable(counts: Map<string, number>, wanted: number): Map<string, number> {
-  const known = Array.from(counts.entries()).filter(
-    ([name]) => name !== "(unclassified)"
-  );
+  const known = Array.from(counts.entries()).filter(([name]) => name !== "(unclassified)");
   const quotas = new Map<string, number>();
   let left = wanted;
 
@@ -400,7 +429,7 @@ function itemsFor(title: string, items: Item[]): Item[] {
       items.find(
         (item) =>
           item.title.toLowerCase().startsWith(wanted) ||
-          wanted.startsWith(item.title.toLowerCase())
+          wanted.startsWith(item.title.toLowerCase()),
       );
     if (found && !resolved.some((item) => item.url === found.url)) {
       resolved.push(found);
@@ -420,10 +449,7 @@ async function main() {
       summary: linkChunks.content,
     })
     .from(links)
-    .leftJoin(
-      linkChunks,
-      and(eq(linkChunks.linkId, links.id), eq(linkChunks.chunkIndex, 0))
-    )
+    .leftJoin(linkChunks, and(eq(linkChunks.linkId, links.id), eq(linkChunks.chunkIndex, 0)))
     .where(and(isNull(links.hiddenAt), ne(links.health, "dead")));
 
   const items: Item[] = rows.map((row) => ({
@@ -490,9 +516,7 @@ async function main() {
    */
   const proposed: Proposed[] = [];
   const askCategory = async (category: string, target: number) => {
-    const inCategory = items.filter(
-      (item) => (item.category ?? "(unclassified)") === category
-    );
+    const inCategory = items.filter((item) => (item.category ?? "(unclassified)") === category);
     if (inCategory.length < 3) return;
     const { object } = await generateObject({
       model: suggestionModel(),
@@ -540,7 +564,9 @@ async function main() {
   const verdicts = await mapWithConcurrency(
     proposed,
     VERIFY_CONCURRENCY,
-    async (chip): Promise<{
+    async (
+      chip,
+    ): Promise<{
       question: string;
       sources?: Item[];
       theme?: boolean;
@@ -572,8 +598,8 @@ async function main() {
           (item) =>
             item.category === chip.browseCategory &&
             words.some((word) =>
-              `${item.title} ${item.summary ?? ""}`.toLowerCase().includes(word)
-            )
+              `${item.title} ${item.summary ?? ""}`.toLowerCase().includes(word),
+            ),
         );
         if (ofKind.length < BROWSE_MIN_ITEMS) {
           return {
@@ -605,14 +631,11 @@ async function main() {
           question,
           theme: true,
           themeCategories: Array.from(
-            new Set(good.map((hit) => hit.category).filter((c): c is string => Boolean(c)))
+            new Set(good.map((hit) => hit.category).filter((c): c is string => Boolean(c))),
           ),
           evidence: good
             .slice(0, 4)
-            .map(
-              (hit) =>
-                `${hit.title}: ${hit.passages[0]?.content.slice(0, 220) ?? ""}`
-            )
+            .map((hit) => `${hit.title}: ${hit.passages[0]?.content.slice(0, 220) ?? ""}`)
             .join("\n"),
         };
       }
@@ -621,9 +644,7 @@ async function main() {
       if (!sources.length) {
         return { question, reason: `about named nothing we sent: ${chip.about.join(" | ")}` };
       }
-      const uniqueItems = Array.from(
-        new Map(sources.map((s) => [s.url, s])).values()
-      ).slice(0, 3);
+      const uniqueItems = Array.from(new Map(sources.map((s) => [s.url, s])).values()).slice(0, 3);
 
       // Every listed item must show up when the question is searched. One
       // missing item means the premise is wrong.
@@ -633,9 +654,7 @@ async function main() {
       if (!top || top.score < MIN_SCORE) {
         return { question, reason: `no match in the index (${top?.score.toFixed(3) ?? "none"})` };
       }
-      const missing = uniqueItems.filter(
-        (item) => !hits.some((hit) => hit.url === item.url)
-      );
+      const missing = uniqueItems.filter((item) => !hits.some((hit) => hit.url === item.url));
       if (missing.length) {
         return {
           question,
@@ -649,7 +668,7 @@ async function main() {
           .map((item) => `${item.title}: ${(item.summary ?? "").slice(0, 220)}`)
           .join("\n"),
       };
-    }
+    },
   );
 
   // Keep them in the model's order: no repeated questions, one chip per item
@@ -657,7 +676,7 @@ async function main() {
   // The truth check, in batches: does the evidence support the chip, is it
   // specific, is it free of claims the collection never made?
   const passers = verdicts.filter(
-    (verdict) => !verdict.reason && (verdict.sources || verdict.theme)
+    (verdict) => !verdict.reason && (verdict.sources || verdict.theme),
   );
   const checked = new Map<string, { keep: boolean; reason: string }>();
   for (let i = 0; i < passers.length; i += CHECK_BATCH) {
@@ -669,7 +688,7 @@ async function main() {
       prompt: batch
         .map(
           (verdict, index) =>
-            `${index + 1}. ${verdict.question}\n   evidence: ${verdict.evidence ?? ""}`
+            `${index + 1}. ${verdict.question}\n   evidence: ${verdict.evidence ?? ""}`,
         )
         .join("\n\n"),
     });
@@ -683,37 +702,31 @@ async function main() {
 
   // The substance check: what a visitor would get if they clicked.
   const substance = new Map<string, { verdict: string; why: string }>();
-  await mapWithConcurrency(
-    passers,
-    VERIFY_CONCURRENCY,
-    async (verdict) => {
-      // A browse chip is judged against its own kind: "galleries for X" must
-      // be answered by galleries, not by whatever happens to rank high.
-      const hits = await search(verdict.question, {
-        limit: 3,
-        passagesPerLink: 2,
-        category: verdict.themeCategories?.[0],
-      });
-      const evidence = hits
-        .map(
-          (hit) =>
-            `${hit.title}: ${hit.passages
-              .map((passage) => passage.content.slice(0, 300))
-              .join(" ")}`
-        )
-        .join("\n\n");
-      const { object: judged } = await generateObject({
-        model: suggestionModel(),
-        schema: SubstanceSchema,
-        system: SUBSTANCE_SYSTEM,
-        prompt: `Question: ${verdict.question}\n\nPassages the collection returns:\n${
-          evidence || "(nothing)"
-        }`,
-      });
-      substance.set(verdict.question, judged);
-      return judged;
-    }
-  );
+  await mapWithConcurrency(passers, VERIFY_CONCURRENCY, async (verdict) => {
+    // A browse chip is judged against its own kind: "galleries for X" must
+    // be answered by galleries, not by whatever happens to rank high.
+    const hits = await search(verdict.question, {
+      limit: 3,
+      passagesPerLink: 2,
+      category: verdict.themeCategories?.[0],
+    });
+    const evidence = hits
+      .map(
+        (hit) =>
+          `${hit.title}: ${hit.passages.map((passage) => passage.content.slice(0, 300)).join(" ")}`,
+      )
+      .join("\n\n");
+    const { object: judged } = await generateObject({
+      model: suggestionModel(),
+      schema: SubstanceSchema,
+      system: SUBSTANCE_SYSTEM,
+      prompt: `Question: ${verdict.question}\n\nPassages the collection returns:\n${
+        evidence || "(nothing)"
+      }`,
+    });
+    substance.set(verdict.question, judged);
+    return judged;
+  });
 
   // Everything that passed the gates, in the model's order. Then two passes
   // decide what fits: first every category gets its quota (so an 85-link tool
@@ -745,13 +758,13 @@ async function main() {
     candidates.push({
       question: verdict.question,
       categories: verdict.theme
-        ? verdict.themeCategories ?? []
+        ? (verdict.themeCategories ?? [])
         : Array.from(
             new Set(
               (verdict.sources ?? [])
                 .map((source) => source.category)
-                .filter((c): c is string => Boolean(c))
-            )
+                .filter((c): c is string => Boolean(c)),
+            ),
           ),
       signature: verdict.theme
         ? undefined
@@ -781,17 +794,13 @@ async function main() {
     }
     const words = subjectWords(chip.question);
     const overlaps = keptSubjects.filter(
-      (keptWords) => words.filter((word) => keptWords.includes(word)).length >= 2
+      (keptWords) => words.filter((word) => keptWords.includes(word)).length >= 2,
     ).length;
     if (overlaps >= 2) return "a subject we already have two of";
     return null;
   };
 
-  const keep = (chip: {
-    question: string;
-    categories: string[];
-    signature?: string;
-  }) => {
+  const keep = (chip: { question: string; categories: string[]; signature?: string }) => {
     if (chip.signature) keptSignatures.add(chip.signature);
     seen.add(chip.question.toLowerCase());
     keptSubjects.push(subjectWords(chip.question));
@@ -814,7 +823,7 @@ async function main() {
       continue;
     }
     const open = chip.categories.filter(
-      (category) => (keptPerCategory.get(category) ?? 0) < (quotas.get(category) ?? 0)
+      (category) => (keptPerCategory.get(category) ?? 0) < (quotas.get(category) ?? 0),
     );
     if (chip.categories.length && open.length === 0) {
       overflow.push(chip);
@@ -833,7 +842,7 @@ async function main() {
   const fillRatio = (category: string) =>
     (keptPerCategory.get(category) ?? 0) / Math.max(1, quotas.get(category) ?? 1);
   const fillOrder = Array.from(overflowByCategory.keys()).sort(
-    (a, b) => fillRatio(a) - fillRatio(b)
+    (a, b) => fillRatio(a) - fillRatio(b),
   );
   let added = true;
   while (kept.length < WANTED && added) {
@@ -893,7 +902,9 @@ async function main() {
   console.log("\ncoverage:");
   for (const [name, n] of Array.from(byCategory.entries()).sort((a, b) => b[1] - a[1])) {
     const chips = spread.get(name) ?? 0;
-    console.log(`  ${name.padEnd(14)} ${String(byCategory.get(name)).padStart(3)} links · ${chips} chips`);
+    console.log(
+      `  ${name.padEnd(14)} ${String(byCategory.get(name)).padStart(3)} links · ${chips} chips`,
+    );
   }
   console.log(`  chips speaking for no category: ${spread.get("(no category)") ?? 0}`);
   console.log(`\nwrote ${OUT}`);

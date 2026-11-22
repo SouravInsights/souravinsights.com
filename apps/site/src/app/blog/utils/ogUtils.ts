@@ -1,9 +1,6 @@
 import { PostMetadata } from "./blogUtils";
 
-export function generateOGImageUrl(
-  post: PostMetadata,
-  baseUrl: string = ""
-): string {
+export function generateOGImageUrl(post: PostMetadata, baseUrl: string = ""): string {
   const params = new URLSearchParams({
     title: post.title,
     excerpt: post.excerpt,
@@ -20,11 +17,7 @@ export function generateOGImageUrl(
   return `${baseUrl}/api/og?${params.toString()}`;
 }
 
-export function generateBlogMetadata(
-  post: PostMetadata,
-  slug: string,
-  baseUrl: string = ""
-) {
+export function generateBlogMetadata(post: PostMetadata, slug: string, baseUrl: string = "") {
   const ogImageUrl = generateOGImageUrl(post, baseUrl);
   const postUrl = `${baseUrl}/blog/${slug}`;
 

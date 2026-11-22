@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import {
-  CircleNotch,
-  FilmStrip,
-  Trash,
-  UploadSimple,
-  X,
-} from "@phosphor-icons/react";
+import { CircleNotch, FilmStrip, Trash, UploadSimple, X } from "@phosphor-icons/react";
 import { DetailSheet } from "@/components/DetailSheet";
 import { EditableField } from "@/components/EditableField";
 import { generateId, type MovieEntry } from "@/types/movies";
@@ -61,7 +55,7 @@ export function MovieDetail({
       }
       e.target.value = "";
     },
-    [movie.id, onUpdate]
+    [movie.id, onUpdate],
   );
 
   const addQuote = () => {
@@ -110,23 +104,15 @@ export function MovieDetail({
         isUploadingImage ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2">
             <CircleNotch className="h-6 w-6 animate-spin text-white/70" />
-            <span className="type-caption px-4 text-center text-white/70">
-              Uploading…
-            </span>
+            <span className="type-caption px-4 text-center text-white/70">Uploading…</span>
           </div>
         ) : movie.posterData ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={movie.posterData}
-            alt={movie.title}
-            className="h-full w-full object-cover"
-          />
+          <img src={movie.posterData} alt={movie.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2">
             <FilmStrip className="h-6 w-6 text-white/50" />
-            <span className="type-caption px-4 text-center text-white/60">
-              No poster
-            </span>
+            <span className="type-caption px-4 text-center text-white/60">No poster</span>
           </div>
         )
       }
@@ -155,9 +141,7 @@ export function MovieDetail({
       {(movie.quotes.length > 0 || isAdmin) && (
         <div className="mt-6">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="type-label text-faint-foreground">
-              Favorite lines
-            </h3>
+            <h3 className="type-label text-faint-foreground">Favorite lines</h3>
             {isAdmin && (
               <button
                 type="button"
@@ -172,10 +156,7 @@ export function MovieDetail({
           {movie.quotes.length > 0 && (
             <ul className="mt-3 space-y-3">
               {movie.quotes.map((quote) => (
-                <li
-                  key={quote.id}
-                  className="group/quote relative border-l border-border pl-4"
-                >
+                <li key={quote.id} className="group/quote relative border-l border-border pl-4">
                   {isAdmin && (
                     <button
                       type="button"

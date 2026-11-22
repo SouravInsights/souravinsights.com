@@ -29,10 +29,7 @@ export default function HackerNewsButton({ url }: HackerNewsButtonProps) {
         className="flex-shrink-0"
       >
         <rect width="16" height="16" rx="2" fill="white" />
-        <path
-          d="M8.5 9.5V13H7.5V9.5L4.5 3H5.7L8 8.3L10.3 3H11.5L8.5 9.5Z"
-          fill="#ff6600"
-        />
+        <path d="M8.5 9.5V13H7.5V9.5L4.5 3H5.7L8 8.3L10.3 3H11.5L8.5 9.5Z" fill="#ff6600" />
       </svg>
       <span>Discuss on HN</span>
       <ArrowSquareOut className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />

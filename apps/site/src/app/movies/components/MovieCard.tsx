@@ -22,13 +22,7 @@ interface MovieCardProps {
  * plain placeholder — same box, no id — keeping the grid's shape and leaving the
  * panel's frame as the sole owner.
  */
-export function MovieCard({
-  movie,
-  index,
-  isEditing,
-  isActive,
-  onSelect,
-}: MovieCardProps) {
+export function MovieCard({ movie, index, isEditing, isActive, onSelect }: MovieCardProps) {
   const sortable = useSortable({ id: movie.id, index });
 
   return (
@@ -54,11 +48,7 @@ export function MovieCard({
         >
           {movie.posterData ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={movie.posterData}
-              alt={movie.title}
-              className="h-full w-full object-cover"
-            />
+            <img src={movie.posterData} alt={movie.title} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center p-3 text-center">
               <FilmStrip className="mb-2 h-5 w-5 text-faint-foreground" />

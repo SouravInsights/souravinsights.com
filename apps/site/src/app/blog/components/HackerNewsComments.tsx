@@ -62,7 +62,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" }
+      { rootMargin: "600px 0px" },
     );
 
     observer.observe(element);
@@ -90,10 +90,7 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
     }
   }, [shouldLoad, status, loadThread]);
 
-  const hoverPath = useMemo(
-    () => ({ activePath, setActivePath }),
-    [activePath]
-  );
+  const hoverPath = useMemo(() => ({ activePath, setActivePath }), [activePath]);
 
   if (!itemId) return null;
 
@@ -125,17 +122,11 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
               xmlns="http://www.w3.org/2000/svg"
             >
               <rect width="16" height="16" rx="2" fill="white" />
-              <path
-                d="M8.5 9.5V13H7.5V9.5L4.5 3H5.7L8 8.3L10.3 3H11.5L8.5 9.5Z"
-                fill="#ff6600"
-              />
+              <path d="M8.5 9.5V13H7.5V9.5L4.5 3H5.7L8 8.3L10.3 3H11.5L8.5 9.5Z" fill="#ff6600" />
             </svg>
           </span>
           <div>
-            <h2
-              id="hn-discussion-heading"
-              className="text-balance type-heading"
-            >
+            <h2 id="hn-discussion-heading" className="text-balance type-heading">
               Discussion on Hacker News
             </h2>
             <p className="type-caption mt-0.5">
@@ -225,14 +216,11 @@ export default function HackerNewsComments({ hnUrl }: HackerNewsCommentsProps) {
               {remaining > 0 && (
                 <button
                   type="button"
-                  onClick={() =>
-                    setVisibleCount((count) => count + TOP_LEVEL_STEP)
-                  }
+                  onClick={() => setVisibleCount((count) => count + TOP_LEVEL_STEP)}
                   className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border py-2.5 text-sm font-medium text-muted-foreground transition-[color,border-color,scale] duration-150 ease-out hover:border-[#ff6600]/50 hover:text-[#ff6600] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6600] focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:active:scale-100"
                 >
                   <CaretDown className="h-4 w-4" />
-                  Show {remaining} more{" "}
-                  {remaining === 1 ? "comment" : "comments"}
+                  Show {remaining} more {remaining === 1 ? "comment" : "comments"}
                 </button>
               )}
             </div>
@@ -278,19 +266,13 @@ function CommentsSkeleton() {
       {SKELETON_ROWS.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className={cn(
-            "flex gap-3",
-            row.indent > 0 && "border-l border-border pl-3 sm:pl-5"
-          )}
+          className={cn("flex gap-3", row.indent > 0 && "border-l border-border pl-3 sm:pl-5")}
         >
           <div className="mt-0.5 h-9 w-9 flex-shrink-0 animate-pulse rounded-full bg-muted" />
           <div className="min-w-0 flex-1 space-y-2 pt-1">
             <div className="h-3 w-24 animate-pulse rounded bg-muted" />
             {row.lines.map((width, lineIndex) => (
-              <div
-                key={lineIndex}
-                className={cn("h-3 animate-pulse rounded bg-muted", width)}
-              />
+              <div key={lineIndex} className={cn("h-3 animate-pulse rounded bg-muted", width)} />
             ))}
           </div>
         </div>
@@ -311,25 +293,16 @@ interface HnCommentNodeProps {
   ancestors: number[];
 }
 
-function HnCommentNode({
-  comment,
-  storyAuthor,
-  authors,
-  depth,
-  ancestors,
-}: HnCommentNodeProps) {
+function HnCommentNode({ comment, storyAuthor, authors, depth, ancestors }: HnCommentNodeProps) {
   const [collapsed, setCollapsed] = useState(false);
   const { activePath, setActivePath } = useHoverPath();
 
   const hasChildren = comment.children.length > 0;
   const descendantCount = useMemo(
     () => (hasChildren ? countComments(comment.children) : 0),
-    [hasChildren, comment.children]
+    [hasChildren, comment.children],
   );
-  const pathToHere = useMemo(
-    () => [...ancestors, comment.id],
-    [ancestors, comment.id]
-  );
+  const pathToHere = useMemo(() => [...ancestors, comment.id], [ancestors, comment.id]);
 
   const isOp = storyAuthor != null && comment.author === storyAuthor;
   const isOnActivePath = activePath.includes(comment.id);
@@ -340,8 +313,7 @@ function HnCommentNode({
 
   // Indentation compounds with every level, so soften it past a few levels to
   // keep deep threads readable on narrow screens while keeping the rail.
-  const indentPadding =
-    depth === 0 ? "" : depth <= 4 ? "pl-2.5 sm:pl-4" : "pl-1";
+  const indentPadding = depth === 0 ? "" : depth <= 4 ? "pl-2.5 sm:pl-4" : "pl-1";
 
   return (
     <div
@@ -350,7 +322,7 @@ function HnCommentNode({
         depth > 0 &&
           "border-l transition-colors duration-200 ease-out motion-reduce:transition-none",
         indentPadding,
-        depth > 0 && (isOnActivePath ? "border-[#ff6600]/50" : "border-border")
+        depth > 0 && (isOnActivePath ? "border-[#ff6600]/50" : "border-border"),
       )}
     >
       <div className="py-4">
@@ -367,9 +339,7 @@ function HnCommentNode({
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 type-caption">
               <a
-                href={`https://news.ycombinator.com/user?id=${encodeURIComponent(
-                  comment.author
-                )}`}
+                href={`https://news.ycombinator.com/user?id=${encodeURIComponent(comment.author)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded font-medium text-foreground transition-colors duration-150 ease-out hover:text-[#ff6600] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6600] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -414,14 +384,12 @@ function HnCommentNode({
                   <CaretDown
                     className={cn(
                       "h-3.5 w-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none",
-                      collapsed && "-rotate-90"
+                      collapsed && "-rotate-90",
                     )}
                   />
                   <span className="tabular-nums">
                     {collapsed
-                      ? `${descendantCount} ${
-                          descendantCount === 1 ? "reply" : "replies"
-                        }`
+                      ? `${descendantCount} ${descendantCount === 1 ? "reply" : "replies"}`
                       : "Hide"}
                   </span>
                 </button>
@@ -479,19 +447,12 @@ interface AvatarProps {
   onToggle: () => void;
   bodyId: string;
 }
-function Avatar({
-  author,
-  initial,
-  interactive,
-  collapsed,
-  onToggle,
-  bodyId,
-}: AvatarProps) {
+function Avatar({ author, initial, interactive, collapsed, onToggle, bodyId }: AvatarProps) {
   const circle = (
     <span
       className={cn(
         "flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold ring-1 ring-inset ring-black/5 dark:ring-white/10",
-        avatarClass(author)
+        avatarClass(author),
       )}
     >
       {initial}
@@ -508,9 +469,7 @@ function Avatar({
       onClick={onToggle}
       aria-expanded={!collapsed}
       aria-controls={bodyId}
-      aria-label={
-        collapsed ? `Expand replies from ${author}` : `Collapse replies from ${author}`
-      }
+      aria-label={collapsed ? `Expand replies from ${author}` : `Collapse replies from ${author}`}
       className="relative mt-0.5 flex-shrink-0 rounded-full transition-transform duration-150 ease-out after:absolute after:-inset-1 after:content-[''] hover:opacity-90 active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6600] focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none motion-reduce:active:scale-100"
     >
       {circle}
@@ -565,8 +524,7 @@ function CommentBody({ blocks }: { blocks: HnBlock[] }) {
             key={index}
             className={cn(
               "whitespace-pre-wrap break-words text-pretty",
-              quoted &&
-                "border-l-2 border-border pl-3 italic text-muted-foreground"
+              quoted && "border-l-2 border-border pl-3 italic text-muted-foreground",
             )}
           >
             {nodes.map((node, nodeIndex) => renderInlineNode(node, nodeIndex))}
@@ -591,17 +549,14 @@ function stripQuoteMarker(nodes: HnInlineNode[]): HnInlineNode[] {
   if (!first || first.type !== "text") return nodes;
   const value = first.value.replace(/^\s*>\s?/, "");
   return [{ ...first, value }, ...rest].filter(
-    (node) => node.type !== "text" || node.value.length > 0
+    (node) => node.type !== "text" || node.value.length > 0,
   );
 }
 
 function previewText(blocks: HnBlock[]): string {
   const first = blocks[0];
   if (!first) return "";
-  const text =
-    first.type === "code"
-      ? first.value
-      : first.nodes.map((node) => node.value).join("");
+  const text = first.type === "code" ? first.value : first.nodes.map((node) => node.value).join("");
   return text.replace(/^\s*>\s?/, "").trim();
 }
 

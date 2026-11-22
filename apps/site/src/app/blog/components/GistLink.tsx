@@ -9,7 +9,7 @@ interface GistLinkProps {
 
 export default async function GistLink({ id, title, description }: GistLinkProps) {
   const gistUrl = `https://gist.github.com/${id}`;
-  
+
   return (
     <div className="my-8 rounded-lg border border-border bg-card overflow-hidden hover:border-accent transition-colors not-prose">
       <Link

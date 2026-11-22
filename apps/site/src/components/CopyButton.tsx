@@ -38,7 +38,7 @@ export function CopyButton({
     () => () => {
       if (timer.current) clearTimeout(timer.current);
     },
-    []
+    [],
   );
 
   const copy = useCallback(async () => {

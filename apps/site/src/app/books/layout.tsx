@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen transition-colors duration-200">

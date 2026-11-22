@@ -10,7 +10,6 @@ import { AppShell } from "@/components/nav/AppShell";
 import { PHProvider } from "@/context/PostHogProvider";
 import { QueryProvider } from "@/context/QueryProvider";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 /**

@@ -27,11 +27,7 @@ async function getVisitorId(): Promise<{ id: string; isNew: boolean }> {
   return { id: uuidv4(), isNew: true };
 }
 
-function withVisitorCookie(
-  response: NextResponse,
-  visitorId: string,
-  isNew: boolean
-) {
+function withVisitorCookie(response: NextResponse, visitorId: string, isNew: boolean) {
   if (isNew) {
     response.cookies.set(VISITOR_COOKIE, visitorId, {
       httpOnly: true,
@@ -47,10 +43,7 @@ export async function GET(request: NextRequest) {
   try {
     const linkId = new URL(request.url).searchParams.get("linkId");
     if (!linkId) {
-      return NextResponse.json(
-        { error: "linkId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "linkId is required" }, { status: 400 });
     }
 
     const { id: visitorId, isNew } = await getVisitorId();
@@ -67,10 +60,7 @@ export async function GET(request: NextRequest) {
     return withVisitorCookie(response, visitorId, isNew);
   } catch (error) {
     console.error("Error fetching insights likes:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch likes" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch likes" }, { status: 500 });
   }
 }
 
@@ -78,10 +68,7 @@ export async function POST(request: NextRequest) {
   try {
     const { linkId } = await request.json();
     if (!linkId) {
-      return NextResponse.json(
-        { error: "linkId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "linkId is required" }, { status: 400 });
     }
 
     const { id: visitorId, isNew } = await getVisitorId();
@@ -95,7 +82,7 @@ export async function POST(request: NextRequest) {
           totalLikes: (await redis.hget<number>(COUNTS_HASH, linkId)) ?? 0,
           userLikes: mine,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -112,9 +99,6 @@ export async function POST(request: NextRequest) {
     return withVisitorCookie(response, visitorId, isNew);
   } catch (error) {
     console.error("Error updating insights likes:", error);
-    return NextResponse.json(
-      { error: "Failed to update like" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update like" }, { status: 500 });
   }
 }

@@ -71,16 +71,14 @@ async function fetchKarma(usernames: string[]): Promise<Record<string, number>> 
     await Promise.all(
       usernames.slice(index, index + limit).map(async (username) => {
         try {
-          const response = await fetch(
-            `${ALGOLIA_USER_URL}/${encodeURIComponent(username)}`
-          );
+          const response = await fetch(`${ALGOLIA_USER_URL}/${encodeURIComponent(username)}`);
           if (!response.ok) return;
           const data = (await response.json()) as { karma?: number };
           if (typeof data.karma === "number") karma[username] = data.karma;
         } catch {
           // best-effort; karma is optional in the export
         }
-      })
+      }),
     );
   }
 
@@ -100,24 +98,20 @@ function inlineToMarkdown(nodes: HnInlineNode[]): string {
 function stripLeadingQuote(nodes: HnInlineNode[]): HnInlineNode[] {
   const [first, ...rest] = nodes;
   if (!first || first.type !== "text") return nodes;
-  return [
-    { ...first, value: first.value.replace(/^\s*>\s?/, "") },
-    ...rest,
-  ].filter((node) => node.type !== "text" || node.value.length > 0);
+  return [{ ...first, value: first.value.replace(/^\s*>\s?/, "") }, ...rest].filter(
+    (node) => node.type !== "text" || node.value.length > 0,
+  );
 }
 
 function blocksToMarkdown(blocks: HnBlock[]): string {
   return blocks
     .map((block) => {
       if (block.type === "code") {
-        return ["```", block.value.replace(/```/g, "``\u200b`"), "```"].join(
-          "\n"
-        );
+        return ["```", block.value.replace(/```/g, "``\u200b`"), "```"].join("\n");
       }
 
       const quoted =
-        block.nodes[0]?.type === "text" &&
-        block.nodes[0].value.trimStart().startsWith(">");
+        block.nodes[0]?.type === "text" && block.nodes[0].value.trimStart().startsWith(">");
 
       if (quoted) {
         return inlineToMarkdown(stripLeadingQuote(block.nodes))
@@ -136,9 +130,7 @@ function formatTimestamp(iso: string): string {
   if (Number.isNaN(date.getTime())) return iso;
   const pad = (value: number) => String(value).padStart(2, "0");
   return (
-    `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-      date.getUTCDate()
-    )} ` +
+    `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())} ` +
     `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`
   );
 }
@@ -155,7 +147,7 @@ function renderComment(
   storyAuthor: string | null,
   karma: Record<string, number>,
   depth: number,
-  pathParts: number[]
+  pathParts: number[],
 ): string {
   const headingLevel = Math.min(depth + 2, 6);
   const prefix = "#".repeat(headingLevel);
@@ -175,16 +167,11 @@ function renderComment(
 
   const replies = comment.children
     .map((child, index) =>
-      renderComment(child, storyAuthor, karma, depth + 1, [
-        ...pathParts,
-        index + 1,
-      ])
+      renderComment(child, storyAuthor, karma, depth + 1, [...pathParts, index + 1]),
     )
     .join("\n\n");
 
-  return [header, "", body, replies ? `\n${replies}` : ""]
-    .filter(Boolean)
-    .join("\n");
+  return [header, "", body, replies ? `\n${replies}` : ""].filter(Boolean).join("\n");
 }
 
 async function main() {
@@ -211,22 +198,14 @@ async function main() {
     .sort((a, b) => (karma[b] ?? -1) - (karma[a] ?? -1))
     .map(
       (author) =>
-        `- **${author}**${
-          item.author === author ? " (OP)" : ""
-        } · ${
-          typeof karma[author] === "number"
-            ? karma[author].toLocaleString("en-US")
-            : "?"
-        } karma · ${counts[author]} ${
-          counts[author] === 1 ? "comment" : "comments"
-        }`
+        `- **${author}**${item.author === author ? " (OP)" : ""} · ${
+          typeof karma[author] === "number" ? karma[author].toLocaleString("en-US") : "?"
+        } karma · ${counts[author]} ${counts[author] === 1 ? "comment" : "comments"}`,
     )
     .join("\n");
 
   const thread = comments
-    .map((comment, index) =>
-      renderComment(comment, item.author, karma, 0, [index + 1])
-    )
+    .map((comment, index) => renderComment(comment, item.author, karma, 0, [index + 1]))
     .join("\n\n---\n\n");
 
   const markdown = [
@@ -251,9 +230,7 @@ async function main() {
     "",
   ].join("\n");
 
-  const output =
-    process.argv[3] ||
-    path.join(process.cwd(), `hn-comments-${id}.md`);
+  const output = process.argv[3] || path.join(process.cwd(), `hn-comments-${id}.md`);
   writeFileSync(output, markdown, "utf8");
   console.log(`Wrote ${output} (${markdown.length} bytes)`);
 }

@@ -110,11 +110,14 @@ export function useTetrisGame() {
       wakeLock: { request: (type: "screen") => Promise<{ release: () => Promise<void> }> };
     };
     const acquire = () => {
-      nav.wakeLock.request("screen").then((sentinel) => {
-        lock = sentinel;
-      }).catch(() => {
-        // The promise rejects when the page is hidden — fine, we re-acquire.
-      });
+      nav.wakeLock
+        .request("screen")
+        .then((sentinel) => {
+          lock = sentinel;
+        })
+        .catch(() => {
+          // The promise rejects when the page is hidden — fine, we re-acquire.
+        });
     };
     acquire();
     const onVisibility = () => {
@@ -155,9 +158,7 @@ export function useTetrisGame() {
       statusRef.current = nextPhase;
       const changed = (Object.keys(next) as (keyof HudState)[]).some((key) => {
         if (key === "queue") {
-          return next.queue.some(
-            (piece, i) => piece !== (prev.queue as QueuedPiece[])[i]
-          );
+          return next.queue.some((piece, i) => piece !== (prev.queue as QueuedPiece[])[i]);
         }
         return next[key] !== prev[key];
       });
@@ -193,7 +194,7 @@ export function useTetrisGame() {
                 `${event.tspin === "mini" ? "t-spin mini" : "t-spin"} +${event.twistPoints}`,
                 COLS / 2,
                 Math.max(midY - 1.5, 5.5),
-                { tone: "accent" }
+                { tone: "accent" },
               );
               posthog.capture("shipstack_tspin", { kind: event.tspin, lines: 0 });
             }
@@ -223,7 +224,7 @@ export function useTetrisGame() {
                 `${event.tspin === "mini" ? "t-spin mini" : "t-spin"} ${name}`,
                 COLS / 2,
                 labelY - 1.6,
-                { tone: "accent", big: true, ttl: 1300 }
+                { tone: "accent", big: true, ttl: 1300 },
               );
               posthog.capture("shipstack_tspin", {
                 kind: event.tspin,
@@ -316,7 +317,7 @@ export function useTetrisGame() {
       }
       syncHud();
     },
-    [effects, engine, haptics, sound, syncHud, input]
+    [effects, engine, haptics, sound, syncHud, input],
   );
 
   const start = useCallback(() => {
@@ -384,7 +385,7 @@ function kindToColor(kind: number): string {
  */
 function computeFallMoves(
   engine: TetrisEngine,
-  clearedRows: number[]
+  clearedRows: number[],
 ): { x: number; y: number; fromY: number }[] {
   // Kept rows preserve order and pack to the bottom: keptRows[i] is the
   // original index of the row now sitting at (offset + i).

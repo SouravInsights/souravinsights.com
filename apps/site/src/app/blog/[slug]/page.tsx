@@ -37,8 +37,7 @@ export async function generateMetadata({ params }: PostPageProps) {
       description: "The requested blog post could not be found.",
     };
   }
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
   return generateBlogMetadata(post, slug, baseUrl);
 }
 
@@ -58,7 +57,16 @@ export default async function PostPage({ params }: PostPageProps) {
   const content = (
     <MDXRemote
       source={post.content}
-      components={{ Playground, GistLink, SideBySide, HtmlNestingVisualizer, DomTreeAnimator, VideoPlayer, TweetEmbed, img: BlogImage }}
+      components={{
+        Playground,
+        GistLink,
+        SideBySide,
+        HtmlNestingVisualizer,
+        DomTreeAnimator,
+        VideoPlayer,
+        TweetEmbed,
+        img: BlogImage,
+      }}
       options={{
         mdxOptions: {
           rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],

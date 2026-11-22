@@ -1,7 +1,4 @@
-export function appendUTMParams(
-  url: string,
-  params: Record<string, string>
-): string {
+export function appendUTMParams(url: string, params: Record<string, string>): string {
   try {
     const urlObj = new URL(url);
     for (const [key, value] of Object.entries(params)) {
@@ -63,20 +60,15 @@ export function cleanShareUrl(url: string): string {
 }
 
 /** Normalize a Date or a millisecond timestamp for comparison. */
-const timeOf = (value: Date | number) =>
-  value instanceof Date ? value.getTime() : value;
+const timeOf = (value: Date | number) => (value instanceof Date ? value.getTime() : value);
 
 /** Newest first, by when the link entered the collection. */
-export function sortByNewest<T extends { addedAt: Date | number }>(
-  items: T[]
-): T[] {
+export function sortByNewest<T extends { addedAt: Date | number }>(items: T[]): T[] {
   return [...items].sort((a, b) => timeOf(b.addedAt) - timeOf(a.addedAt));
 }
 
 /** Oldest first — the inverse of sortByNewest, used to surface stale links. */
-export function sortByOldest<T extends { addedAt: Date | number }>(
-  items: T[]
-): T[] {
+export function sortByOldest<T extends { addedAt: Date | number }>(items: T[]): T[] {
   return [...items].sort((a, b) => timeOf(a.addedAt) - timeOf(b.addedAt));
 }
 
@@ -106,4 +98,3 @@ export function snowflakeDate(id: string): Date {
     return new Date();
   }
 }
-

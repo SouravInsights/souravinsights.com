@@ -51,7 +51,7 @@ async function collect(): Promise<Candidate[]> {
           };
         })
         .filter((c) => c.url);
-    })
+    }),
   );
 
   // Newest first, then collapse cross-channel reposts (same rule as the page).
@@ -99,10 +99,7 @@ async function main() {
       channel: candidate.channel,
       discordId: BigInt(candidate.id),
       addedAt: candidate.addedAt,
-      health:
-        health.verdict === "retry"
-          ? "dying"
-          : (health.verdict as "alive" | "uncheckable"),
+      health: health.verdict === "retry" ? "dying" : (health.verdict as "alive" | "uncheckable"),
       consecutiveFailures: health.verdict === "retry" ? 1 : 0,
       healthCheckedAt: new Date(),
     });

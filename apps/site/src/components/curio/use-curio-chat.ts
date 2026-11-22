@@ -119,15 +119,12 @@ export function citationsOf(parts: { type: string; state?: string; output?: unkn
   return out;
 }
 
-export function useCurioChat(
-  seed?: { id: string; messages: UIMessage[] }
-) {
+export function useCurioChat(seed?: { id: string; messages: UIMessage[] }) {
   const [input, setInput] = useState("");
 
-  const { messages, setMessages, sendMessage, status, error, stop, regenerate } =
-    useChat({
-      transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
-    });
+  const { messages, setMessages, sendMessage, status, error, stop, regenerate } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/insights/chat" }),
+  });
 
   /**
    * The tab's copy.
@@ -175,8 +172,7 @@ export function useCurioChat(
 
   // The live phase shown while we wait: derived from the newest assistant
   // message, so it works during `submitted` (no message yet) and `streaming`.
-  const lastParts = (messages.filter((m) => m.role === "assistant").at(-1)?.parts ??
-    []) as Part[];
+  const lastParts = (messages.filter((m) => m.role === "assistant").at(-1)?.parts ?? []) as Part[];
   const phase = busy ? phaseOf(lastParts) : null;
 
   const submit = (text: string) => {

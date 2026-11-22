@@ -10,25 +10,20 @@ const localWrite = async () => null;
 
 export function HighlightDemo() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [share, setShare] = useState<{ quote: string; context: string } | null>(
-    null
-  );
+  const [share, setShare] = useState<{ quote: string; context: string } | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full max-w-prose text-[15px] leading-7"
-    >
+    <div ref={containerRef} className="w-full max-w-prose text-[15px] leading-7">
       <p>
-        The best interfaces disappear. You stop noticing the buttons and the
-        panels and the type, and you are left with the thing you came to do.
+        The best interfaces disappear. You stop noticing the buttons and the panels and the type,
+        and you are left with the thing you came to do.
       </p>
       <p className="mt-4">
-        Select any sentence here. The palette opens on the words, and the
-        highlight stays for as long as the page is open.
+        Select any sentence here. The palette opens on the words, and the highlight stays for as
+        long as the page is open.
       </p>
 
       {ready && (

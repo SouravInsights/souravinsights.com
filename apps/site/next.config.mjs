@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 // it). Same map the stats routes read, so the file and the redirect can't
 // disagree. `scripts/generate-post-aliases.mjs` keeps it in sync with git.
 const postAliases = JSON.parse(
-  readFileSync(new URL("./src/content/post-aliases.json", import.meta.url), "utf8")
+  readFileSync(new URL("./src/content/post-aliases.json", import.meta.url), "utf8"),
 );
 
 /** @type {import('next').NextConfig} */
@@ -64,8 +64,7 @@ const nextConfig = {
       {
         key: "Access-Control-Allow-Headers",
         // The MCP two are what a browser-based MCP client sends.
-        value:
-          "Authorization, Content-Type, MCP-Protocol-Version, Mcp-Session-Id",
+        value: "Authorization, Content-Type, MCP-Protocol-Version, Mcp-Session-Id",
       },
       { key: "Access-Control-Expose-Headers", value: "Mcp-Session-Id" },
     ];

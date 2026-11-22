@@ -15,17 +15,18 @@ import {
  */
 async function main() {
   const usage = await readDailyUsage();
-  const percent = (value: number, ceiling: number) =>
-    `${((value / ceiling) * 100).toFixed(1)}%`;
+  const percent = (value: number, ceiling: number) => `${((value / ceiling) * 100).toFixed(1)}%`;
 
   console.log("curio, today");
   console.log(
-    `  questions ${usage.questions}/${DAILY_QUESTION_CEILING}  (${percent(usage.questions, DAILY_QUESTION_CEILING)})`
+    `  questions ${usage.questions}/${DAILY_QUESTION_CEILING}  (${percent(usage.questions, DAILY_QUESTION_CEILING)})`,
   );
   console.log(
-    `  tokens    ${usage.tokens}/${DAILY_TOKEN_BUDGET}  (${percent(usage.tokens, DAILY_TOKEN_BUDGET)})`
+    `  tokens    ${usage.tokens}/${DAILY_TOKEN_BUDGET}  (${percent(usage.tokens, DAILY_TOKEN_BUDGET)})`,
   );
-  console.log(`  ${usage.exhausted ? "at the ceiling: further questions are refused" : "room left"}`);
+  console.log(
+    `  ${usage.exhausted ? "at the ceiling: further questions are refused" : "room left"}`,
+  );
 }
 
 main().catch((error) => {

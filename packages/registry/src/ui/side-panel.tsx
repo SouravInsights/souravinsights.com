@@ -3,8 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface SidePanelProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+export interface SidePanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   open: boolean;
   children: React.ReactNode;
   side?: "left" | "right";
@@ -62,7 +61,7 @@ function SidePanel({
         "lg:relative lg:inset-auto lg:z-auto lg:shrink-0 lg:w-0 lg:overflow-hidden lg:shadow-none lg:transition-[width]",
         open
           ? "opacity-100 lg:w-[var(--side-panel-width)]"
-          : "pointer-events-none opacity-0 lg:pointer-events-auto lg:opacity-100"
+          : "pointer-events-none opacity-0 lg:pointer-events-auto lg:opacity-100",
       )}
     >
       <span
@@ -70,7 +69,7 @@ function SidePanel({
         className={cn(
           "pointer-events-none absolute inset-y-0 z-[2] w-px bg-border opacity-0 transition-opacity duration-150",
           left ? "right-0" : "left-0",
-          open && "lg:opacity-100"
+          open && "lg:opacity-100",
         )}
       />
       <div
@@ -83,7 +82,7 @@ function SidePanel({
           open ? "opacity-100" : "opacity-0",
           left ? "lg:absolute lg:inset-y-0 lg:right-0" : "lg:absolute lg:inset-y-0 lg:left-0",
           "lg:overflow-y-auto lg:overscroll-contain",
-          className
+          className,
         )}
         {...props}
       >

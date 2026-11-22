@@ -9,11 +9,7 @@ import { LikeButton } from "@/components/LikeButton";
 import { apiJson } from "@/lib/query/api";
 import { qk } from "@/lib/query/keys";
 import { useGalleryViews } from "@/hooks/useGalleryViews";
-import type {
-  GalleryClipPatch,
-  GalleryProject,
-  GalleryVideo,
-} from "../gallery-types";
+import type { GalleryClipPatch, GalleryProject, GalleryVideo } from "../gallery-types";
 import { formatTime, VideoPlayer } from "./VideoPlayer";
 
 interface VideoDetailProps {
@@ -66,9 +62,7 @@ export function VideoDetail({
   const [tags, setTags] = useState(video.tags);
   const [tagsText, setTagsText] = useState(video.tags.join(", "));
   const [sound, setSound] = useState(video.sound);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">(
-    "idle"
-  );
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
 
   useEffect(() => {
     onViewChange(views);
@@ -78,13 +72,10 @@ export function VideoDetail({
     () => () => {
       if (savedTimer.current) window.clearTimeout(savedTimer.current);
     },
-    []
+    [],
   );
 
-  const handleLikeChange = useCallback(
-    (total: number) => onLikeChange(total),
-    [onLikeChange]
-  );
+  const handleLikeChange = useCallback((total: number) => onLikeChange(total), [onLikeChange]);
 
   const persist = useCallback(
     async (patch: GalleryClipPatch) => {
@@ -104,7 +95,7 @@ export function VideoDetail({
         setSaveState("idle");
       }
     },
-    [video.id, queryClient]
+    [video.id, queryClient],
   );
 
   const handleTitle = (value: string) => {
@@ -154,10 +145,7 @@ export function VideoDetail({
           <span className="type-label text-faint-foreground">{project.name}</span>
           {video.recordedAt ? (
             <>
-              <span
-                className="h-1 w-1 rounded-full bg-border"
-                aria-hidden="true"
-              />
+              <span className="h-1 w-1 rounded-full bg-border" aria-hidden="true" />
               <span className="type-caption text-faint-foreground">
                 {formatDate(video.recordedAt)}
               </span>
@@ -218,17 +206,13 @@ export function VideoDetail({
                 }`}
               />
             </button>
-            <span className="type-caption text-muted-foreground">
-              Play with sound
-            </span>
+            <span className="type-caption text-muted-foreground">Play with sound</span>
           </div>
         </>
       ) : (
         <>
           <h2 className="type-title mt-2">{title}</h2>
-          <p className="type-body mt-3 max-w-2xl text-muted-foreground">
-            {notes}
-          </p>
+          <p className="type-body mt-3 max-w-2xl text-muted-foreground">{notes}</p>
           {tags.length > 0 && (
             <ul className="mt-4 flex flex-wrap gap-1.5">
               {tags.map((tag) => (

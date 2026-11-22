@@ -27,12 +27,8 @@ export default function GlobalError({
           fontFamily: "system-ui, -apple-system, sans-serif",
         }}
       >
-        <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
-          Something went wrong
-        </h1>
-        <p style={{ fontSize: 14, opacity: 0.7, margin: 0 }}>
-          The page hit an unexpected error.
-        </p>
+        <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>Something went wrong</h1>
+        <p style={{ fontSize: 14, opacity: 0.7, margin: 0 }}>The page hit an unexpected error.</p>
         <button
           type="button"
           onClick={reset}

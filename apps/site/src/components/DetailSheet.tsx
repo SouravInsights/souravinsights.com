@@ -130,10 +130,7 @@ export function DetailSheet({
         dragMomentum={false}
         dragElastic={{ top: 0, bottom: 0.5 }}
         onDragEnd={(_, info) => {
-          if (
-            info.offset.y > DISMISS_OFFSET ||
-            info.velocity.y > DISMISS_VELOCITY
-          ) {
+          if (info.offset.y > DISMISS_OFFSET || info.velocity.y > DISMISS_VELOCITY) {
             close();
           }
         }}
@@ -206,11 +203,7 @@ export function DetailSheet({
             className="relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain"
           >
             <div className="relative px-5 pt-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] sm:px-7 sm:pt-6 sm:pb-8">
-              {meta && (
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  {meta}
-                </div>
-              )}
+              {meta && <div className="flex flex-wrap items-center gap-x-2 gap-y-1">{meta}</div>}
 
               {children}
             </div>
@@ -255,6 +248,6 @@ export function DetailSheet({
         </motion.button>
       </motion.div>
     </div>,
-    document.body
+    document.body,
   );
 }

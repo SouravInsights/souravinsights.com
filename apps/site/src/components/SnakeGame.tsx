@@ -92,8 +92,7 @@ const SnakeGame: React.FC = () => {
           gamesPlayed: initialGamesPlayed + 1,
           averageScore: score / (initialGamesPlayed + 1),
           controlsUsed: {
-            keyboard:
-              controlsUsed.current.keyboard - initialControlsUsed.keyboard,
+            keyboard: controlsUsed.current.keyboard - initialControlsUsed.keyboard,
             mobile: controlsUsed.current.mobile - initialControlsUsed.mobile,
           },
           difficulty,
@@ -185,9 +184,7 @@ const SnakeGame: React.FC = () => {
       setFood(getRandomPosition());
 
       // Change up the food icon, just to keep things spicy
-      setCurrentIcon(
-        programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
-      );
+      setCurrentIcon(programmingIcons[Math.floor(Math.random() * programmingIcons.length)]);
       playPop(1, 1.2);
       // Notice we don't remove the tail here - that's how our snake grows!
     } else {
@@ -255,9 +252,7 @@ const SnakeGame: React.FC = () => {
     setFood(getRandomPosition());
     setGameOver(false);
     setScore(0);
-    setCurrentIcon(
-      programmingIcons[Math.floor(Math.random() * programmingIcons.length)]
-    );
+    setCurrentIcon(programmingIcons[Math.floor(Math.random() * programmingIcons.length)]);
     gameStartTime.current = Date.now();
     gamesPlayed.current += 1;
     posthog.capture("game_restarted", { difficulty });
@@ -336,10 +331,7 @@ const SnakeGame: React.FC = () => {
         {/* Grid lines */}
         <div className="absolute inset-0 grid grid-cols-20 grid-rows-20">
           {Array.from({ length: 400 }).map((_, i) => (
-            <div
-              key={i}
-              className="border border-gray-100 dark:border-border/20"
-            />
+            <div key={i} className="border border-gray-100 dark:border-border/20" />
           ))}
         </div>
         {/* Snake */}

@@ -6,17 +6,8 @@ import { CircleNotch } from "@phosphor-icons/react";
 import posthog from "posthog-js";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import { CopyButton, answerAsMarkdown } from "./CopyButton";
-import {
-  Message,
-  MessageContent,
-  MessageResponse,
-} from "@/components/ai-elements/message";
-import {
-  Source,
-  Sources,
-  SourcesContent,
-  SourcesTrigger,
-} from "@/components/ai-elements/sources";
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
+import { Source, Sources, SourcesContent, SourcesTrigger } from "@/components/ai-elements/sources";
 import { Curio } from "./Curio";
 import { citationsOf } from "./use-curio-chat";
 
@@ -73,7 +64,7 @@ export function CurioTranscript({
           .map((part) => (part as { text: string }).text)
           .join("");
         const citations = citationsOf(
-          message.parts as { type: string; state?: string; output?: unknown }[]
+          message.parts as { type: string; state?: string; output?: unknown }[],
         );
 
         return (
@@ -115,7 +106,7 @@ export function CurioTranscript({
                           citations.map((citation) => ({
                             title: citation.title,
                             url: citation.url,
-                          }))
+                          })),
                         )}
                       />
                     </div>
@@ -170,9 +161,7 @@ export function transcriptAsMarkdown(messages: UIMessage[]): string {
         .filter((part) => part.type === "text")
         .map((part) => (part as { text: string }).text)
         .join("");
-      const citations = citationsOf(
-        message.parts as { type: string; output?: unknown }[]
-      );
+      const citations = citationsOf(message.parts as { type: string; output?: unknown }[]);
       const heading = message.role === "user" ? "**You**" : "**Curio**";
       const sources = citations.length
         ? `\n\nSources:\n${citations

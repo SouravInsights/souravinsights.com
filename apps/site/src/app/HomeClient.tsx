@@ -15,10 +15,7 @@ import { useFeedback } from "@/hooks/useFeedback";
 import { OpinionsSection } from "@/components/OpinionsSection";
 import { EssayHighlights } from "@/components/EssayHighlights";
 import type { Project } from "@/app/projects/projects-data";
-import {
-  ScrollPreviewProvider,
-  ScrollPreviewTrigger,
-} from "@/components/ui/ScrollPreview";
+import { ScrollPreviewProvider, ScrollPreviewTrigger } from "@/components/ui/ScrollPreview";
 import {
   Figma,
   Obsidian,
@@ -156,166 +153,154 @@ const HeroSection = () => {
   const feedback = useFeedback();
 
   return (
-  <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
-    {/* Background grid effect */}
-    <div
-      className="absolute inset-0 transition-opacity duration-200"
-      style={{
-        backgroundImage: `
+    <div className="bg-background rounded-lg overflow-hidden relative border border-border transition-colors duration-200">
+      {/* Background grid effect */}
+      <div
+        className="absolute inset-0 transition-opacity duration-200"
+        style={{
+          backgroundImage: `
           linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
           linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
         `,
-        backgroundSize: "4rem 4rem",
-        maskImage:
-          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
-        WebkitMaskImage:
-          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
-        opacity: "0.2",
-      }}
-    />
+          backgroundSize: "4rem 4rem",
+          maskImage: "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+          WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+          opacity: "0.2",
+        }}
+      />
 
-    {/* Dark mode grid */}
-    <div
-      className="absolute inset-0 transition-opacity duration-200 dark:opacity-20 opacity-0"
-      style={{
-        backgroundImage: `
+      {/* Dark mode grid */}
+      <div
+        className="absolute inset-0 transition-opacity duration-200 dark:opacity-20 opacity-0"
+        style={{
+          backgroundImage: `
           linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
           linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
         `,
-        backgroundSize: "4rem 4rem",
-        maskImage:
-          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
-        WebkitMaskImage:
-          "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
-      }}
-    />
+          backgroundSize: "4rem 4rem",
+          maskImage: "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+          WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 110%)",
+        }}
+      />
 
-    <div className="relative z-10 p-5 sm:p-6 md:p-8">
-      <div className="flex flex-col md:grid md:grid-cols-2 gap-8 items-center">
-        {/* Content section - Reordered for mobile */}
-        <div className="order-2 md:order-1 w-full">
-          <div className="space-y-6">
-            <StickerDeck />
+      <div className="relative z-10 p-5 sm:p-6 md:p-8">
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-8 items-center">
+          {/* Content section - Reordered for mobile */}
+          <div className="order-2 md:order-1 w-full">
+            <div className="space-y-6">
+              <StickerDeck />
 
-            <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
-              <p>
-                Hey there! This is my{" "}
-                <a
-                  href="https://matthiasott.com/articles/into-the-personal-website-verse"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  little corner of the internet
-                </a>
-                . I'm a Product Engineer who loves building underwhelming
-                interfaces,{" "}
-                <a
-                  href="https://x.com/souravinsights/status/1898797157463015437"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  learning new stuff
-                </a>
-                , and occasionally{" "}
-                <a
-                  href="https://www.souravinsights.com/blog"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  writing
-                </a>{" "}
-                about it.
-              </p>
-              <p>
-                I spend my days writing code, tinkering with side projects, and
-                figuring out{" "}
-                <a
-                  href="https://www.souravinsights.com/blog/polymath-mode"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  how to balance curiosity
-                </a>{" "}
-                with actually finishing things. When I'm not coding, you'll find
-                me{" "}
-                <a
-                  href="https://chordcanvas.vercel.app/"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  practicing chords
-                </a>{" "}
-                of my fav songs, on a{" "}
-                <a
-                  href="https://www.souravinsights.com/blog/why-riding-is-like-a-therapy"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  bike ride
-                </a>
-                , or probably{" "}
-                <a
-                  href="https://www.souravinsights.com/books"
-                  className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
-                >
-                  reading some books.
-                </a>
-              </p>
-              <p>
-                This site is an extension of my personal self, it's where I
-                share what I'm working on, thinking about, and learning. It's
-                always changing because, well, so am I.
-              </p>
+              <div className="space-y-4 type-body text-foreground dark:text-muted-foreground">
+                <p>
+                  Hey there! This is my{" "}
+                  <a
+                    href="https://matthiasott.com/articles/into-the-personal-website-verse"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    little corner of the internet
+                  </a>
+                  . I'm a Product Engineer who loves building underwhelming interfaces,{" "}
+                  <a
+                    href="https://x.com/souravinsights/status/1898797157463015437"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    learning new stuff
+                  </a>
+                  , and occasionally{" "}
+                  <a
+                    href="https://www.souravinsights.com/blog"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    writing
+                  </a>{" "}
+                  about it.
+                </p>
+                <p>
+                  I spend my days writing code, tinkering with side projects, and figuring out{" "}
+                  <a
+                    href="https://www.souravinsights.com/blog/polymath-mode"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    how to balance curiosity
+                  </a>{" "}
+                  with actually finishing things. When I'm not coding, you'll find me{" "}
+                  <a
+                    href="https://chordcanvas.vercel.app/"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    practicing chords
+                  </a>{" "}
+                  of my fav songs, on a{" "}
+                  <a
+                    href="https://www.souravinsights.com/blog/why-riding-is-like-a-therapy"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    bike ride
+                  </a>
+                  , or probably{" "}
+                  <a
+                    href="https://www.souravinsights.com/books"
+                    className="text-green-700 dark:text-green-500 underline hover:text-green-500 dark:hover:text-green-400 transition-colors"
+                  >
+                    reading some books.
+                  </a>
+                </p>
+                <p>
+                  This site is an extension of my personal self, it's where I share what I'm working
+                  on, thinking about, and learning. It's always changing because, well, so am I.
+                </p>
 
-              <LastDeployedInfo />
+                <LastDeployedInfo />
+              </div>
+
+              <motion.div
+                className="flex flex-wrap gap-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2 }}
+              >
+                <a
+                  href="https://github.com/souravinsights"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => feedback.press()}
+                  className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+                >
+                  <GithubLogo className="w-4 h-4" />
+                  <span>GitHub</span>
+                </a>
+                <a
+                  href="https://twitter.com/souravinsights"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => feedback.press()}
+                  className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+                >
+                  <XLogo className="w-4 h-4" />
+                  <span>Twitter</span>
+                </a>
+              </motion.div>
             </div>
+          </div>
 
+          {/* Macintosh section */}
+          <div className="order-1 md:order-2 w-full flex justify-center md:justify-end">
             <motion.div
-              className="flex flex-wrap gap-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="bg-secondary p-4 rounded-md transition-colors duration-200"
             >
-              <a
-                href="https://github.com/souravinsights"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => feedback.press()}
-                className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
-              >
-                <GithubLogo className="w-4 h-4" />
-                <span>GitHub</span>
-              </a>
-              <a
-                href="https://twitter.com/souravinsights"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => feedback.press()}
-                className="bg-secondary text-secondary-foreground px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
-              >
-                <XLogo className="w-4 h-4" />
-                <span>Twitter</span>
-              </a>
+              <Macintosh />
             </motion.div>
           </div>
         </div>
-
-        {/* Macintosh section */}
-        <div className="order-1 md:order-2 w-full flex justify-center md:justify-end">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="bg-secondary p-4 rounded-md transition-colors duration-200"
-          >
-            <Macintosh />
-          </motion.div>
-        </div>
       </div>
     </div>
-  </div>
   );
 };
 
-export function HomeClient({
-  featuredProjects,
-}: {
-  featuredProjects: Project[];
-}) {
+export function HomeClient({ featuredProjects }: { featuredProjects: Project[] }) {
   /** The home-page links that get the hover scroll-through. Fixed and small. */
   const previewUrls = [
     ...companies.map((company) => company.website),
@@ -330,9 +315,7 @@ export function HomeClient({
       {/* Every panel is an h2 section, so the page owes them an h1 — and it had
           none, which is why CardTitle (an h3) was the wrong tool for the labels.
           Assistive tech and crawlers get a heading; the design gets the hero. */}
-      <h1 className="sr-only">
-        Sourav Insights — writing, projects, and the things I keep
-      </h1>
+      <h1 className="sr-only">Sourav Insights — writing, projects, and the things I keep</h1>
 
       {/* A dashboard, not a scroll: every block is a panel on a twelve-column
           grid, so the page is scanned rather than read downwards. The old page
@@ -347,63 +330,18 @@ export function HomeClient({
         </div>
 
         <ScrollPreviewProvider urls={previewUrls}>
-        <Panel
-          title="Companies"
-          className="lg:col-span-4"
-          bodyClassName="flex flex-wrap content-start gap-x-6 gap-y-4"
-        >
-          {companies.map((company, index) => (
-            <ScrollPreviewTrigger
-              key={company.name}
-              url={company.website}
-              name={company.name}
-            >
-              <motion.a
-                href={company.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.3,
-                  delay: Math.min(index, 12) * 0.03,
-                }}
-              >
-                <div className="relative h-6 w-6 shrink-0">
-                  <Image
-                    src={company.logo}
-                    alt={`${company.name} logo`}
-                    fill
-                    className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
-                  />
-                </div>
-                <span className="type-body text-foreground">
-                  {company.name}
-                </span>
-              </motion.a>
-            </ScrollPreviewTrigger>
-          ))}
-        </Panel>
-
-        <Panel
-          title="Side Projects"
-          href="/projects"
-          className="lg:col-span-8"
-          bodyClassName="grid grid-cols-1 content-start gap-x-8 gap-y-6 sm:grid-cols-3"
-        >
-          {featuredProjects.map((project, index) => {
-            const logoIsSvg = project.logo.endsWith(".svg");
-
-            return (
-              <ScrollPreviewTrigger
-                key={project.slug}
-                url={project.url}
-                name={project.name}
-              >
+          <Panel
+            title="Companies"
+            className="lg:col-span-4"
+            bodyClassName="flex flex-wrap content-start gap-x-6 gap-y-4"
+          >
+            {companies.map((company, index) => (
+              <ScrollPreviewTrigger key={company.name} url={company.website} name={company.name}>
                 <motion.a
-                  href={`/projects#${project.slug}`}
-                  className="group flex flex-col"
+                  href={company.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2.5 transition-opacity hover:opacity-70"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
@@ -411,26 +349,61 @@ export function HomeClient({
                     delay: Math.min(index, 12) * 0.03,
                   }}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
-                      <Image
-                        src={project.logo}
-                        alt={`${project.name} logo`}
-                        fill
-                        unoptimized={logoIsSvg}
-                        className="object-cover"
-                      />
-                    </div>
-                    <h3 className="type-heading transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
-                      {project.name}
-                    </h3>
+                  <div className="relative h-6 w-6 shrink-0">
+                    <Image
+                      src={company.logo}
+                      alt={`${company.name} logo`}
+                      fill
+                      className="rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10"
+                    />
                   </div>
-                  <p className="type-caption mt-2">{project.note}</p>
+                  <span className="type-body text-foreground">{company.name}</span>
                 </motion.a>
               </ScrollPreviewTrigger>
-            );
-          })}
-        </Panel>
+            ))}
+          </Panel>
+
+          <Panel
+            title="Side Projects"
+            href="/projects"
+            className="lg:col-span-8"
+            bodyClassName="grid grid-cols-1 content-start gap-x-8 gap-y-6 sm:grid-cols-3"
+          >
+            {featuredProjects.map((project, index) => {
+              const logoIsSvg = project.logo.endsWith(".svg");
+
+              return (
+                <ScrollPreviewTrigger key={project.slug} url={project.url} name={project.name}>
+                  <motion.a
+                    href={`/projects#${project.slug}`}
+                    className="group flex flex-col"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: Math.min(index, 12) * 0.03,
+                    }}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-md bg-secondary">
+                        <Image
+                          src={project.logo}
+                          alt={`${project.name} logo`}
+                          fill
+                          unoptimized={logoIsSvg}
+                          className="object-cover"
+                        />
+                      </div>
+                      <h3 className="type-heading transition-colors group-hover:text-green-700 dark:group-hover:text-green-500">
+                        {project.name}
+                      </h3>
+                    </div>
+                    <p className="type-caption mt-2">{project.note}</p>
+                  </motion.a>
+                </ScrollPreviewTrigger>
+              );
+            })}
+          </Panel>
         </ScrollPreviewProvider>
 
         <Panel title="Recent Essays" href="/blog" className="lg:col-span-6">
@@ -453,9 +426,7 @@ export function HomeClient({
           <div className="flex flex-col">
             {Object.entries(myToolkit).map(([key, category], groupIndex) => (
               <div key={key}>
-                {groupIndex > 0 && (
-                  <div className="rule my-4" aria-hidden="true" />
-                )}
+                {groupIndex > 0 && <div className="rule my-4" aria-hidden="true" />}
                 <h3 className="type-label mb-3">{category.title}</h3>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
                   {category.items.map((item, index) => {
@@ -491,10 +462,7 @@ export function HomeClient({
                               style={{ flexShrink: 0 }}
                             />
                           ) : LogoComponent ? (
-                            <LogoComponent
-                              className="w-4 h-4"
-                              style={{ flexShrink: 0 }}
-                            />
+                            <LogoComponent className="w-4 h-4" style={{ flexShrink: 0 }} />
                           ) : null)}
                         <span>{item.name}</span>
                       </ItemWrapper>
@@ -506,15 +474,10 @@ export function HomeClient({
           </div>
         </Panel>
 
-        <Panel
-          title="Unpopular Opinions"
-          className="lg:col-span-5"
-          bodyClassName="p-2"
-        >
+        <Panel title="Unpopular Opinions" className="lg:col-span-5" bodyClassName="p-2">
           <OpinionsSection />
         </Panel>
       </div>
     </div>
   );
 }
-

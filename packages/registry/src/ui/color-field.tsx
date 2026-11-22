@@ -67,10 +67,8 @@ function ColorField({
       data-state={open ? "open" : "closed"}
       className={cn(
         "-mx-2 rounded-md transition-colors duration-150",
-        open
-          ? "bg-foreground/[0.055]"
-          : "[@media(hover:hover)]:hover:bg-foreground/[0.035]",
-        className
+        open ? "bg-foreground/[0.055]" : "[@media(hover:hover)]:hover:bg-foreground/[0.035]",
+        className,
       )}
     >
       <Button
@@ -116,7 +114,7 @@ function ColorField({
                       className={cn(
                         "size-6 flex-none rounded-full p-0 hover:bg-transparent",
                         extra.active &&
-                          "ring-2 ring-[hsl(var(--foreground))] ring-offset-2 ring-offset-background"
+                          "ring-2 ring-[hsl(var(--foreground))] ring-offset-2 ring-offset-background",
                       )}
                     />
                   ) : undefined

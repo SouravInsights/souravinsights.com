@@ -159,10 +159,7 @@ export function InsightsCommandPalette({
 
   // Empty, show a few recent links so the palette is useful before you type;
   // once there is a query, cmdk filters the whole collection.
-  const linkRows = useMemo(
-    () => (hasQuery ? links : links.slice(0, 6)),
-    [hasQuery, links]
-  );
+  const linkRows = useMemo(() => (hasQuery ? links : links.slice(0, 6)), [hasQuery, links]);
 
   // Only the moves that would change something: the other view, the other
   // sorts. Offering the state you are already in is a command that does
@@ -195,19 +192,13 @@ export function InsightsCommandPalette({
   ];
 
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={handleOpenChange}
-      label="Search the collection"
-    >
+    <CommandDialog open={open} onOpenChange={handleOpenChange} label="Search the collection">
       <CommandInput
         onValueChange={setQuery}
         placeholder="Search links, or jump to…"
         aria-label="Search links, or jump to a page or action"
       >
-        <kbd className={`${KBD} hidden sm:inline-flex`}>
-          esc
-        </kbd>
+        <kbd className={`${KBD} hidden sm:inline-flex`}>esc</kbd>
       </CommandInput>
 
       <CommandList>
@@ -246,9 +237,7 @@ export function InsightsCommandPalette({
                 onSelect={() => run(() => onCategory("all"))}
               >
                 <FunnelSimple aria-hidden="true" className="h-4 w-4" />
-                <span className="min-w-0 flex-1 truncate text-foreground">
-                  Show all categories
-                </span>
+                <span className="min-w-0 flex-1 truncate text-foreground">Show all categories</span>
               </CommandItem>
             )}
           </CommandGroup>
@@ -266,7 +255,7 @@ export function InsightsCommandPalette({
                     `link:${link.urlKey}`,
                     link.title,
                     domain,
-                    (link.topics ?? []).join(" ")
+                    (link.topics ?? []).join(" "),
                   )}
                   onSelect={() => run(() => onOpenLink(link))}
                 >
@@ -279,22 +268,15 @@ export function InsightsCommandPalette({
                     loading="lazy"
                     className="h-4 w-4 object-contain"
                   />
-                  <span className="min-w-0 flex-1 truncate text-foreground">
-                    {link.title}
-                  </span>
+                  <span className="min-w-0 flex-1 truncate text-foreground">{link.title}</span>
                   {domain && (
-                    <CommandShortcut className="hidden sm:block">
-                      {domain}
-                    </CommandShortcut>
+                    <CommandShortcut className="hidden sm:block">{domain}</CommandShortcut>
                   )}
                   <span className="shrink-0 text-faint-foreground">
                     {readInPlace ? (
                       <BookOpen aria-hidden="true" className="h-3.5 w-3.5" />
                     ) : (
-                      <ArrowSquareOut
-                        aria-hidden="true"
-                        className="h-3.5 w-3.5"
-                      />
+                      <ArrowSquareOut aria-hidden="true" className="h-3.5 w-3.5" />
                     )}
                   </span>
                 </CommandItem>
@@ -309,9 +291,7 @@ export function InsightsCommandPalette({
             <CommandItem
               value={val("ask", query)}
               onSelect={() =>
-                run(() =>
-                  router.push(`/curio?q=${encodeURIComponent(query.trim())}`)
-                )
+                run(() => router.push(`/curio?q=${encodeURIComponent(query.trim())}`))
               }
             >
               <Sparkle aria-hidden="true" className="h-4 w-4" />
@@ -342,9 +322,7 @@ export function InsightsCommandPalette({
                   onSelect={() => run(() => onCategory(category.value))}
                 >
                   <Tag aria-hidden="true" className="h-4 w-4" />
-                  <span className="min-w-0 flex-1 truncate text-foreground">
-                    {category.label}
-                  </span>
+                  <span className="min-w-0 flex-1 truncate text-foreground">{category.label}</span>
                   <CommandShortcut>{category.count}</CommandShortcut>
                   {active && <Check aria-hidden="true" className="h-3.5 w-3.5" />}
                 </CommandItem>
@@ -367,9 +345,7 @@ export function InsightsCommandPalette({
                   }}
                 >
                   <Tag aria-hidden="true" className="h-4 w-4" />
-                  <span className="min-w-0 flex-1 truncate text-foreground">
-                    {topic}
-                  </span>
+                  <span className="min-w-0 flex-1 truncate text-foreground">{topic}</span>
                   <CommandShortcut>{count}</CommandShortcut>
                   {active && <Check aria-hidden="true" className="h-3.5 w-3.5" />}
                 </CommandItem>
@@ -409,9 +385,7 @@ export function InsightsCommandPalette({
                 <span className="min-w-0 flex-1 truncate text-foreground">
                   Sort by {option.label.toLowerCase()}
                 </span>
-                {sort === option.value && (
-                  <Check aria-hidden="true" className="h-3.5 w-3.5" />
-                )}
+                {sort === option.value && <Check aria-hidden="true" className="h-3.5 w-3.5" />}
               </CommandItem>
             ))}
         </CommandGroup>
@@ -440,21 +414,15 @@ export function InsightsCommandPalette({
             onSelect={() => run(onCopyPageLink)}
           >
             <Copy aria-hidden="true" className="h-4 w-4" />
-            <span className="min-w-0 flex-1 truncate text-foreground">
-              Copy link to this page
-            </span>
+            <span className="min-w-0 flex-1 truncate text-foreground">Copy link to this page</span>
           </CommandItem>
           {hasQuery && (
             <CommandItem
               value={val("action", "rss", "feed", "subscribe", "xml")}
-              onSelect={() =>
-                run(() => window.open("/insights/rss.xml", "_blank"))
-              }
+              onSelect={() => run(() => window.open("/insights/rss.xml", "_blank"))}
             >
               <BracketsCurly aria-hidden="true" className="h-4 w-4" />
-              <span className="min-w-0 flex-1 truncate text-foreground">
-                Open the RSS feed
-              </span>
+              <span className="min-w-0 flex-1 truncate text-foreground">Open the RSS feed</span>
             </CommandItem>
           )}
           {hasQuery && isAdmin && (
@@ -463,9 +431,7 @@ export function InsightsCommandPalette({
               onSelect={() => run(onCleanup)}
             >
               <Trash aria-hidden="true" className="h-4 w-4" />
-              <span className="min-w-0 flex-1 truncate text-foreground">
-                Clean up links
-              </span>
+              <span className="min-w-0 flex-1 truncate text-foreground">Clean up links</span>
             </CommandItem>
           )}
         </CommandGroup>
@@ -479,9 +445,7 @@ export function InsightsCommandPalette({
                 onSelect={() => run(() => router.push(item.path))}
               >
                 <item.icon aria-hidden="true" className="h-4 w-4" />
-                <span className="min-w-0 flex-1 truncate text-foreground">
-                  {item.label}
-                </span>
+                <span className="min-w-0 flex-1 truncate text-foreground">{item.label}</span>
               </CommandItem>
             ))}
           </CommandGroup>
@@ -491,18 +455,12 @@ export function InsightsCommandPalette({
       <div className="flex h-10 shrink-0 items-center justify-between gap-3 border-t border-border px-4 text-[12px] text-faint-foreground">
         <span className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
-            <kbd className={KBD}>
-              ↑
-            </kbd>
-            <kbd className={KBD}>
-              ↓
-            </kbd>
+            <kbd className={KBD}>↑</kbd>
+            <kbd className={KBD}>↓</kbd>
             navigate
           </span>
           <span className="flex items-center gap-1.5">
-            <kbd className={KBD}>
-              ↵
-            </kbd>
+            <kbd className={KBD}>↵</kbd>
             open
           </span>
         </span>

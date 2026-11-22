@@ -15,9 +15,7 @@ export default async function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-5">
       <div className="flex w-full max-w-xs flex-col items-center gap-6 text-center">
-        <h1 className="type-heading text-foreground">
-          {isAdmin ? "Signed in" : "Sign in"}
-        </h1>
+        <h1 className="type-heading text-foreground">{isAdmin ? "Signed in" : "Sign in"}</h1>
         {isAdmin ? (
           <>
             <p className="type-body text-muted-foreground">

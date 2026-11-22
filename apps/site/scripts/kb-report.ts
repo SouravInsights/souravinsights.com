@@ -29,11 +29,12 @@ async function main() {
 
   const total = await one(db.select({ n: sql<number>`count(*)::int` }).from(links));
   const hidden = await one(
-    db.select({ n: sql<number>`count(*)::int` }).from(links).where(sql`hidden_at is not null`)
+    db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(links)
+      .where(sql`hidden_at is not null`),
   );
-  const passages = await one(
-    db.select({ n: sql<number>`count(*)::int` }).from(linkChunks)
-  );
+  const passages = await one(db.select({ n: sql<number>`count(*)::int` }).from(linkChunks));
 
   const counts = await db
     .select({ status: links.readStatus, n: sql<number>`count(*)::int` })
@@ -65,17 +66,17 @@ async function main() {
     group by l.category
     order by links desc
   `)) as unknown as { rows?: Record<string, unknown>[] } | Record<string, unknown>[];
-  const coverageRows = Array.isArray(coverage) ? coverage : coverage.rows ?? [];
+  const coverageRows = Array.isArray(coverage) ? coverage : (coverage.rows ?? []);
 
   const L: string[] = [];
   L.push("# KB build report", "");
   L.push(
     `_Generated ${new Date().toISOString()}. Regenerate: \`npx tsx scripts/kb-report.ts --write\`._`,
-    ""
+    "",
   );
   L.push(
     `Embedding model \`${EMBEDDING_MODEL_ID}\` · chat model \`${CHAT_MODEL_ID}\` · chunk target ${MAX_TOKENS} tokens.`,
-    ""
+    "",
   );
   L.push("## Links", "", "| Status | Count |", "| :--- | ---: |");
   for (const s of STATUSES) {
@@ -83,21 +84,16 @@ async function main() {
     if (n) L.push(`| ${s} | ${n} |`);
   }
   L.push("");
-  L.push(
-    `**Total links:** ${total} (${hidden} hidden). **Passages stored:** ${passages}.`,
-    ""
-  );
+  L.push(`**Total links:** ${total} (${hidden} hidden). **Passages stored:** ${passages}.`, "");
   L.push("## Coverage per category", "");
   L.push(
     "`missing` = links search cannot reach at all (no passage was stored).",
     "",
     "| Category | Links | Passages | Missing |",
-    "| :--- | ---: | ---: | ---: |"
+    "| :--- | ---: | ---: | ---: |",
   );
   for (const row of coverageRows) {
-    L.push(
-      `| ${row.category ?? "—"} | ${row.links} | ${row.passages} | ${row.missing} |`
-    );
+    L.push(`| ${row.category ?? "—"} | ${row.links} | ${row.passages} | ${row.missing} |`);
   }
   L.push("");
   L.push("## Thin / failed (need attention)", "");
@@ -106,7 +102,7 @@ async function main() {
     "`failed` = no text extracted at all.",
     "",
     "| Status | Words | Category | URL |",
-    "| :--- | ---: | :--- | :--- |"
+    "| :--- | ---: | :--- | :--- |",
   );
   for (const r of problem) {
     L.push(`| ${r.status} | ${r.words ?? 0} | ${r.category ?? "—"} | ${r.url} |`);
@@ -121,9 +117,7 @@ async function main() {
   } else {
     console.log(report);
   }
-  console.log(
-    `\ntotals: ${total} links · ${passages} passages · ${problem.length} thin/failed`
-  );
+  console.log(`\ntotals: ${total} links · ${passages} passages · ${problem.length} thin/failed`);
 }
 
 main().catch((err) => {

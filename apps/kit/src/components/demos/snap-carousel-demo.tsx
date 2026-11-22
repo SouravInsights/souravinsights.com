@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  SnapCarousel,
-  SnapCarouselContent,
-  SnapCarouselItem,
-} from "@/components/ui/snap-carousel";
+import { SnapCarousel, SnapCarouselContent, SnapCarouselItem } from "@/components/ui/snap-carousel";
 
 const ITEMS = ["one", "two", "three", "four", "five"];
 

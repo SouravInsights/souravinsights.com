@@ -1,10 +1,5 @@
 import "./load-env";
-import {
-  inspectLink,
-  kbOverview,
-  LinkNotFoundError,
-  HEAVY_CHUNKS,
-} from "../src/lib/kb/inspect";
+import { inspectLink, kbOverview, LinkNotFoundError, HEAVY_CHUNKS } from "../src/lib/kb/inspect";
 
 /**
  * Look at what we stored for a link.
@@ -28,8 +23,7 @@ import {
  */
 
 const useColor = process.stdout.isTTY && !process.env.NO_COLOR;
-const paint = (code: string, s: string) =>
-  useColor ? `\x1b[${code}m${s}\x1b[0m` : s;
+const paint = (code: string, s: string) => (useColor ? `\x1b[${code}m${s}\x1b[0m` : s);
 const bold = (s: string) => paint("1", s);
 const dim = (s: string) => paint("2", s);
 const red = (s: string) => paint("31", s);
@@ -69,18 +63,18 @@ async function main() {
     console.log(bold("\nTHE INDEX"));
     console.log(
       `  ${num(totals.links)} links (${num(totals.visible)} visible) · ` +
-        `${num(totals.passages)} passages · ${num(totals.not_indexed)} visible links not indexed`
+        `${num(totals.passages)} passages · ${num(totals.not_indexed)} visible links not indexed`,
     );
 
     rule("BY CATEGORY");
     console.log(
-      `  ${"category".padEnd(16)} ${"links".padStart(6)} ${"passages".padStart(9)}  median`
+      `  ${"category".padEnd(16)} ${"links".padStart(6)} ${"passages".padStart(9)}  median`,
     );
     for (const c of categories) {
       console.log(
-        `  ${(c.category ?? "—").padEnd(16)} ${num(c.links).padStart(6)} ${num(
-          c.passages
-        ).padStart(9)}  ${num(c.median_tokens)} tok`
+        `  ${(c.category ?? "—").padEnd(16)} ${num(c.links).padStart(6)} ${num(c.passages).padStart(
+          9,
+        )}  ${num(c.median_tokens)} tok`,
       );
     }
 
@@ -95,8 +89,8 @@ async function main() {
     console.log(
       dim(
         `\n  A link above ${HEAVY_CHUNKS} passages owns enough of the index to distort it.` +
-          `\n  Inspect one:  yarn inspect <urlKey>`
-      )
+          `\n  Inspect one:  yarn inspect <urlKey>`,
+      ),
     );
 
     if (unindexed.length) {
@@ -126,12 +120,12 @@ async function main() {
   console.log(`  ${"title".padEnd(11)} ${l.title || dim("(none)")}`);
   console.log(`  ${"url".padEnd(11)} ${l.url}`);
   console.log(
-    `  ${"category".padEnd(11)} ${l.category ?? "—"}   ${dim("status")} ${l.readStatus}   ${dim("health")} ${l.health}`
+    `  ${"category".padEnd(11)} ${l.category ?? "—"}   ${dim("status")} ${l.readStatus}   ${dim("health")} ${l.health}`,
   );
   console.log(
     `  ${"added".padEnd(11)} ${l.addedAt.slice(0, 10)}   ${dim("last read")} ${
       l.extractedAt ? l.extractedAt.slice(0, 19).replace("T", " ") : dim("never")
-    }`
+    }`,
   );
   console.log(`  ${"raw text".padEnd(11)} ${num(l.rawChars)} chars`);
   console.log(
@@ -139,10 +133,10 @@ async function main() {
       (s.indexPassages
         ? `  ${dim(`(${s.pctOfIndex.toFixed(1)}% of the index's ${num(s.indexPassages)})`)}`
         : "") +
-      `   ${dim(`tokens ${num(s.minTokens)}–${num(s.maxTokens)}, median ${num(s.medianTokens)}`)}`
+      `   ${dim(`tokens ${num(s.minTokens)}–${num(s.maxTokens)}, median ${num(s.medianTokens)}`)}`,
   );
   console.log(
-    `  ${"embedded as".padEnd(11)} ${dim(`${result.embeddingHeader}<passage>  — reconstructed from the current title`)}`
+    `  ${"embedded as".padEnd(11)} ${dim(`${result.embeddingHeader}<passage>  — reconstructed from the current title`)}`,
   );
 
   if (!l.description) {
@@ -164,15 +158,15 @@ async function main() {
     `\n${bold("PASSAGES")} ${dim(
       `${shown} of ${num(s.passages)}` +
         (result.matched !== s.passages ? ` (${num(result.matched)} match the filter)` : "") +
-        (shown < s.passages ? "  — --all for every one, --grep TEXT to filter" : "")
-    )}`
+        (shown < s.passages ? "  — --all for every one, --grep TEXT to filter" : ""),
+    )}`,
   );
 
   for (const p of result.passages) {
     console.log(
       `\n${dim("┌")} ${cyan(`[${p.index}]`)} ${dim(
-        `${num(p.tokens)} tokens · ${num(p.chars)} chars`
-      )}`
+        `${num(p.tokens)} tokens · ${num(p.chars)} chars`,
+      )}`,
     );
     console.log(p.content.trimEnd());
   }
@@ -185,7 +179,7 @@ main().catch((err) => {
       console.error(dim("\n  Candidates — re-run with one of these keys:\n"));
       for (const c of err.candidates.slice(0, 12)) {
         console.error(
-          `    ${cyan(c.urlKey)}  ${dim(`${c.category ?? "—"} · ${num(c.passages)} passages`)}`
+          `    ${cyan(c.urlKey)}  ${dim(`${c.category ?? "—"} · ${num(c.passages)} passages`)}`,
         );
         if (c.title) console.error(`      ${dim(c.title.slice(0, 68))}`);
       }

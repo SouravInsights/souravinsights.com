@@ -52,10 +52,7 @@ export function CopyButton({
 }
 
 /** Markdown for one answer, sources included, so a paste keeps its links. */
-export function answerAsMarkdown(
-  text: string,
-  sources: { title: string; url: string }[]
-): string {
+export function answerAsMarkdown(text: string, sources: { title: string; url: string }[]): string {
   if (!sources.length) return text;
   return [
     text,

@@ -47,14 +47,7 @@ function HighlightToolbar({ children }: { children?: ReactNode }) {
 }
 
 function HighlightActions() {
-  const {
-    shareable,
-    close,
-    onShareQuote,
-    setSaid,
-    permalinkRange,
-    onCopyLink,
-  } = useHighlight();
+  const { shareable, close, onShareQuote, setSaid, permalinkRange, onCopyLink } = useHighlight();
 
   return (
     <div className="flex items-center gap-1 border-b border-border pb-2.5">
@@ -82,7 +75,7 @@ function HighlightActions() {
           if (!payload) return;
           void navigator.clipboard.writeText(payload.quote).then(
             () => setSaid("Quote copied"),
-            () => setSaid("Could not reach the clipboard")
+            () => setSaid("Could not reach the clipboard"),
           );
         }}
         className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
@@ -97,7 +90,7 @@ function HighlightActions() {
           size="sm"
           onClick={() => {
             void onCopyLink(permalinkRange()).then((ok) =>
-              setSaid(ok ? "Link copied" : "Could not copy the link")
+              setSaid(ok ? "Link copied" : "Could not copy the link"),
             );
           }}
           className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
@@ -169,9 +162,7 @@ function HighlightList() {
                 data-active={m.id === current?.id ? "" : undefined}
                 onClick={() => selectMark(m.id)}
                 className={`h-auto w-full justify-start px-2 py-1 text-left text-[13px] font-normal leading-[1.5] ${
-                  m.id === current?.id
-                    ? "bg-foreground/5 text-foreground"
-                    : "text-muted-foreground"
+                  m.id === current?.id ? "bg-foreground/5 text-foreground" : "text-muted-foreground"
                 }`}
               >
                 <span
@@ -179,9 +170,7 @@ function HighlightList() {
                   className="h-3 w-0.5 shrink-0 rounded-full"
                   style={{ backgroundColor: HUES[m.hue].swatch }}
                 />
-                <span className="truncate">
-                  {textOf(m.para).slice(m.start, m.end)}
-                </span>
+                <span className="truncate">{textOf(m.para).slice(m.start, m.end)}</span>
               </Button>
             </li>
           ))}
@@ -203,9 +192,4 @@ function nthIndexOf(text: string, quote: string, occurrence: number): number {
   return at;
 }
 
-export {
-  HighlightActions,
-  HighlightColors,
-  HighlightList,
-  HighlightToolbar,
-};
+export { HighlightActions, HighlightColors, HighlightList, HighlightToolbar };

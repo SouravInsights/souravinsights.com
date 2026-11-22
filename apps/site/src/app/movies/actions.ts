@@ -1,11 +1,7 @@
 "use server";
 
 import redis from "@/app/lib/redis";
-import {
-  MoviesData,
-  emptyMoviesData,
-  normalizeMoviesData,
-} from "@/types/movies";
+import { MoviesData, emptyMoviesData, normalizeMoviesData } from "@/types/movies";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { put } from "@vercel/blob";
 
@@ -35,7 +31,7 @@ export async function getMoviesData(): Promise<MoviesData> {
 }
 
 export async function saveMoviesData(
-  data: MoviesData
+  data: MoviesData,
 ): Promise<{ success: boolean; error?: string }> {
   if (!(await isAdminAuthenticated())) {
     return { success: false, error: "Unauthorized" };
@@ -50,7 +46,9 @@ export async function saveMoviesData(
   }
 }
 
-export async function uploadPoster(formData: FormData): Promise<{ success: boolean; url?: string; error?: string }> {
+export async function uploadPoster(
+  formData: FormData,
+): Promise<{ success: boolean; url?: string; error?: string }> {
   if (!(await isAdminAuthenticated())) {
     return { success: false, error: "Unauthorized" };
   }

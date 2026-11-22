@@ -35,8 +35,7 @@ const SCROLL_PAUSE = 250;
 export const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** A scroll-jacked section: a sticky host much taller than the viewport. */
 export interface ScrollJack {
@@ -60,7 +59,7 @@ export async function waitForAssets(page: Page): Promise<void> {
           new Promise<void>((resolve) => {
             image.addEventListener("load", () => resolve(), { once: true });
             image.addEventListener("error", () => resolve(), { once: true });
-          })
+          }),
       );
 
     await Promise.race([
@@ -80,9 +79,7 @@ export async function primeForScroll(page: Page): Promise<void> {
   // render immediately instead of as empty space; no scrollbar keeps the image
   // clean; `scroll-behavior: auto` makes `scrollTo` instant, so each step
   // settles.
-  await page.emulateMediaFeatures([
-    { name: "prefers-reduced-motion", value: "reduce" },
-  ]);
+  await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
   await page.addStyleTag({
     content:
       "html{scroll-behavior:auto !important}" +
@@ -92,11 +89,9 @@ export async function primeForScroll(page: Page): Promise<void> {
 
   // Lazy images below the fold never load on their own; promote them first.
   await page.evaluate(() => {
-    document
-      .querySelectorAll<HTMLImageElement>('img[loading="lazy"]')
-      .forEach((image) => {
-        image.loading = "eager";
-      });
+    document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((image) => {
+      image.loading = "eager";
+    });
   });
 
   // Kept free of named inner functions: some bundlers inject a name helper into
@@ -105,10 +100,7 @@ export async function primeForScroll(page: Page): Promise<void> {
     async (config: { max: number; step: number; pause: number }) => {
       let end = Math.min(
         config.max,
-        Math.max(
-          document.body.scrollHeight,
-          document.documentElement.scrollHeight
-        )
+        Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
       );
       let guard = 0;
       // The page can grow as sections stream in, so recompute the end each step.
@@ -117,10 +109,7 @@ export async function primeForScroll(page: Page): Promise<void> {
         await new Promise((resolve) => setTimeout(resolve, config.pause));
         end = Math.min(
           config.max,
-          Math.max(
-            document.body.scrollHeight,
-            document.documentElement.scrollHeight
-          )
+          Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
         );
         guard += 1;
       }
@@ -130,7 +119,7 @@ export async function primeForScroll(page: Page): Promise<void> {
       window.scrollTo(0, 0);
       await new Promise((resolve) => setTimeout(resolve, 300));
     },
-    { max: SCROLL_MAX_HEIGHT, step: SCROLL_STEP, pause: SCROLL_PAUSE }
+    { max: SCROLL_MAX_HEIGHT, step: SCROLL_STEP, pause: SCROLL_PAUSE },
   );
 
   // Everything is eager now, so settle the requests the walk kicked off.
@@ -148,9 +137,7 @@ export async function hideViewportBars(page: Page): Promise<void> {
   await page.evaluate(() => {
     if (document.documentElement.dataset.previewBarsHidden) return;
     document.documentElement.dataset.previewBarsHidden = "1";
-    for (const element of Array.from(
-      document.querySelectorAll<HTMLElement>("*")
-    )) {
+    for (const element of Array.from(document.querySelectorAll<HTMLElement>("*"))) {
       const position = getComputedStyle(element).position;
       if (position === "fixed") {
         element.style.visibility = "hidden";
@@ -176,9 +163,7 @@ export async function findScrollJacks(page: Page): Promise<ScrollJack[]> {
     const ranges: { start: number; end: number }[] = [];
     const viewport = window.innerHeight;
 
-    for (const element of Array.from(
-      document.querySelectorAll<HTMLElement>("*")
-    )) {
+    for (const element of Array.from(document.querySelectorAll<HTMLElement>("*"))) {
       if (getComputedStyle(element).position !== "sticky") continue;
       const host = element.parentElement;
       if (!host) continue;
@@ -205,15 +190,9 @@ export async function findScrollJacks(page: Page): Promise<ScrollJack[]> {
 }
 
 /** Full document height, clamped to the capture ceiling and rounded for sharp. */
-export async function measurePageHeight(
-  page: Page,
-  max: number
-): Promise<number> {
+export async function measurePageHeight(page: Page, max: number): Promise<number> {
   return page.evaluate((limit) => {
-    const full = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight
-    );
+    const full = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
     return Math.round(Math.max(1, Math.min(limit, full)));
   }, max);
 }
@@ -225,7 +204,7 @@ export async function measurePageHeight(
 export async function stitchTiles(
   tiles: { top: number; buffer: Buffer }[],
   width: number,
-  height: number
+  height: number,
 ): Promise<Buffer> {
   return sharp({
     create: {
@@ -240,7 +219,7 @@ export async function stitchTiles(
         input: tile.buffer,
         top: tile.top,
         left: 0,
-      }))
+      })),
     )
     .png()
     .toBuffer();

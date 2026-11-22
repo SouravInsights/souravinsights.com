@@ -49,9 +49,7 @@ function BookRow({
           {book.title}
         </p>
         {author ? (
-          <p className="type-caption mt-1 line-clamp-1 text-faint-foreground">
-            {author}
-          </p>
+          <p className="type-caption mt-1 line-clamp-1 text-faint-foreground">{author}</p>
         ) : null}
       </div>
     </div>
@@ -71,34 +69,25 @@ function Shelf() {
 
   const profileId = profileData?.profile?.id;
 
-  const { loading: loadingReading, data: readingData } = useQuery(
-    GET_BOOKS_BY_STATUS,
-    {
-      variables: { limit: MAX_BOOKS, offset: 0, readingStatus: "IS_READING", profileId },
-      skip: !profileId,
-    }
-  );
+  const { loading: loadingReading, data: readingData } = useQuery(GET_BOOKS_BY_STATUS, {
+    variables: { limit: MAX_BOOKS, offset: 0, readingStatus: "IS_READING", profileId },
+    skip: !profileId,
+  });
 
   const readingBooks: any[] = readingData?.booksByReadingStateAndProfile ?? [];
 
   // Recently finished books fill out the list when nothing is in progress.
-  const { loading: loadingFinished, data: finishedData } = useQuery(
-    GET_BOOKS_BY_STATUS,
-    {
-      variables: { limit: MAX_BOOKS, offset: 0, readingStatus: "FINISHED", profileId },
-      skip: !profileId,
-    }
-  );
+  const { loading: loadingFinished, data: finishedData } = useQuery(GET_BOOKS_BY_STATUS, {
+    variables: { limit: MAX_BOOKS, offset: 0, readingStatus: "FINISHED", profileId },
+    skip: !profileId,
+  });
 
   if (profileError || (!profileLoading && !profileId)) return null;
 
   const loading = !profileId || loadingReading || loadingFinished;
 
   const seen = new Set<string>();
-  const books: any[] = [
-    ...readingBooks,
-    ...(finishedData?.booksByReadingStateAndProfile ?? []),
-  ]
+  const books: any[] = [...readingBooks, ...(finishedData?.booksByReadingStateAndProfile ?? [])]
     .filter((book) => {
       if (seen.has(book.id)) return false;
       seen.add(book.id);
@@ -128,11 +117,7 @@ function Shelf() {
     <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:gap-x-6 sm:gap-y-4">
       {books.map((book, index) => (
         <FadeIn key={book.id} delay={Math.min(index, 12) * 0.03}>
-          <BookRow
-            book={book}
-            dimmed={isDimmed(index)}
-            {...getItemProps(index)}
-          />
+          <BookRow book={book} dimmed={isDimmed(index)} {...getItemProps(index)} />
         </FadeIn>
       ))}
     </div>

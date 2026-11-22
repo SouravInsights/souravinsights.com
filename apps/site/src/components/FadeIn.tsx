@@ -17,13 +17,7 @@ interface FadeInProps {
  * same way: headers at y=20 / 0.5s, list rows at y=8 / 0.3s with a small
  * stagger. Lives in a client component so server pages can use it too.
  */
-export function FadeIn({
-  children,
-  y = 8,
-  duration = 0.3,
-  delay = 0,
-  className,
-}: FadeInProps) {
+export function FadeIn({ children, y = 8, duration = 0.3, delay = 0, className }: FadeInProps) {
   return (
     <motion.div
       className={className}

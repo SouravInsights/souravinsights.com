@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-  OpenAPIRegistry,
-  OpenApiGeneratorV3,
-} from "@asteasolutions/zod-to-openapi";
+import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import {
   addLinkRequestSchema,
   addLinkResponseSchema,
@@ -17,8 +14,7 @@ import {
   searchResultSchema,
 } from "./api-schemas";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
 
 /**
  * The OpenAPI document is generated from the same zod schemas that validate

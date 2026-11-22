@@ -4,12 +4,7 @@ import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ArrowBendDownRight,
-  ArrowUp,
-  Square,
-  X,
-} from "@phosphor-icons/react";
+import { ArrowBendDownRight, ArrowUp, Square, X } from "@phosphor-icons/react";
 import {
   Conversation,
   ConversationContent,
@@ -17,10 +12,7 @@ import {
 } from "@/components/ai-elements/conversation";
 import { Curio } from "@/components/curio/Curio";
 import { CurioTranscript } from "@/components/curio/CurioConversation";
-import {
-  phaseOf,
-  type Part,
-} from "@/components/curio/use-curio-chat";
+import { phaseOf, type Part } from "@/components/curio/use-curio-chat";
 import { HUES } from "@/lib/highlight-palette";
 import { questionsQuery } from "./article-query";
 import type { StoredHighlight } from "./ArticleBody";
@@ -71,9 +63,7 @@ export function CoReader({
 
   const { data: starters = [] } = useQuery(questionsQuery(urlKey));
 
-  const lastAssistant = [...messages]
-    .reverse()
-    .find((m) => m.role === "assistant");
+  const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
   const lastParts = (lastAssistant?.parts ?? []) as Part[];
   const phase = busy ? phaseOf(lastParts) : null;
 
@@ -124,9 +114,7 @@ export function CoReader({
               <section>
                 <h2 className="type-label mb-2.5">Summary</h2>
                 {summary ? (
-                  <p className="text-[14px] leading-[1.6] text-muted-foreground">
-                    {summary}
-                  </p>
+                  <p className="text-[14px] leading-[1.6] text-muted-foreground">{summary}</p>
                 ) : (
                   <p className="type-caption text-faint-foreground">
                     No summary was written for this article.
@@ -134,12 +122,7 @@ export function CoReader({
                 )}
               </section>
 
-              <CurioTranscript
-                messages={messages}
-                phase={phase}
-                error={undefined}
-                phaseMark
-              />
+              <CurioTranscript messages={messages} phase={phase} error={undefined} phaseMark />
             </ConversationContent>
             <ConversationScrollButton />
           </Conversation>
@@ -219,16 +202,13 @@ function Notebook({ marks }: { marks: StoredHighlight[] }) {
       </h2>
       {marks.length === 0 ? (
         <p className="type-caption text-faint-foreground">
-          Select a line in the article to mark it. Highlights appear here and to
-          everyone who opens this article.
+          Select a line in the article to mark it. Highlights appear here and to everyone who opens
+          this article.
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
           {marks.map((mark) => (
-            <li
-              key={mark.id}
-              className="rounded-lg border border-border/60 p-3"
-            >
+            <li key={mark.id} className="rounded-lg border border-border/60 p-3">
               <span
                 aria-hidden="true"
                 className="mb-2 block h-0.5 w-6 rounded-full"

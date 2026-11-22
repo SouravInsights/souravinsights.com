@@ -19,9 +19,7 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
         {action}
       </div>
       {description ? (
-        <p className="type-body mt-3 max-w-2xl text-muted-foreground">
-          {description}
-        </p>
+        <p className="type-body mt-3 max-w-2xl text-muted-foreground">{description}</p>
       ) : null}
       <div className="rule mt-5" aria-hidden="true" />
     </header>

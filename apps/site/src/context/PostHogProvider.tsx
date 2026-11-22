@@ -18,8 +18,7 @@ if (typeof window !== "undefined") {
   }
 
   // Check if user was previously marked as internal
-  const wasMarkedInternal =
-    localStorage.getItem("posthog_internal_user") === "true";
+  const wasMarkedInternal = localStorage.getItem("posthog_internal_user") === "true";
 
   if (!excludeFromEnv) {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {

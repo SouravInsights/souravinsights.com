@@ -22,9 +22,7 @@ const MEDIA_VERSION = 2;
 const publicUrl = (key: string) => `${R2_BASE}/${key}?v=${MEDIA_VERSION}`;
 
 const toCounts = (raw: Record<string, number> | null): Record<string, number> =>
-  Object.fromEntries(
-    Object.entries(raw ?? {}).map(([id, value]) => [id, Number(value) || 0])
-  );
+  Object.fromEntries(Object.entries(raw ?? {}).map(([id, value]) => [id, Number(value) || 0]));
 
 /**
  * The gallery read. One request returns everything the page needs — projects,
@@ -42,10 +40,7 @@ export async function GET() {
       .select()
       .from(galleryProjects)
       .orderBy(asc(galleryProjects.position), asc(galleryProjects.key)),
-    db
-      .select()
-      .from(galleryVideos)
-      .orderBy(asc(galleryVideos.position), asc(galleryVideos.id)),
+    db.select().from(galleryVideos).orderBy(asc(galleryVideos.position), asc(galleryVideos.id)),
     redis.hgetall<Record<string, number>>("gallery:likes"),
     redis.hgetall<Record<string, number>>("gallery:views"),
   ]);

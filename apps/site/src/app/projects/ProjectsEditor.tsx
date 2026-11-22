@@ -140,7 +140,7 @@ export function ProjectsEditor({
       const next = { ...current };
       for (const section of SECTIONS) {
         next[section] = current[section].map((project) =>
-          project.id === id ? { ...project, ...patch } : project
+          project.id === id ? { ...project, ...patch } : project,
         );
       }
       return next;
@@ -196,13 +196,11 @@ export function ProjectsEditor({
           you can do are not obvious from a handle, so it says so once. */}
       <p className="mb-6 rounded-lg border border-border bg-foreground/[0.02] px-3 py-2 type-caption text-muted-foreground">
         <span className="font-medium text-foreground">Drag to reorder. </span>
-        Or drop a project into the other list to switch between Main and Smaller
-        things. Changes save on their own.
+        Or drop a project into the other list to switch between Main and Smaller things. Changes
+        save on their own.
       </p>
 
-      <DragDropProvider
-        onDragOver={(event) => setColumns((current) => move(current, event))}
-      >
+      <DragDropProvider onDragOver={(event) => setColumns((current) => move(current, event))}>
         <ProjectsSkeleton
           featuredItems={columns.featured.map((project, index) => ({
             key: project.id,

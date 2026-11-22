@@ -75,13 +75,11 @@ function isAdminRequest(request: NextRequest): Promise<boolean> | boolean {
 }
 
 /** A 401 response for a non-admin write, or null when the caller may proceed. */
-export async function requireAdmin(
-  request: NextRequest
-): Promise<NextResponse | null> {
+export async function requireAdmin(request: NextRequest): Promise<NextResponse | null> {
   if (await isAdminRequest(request)) return null;
   return NextResponse.json(
     { error: { code: "unauthorized", message: "Missing or invalid admin key" } },
-    { status: 401 }
+    { status: 401 },
   );
 }
 

@@ -19,15 +19,13 @@ async function getVisitorId(): Promise<string> {
 // A post keeps its stats across renames, so a total is the sum over every slug
 // it has answered on. See `src/lib/post-aliases.ts`.
 async function getTotalLikes(slugs: string[]): Promise<number> {
-  const values = await Promise.all(
-    slugs.map((slug) => redis.get<number>(`blog:likes:${slug}`))
-  );
+  const values = await Promise.all(slugs.map((slug) => redis.get<number>(`blog:likes:${slug}`)));
   return values.reduce<number>((total, value) => total + (value ?? 0), 0);
 }
 
 async function getUserLikes(slugs: string[], visitorId: string): Promise<number> {
   const values = await Promise.all(
-    slugs.map((slug) => redis.get<number>(`blog:likes:${slug}:${visitorId}`))
+    slugs.map((slug) => redis.get<number>(`blog:likes:${slug}:${visitorId}`)),
   );
   return values.reduce<number>((total, value) => total + (value ?? 0), 0);
 }
@@ -50,10 +48,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ totalLikes, userLikes });
   } catch (error) {
     console.error("Error fetching likes:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch likes" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch likes" }, { status: 500 });
   }
 }
 
@@ -80,7 +75,7 @@ export async function POST(request: NextRequest) {
           totalLikes: await getTotalLikes(slugs),
           userLikes: currentUserLikes,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -94,9 +89,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating likes:", error);
-    return NextResponse.json(
-      { error: "Failed to update likes" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update likes" }, { status: 500 });
   }
 }

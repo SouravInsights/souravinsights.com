@@ -1,11 +1,11 @@
 {
   "name": "souravinsights",
-  "private": true,
   "version": "0.1.0",
-  "packageManager": "bun@1.4.0",
-  "engines": {
-    "node": "22.x"
-  },
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "turbo run dev --parallel",
     "dev:site": "turbo run dev --filter=site",
@@ -16,17 +16,20 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "typecheck": "turbo run typecheck",
-    "registry:build": "cd packages/registry && npx shadcn@latest build && rm -rf ../../apps/kit/public/r && cp -R public/r ../../apps/kit/public/r"
+    "registry:build": "cd packages/registry && npx shadcn@latest build && rm -rf ../../apps/kit/public/r && cp -R public/r ../../apps/kit/public/r",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "devDependencies": {
+    "oxfmt": "^0.79.0",
     "oxlint": "^1.94.0",
     "oxlint-tsgolint": "^7.0.2008",
     "turbo": "^2.5.8"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "engines": {
+    "node": "22.x"
+  },
+  "packageManager": "bun@1.4.0",
   "trustedDependencies": [
     "@sparticuz/chromium",
     "@tailwindcss/oxide",

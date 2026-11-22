@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, CaretDown, SlidersHorizontal, type Icon as PhosphorIcon } from "@phosphor-icons/react";
+import {
+  Check,
+  CaretDown,
+  SlidersHorizontal,
+  type Icon as PhosphorIcon,
+} from "@phosphor-icons/react";
 import { useFeedback } from "@/hooks/useFeedback";
 
 export interface FilterOption {
@@ -105,9 +110,7 @@ export function FilterMenu({
                 <span className="truncate">{option.label}</span>
                 <span className="flex shrink-0 items-center gap-2">
                   {option.count !== undefined && (
-                    <span className="tabular-nums text-faint-foreground">
-                      {option.count}
-                    </span>
+                    <span className="tabular-nums text-faint-foreground">{option.count}</span>
                   )}
                   {selected && <Check className="h-3.5 w-3.5 shrink-0" />}
                 </span>

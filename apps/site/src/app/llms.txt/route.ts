@@ -1,7 +1,6 @@
 export const revalidate = 3600;
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
 
 /**
  * Agent-facing index of the site (llmstxt.org convention): plain markdown so a

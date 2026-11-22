@@ -10,10 +10,9 @@ import { ProjectSmallRow } from "./ProjectSmallRow";
 import { ProjectsSkeleton } from "./ProjectsSkeleton";
 
 // The editor, dnd-kit and all: a chunk only an admin loads.
-const ProjectsEditor = dynamic(
-  () => import("./ProjectsEditor").then((mod) => mod.ProjectsEditor),
-  { ssr: false }
-);
+const ProjectsEditor = dynamic(() => import("./ProjectsEditor").then((mod) => mod.ProjectsEditor), {
+  ssr: false,
+});
 
 /**
  * The list.
@@ -23,11 +22,7 @@ const ProjectsEditor = dynamic(
  * them. `admin_ui` is a non-secret hint, so the page still renders statically
  * and the editor — and dnd-kit — loads only for the owner.
  */
-export function ProjectsBody({
-  initialProjects,
-}: {
-  initialProjects: Project[];
-}) {
+export function ProjectsBody({ initialProjects }: { initialProjects: Project[] }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [projects, setProjects] = useState(initialProjects);
   const { featured, other, graveyard } = splitProjects(projects);
@@ -42,7 +37,7 @@ export function ProjectsBody({
     if (!buried) return;
     console.log(
       `%c†  ${buried} project${buried === 1 ? "" : "s"} in the graveyard. mind the ghosts.`,
-      "color:#8C8278;font-style:italic;font-family:ui-serif,Georgia,serif"
+      "color:#8C8278;font-style:italic;font-family:ui-serif,Georgia,serif",
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -58,8 +58,7 @@ export interface CategoryDef {
 
 export const CATEGORY_DEFS: Record<Category, CategoryDef> = {
   article: {
-    prompt:
-      "one piece of writing: an essay, post, guide or case study, wherever it lives",
+    prompt: "one piece of writing: an essay, post, guide or case study, wherever it lives",
     blurb: "One piece of writing: an essay, post, or guide.",
   },
   publication: {
@@ -100,14 +99,13 @@ export const CATEGORY_DEFS: Record<Category, CategoryDef> = {
 
 /** The list the classify prompt speaks, generated from CATEGORY_DEFS. */
 export const CATEGORY_PROMPT_LIST = CATEGORIES.map(
-  (c) => `- ${c} — ${CATEGORY_DEFS[c].prompt}`
+  (c) => `- ${c} — ${CATEGORY_DEFS[c].prompt}`,
 ).join("\n");
 
 /** What the "i" button shows, generated from CATEGORY_DEFS. */
 export const CATEGORY_BLURBS: Record<Category, string> = Object.fromEntries(
-  CATEGORIES.map((c) => [c, CATEGORY_DEFS[c].blurb])
+  CATEGORIES.map((c) => [c, CATEGORY_DEFS[c].blurb]),
 ) as Record<Category, string>;
 
 export const isCategory = (value: string): value is Category =>
   (CATEGORIES as readonly string[]).includes(value);
-

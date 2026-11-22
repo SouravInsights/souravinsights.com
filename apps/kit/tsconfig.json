@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,60 +15,24 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/components/highlight/*": [
-        "../../packages/registry/src/highlight/*"
-      ],
-      "@/components/quote/*": [
-        "../../packages/registry/src/quote/*"
-      ],
-      "@/components/blocks/*": [
-        "../../packages/registry/src/blocks/*"
-      ],
-      "@/components/ui/anchored-panel": [
-        "../../packages/registry/src/ui/anchored-panel"
-      ],
-      "@/components/ui/canvas": [
-        "../../packages/registry/src/ui/canvas"
-      ],
-      "@/components/ui/color-field": [
-        "../../packages/registry/src/ui/color-field"
-      ],
-      "@/components/ui/color-picker": [
-        "../../packages/registry/src/ui/color-picker"
-      ],
-      "@/components/ui/inline-edit-field": [
-        "../../packages/registry/src/ui/inline-edit-field"
-      ],
-      "@/components/ui/marker-rail": [
-        "../../packages/registry/src/ui/marker-rail"
-      ],
-      "@/components/ui/side-panel": [
-        "../../packages/registry/src/ui/side-panel"
-      ],
-      "@/components/ui/snap-carousel": [
-        "../../packages/registry/src/ui/snap-carousel"
-      ],
-      "@/components/ui/swatch": [
-        "../../packages/registry/src/ui/swatch"
-      ],
-      "@/hooks/use-anchored-panel": [
-        "../../packages/registry/src/hooks/use-anchored-panel"
-      ],
-      "@/hooks/use-reduced-motion": [
-        "../../packages/registry/src/hooks/use-reduced-motion"
-      ],
-      "@/hooks/use-text-selection": [
-        "../../packages/registry/src/hooks/use-text-selection"
-      ],
-      "@/lib/highlight-anchor": [
-        "../../packages/registry/src/lib/highlight-anchor"
-      ],
-      "@/lib/highlight-palette": [
-        "../../packages/registry/src/lib/highlight-palette"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "@/components/highlight/*": ["../../packages/registry/src/highlight/*"],
+      "@/components/quote/*": ["../../packages/registry/src/quote/*"],
+      "@/components/blocks/*": ["../../packages/registry/src/blocks/*"],
+      "@/components/ui/anchored-panel": ["../../packages/registry/src/ui/anchored-panel"],
+      "@/components/ui/canvas": ["../../packages/registry/src/ui/canvas"],
+      "@/components/ui/color-field": ["../../packages/registry/src/ui/color-field"],
+      "@/components/ui/color-picker": ["../../packages/registry/src/ui/color-picker"],
+      "@/components/ui/inline-edit-field": ["../../packages/registry/src/ui/inline-edit-field"],
+      "@/components/ui/marker-rail": ["../../packages/registry/src/ui/marker-rail"],
+      "@/components/ui/side-panel": ["../../packages/registry/src/ui/side-panel"],
+      "@/components/ui/snap-carousel": ["../../packages/registry/src/ui/snap-carousel"],
+      "@/components/ui/swatch": ["../../packages/registry/src/ui/swatch"],
+      "@/hooks/use-anchored-panel": ["../../packages/registry/src/hooks/use-anchored-panel"],
+      "@/hooks/use-reduced-motion": ["../../packages/registry/src/hooks/use-reduced-motion"],
+      "@/hooks/use-text-selection": ["../../packages/registry/src/hooks/use-text-selection"],
+      "@/lib/highlight-anchor": ["../../packages/registry/src/lib/highlight-anchor"],
+      "@/lib/highlight-palette": ["../../packages/registry/src/lib/highlight-palette"],
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {
@@ -87,7 +47,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

@@ -135,9 +135,7 @@ export function Curio({ size = 32, busy = false, still = false }: CurioProps) {
 
       eyes.setAttribute(
         "transform",
-        `translate(${(pos.current.x * DRIFT).toFixed(2)} ${(
-          pos.current.y * DRIFT
-        ).toFixed(2)})`
+        `translate(${(pos.current.x * DRIFT).toFixed(2)} ${(pos.current.y * DRIFT).toFixed(2)})`,
       );
 
       // At rest, stop. An idle mascot must not hold a frame loop open.
@@ -241,27 +239,13 @@ export function Curio({ size = 32, busy = false, still = false }: CurioProps) {
           using `center`. Change the y values here and that value has to follow. */}
       <g ref={eyesRef}>
         <g className="curio-eye">
-          <rect
-            x={18.5}
-            y={22}
-            width={11}
-            height={12}
-            rx={5.25}
-            fill={EYE_COLOR}
-          />
+          <rect x={18.5} y={22} width={11} height={12} rx={5.25} fill={EYE_COLOR} />
           {/* The catchlight is what makes these eyes rather than a pause
               button: a glyph has nothing catching the light. */}
           <circle cx={21.9} cy={25.6} r={1.7} fill={CATCHLIGHT} />
         </g>
         <g className="curio-eye">
-          <rect
-            x={34.5}
-            y={22}
-            width={11}
-            height={12}
-            rx={5.25}
-            fill={EYE_COLOR}
-          />
+          <rect x={34.5} y={22} width={11} height={12} rx={5.25} fill={EYE_COLOR} />
           <circle cx={37.9} cy={25.6} r={1.7} fill={CATCHLIGHT} />
         </g>
       </g>

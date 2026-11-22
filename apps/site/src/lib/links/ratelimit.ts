@@ -61,8 +61,6 @@ type HeaderReader = { get(name: string): string | null };
 
 export function clientIp(headers: HeaderReader): string {
   return (
-    headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-    headers.get("x-real-ip") ??
-    "anonymous"
+    headers.get("x-forwarded-for")?.split(",")[0].trim() ?? headers.get("x-real-ip") ?? "anonymous"
   );
 }

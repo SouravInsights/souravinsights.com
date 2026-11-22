@@ -20,8 +20,7 @@ export const KindleShowcase: React.FC = () => {
           My Reading Companion
         </h2>
         <p className="text-center text-gray-600 dark:text-gray-300">
-          It's like carrying a whole library without the backache! One digital
-          page at a time... 😬
+          It's like carrying a whole library without the backache! One digital page at a time... 😬
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:flex items-center justify-center gap-4 md:gap-8">

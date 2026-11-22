@@ -85,11 +85,7 @@ export function StickerDeck({ className }: { className?: string }) {
       if (raw) {
         const saved = JSON.parse(raw) as { pinned?: unknown; featured?: unknown };
         if (typeof saved.pinned === "boolean") setPinned(saved.pinned);
-        if (
-          typeof saved.featured === "number" &&
-          saved.featured >= 0 &&
-          saved.featured < N
-        ) {
+        if (typeof saved.featured === "number" && saved.featured >= 0 && saved.featured < N) {
           setFeatured(saved.featured);
         }
       }
@@ -132,7 +128,7 @@ export function StickerDeck({ className }: { className?: string }) {
       setHovering(false);
       setActive(null);
     },
-    [feedback]
+    [feedback],
   );
 
   /** Where sticker `i` sits right now. One source for art and hit-testing. */
@@ -197,7 +193,7 @@ export function StickerDeck({ className }: { className?: string }) {
             tabIndex={t.live ? 0 : -1}
             className={cn(
               "absolute top-1/2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              t.live ? "cursor-pointer" : "pointer-events-none"
+              t.live ? "cursor-pointer" : "pointer-events-none",
             )}
             style={{
               left: 0,

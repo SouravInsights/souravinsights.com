@@ -58,24 +58,17 @@ export function ShareQuoteDialog({
   publication,
   context,
 }: Props) {
-
   const [mode, setMode] = useState<Mode>("story");
   const [themeId, setThemeId] = useState(THEMES[0].id);
-  const [variantByTheme, setVariantByTheme] = useState<Record<string, number>>(
-    {}
-  );
-  const [overridesByTheme, setOverridesByTheme] = useState<
-    Record<string, Overrides>
-  >({});
+  const [variantByTheme, setVariantByTheme] = useState<Record<string, number>>({});
+  const [overridesByTheme, setOverridesByTheme] = useState<Record<string, Overrides>>({});
   const [customize, setCustomize] = useState(false);
   const [band, setBand] = useState(367);
   const [panelScrolled, setPanelScrolled] = useState(false);
   const [draftQuote, setDraftQuote] = useState(quote);
   const [draftTitle, setDraftTitle] = useState(title);
   const [draftPublication, setDraftPublication] = useState(publication);
-  const [status, setStatus] = useState<"idle" | "working" | "done" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<"idle" | "working" | "done" | "error">("idle");
   const [statusText, setStatusText] = useState("");
 
   // Each open starts from the highlighted words as they are now.
@@ -110,11 +103,11 @@ export function ShareQuoteDialog({
       publication: draftPublication,
       context,
     }),
-    [draftQuote, draftTitle, draftPublication, context]
+    [draftQuote, draftTitle, draftPublication, context],
   );
   const options = useMemo(
     () => resolveOptions(theme, variant, overrides, content),
-    [theme, variant, overrides, content]
+    [theme, variant, overrides, content],
   );
 
   const dims = MODES.find((m) => m.id === mode) ?? MODES[0];
@@ -149,9 +142,7 @@ export function ShareQuoteDialog({
     const blob = await cardToBlob(mode, theme, options);
     if (!blob) return flash("Couldn’t draw the card.", false);
     try {
-      await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": blob }),
-      ]);
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
       flash("Image copied", true);
     } catch {
       flash("Clipboard blocked — use Save image.", false);
@@ -190,9 +181,7 @@ export function ShareQuoteDialog({
    * colour leaves the variant row unselected.
    */
   const COLOR_KEYS = ["background", "text", "highlight", "highlightText"] as const;
-  const hasColorOverrides = COLOR_KEYS.some(
-    (key) => overrides[key] !== undefined
-  );
+  const hasColorOverrides = COLOR_KEYS.some((key) => overrides[key] !== undefined);
   const clearColorOverrides = () =>
     setOverridesByTheme((all) => {
       const next = { ...(all[themeId] ?? {}) };
@@ -214,9 +203,7 @@ export function ShareQuoteDialog({
       overrides={overrides}
       set={set}
       clear={clear}
-      reset={() =>
-        setOverridesByTheme((all) => ({ ...all, [themeId]: {} }))
-      }
+      reset={() => setOverridesByTheme((all) => ({ ...all, [themeId]: {} }))}
       quote={draftQuote}
       setQuote={setDraftQuote}
       title={draftTitle}
@@ -230,7 +217,6 @@ export function ShareQuoteDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-
       <style>{`
         @keyframes qs-palette-in { from { opacity: 0; scale: .97 } }
         @keyframes qs-palette-out { to { opacity: 0; scale: .98 } }
@@ -246,9 +232,7 @@ export function ShareQuoteDialog({
             open={customize}
             side="left"
             width={PANEL_W}
-            onScroll={(event) =>
-              setPanelScrolled(event.currentTarget.scrollTop > 4)
-            }
+            onScroll={(event) => setPanelScrolled(event.currentTarget.scrollTop > 4)}
             className="px-4 pb-5"
           >
             {panel}

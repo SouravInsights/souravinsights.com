@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useCallback, useRef } from "react";
-import {
-  Highlight,
-  type CreatePayload,
-} from "@/components/highlight/highlight";
+import { Highlight, type CreatePayload } from "@/components/highlight/highlight";
 import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { updateArticleMarks } from "./article-query";
 
@@ -72,35 +69,31 @@ export function ArticleBody({
         return null;
       }
     },
-    [isAdmin, urlKey]
+    [isAdmin, urlKey],
   );
 
   const onRecolor = useCallback(
     (rowId: number, hue: number) => {
       if (!isAdmin) return;
-      updateArticleMarks(urlKey, (marks) =>
-        marks.map((m) => (m.id === rowId ? { ...m, hue } : m))
-      );
+      updateArticleMarks(urlKey, (marks) => marks.map((m) => (m.id === rowId ? { ...m, hue } : m)));
       fetch("/api/insights/highlights", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id: rowId, hue }),
       }).catch(() => undefined);
     },
-    [isAdmin, urlKey]
+    [isAdmin, urlKey],
   );
 
   const onDelete = useCallback(
     (rowId: number) => {
       if (!isAdmin) return;
-      updateArticleMarks(urlKey, (marks) =>
-        marks.filter((m) => m.id !== rowId)
-      );
+      updateArticleMarks(urlKey, (marks) => marks.filter((m) => m.id !== rowId));
       fetch(`/api/insights/highlights?id=${rowId}`, {
         method: "DELETE",
       }).catch(() => undefined);
     },
-    [isAdmin, urlKey]
+    [isAdmin, urlKey],
   );
 
   return (

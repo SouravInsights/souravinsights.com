@@ -44,9 +44,7 @@ export async function getChannels(): Promise<DiscordChannel[]> {
   }
 
   try {
-    const channels = (await rest.get(
-      Routes.guildChannels(GUILD_ID)
-    )) as DiscordChannel[];
+    const channels = (await rest.get(Routes.guildChannels(GUILD_ID))) as DiscordChannel[];
 
     const desiredChannels = [
       "fav-portfolios",
@@ -67,7 +65,7 @@ export async function getChannels(): Promise<DiscordChannel[]> {
 
 export async function getMessagesFromChannel(
   channelId: string,
-  limit = 100
+  limit = 100,
 ): Promise<DiscordMessage[]> {
   try {
     const messages = (await rest.get(Routes.channelMessages(channelId), {

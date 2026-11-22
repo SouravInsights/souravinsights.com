@@ -25,22 +25,14 @@ interface ScrollPreviewContextValue {
   warm: (url: string) => void;
 }
 
-const ScrollPreviewContext = createContext<ScrollPreviewContextValue | null>(
-  null
-);
+const ScrollPreviewContext = createContext<ScrollPreviewContextValue | null>(null);
 
 /**
  * Warms the tall captures once for a small, fixed set of links — the home page's
  * companies and side projects. The set is tiny, so two at a time is plenty and
  * the retry-by-reload behaviour of `warmed` is not needed.
  */
-export function ScrollPreviewProvider({
-  urls,
-  children,
-}: {
-  urls: string[];
-  children: ReactNode;
-}) {
+export function ScrollPreviewProvider({ urls, children }: { urls: string[]; children: ReactNode }) {
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const warmed = useRef<Set<string>>(new Set());
   const queue = useRef<string[]>([]);
@@ -51,9 +43,7 @@ export function ScrollPreviewProvider({
       const url = queue.current.shift();
       if (!url) break;
       running.current += 1;
-      fetch(
-        `/api/link-preview?url=${encodeURIComponent(url)}&variant=scroll&json=1`
-      )
+      fetch(`/api/link-preview?url=${encodeURIComponent(url)}&variant=scroll&json=1`)
         .then((response) => (response.ok ? response.json() : null))
         .then((data: { preview?: string } | null) => {
           if (data?.preview) {
@@ -75,7 +65,7 @@ export function ScrollPreviewProvider({
       queue.current.push(url);
       pump();
     },
-    [pump]
+    [pump],
   );
 
   useEffect(() => {
@@ -100,9 +90,7 @@ function ScrollImage({ src, name }: { src: string; name: string }) {
   const measure = useCallback(() => {
     const image = imageRef.current;
     if (image && image.naturalWidth > 0) {
-      setRenderedHeight(
-        (image.naturalHeight / image.naturalWidth) * CARD_WIDTH
-      );
+      setRenderedHeight((image.naturalHeight / image.naturalWidth) * CARD_WIDTH);
     }
   }, []);
 
@@ -125,9 +113,7 @@ function ScrollImage({ src, name }: { src: string; name: string }) {
   }
 
   // The image is CARD_WIDTH wide, so its height scales with the aspect ratio.
-  const travel = renderedHeight
-    ? Math.max(0, renderedHeight - CARD_HEIGHT)
-    : 0;
+  const travel = renderedHeight ? Math.max(0, renderedHeight - CARD_HEIGHT) : 0;
   // Longer pages get a longer pan, but never so long the card overstays.
   const duration = Math.min(12, Math.max(5, travel / 100));
 
@@ -196,7 +182,7 @@ export function ScrollPreviewTrigger({
     () => () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     },
-    []
+    [],
   );
 
   // Dismiss a touch preview on an outside tap or any scroll. Radix's own close
@@ -224,7 +210,7 @@ export function ScrollPreviewTrigger({
     const margin = 12;
     const left = Math.min(
       Math.max(margin, event.clientX - CARD_WIDTH / 2),
-      window.innerWidth - CARD_WIDTH - margin
+      window.innerWidth - CARD_WIDTH - margin,
     );
     let top = event.clientY + 16;
     if (top + CARD_HEIGHT > window.innerHeight - margin) {
@@ -312,16 +298,13 @@ export function ScrollPreviewTrigger({
             "origin-[var(--radix-tooltip-content-transform-origin)]",
             "data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95",
             "data-[state=instant-open]:animate-in data-[state=instant-open]:fade-in-0 data-[state=instant-open]:zoom-in-95",
-            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           )}
         >
           {src ? (
             <ScrollImage src={src} name={name} />
           ) : (
-            <div
-              className="relative"
-              style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}
-            >
+            <div className="relative" style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}>
               <PreviewLoader />
             </div>
           )}

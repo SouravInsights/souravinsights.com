@@ -44,10 +44,7 @@ const rpcError = (code: number, message: string) => ({
   id: null,
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const rate = await apiLimiter.limit(clientIp(headersOf(req)));
   if (!rate.success) {
     res.setHeader("Retry-After", String(Math.max(1, rate.reset - Date.now())));

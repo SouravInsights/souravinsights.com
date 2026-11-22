@@ -2,13 +2,7 @@ import { demos } from "@/lib/demos";
 import { ComponentSource } from "@/components/component-source";
 import { PreviewTabs } from "@/components/preview-tabs";
 
-export function ComponentPreview({
-  name,
-  className,
-}: {
-  name: string;
-  className?: string;
-}) {
+export function ComponentPreview({ name, className }: { name: string; className?: string }) {
   const Demo = demos[name];
 
   if (!Demo) {

@@ -53,19 +53,18 @@ const escapeLike = (s: string) => s.replace(/[\\%_]/g, "\\$&");
  * and `www.` removed. Paste a whole URL, type a domain, or type any fragment of
  * a title.
  */
-export async function findLinks(
-  query: string,
-  limit = 20
-): Promise<LinkCandidate[]> {
+export async function findLinks(query: string, limit = 20): Promise<LinkCandidate[]> {
   const q = `%${escapeLike(query)}%`;
-  const rows = (await db.execute(sql`
+  const rows = (await db
+    .execute(sql`
     select l.url_key, l.title, l.category, count(c.id)::int as passages
     from links l left join link_chunks c on c.link_id = l.id
     where l.url_key ilike ${q} or l.url ilike ${q} or l.title ilike ${q}
     group by 1, 2, 3
     order by (l.url_key = ${query}) desc, count(c.id) desc, l.url_key
     limit ${limit}
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
   return rows.map((r: any) => ({
     urlKey: r.url_key,
@@ -79,12 +78,12 @@ export async function findLinks(
 export class LinkNotFoundError extends Error {
   constructor(
     readonly query: string,
-    readonly candidates: LinkCandidate[]
+    readonly candidates: LinkCandidate[],
   ) {
     super(
       candidates.length
         ? `No exact match for "${query}". ${candidates.length} link(s) look like it.`
-        : `No link matches "${query}".`
+        : `No link matches "${query}".`,
     );
   }
 }
@@ -98,7 +97,7 @@ export class LinkNotFoundError extends Error {
  * problem to present.
  */
 export async function resolveUrlKey(
-  input: string
+  input: string,
 ): Promise<{ urlKey: string; matched: "exact" | "loose" } | null> {
   const key = normalizeUrl(input.trim());
 
@@ -164,7 +163,7 @@ export interface LinkInspection {
  */
 export async function inspectLink(
   input: string,
-  opts: { limit?: number; grep?: string } = {}
+  opts: { limit?: number; grep?: string } = {},
 ): Promise<LinkInspection> {
   const resolved = await resolveUrlKey(input);
   if (!resolved) {
@@ -197,7 +196,8 @@ export async function inspectLink(
     throw new LinkNotFoundError(input, []);
   }
 
-  const [stats] = (await db.execute(sql`
+  const [stats] = (await db
+    .execute(sql`
     select count(*)::int as passages,
            coalesce(sum(token_count), 0)::int as total_tokens,
            coalesce(min(token_count), 0)::int as min_tokens,
@@ -205,17 +205,22 @@ export async function inspectLink(
            coalesce(max(token_count), 0)::int as max_tokens
     from link_chunks
     where link_id = ${row.id}
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
-  const [index] = (await db.execute(sql`
+  const [index] = (await db
+    .execute(sql`
     select count(*)::int as passages from link_chunks
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
-  const [matched] = (await db.execute(sql`
+  const [matched] = (await db
+    .execute(sql`
     select count(*)::int as n from link_chunks
     where link_id = ${row.id}
       ${opts.grep ? sql`and content ilike ${"%" + opts.grep + "%"}` : sql``}
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
   const passages = await db
     .select({
@@ -227,7 +232,7 @@ export async function inspectLink(
     .where(
       opts.grep
         ? and(eq(linkChunks.linkId, row.id), ilike(linkChunks.content, `%${opts.grep}%`))
-        : eq(linkChunks.linkId, row.id)
+        : eq(linkChunks.linkId, row.id),
     )
     .orderBy(asc(linkChunks.chunkIndex))
     .limit(opts.limit ?? 5);
@@ -241,8 +246,7 @@ export async function inspectLink(
   if (stats.passages === 0) {
     warnings.push({
       level: "warn",
-      message:
-        `Not indexed (${row.readStatus}). This link can never be retrieved.`,
+      message: `Not indexed (${row.readStatus}). This link can never be retrieved.`,
     });
   }
   if (stats.passages > HEAVY_CHUNKS) {
@@ -324,16 +328,19 @@ export interface OverviewRow {
 
 /** The shape of the whole index: totals, per category, and the heaviest links. */
 export async function kbOverview() {
-  const [totals] = (await db.execute(sql`
+  const [totals] = (await db
+    .execute(sql`
     select (select count(*) from links)::int as links,
            (select count(*) from links where hidden_at is null)::int as visible,
            (select count(*) from link_chunks)::int as passages,
            (select count(*) from links l
               where l.hidden_at is null and not exists (
                 select 1 from link_chunks c where c.link_id = l.id))::int as not_indexed
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
-  const categories = (await db.execute(sql`
+  const categories = (await db
+    .execute(sql`
     select l.category,
            count(distinct l.id)::int as links,
            count(c.id)::int as passages,
@@ -341,9 +348,11 @@ export async function kbOverview() {
     from links l left join link_chunks c on c.link_id = l.id
     where l.hidden_at is null
     group by 1 order by 3 desc
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
-  const heaviest = (await db.execute(sql`
+  const heaviest = (await db
+    .execute(sql`
     select l.url_key, l.category, l.read_status,
            count(c.id)::int as passages,
            round(100.0 * count(c.id) / greatest((select count(*) from link_chunks), 1), 1) as pct,
@@ -353,15 +362,18 @@ export async function kbOverview() {
     group by 1,2,3,6
     order by 4 desc
     limit 15
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
-  const unindexed = (await db.execute(sql`
+  const unindexed = (await db
+    .execute(sql`
     select l.url_key, l.category, l.read_status
     from links l
     where l.hidden_at is null
       and not exists (select 1 from link_chunks c where c.link_id = l.id)
     order by l.category, l.url_key
-  `).then((r) => r.rows)) as any;
+  `)
+    .then((r) => r.rows)) as any;
 
   return {
     totals,
@@ -386,7 +398,6 @@ export async function kbOverview() {
     })) as OverviewRow[],
   };
 }
-
 
 /* -------------------------------------------------------------------------- */
 /*  Tracing one question                                                      */
@@ -447,7 +458,10 @@ export interface TraceResult {
 }
 
 const urlKeyOf = (url: string) =>
-  url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
+  url
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .replace(/\/$/, "");
 
 function summarise(name: string, output: unknown): TraceToolResult {
   const o = (output ?? {}) as {
@@ -498,7 +512,7 @@ function summarise(name: string, output: unknown): TraceToolResult {
  */
 export async function traceQuestion(
   question: string,
-  opts: { limit?: number; score?: boolean } = {}
+  opts: { limit?: number; score?: boolean } = {},
 ): Promise<TraceResult> {
   const limit = opts.limit ?? SEARCH_LIMIT;
   const started = Date.now();
@@ -515,10 +529,7 @@ export async function traceQuestion(
     stepNumber: s.stepNumber,
     toolCalls: s.toolCalls.map((c) => ({ name: c.toolName, input: c.input })),
     toolResults: s.toolResults.map((r) =>
-      summarise(
-        (r as { toolName: string }).toolName,
-        (r as { output: unknown }).output
-      )
+      summarise((r as { toolName: string }).toolName, (r as { output: unknown }).output),
     ),
     text: s.text,
     finishReason: String(s.finishReason),
@@ -579,4 +590,3 @@ export async function traceQuestion(
     },
   };
 }
-

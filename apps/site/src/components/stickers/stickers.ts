@@ -34,6 +34,11 @@ export const STICKERS: Sticker[] = [
     tilt: 6,
     aspect: 0.8731,
   },
-  { src: "/avatars/glasses-side.png", alt: "Me in glasses, side profile", tilt: -5, aspect: 0.7698 },
+  {
+    src: "/avatars/glasses-side.png",
+    alt: "Me in glasses, side profile",
+    tilt: -5,
+    aspect: 0.7698,
+  },
   { src: "/avatars/close-up.png", alt: "Me in black glasses, close up", tilt: 3, aspect: 0.6687 },
 ];

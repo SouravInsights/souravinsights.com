@@ -89,10 +89,10 @@ export function readShares(): RememberedShare[] {
 
 /** Put a link at the top of the list, newest first, without duplicates. */
 export function rememberShare(share: RememberedShare): RememberedShare[] {
-  const next = [
-    share,
-    ...readShares().filter((existing) => existing.id !== share.id),
-  ].slice(0, MAX_SHARES);
+  const next = [share, ...readShares().filter((existing) => existing.id !== share.id)].slice(
+    0,
+    MAX_SHARES,
+  );
   if (typeof window !== "undefined") {
     try {
       window.localStorage.setItem(SHARES_KEY, JSON.stringify(next));

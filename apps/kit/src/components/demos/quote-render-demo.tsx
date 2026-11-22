@@ -10,12 +10,17 @@ export function QuoteRenderDemo() {
   useEffect(() => {
     let objectUrl: string | null = null;
     const theme = THEMES[0];
-    const options = resolveOptions(theme, theme.variants[0], {}, {
-      quote: "The best interfaces disappear.",
-      title: "Disappearing interfaces",
-      publication: "souravinsights.com",
-      context: "",
-    });
+    const options = resolveOptions(
+      theme,
+      theme.variants[0],
+      {},
+      {
+        quote: "The best interfaces disappear.",
+        title: "Disappearing interfaces",
+        publication: "souravinsights.com",
+        context: "",
+      },
+    );
 
     void cardToBlob("post", theme, options).then((blob) => {
       if (!blob) return;

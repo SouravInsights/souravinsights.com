@@ -2,12 +2,7 @@
 
 import { useCallback, useRef } from "react";
 import { SpeakerLow, SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CircularSlider } from "@/components/ui/circular-slider";
 import { useSoundSettings } from "@/context/SoundContext";
 import { useMediaQuery } from "@/hooks/useMediaQuery";

@@ -32,7 +32,7 @@ export function SuggestionRows({
   // Dealt round-robin, so every lane stays a mix of categories instead of each
   // lane becoming one category.
   const dealt = Array.from({ length: lanes }, (_, lane) =>
-    suggestions.filter((_, index) => index % lanes === lane)
+    suggestions.filter((_, index) => index % lanes === lane),
   );
 
   return (
@@ -88,10 +88,7 @@ function ChipLane({
           makes the scroll width exactly two identical sets, which is the number
           the drift wraps by. An outer gap would put a few pixels of lie in every
           wrap. */}
-      <div
-        ref={rowRef}
-        className="no-scrollbar flex flex-nowrap items-center overflow-x-auto pb-1"
-      >
+      <div ref={rowRef} className="no-scrollbar flex flex-nowrap items-center overflow-x-auto pb-1">
         {[0, 1].map((set) => (
           <div
             key={set}

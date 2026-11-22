@@ -55,7 +55,7 @@ export default async function CuratedLinksPage() {
     Object.values(linkData)
       .flat()
       .map((link) => link.url)
-      .filter(Boolean)
+      .filter(Boolean),
   );
 
   // Like totals for the whole collection, so the list can sort by quality
@@ -68,7 +68,7 @@ export default async function CuratedLinksPage() {
   // Grand total across every category, de-duplicated, so the header can show
   // how much is in the collection without any per-view noise.
   const totalLinks = dedupeByUrl(
-    sortByNewest(groups.flatMap((group) => linkData[group.name] || []))
+    sortByNewest(groups.flatMap((group) => linkData[group.name] || [])),
   ).length;
 
   // A new shuffle every five minutes, handed down so the server and client

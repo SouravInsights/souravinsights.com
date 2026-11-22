@@ -28,8 +28,8 @@ export const linksHealthCheck = schedules.task({
           ne(links.health, "dead"),
           ne(links.health, "uncheckable"),
           // Admin-hidden rows earn no checks — nobody sees them anyway.
-          isNull(links.hiddenAt)
-        )
+          isNull(links.hiddenAt),
+        ),
       );
 
     logger.info("health sweep starting", { count: rows.length });

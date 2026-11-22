@@ -20,16 +20,12 @@ export function SavePill({ state }: { state: SaveState }) {
       {state === "saving" ? (
         <>
           <CircleNotch className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
-          <span className="text-xs font-medium text-muted-foreground">
-            Saving…
-          </span>
+          <span className="text-xs font-medium text-muted-foreground">Saving…</span>
         </>
       ) : (
         <>
           <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-500" />
-          <span className="text-xs font-medium text-green-700 dark:text-green-500">
-            Saved
-          </span>
+          <span className="text-xs font-medium text-green-700 dark:text-green-500">Saved</span>
         </>
       )}
     </div>

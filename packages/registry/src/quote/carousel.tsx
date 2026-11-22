@@ -1,11 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  SnapCarousel,
-  SnapCarouselContent,
-  SnapCarouselItem,
-} from "@/components/ui/snap-carousel";
+import { SnapCarousel, SnapCarouselContent, SnapCarouselItem } from "@/components/ui/snap-carousel";
 import type { Mode } from "./presets";
 import type { Overrides } from "./render";
 import type { ShareTheme } from "./themes";
@@ -86,11 +82,7 @@ function QuoteCarousel({
               onClick={(event) => {
                 const start = pointerStart.current;
                 const still =
-                  !start ||
-                  Math.hypot(
-                    event.clientX - start.x,
-                    event.clientY - start.y
-                  ) < 4;
+                  !start || Math.hypot(event.clientX - start.x, event.clientY - start.y) < 4;
                 const recent = performance.now() - lastScroll.current < 150;
                 if (active || !still || recent) return;
                 onThemeChange(theme.id);
@@ -101,10 +93,7 @@ function QuoteCarousel({
                 <QuoteCard
                   mode={mode}
                   theme={theme}
-                  variant={
-                    theme.variants[variantByTheme[theme.id] ?? 0] ??
-                    theme.variants[0]
-                  }
+                  variant={theme.variants[variantByTheme[theme.id] ?? 0] ?? theme.variants[0]}
                   overrides={overridesByTheme[theme.id] ?? NO_OVERRIDES}
                   content={content}
                   style={{ width: frameWidth, height: frameHeight }}

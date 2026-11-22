@@ -50,9 +50,7 @@ export function sansStack(): string {
 
 export function fontStack(choice: FontChoice): string {
   if (choice === "sans") return sansStack();
-  if (choice === "mono")
-    return "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+  if (choice === "mono") return "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
   // The excerpt face.
   return "'New York', ui-serif, Georgia, 'Times New Roman', serif";
 }
-

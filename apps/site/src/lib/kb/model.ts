@@ -61,8 +61,7 @@ function client() {
 }
 
 /** The embedding model, for turning text into vectors. */
-export const embeddingModel = () =>
-  client().textEmbeddingModel(EMBEDDING_MODEL_ID);
+export const embeddingModel = () => client().textEmbeddingModel(EMBEDDING_MODEL_ID);
 
 /** The chat model, for the agent that writes answers. */
 export const chatModel = () => client()(CHAT_MODEL_ID);
