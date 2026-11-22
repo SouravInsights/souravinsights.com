@@ -115,3 +115,37 @@ run reformats ~314 files, so it belongs in its own change.
 It surfaces ~340 findings the old `core-web-vitals` preset never checked
 (jsx-a11y, unused vars, react-hooks, next). They are warnings, matching the old
 passing bar; promoting correctness to errors is a separate cleanup.
+
+## Pipeline
+
+Two halves, both automatic.
+
+### Deploys — Vercel Git integration
+
+Both projects are connected to the repo. A push to any branch makes Vercel
+create a deployment for each project; the `ignoreCommand` then skips the one
+whose app did not change. The skipped entry still appears in the list, marked
+`CANCELED` — that is Vercel's record of the decision, not a failure.
+
+| Push touches | `souravinsights-com` | `souravinsights-kit` |
+| :--- | :--- | :--- |
+| `apps/site` | builds | skipped |
+| `apps/kit` | skipped | builds |
+| `packages/registry` / root lockfile | builds | builds |
+| nothing deployable | skipped | skipped |
+
+`main` is production for both; every other branch is a preview.
+
+### Checks — GitHub Actions
+
+`.github/workflows/ci.yml` runs `format:check`, `lint` and `typecheck` on pull
+requests and on `main`. It does not build: Vercel already builds both apps, so
+a build here would be duplicate work. The repo is public, so Actions minutes
+are free; the run is still cached and cancels superseded runs.
+
+### The kit needs the registry's deps
+
+The kit compiles `packages/registry/src` through its tsconfig aliases, so it
+must declare `@sourav/registry` as a workspace dependency. Without it,
+`bun install --filter kit` installs only the kit's own deps and the build fails
+on `@phosphor-icons/react` / `class-variance-authority`.
