@@ -1,0 +1,12 @@
+{
+  "name": "@sourav/registry",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "class-variance-authority": "^0.7.1"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

@@ -80,13 +80,31 @@ point to.
 
 ## Phases
 
-1. **Skeleton.** Root workspaces + turbo; move the current app to `apps/site`.
-   Verify the site builds and deploys from that root.
-2. **Kit app.** Add `apps/kit` with a minimal docs shell and `/r` static output.
-   Move the `ui` domain. No documentation content yet.
-3. **Registry package.** Move the kit source into `packages/registry`, make both
-   apps consume it, wire the build into `apps/kit/public/r`.
-4. **Docs.** Write examples and API pages against the real installed registry.
+1. **Skeleton.** Done: root workspaces + turbo; the current app lives in
+   `apps/site` and builds from there. Vercel root is `apps/site`.
+2. **Kit app.** Done: `apps/kit` is a Vercel project rooted at `apps/kit`, and
+   `ui.souravinsights.com` aliases its production deployment. The site project
+   no longer serves that host.
+3. **Registry package.** Done: source lives in `packages/registry`, the site maps
+   its old aliases there, and `yarn registry:build` writes
+   `apps/kit/public/r`. The site's Tailwind config scans the package.
+4. **Docs.** Done on Fumadocs: index, installation, examples and generated item
+   pages. Every item has a demo, a Usage snippet and a copyable source. The
+   sidebar is flat: Components, Blocks, Utilities.
+
+## Deploy
+
+Two Vercel projects, both on the `souravinsights-projects` team:
+
+| Project | Domain | Root | Environment |
+| :--- | :--- | :--- | :--- |
+| `souravinsights-com` | `www.souravinsights.com` | `apps/site` | Production branch |
+| `souravinsights-kit` | `ui.souravinsights.com` | `apps/kit` | Production branch |
+
+Both build from the repo root install (Yarn workspaces) and only their app's
+`build` script. The kit's build runs `node scripts/generate-docs.mjs && next
+build`, so `apps/kit/public/r` must be committed; `src/generated` and
+`content/docs/{components,blocks,utilities}` are regenerated and ignored.
 
 ## Risks
 

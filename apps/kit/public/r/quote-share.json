@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "quote-share",
+  "title": "Quote share",
+  "description": "A share button over the quote studio.",
+  "registryDependencies": [
+    "button",
+    "https://ui.souravinsights.com/r/quote-share-dialog.json"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/quote-share.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport { ShareQuoteDialog } from \"@/components/quote/dialog\";\n\nexport interface QuoteShareProps {\n  quote: string;\n  context?: string;\n  title: string;\n  publication: string;\n}\n\n/** A single share button over the quote studio. */\nexport function QuoteShare({\n  quote,\n  context = \"\",\n  title,\n  publication,\n}: QuoteShareProps) {\n  const [open, setOpen] = useState(false);\n\n  return (\n    <>\n      <Button type=\"button\" onClick={() => setOpen(true)}>\n        Share quote\n      </Button>\n      <ShareQuoteDialog\n        open={open}\n        onOpenChange={setOpen}\n        quote={quote}\n        context={context}\n        title={title}\n        publication={publication}\n      />\n    </>\n  );\n}\n",
+      "type": "registry:block",
+      "target": "components/blocks/quote-share.tsx"
+    }
+  ],
+  "type": "registry:block"
+}

@@ -1,0 +1,747 @@
+"use client";
+
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { unionRect, useTextSelection } from "@/hooks/use-text-selection";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
+} from "react";
+import { HUES, paint, type Paint } from "@/lib/highlight-palette";
+import { cut, snap, type HighlightSpan } from "@/lib/highlight-anchor";
+import { CLEAR, drawBars, playWave, type Under } from "./wave";
+import type { HighlightRailItem } from "@/components/highlight/highlight-rail";
+import {
+  HighlightContext,
+  type HighlightContextValue,
+  type HighlightMark as Mark,
+  type HighlightOpen as Pop,
+} from "./highlight-context";
+import { HighlightToolbar } from "./highlight-toolbar";
+
+/*
+ * Highlights for the reader — a port of the palette, the bars and the wave
+ * from github.com/SanyamPunia/www components/labs/highlight-wave, driven over
+ * the rendered article rather than a fixed notes list.
+ *
+ * State lives here; paragraphs are rebuilt wholesale per change, exactly like
+ * the original: overlapping marks are recomputed (`cut`) and the paragraph's
+ * mark spans redrawn from state. New marks render instantly — persistence is
+ * a background call that never blocks the wave.
+ */
+
+/** A mark's removal pass is capped here, however long the quote is. */
+const REMOVE_MS = 420;
+
+interface WaveRequest {
+  id: number;
+  from: Paint;
+  under: Under[];
+  hue: number;
+  nonce: number;
+}
+
+export interface CreatePayload {
+  quote: string;
+  prefix: string;
+  suffix: string;
+  occurrence: number;
+  hue: number;
+}
+
+export interface HighlightMark {
+  id: number;
+  quote: string;
+  occurrence: number;
+  hue: number;
+}
+
+interface Props {
+  /** the element whose <p> children may be highlighted */
+  containerRef: RefObject<HTMLElement | null>;
+  /** the palette is offered — the owner in the reader, every visitor on the blog */
+  editable: boolean;
+  /** marks already stored, located into the paragraphs on mount */
+  initialMarks?: HighlightMark[];
+  /** controlled marks; when set, they replace initialMarks */
+  marks?: HighlightMark[];
+  onCreate?: (payload: CreatePayload) => Promise<number | null>;
+  onRecolor?: (rowId: number, hue: number) => void;
+  onDelete?: (rowId: number) => void;
+  onMarksChange?: (marks: HighlightMark[]) => void;
+  /** the palette's Share quote tool hands the words (and their paragraph) up */
+  onShareQuote: (payload: { quote: string; context: string }) => void;
+  /** the discovery popover's way into the Co-Reader's Notes tab */
+  onOpenNotebook?: () => void;
+  /** blog-only: copy a `#L12-L18` permalink for the blocks the words sit in */
+  onCopyLink?: (range: Range | null) => Promise<boolean>;
+  /** the tick data goes up so the reader can pin the rail outside the scroller */
+  onTicks?: (ticks: HighlightRailItem[]) => void;
+  /** Optional composed toolbar; defaults to HighlightToolbar. */
+  children?: ReactNode;
+}
+
+
+
+const isDark = () => document.documentElement.classList.contains("dark");
+
+export function Highlight({
+  containerRef,
+  editable,
+  initialMarks = [],
+  marks: controlledMarks,
+  onCreate,
+  onRecolor,
+  onDelete,
+  onMarksChange,
+  onShareQuote,
+  onOpenNotebook,
+  onTicks,
+  onCopyLink,
+  children,
+}: Props): ReactElement | null {
+  const reduce = useReducedMotion();
+  const paras = useRef<HTMLElement[]>([]);
+  const layers = useRef<HTMLElement[]>([]);
+  const pop = useRef<HTMLDivElement>(null);
+  /** true when the current gesture was a double-click (word, not paragraph) */
+  const wordSelect = useRef(false);
+
+  const [marks, setMarks] = useState<Mark[]>([]);
+  const [open, setOpen] = useState<Pop | null>(null);
+  const [wave, setWave] = useState<WaveRequest | null>(null);
+  const [dark, setDark] = useState(false);
+  const [said, setSaid] = useState("");
+  const lastTicksKey = useRef("");
+
+  const nextId = useRef(1);
+  const played = useRef(0);
+  const nonce = useRef(0);
+  const live = useRef({ marks, open });
+  live.current = { marks, open };
+
+  const textOf = (para: number) => paras.current[para]?.textContent ?? "";
+
+  /** A live box for a mark, unioned across its inline segments. */
+  const anchorForMark = useCallback((id: number) => {
+    return () => {
+      const container = containerRef.current;
+      if (!container) return null;
+      const rects = Array.from(
+        container.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`)
+      ).flatMap((span) => Array.from(span.getClientRects()));
+      return unionRect(rects);
+    };
+  }, [containerRef]);
+
+  // Theme flips repaint every mark's ink/wash.
+  useEffect(() => {
+    const update = () => setDark(document.documentElement.classList.contains("dark"));
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  /*
+   * Paragraph registry: every <p> in the article gets ko-rning off (so a run
+   * split into characters sets at exactly the width it had as plain text) and
+   * an absolutely positioned layer behind its text for the bars.
+   */
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    paras.current = Array.from(container.querySelectorAll<HTMLElement>("p"));
+    layers.current = paras.current.map((p) => {
+      p.classList.add("relative", "isolate");
+      p.style.fontKerning = "none";
+      p.style.fontVariantLigatures = "none";
+      const layer = document.createElement("span");
+      layer.setAttribute("aria-hidden", "true");
+      layer.className = "-z-10 pointer-events-none absolute inset-0";
+      p.appendChild(layer);
+      return layer;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const base = (para: number): string => {
+    const el = paras.current[para];
+    return el ? getComputedStyle(el).color : "currentColor";
+  };
+
+  /* ---------------- mark DOM, built from state ------------------ */
+
+  /** unwrap a mark back to plain text, keeping its characters */
+  const unmark = (para: HTMLElement, id: number) => {
+    for (const segment of Array.from(
+      para.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`)
+    )) {
+      segment.replaceWith(document.createTextNode(segment.textContent ?? ""));
+    }
+    para.normalize();
+  };
+
+  /**
+   * Wrap the [start,end) run in [data-hl] spans whose words hold [data-ch]
+   * characters, the wave's grid. Segment per existing text node so inline
+   * elements (links, emphasis) stay intact under the mark.
+   */
+  const markDom = (para: HTMLElement, mark: HighlightSpan) => {
+    const walker = document.createTreeWalker(para, NodeFilter.SHOW_TEXT);
+    const nodes: Text[] = [];
+    let n: Node | null;
+    while ((n = walker.nextNode())) nodes.push(n as Text);
+
+    const p = paint(mark.hue, isDark());
+    let offset = 0;
+    const segments: { node: Text; from: number; to: number; at: number }[] = [];
+    for (const node of nodes) {
+      const next = offset + node.data.length;
+      const from = Math.max(offset, mark.start);
+      const to = Math.min(next, mark.end);
+      if (from < to) segments.push({ node, from: from - offset, to: to - offset, at: from });
+      if (next >= mark.end) break;
+      offset = next;
+    }
+
+    // Wrap last-to-first so earlier offsets stay valid.
+    for (const seg of [...segments].reverse()) {
+      const range = document.createRange();
+      range.setStart(seg.node, seg.from);
+      range.setEnd(seg.node, seg.to);
+      const span = document.createElement("span");
+      span.dataset.hl = String(mark.id);
+      span.dataset.wash = p.wash;
+      span.style.color = p.ink;
+      span.className =
+        "cursor-pointer rounded-[0.22em] outline-none focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-offset-2";
+      span.setAttribute("role", "button");
+      span.setAttribute("tabIndex", "0");
+      span.setAttribute("aria-label", `Highlight in ${HUES[mark.hue].name}`);
+      range.surroundContents(span);
+
+      // Words hold whole, characters are inline blocks the wave can move.
+      const text = span.textContent ?? "";
+      span.textContent = "";
+      let cursor = seg.at;
+      for (const part of text.split(/(\s+)/)) {
+        if (!part) continue;
+        if (/^\s+$/.test(part)) {
+          span.appendChild(document.createTextNode(part));
+          cursor += part.length;
+          continue;
+        }
+        const word = document.createElement("span");
+        word.className = "whitespace-nowrap";
+        Array.from(part).forEach((ch, j) => {
+          const c = document.createElement("span");
+          c.dataset.ch = "";
+          c.dataset.at = String(cursor + j);
+          c.className = "inline-block origin-[50%_70%]";
+          // set on the character, never inherited (Chrome keeps the colour an
+          // element had while animating otherwise)
+          c.style.color = p.ink;
+          c.textContent = ch;
+          word.appendChild(c);
+        });
+        span.appendChild(word);
+        cursor += part.length;
+      }
+    }
+  };
+
+  /** rebuild one paragraph's mark DOM wholesale from state */
+  const rebuildParagraph = (para: number) => {
+    const p = paras.current[para];
+    const layer = layers.current[para];
+    if (!p || !layer) return;
+    for (const m of Array.from(p.querySelectorAll<HTMLElement>("[data-hl]"))) {
+      m.replaceWith(document.createTextNode(m.textContent ?? ""));
+    }
+    p.normalize();
+    for (const m of live.current.marks.filter((m) => m.para === para)) {
+      markDom(p, m);
+    }
+    drawBars(p, layer);
+  };
+
+  /**
+   * The discovery rail: one marker per paragraph that holds a highlight, at the
+   * paragraph's own height in the article. Measured from the DOM rather than
+   * computed from offsets, because line wrapping decides the real position.
+   */
+  const measureTicks = () => {
+    const container = containerRef.current;
+    if (!container) return;
+    const box = container.getBoundingClientRect();
+    if (box.height <= 0) return;
+    const next: HighlightRailItem[] = [];
+    for (const m of live.current.marks) {
+      const span = container.querySelector<HTMLElement>(`[data-hl="${m.id}"]`);
+      if (!span) continue;
+      const rect = span.getBoundingClientRect();
+      next.push({
+        id: m.id,
+        at: Math.max(
+          0,
+          Math.min(1, (rect.top - box.top + rect.height / 2) / box.height)
+        ),
+        hue: m.hue,
+        quote: textOf(m.para).slice(m.start, m.end),
+      });
+    }
+    next.sort((a, b) => a.at - b.at);
+    const key = next.map((t) => `${t.id}:${t.at.toFixed(4)}`).join(",");
+    if (key === lastTicksKey.current) return;
+    lastTicksKey.current = key;
+    onTicks?.(next);
+  };
+
+  /*
+   * The bars are redrawn from the marks on every change and every resize, and
+   * a pending wave plays on the bars this pass has just drawn.
+   */
+  useLayoutEffect(() => {
+    paras.current.forEach((p, i) => {
+      const layer = layers.current[i];
+      if (p && layer) drawBars(p, layer);
+    });
+
+    if (!wave || wave.nonce === played.current) return;
+    played.current = wave.nonce;
+    if (reduce) return;
+    const mark = live.current.marks.find((m) => m.id === wave.id);
+    const p = mark ? paras.current[mark.para] : null;
+    const layer = mark ? layers.current[mark.para] : null;
+    if (!mark || !p || !layer) return;
+    playWave(p, layer, mark.id, wave.from, paint(wave.hue, dark), HUES[wave.hue].swatch, false, wave.under);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marks, wave, dark]);
+
+  // Rebuild DOM when React state changes (single source of truth).
+  useLayoutEffect(() => {
+    const dirty = new Set(live.current.marks.map((m) => m.para));
+    // paragraphs that LOST all their marks need a rebuild too — tracked simply
+    for (let i = 0; i < paras.current.length; i++) {
+      const hasDom = paras.current[i]?.querySelector("[data-hl]");
+      if (dirty.has(i) || hasDom) rebuildParagraph(i);
+    }
+    measureTicks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marks, dark]);
+
+  // Bars follow the panel's own size (the resize handle moves the text).
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver(() => {
+      paras.current.forEach((p, i) => {
+        const layer = layers.current[i];
+        if (p && layer) drawBars(p, layer);
+      });
+      measureTicks();
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ---------------- locating stored marks ------------------ */
+
+  // Server anchors (quote + occurrence in full article text) → para + offsets.
+  const incoming = controlledMarks ?? initialMarks;
+  const incomingKey = JSON.stringify(incoming);
+  const locatedKey = useRef("");
+
+  useEffect(() => {
+    if (incomingKey === locatedKey.current) return;
+    locatedKey.current = incomingKey;
+    const full = paras.current.map((_, i) => textOf(i)).join("");
+    const located: Mark[] = [];
+    for (const stored of incoming) {
+      const index = nthIndexOf(full, stored.quote, stored.occurrence);
+      if (index === -1) continue; // anchor lost — stays hidden, never deleted
+      let acc = 0;
+      for (let para = 0; para < paras.current.length; para++) {
+        const len = textOf(para).length;
+        if (index < acc + len) {
+          located.push({
+            id: stored.id,
+            rowId: stored.id,
+            para,
+            start: index - acc,
+            end: index - acc + stored.quote.length,
+            hue: stored.hue,
+          });
+          break;
+        }
+        acc += len;
+      }
+    }
+    nextId.current = Math.max(1, ...incoming.map((m) => m.id)) + 1;
+    setMarks(located);
+  }, [incomingKey, incoming]);
+
+  // Emit anchors after every internal change. The parent can store them or
+  // feed them back through `marks`; its own echo is ignored by the effect above.
+  const lastEmit = useRef("");
+  useEffect(() => {
+    if (!onMarksChange) return;
+    const full = paras.current.map((_, i) => textOf(i)).join("");
+    const next = marks.map((mark) => {
+      const quote = textOf(mark.para).slice(mark.start, mark.end);
+      const startGlobal =
+        paras.current
+          .slice(0, mark.para)
+          .reduce((n, _, i) => n + textOf(i).length, 0) + mark.start;
+      return {
+        id: mark.id,
+        quote,
+        occurrence: full.slice(0, startGlobal).split(quote).length - 1,
+        hue: mark.hue,
+      };
+    });
+    const key = JSON.stringify(next);
+    if (key === lastEmit.current) return;
+    lastEmit.current = key;
+    onMarksChange(next);
+  }, [marks, onMarksChange]);
+
+  /* ---------------- reading a selection ------------------ */
+
+  const readSelection = useTextSelection({
+    containerRef,
+    paragraphs: paras,
+    wordSelect,
+  });
+
+  const read = useCallback((): Pop | null => {
+    const selection = readSelection();
+    if (!selection) return null;
+    const { para, start, end, anchor } = selection;
+
+    const same = live.current.marks.find(
+      (m) => m.para === para && m.start === start && m.end === end
+    );
+    if (same)
+      return {
+        kind: "edit",
+        id: same.id,
+        viaKey: false,
+        anchor: anchorForMark(same.id),
+      };
+
+    if (!anchor()) return null;
+    return { kind: "new", para, start, end, anchor };
+  }, [anchorForMark, readSelection]);
+
+  /* The same pointup/selectionchange pairing as the original. */
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !editable) return;
+    let pressing = false;
+    let timer = 0;
+
+    const check = () => {
+      const next = read();
+      if (next) setOpen(next);
+    };
+    const down = (e: PointerEvent) => {
+      const t = e.target as Element;
+      if (pop.current?.contains(t)) return;
+      if (live.current.open) {
+        setOpen(null);
+        // A stale selection would reopen the palette on pointerup.
+        window.getSelection()?.removeAllRanges();
+      }
+      pressing = container.contains(t);
+      wordSelect.current = e.detail >= 2;
+    };
+    const up = () => {
+      if (!pressing) return;
+      pressing = false;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(check, 0);
+    };
+    const changed = () => {
+      // Not gated on `pressing`. On a phone, selecting text is a long press
+      // and then dragging two handles, and the handles fire no pointerup, so
+      // the flag stays down and the palette never opens. selectionchange is
+      // the one signal that always arrives.
+      window.clearTimeout(timer);
+      timer = window.setTimeout(check, 180);
+    };
+
+    document.addEventListener("pointerdown", down, true);
+    window.addEventListener("pointerup", up);
+    // A cancelled gesture must clear the flag too, or one interrupted touch
+    // would leave it down for the rest of the session.
+    window.addEventListener("pointercancel", up);
+    document.addEventListener("selectionchange", changed);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("pointerdown", down, true);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      document.removeEventListener("selectionchange", changed);
+    };
+  }, [editable, containerRef, read]);
+
+  const close = useCallback((restore: boolean) => {
+    const was = live.current.open;
+    setOpen(null);
+    if (restore && was?.kind === "edit" && was.viaKey) {
+      paras.current[
+        live.current.marks.find((m) => m.id === was.id)?.para ?? -1
+      ]
+        ?.querySelector<HTMLElement>(`[data-hl="${was.id}"]`)
+        ?.focus({ preventScroll: true });
+    }
+  }, []);
+
+  /* ---------------- actions ------------------ */
+
+  const request = (id: number, from: Paint, hue: number, under: Under[] = []) => {
+    nonce.current += 1;
+    setWave({ id, from, under, hue, nonce: nonce.current });
+  };
+
+  const pick = (hue: number) => {
+    const current = live.current.open;
+    if (!current) return;
+
+    if (current.kind === "new") {
+      const { para, start, end } = current;
+      const text = textOf(para);
+      const quote = text.slice(start, end);
+      const id = nextId.current++;
+      const under = live.current.marks
+        .filter((m) => m.para === para && m.start < end && m.end > start)
+        .map((m) => ({
+          start: Math.max(m.start, start),
+          end: Math.min(m.end, end),
+          paint: paint(m.hue, dark),
+        }));
+
+      // article-wide occurrence, for the stored anchor
+      const full = paras.current.map((_, i) => textOf(i)).join("");
+      const startGlobal =
+        paras.current
+          .slice(0, para)
+          .reduce((n, _, i) => n + textOf(i).length, 0) + start;
+      const occurrence = full.slice(0, startGlobal).split(quote).length - 1;
+
+      window.getSelection()?.removeAllRanges();
+      setMarks((all) => [
+        ...cut(all, para, text, start, end, () => nextId.current++),
+        { id, para, start, end, hue },
+      ]);
+      request(id, { ink: base(para), wash: CLEAR }, hue, under);
+      setOpen({ kind: "edit", id, viaKey: false, anchor: anchorForMark(id) });
+
+      // Persistence never blocks the wave; the row id lands when it lands.
+      const before = text.slice(Math.max(0, start - 40), start);
+      const after = text.slice(end, end + 40);
+      onCreate?.({ quote, prefix: before, suffix: after, occurrence, hue })?.then(
+        (rowId) => {
+          if (rowId === null || rowId === undefined) return;
+          setMarks((all) => all.map((m) => (m.id === id ? { ...m, rowId } : m)));
+        }
+      );
+    } else {
+      const mark = live.current.marks.find((m) => m.id === current.id);
+      if (!mark) return;
+      setMarks((all) => all.map((m) => (m.id === mark.id ? { ...m, hue } : m)));
+      request(mark.id, paint(mark.hue, dark), hue);
+      if (mark.rowId) onRecolor?.(mark.rowId, hue);
+    }
+    setSaid(`Highlighted in ${HUES[hue].name}`);
+  };
+
+  const remove = () => {
+    if (open?.kind !== "edit") return;
+    const mark = live.current.marks.find((m) => m.id === open.id);
+    if (!mark) return;
+    close(false);
+    setSaid("Highlight removed");
+    const drop = () => {
+      setMarks((all) => all.filter((m) => m.id !== mark.id));
+      if (mark.rowId) onDelete?.(mark.rowId);
+    };
+    const p = paras.current[mark.para];
+    const layer = layers.current[mark.para];
+    if (reduce || !p || !layer) return drop();
+    const ms = playWave(
+      p,
+      layer,
+      mark.id,
+      paint(mark.hue, dark),
+      { ink: base(mark.para), wash: CLEAR },
+      HUES[mark.hue].swatch,
+      true,
+      [],
+      REMOVE_MS
+    );
+    window.setTimeout(drop, ms);
+  };
+
+  /** the words the open palette is about — a fresh selection or a stored mark */
+  const shareable = (): { quote: string; context: string } | null => {
+    const current = live.current.open;
+    if (!current) return null;
+    if (current.kind === "new") {
+      const context = textOf(current.para);
+      const quote = context.slice(current.start, current.end);
+      return quote.trim() ? { quote, context } : null;
+    }
+    const mark = live.current.marks.find((m) => m.id === current.id);
+    if (!mark) return null;
+    const context = textOf(mark.para);
+    const quote = context.slice(mark.start, mark.end);
+    return quote.trim() ? { quote, context } : null;
+  };
+
+  /** The live selection, or the open mark itself — what a permalink names. */
+  const permalinkRange = (): Range | null => {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && sel.rangeCount) return sel.getRangeAt(0);
+    const current = live.current.open;
+    if (current?.kind !== "edit") return null;
+    const span = containerRef.current?.querySelector<HTMLElement>(
+      `[data-hl="${current.id}"]`
+    );
+    if (!span) return null;
+    const range = document.createRange();
+    range.selectNode(span);
+    return range;
+  };
+
+  const openMark = (id: number, viaKey: boolean) => {
+    if (!editable) return;
+    if (!viaKey && !window.getSelection()?.isCollapsed) return;
+    setOpen({ kind: "edit", id, viaKey, anchor: anchorForMark(id) });
+  };
+
+  // Clicks on marks open the palette on them (event delegation on the stage).
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !editable) return;
+    const click = (e: MouseEvent) => {
+      const target = (e.target as Element).closest<HTMLElement>("[data-hl]");
+      if (target) openMark(Number(target.dataset.hl), false);
+    };
+    const key = (e: Event) => {
+      const ke = e as globalThis.KeyboardEvent;
+      if (ke.key !== "Enter" && ke.key !== " ") return;
+      const target = (ke.target as Element).closest<HTMLElement>("[data-hl]");
+      if (target) {
+        ke.preventDefault();
+        openMark(Number(target.dataset.hl), true);
+      }
+    };
+    container.addEventListener("click", click);
+    container.addEventListener("keydown", key);
+    return () => {
+      container.removeEventListener("click", click);
+      container.removeEventListener("keydown", key);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editable, containerRef, marks, open]);
+
+  // A palette opened from the keyboard takes focus to its current colour.
+  useEffect(() => {
+    if (open?.kind !== "edit" || !open.viaKey) return;
+    pop.current
+      ?.querySelector<HTMLElement>('[aria-pressed="true"]')
+      ?.focus({ preventScroll: true });
+  }, [open]);
+
+  const focusPara =
+    open?.kind === "new"
+      ? open.para
+      : open
+        ? (marks.find((m) => m.id === open.id)?.para ?? null)
+        : null;
+
+  // Dim non-focused paragraphs while a palette is open.
+  useEffect(() => {
+    paras.current.forEach((p, i) => {
+      p.classList.toggle(
+        "opacity-35",
+        focusPara !== null && focusPara !== i
+      );
+      p.classList.toggle("transition-opacity", true);
+      p.classList.toggle("duration-200", true);
+    });
+  }, [focusPara]);
+
+  const current =
+    open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
+  const ordered = [...marks].sort(
+    (a, b) => a.para - b.para || a.start - b.start
+  );
+
+  if (!editable && ordered.length === 0) return null;
+
+  const selectMark = (id: number) => {
+    const mark = live.current.marks.find((m) => m.id === id);
+    if (!mark) return;
+    window.getSelection()?.removeAllRanges();
+    setOpen({ kind: "edit", id, viaKey: false, anchor: anchorForMark(id) });
+    request(id, paint(mark.hue, dark), mark.hue);
+  };
+
+  const value: HighlightContextValue = {
+    open,
+    marks,
+    current,
+    ordered,
+    said,
+    setSaid,
+    close,
+    pick,
+    remove,
+    selectMark,
+    shareable,
+    permalinkRange,
+    onShareQuote,
+    onCopyLink,
+    panelRef: pop,
+    textOf,
+  };
+
+  return (
+    <HighlightContext.Provider value={value}>
+      {children ?? <HighlightToolbar />}
+      <p aria-live="polite" className="sr-only">
+        {said}
+      </p>
+    </HighlightContext.Provider>
+  );
+}
+
+/** index of the `occurrence`-th appearance of `quote` in `text`, or -1 */
+function nthIndexOf(text: string, quote: string, occurrence: number): number {
+  let seen = 0;
+  let at = -1;
+  while (seen <= occurrence) {
+    at = text.indexOf(quote, at + 1);
+    if (at === -1) return -1;
+    seen++;
+  }
+  return at;
+}
+
+export {
+  HighlightActions,
+  HighlightColors,
+  HighlightList,
+  HighlightToolbar,
+} from "./highlight-toolbar";
+export { useHighlight } from "./highlight-context";

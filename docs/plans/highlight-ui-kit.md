@@ -3,6 +3,33 @@
 Goal: highlights + quote cards as shadcn-style registry items. Copy the source,
 own it, edit it. Docs at `ui.souravinsights.com`.
 
+## One copy, two apps
+
+`packages/registry` is the only source. Both apps alias it from `tsconfig.json`;
+neither keeps an installed copy:
+
+| Alias | Target |
+| :--- | :--- |
+| `@/components/highlight/*` | `packages/registry/src/highlight` |
+| `@/components/quote/*` | `packages/registry/src/quote` |
+| `@/components/blocks/*` | `packages/registry/src/blocks` |
+| `@/components/ui/*` (custom primitives) | `packages/registry/src/ui` |
+| `@/hooks/*`, `@/lib/highlight-*` | `packages/registry/src/hooks`, `.../lib` |
+
+shadcn built-ins (`button`, `popover`, `tooltip`, `dialog`, `tabs`, …) stay
+installed per app.
+
+### React versions
+
+The site runs Next 14 + React 18; the kit runs Next 16 + React 19. Yarn 1 would
+otherwise hoist one version and nest the other, mixing `@types/react` inside a
+single TS program. Two guards keep them apart:
+
+- root `workspaces.nohoist` pins `react`, `react-dom`, `@types/react` and
+  `@types/react-dom` inside `kit` and `site`;
+- each app maps `react`, `react/*`, `react-dom`, `react-dom/*` to its own
+  `@types`, so registry source compiled by that app sees one React.
+
 ## The design is locked
 
 The current highlight palette, quote studio, carousel, variant swatches, colour
@@ -64,7 +91,11 @@ Done in this refactor:
 - `shadcn build` generates `public/r/*.json`
 - `cards.ts` split into presets, themes and render; fills live with themes
 
-## Remaining foundation work
+## Foundation
+
+All three landed. The kit is documented on `ui.souravinsights.com`; deployment
+lives in `docs/plans/monorepo.md`. The notes below stay as the contract the
+code was built against.
 
 ### 1. Highlights
 
@@ -73,12 +104,15 @@ Done in this refactor:
 
 ```ts
 type HighlightMark = {
-  id: string;
+  id: number;
   quote: string;
   occurrence: number;
-  hue: string;
+  hue: number;
 };
 ```
+
+- Controlled `marks` / `onMarksChange` are implemented; `initialMarks` and the
+  persistence callbacks still work for the reader.
 
 - Keep `highlight-rail.tsx` as the highlight-specific list + Notes action over
   `MarkerRail`.
@@ -93,10 +127,20 @@ type HighlightMark = {
 ### 3. Registry and docs
 
 - `registry.json` exists and names the libs, hooks and UI items.
-- Verify every item installs into a blank app.
-- Add blocks: `article-highlights`, `quote-share`.
+- Verified: `highlight` and `quote-share-dialog` install and typecheck in a
+  Radix-based blank Next app.
+- The kit uses Radix primitives; Base UI projects must initialize with
+  `npx shadcn@latest init -b radix`.
+- Blocks `article-highlights` and `quote-share` exist.
 - `shadcn build` → `public/r/*.json`.
-- Docs: minimal article, custom toolbar, persisted marks, quote card only.
+- Docs are on Fumadocs. Hand-written index, installation and examples pages;
+  one generated MDX page per registry item. Search and sidebar are Fumadocs'.
+- Each item page follows shadcn: a centred `<ComponentPreview>` with the demo
+  source behind View Code, Installation with Command and Manual tabs (Steps +
+  `<ComponentSource>`), then an authored Usage and any examples.
+- Every item has a demo (`src/components/demos/<name>-demo.tsx`); the generator
+  reads the demo source and the registry source into `src/generated`.
+- Authored Usage and examples live in `scripts/registry-docs.mjs`.
 
 ## Naming
 

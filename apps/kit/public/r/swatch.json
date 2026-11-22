@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "swatch",
+  "title": "Swatch",
+  "description": "A colour swatch and its radio group.",
+  "registryDependencies": [
+    "radio-group",
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "src/ui/swatch.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\";\nimport { cn } from \"@/lib/utils\";\n\nconst swatchVariants = cva(\n  \"group relative flex-none rounded-full border-0 p-0 transition-[box-shadow,outline-color,scale] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] [&>span]:hidden\",\n  {\n    variants: {\n      variant: {\n        /** Quote designs: a crisp outline with a gap, like a selected radio. */\n        ring: [\n          \"size-7 overflow-hidden ring-offset-2 ring-offset-background\",\n          \"shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]\",\n          \"[@media(hover:hover)]:data-[state=unchecked]:hover:outline-2 [@media(hover:hover)]:data-[state=unchecked]:hover:outline-[hsl(var(--foreground)/0.2)] [@media(hover:hover)]:data-[state=unchecked]:hover:outline-offset-2\",\n          \"focus-visible:ring-2 focus-visible:ring-[hsl(var(--foreground))] data-[state=checked]:ring-2 data-[state=checked]:ring-[hsl(var(--foreground))]\",\n        ],\n        /** Highlight colours: a coloured outline with a hairline inner ring. */\n        outline: [\n          \"size-6 outline-2 outline-transparent outline-offset-2\",\n          \"before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:ring-1 before:ring-[hsl(var(--foreground)/0.1)] before:ring-inset\",\n          \"[@media(hover:hover)]:data-[state=unchecked]:hover:outline-[hsl(var(--foreground)/0.25)]\",\n        ],\n        /** Preset colours: lift on hover, ring on selection. */\n        scale: [\n          \"size-6\",\n          \"shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16)]\",\n          \"[@media(hover:hover)]:hover:scale-110\",\n          \"data-[state=checked]:ring-2 data-[state=checked]:ring-[hsl(var(--foreground))] data-[state=checked]:ring-offset-2 data-[state=checked]:ring-offset-background\",\n        ],\n      },\n    },\n    defaultVariants: { variant: \"ring\" },\n  }\n);\n\nfunction SwatchGroup({\n  className,\n  ...props\n}: React.ComponentProps<typeof RadioGroup>) {\n  return (\n    <RadioGroup\n      data-slot=\"swatch-group\"\n      className={cn(\"flex items-center gap-1.5\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction Swatch({\n  className,\n  background,\n  label,\n  variant,\n  style,\n  ...props\n}: React.ComponentProps<typeof RadioGroupItem> &\n  VariantProps<typeof swatchVariants> & {\n    /** any CSS background: a colour, a gradient, a radial dot */\n    background: string;\n    label: string;\n  }) {\n  return (\n    <RadioGroupItem\n      data-slot=\"swatch\"\n      aria-label={label}\n      title={label}\n      style={{ background, ...style }}\n      className={cn(swatchVariants({ variant }), className)}\n      {...props}\n    />\n  );\n}\n\nexport { Swatch, SwatchGroup, swatchVariants };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

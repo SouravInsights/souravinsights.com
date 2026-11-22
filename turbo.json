@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "ADMIN_SECRET",
+    "BLOB_READ_WRITE_TOKEN",
+    "BUTTONDOWN_API_KEY",
+    "CHANNEL_ID",
+    "CV_EDIT_SECRET",
+    "DATABASE_URL",
+    "DISCORD_CLIENT_ID",
+    "DISCORD_GUILD_ID",
+    "DISCORD_TOKEN",
+    "KV_REST_API_READ_ONLY_TOKEN",
+    "KV_REST_API_TOKEN",
+    "KV_REST_API_URL",
+    "KV_URL",
+    "LITERAL_PROFILE_ID",
+    "OPENROUTER_API_KEY",
+    "READWISE_API_TOKEN",
+    "REVALIDATE_SECRET",
+    "SPOTIFY_CLIENT_ID",
+    "SPOTIFY_CLIENT_SECRET",
+    "SPOTIFY_REFRESH_TOKEN",
+    "UPSTASH_REDIS_REST_TOKEN",
+    "UPSTASH_REDIS_REST_URL",
+    "WEATHERAPI_KEY",
+    "WEATHER_CITY"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "public/r/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {}
+  }
+}

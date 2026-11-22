@@ -1,0 +1,6 @@
+.vercel
+.env*
+
+content/docs/components
+
+src/generated
