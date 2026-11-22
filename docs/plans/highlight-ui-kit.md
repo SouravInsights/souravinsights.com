@@ -102,9 +102,8 @@ type HighlightMark = {
   `npx shadcn@latest init -b radix`.
 - Blocks `article-highlights` and `quote-share` exist.
 - `shadcn build` → `public/r/*.json`.
-- Docs: the index and an item page per registry entry exist. Still missing:
-  worked examples (minimal article, custom toolbar, persisted marks, quote card
-  only).
+- Docs are on Fumadocs. Hand-written index, installation and examples pages;
+  one generated MDX page per registry item. Search and sidebar are Fumadocs'.
 
 ## Naming
 

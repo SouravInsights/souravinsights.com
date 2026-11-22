@@ -88,8 +88,8 @@ point to.
 3. **Registry package.** Done: source lives in `packages/registry`, the site maps
    its old aliases there, and `yarn registry:build` writes
    `apps/kit/public/r`. The site's Tailwind config scans the package.
-4. **Docs.** Item pages and the index exist. Remaining: worked examples, and
-   moving `ui.souravinsights.com` to the kit project.
+4. **Docs.** Done on Fumadocs: index, installation, examples and generated item
+   pages. `ui.souravinsights.com` belongs to the kit project.
 
 ## Risks
 
