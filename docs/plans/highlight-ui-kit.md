@@ -73,12 +73,15 @@ Done in this refactor:
 
 ```ts
 type HighlightMark = {
-  id: string;
+  id: number;
   quote: string;
   occurrence: number;
-  hue: string;
+  hue: number;
 };
 ```
+
+- Controlled `marks` / `onMarksChange` are implemented; `initialMarks` and the
+  persistence callbacks still work for the reader.
 
 - Keep `highlight-rail.tsx` as the highlight-specific list + Notes action over
   `MarkerRail`.
@@ -97,9 +100,11 @@ type HighlightMark = {
   Radix-based blank Next app.
 - The kit uses Radix primitives; Base UI projects must initialize with
   `npx shadcn@latest init -b radix`.
-- Add blocks: `article-highlights`, `quote-share`.
+- Blocks `article-highlights` and `quote-share` exist.
 - `shadcn build` → `public/r/*.json`.
-- Docs: minimal article, custom toolbar, persisted marks, quote card only.
+- Docs: the index and an item page per registry entry exist. Still missing:
+  worked examples (minimal article, custom toolbar, persisted marks, quote card
+  only).
 
 ## Naming
 

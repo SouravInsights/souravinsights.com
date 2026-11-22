@@ -87,8 +87,9 @@ point to.
    `apps/kit`.
 3. **Registry package.** Done: source lives in `packages/registry`, the site maps
    its old aliases there, and `yarn registry:build` writes
-   `apps/kit/public/r`.
-4. **Docs.** Write examples and API pages against the real installed registry.
+   `apps/kit/public/r`. The site's Tailwind config scans the package.
+4. **Docs.** Item pages and the index exist. Remaining: worked examples, and
+   moving `ui.souravinsights.com` to the kit project.
 
 ## Risks
 
