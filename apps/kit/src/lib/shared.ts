@@ -1,4 +1,4 @@
-export const appName = "UI Kit";
+export const appName = "Highlight & Quote";
 export const docsRoute = "/docs";
 
 export const gitConfig = {

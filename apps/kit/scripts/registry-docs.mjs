@@ -30,6 +30,75 @@ const containerRef = useRef<HTMLElement>(null)
         name: "article-highlights-demo",
         description: "The palette, the highlight rail and the quote dialog wired to local marks.",
       },
+      {
+        title: "Controlled marks",
+        name: "highlight-controlled-demo",
+        description: "The parent owns the marks array; the engine only renders it.",
+      },
+    ],
+    api: [
+      {
+        name: "Highlight",
+        props: [
+          {
+            prop: "containerRef",
+            type: "RefObject<HTMLElement | null>",
+            default: "required",
+          },
+          { prop: "editable", type: "boolean", default: "required" },
+          {
+            prop: "initialMarks",
+            type: "HighlightMark[]",
+            default: "[]",
+          },
+          {
+            prop: "marks",
+            type: "HighlightMark[]",
+            default: "—",
+          },
+          {
+            prop: "onCreate",
+            type: "(payload: CreatePayload) => Promise<number | null>",
+            default: "—",
+          },
+          {
+            prop: "onRecolor",
+            type: "(rowId: number, hue: number) => void",
+            default: "—",
+          },
+          {
+            prop: "onDelete",
+            type: "(rowId: number) => void",
+            default: "—",
+          },
+          {
+            prop: "onMarksChange",
+            type: "(marks: HighlightMark[]) => void",
+            default: "—",
+          },
+          {
+            prop: "onShareQuote",
+            type: "(payload: { quote: string; context: string }) => void",
+            default: "required",
+          },
+          { prop: "onOpenNotebook", type: "() => void", default: "—" },
+          {
+            prop: "onCopyLink",
+            type: "(range: Range | null) => Promise<boolean>",
+            default: "—",
+          },
+          {
+            prop: "onTicks",
+            type: "(ticks: HighlightRailItem[]) => void",
+            default: "—",
+          },
+          {
+            prop: "children",
+            type: "ReactNode",
+            default: "<HighlightToolbar />",
+          },
+        ],
+      },
     ],
   },
 
@@ -114,6 +183,23 @@ const [open, setOpen] = useState(false)
         title: "Share button",
         name: "quote-share-demo",
         description: "A button that opens the studio on a fixed quote.",
+      },
+    ],
+    api: [
+      {
+        name: "ShareQuoteDialog",
+        props: [
+          { prop: "open", type: "boolean", default: "required" },
+          {
+            prop: "onOpenChange",
+            type: "(open: boolean) => void",
+            default: "required",
+          },
+          { prop: "quote", type: "string", default: "required" },
+          { prop: "title", type: "string", default: "required" },
+          { prop: "publication", type: "string", default: "required" },
+          { prop: "context", type: "string", default: "required" },
+        ],
       },
     ],
   },

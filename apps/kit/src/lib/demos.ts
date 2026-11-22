@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import { HighlightDemo } from "@/components/demos/highlight-demo";
+import { HighlightControlledDemo } from "@/components/demos/highlight-controlled-demo";
 import { HighlightAnchorDemo } from "@/components/demos/highlight-anchor-demo";
 import { HighlightPaletteDemo } from "@/components/demos/highlight-palette-demo";
 import { HighlightWaveDemo } from "@/components/demos/highlight-wave-demo";
@@ -29,6 +30,7 @@ import { SwatchDemo } from "@/components/demos/swatch-demo";
 
 export const demos: Record<string, ComponentType> = {
   "highlight-demo": HighlightDemo,
+  "highlight-controlled-demo": HighlightControlledDemo,
   "highlight-anchor-demo": HighlightAnchorDemo,
   "highlight-palette-demo": HighlightPaletteDemo,
   "highlight-wave-demo": HighlightWaveDemo,

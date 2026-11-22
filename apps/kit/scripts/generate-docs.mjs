@@ -61,6 +61,20 @@ const sections = [
 ];
 
 const sources = {};
+
+/** A markdown table cell cannot contain a raw pipe: `number | null` splits it. */
+const cell = (value) => String(value).replace(/\|/g, "\\|");
+
+/** One component's props as a shadcn-style table. */
+function renderApi({ name, props }) {
+  const rows = props
+    .map(
+      (prop) => `| \`${cell(prop.prop)}\` | \`${cell(prop.type)}\` | \`${cell(prop.default)}\` |`,
+    )
+    .join("\n");
+  return `### ${name}\n\n| Prop | Type | Default |\n| :--- | :--- | :--- |\n${rows}`;
+}
+
 const docs = join(root, "content", "docs");
 
 for (const section of sections) {
@@ -99,6 +113,21 @@ for (const section of sections) {
     const npmDeps = item.dependencies ?? [];
     const authored = registryDocs[item.name] ?? {};
 
+    // Examples get their own `ComponentPreview` with a code tab, so their
+    // demo source has to be in `sources.json` too.
+    for (const example of authored.examples ?? []) {
+      if (!example.name || sources[example.name]) continue;
+      sources[example.name] = [
+        {
+          path: `src/components/demos/${example.name}.tsx`,
+          content: readFileSync(
+            join(root, "src", "components", "demos", `${example.name}.tsx`),
+            "utf8",
+          ),
+        },
+      ];
+    }
+
     const preview = demo ? `<ComponentPreview name="${demo}" />\n\n` : "";
     const usage = authored.usage ? `\n## Usage\n\n${authored.usage}\n` : "";
 
@@ -111,6 +140,9 @@ for (const section of sections) {
       )
       .join("\n\n");
     const examplesSection = examples ? `\n## Examples\n\n${examples}\n` : "";
+    const apiSection = authored.api?.length
+      ? `\n## API Reference\n\n${authored.api.map(renderApi).join("\n\n")}\n`
+      : "";
 
     const depsStep = npmDeps.length
       ? `<Step>Install the following dependencies:</Step>
@@ -155,7 +187,7 @@ ${depsStep}
 
 </TabsContent>
 </Tabs>
-${usage}${examplesSection}`,
+${usage}${examplesSection}${apiSection}`,
     );
   }
 
