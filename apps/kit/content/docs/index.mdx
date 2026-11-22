@@ -1,18 +1,36 @@
 ---
-title: UI Kit
+title: Introduction
 description: Highlight text, pick a hue, share a quote card. Copy the source and own it.
 ---
 
-Built on Radix primitives. If your project is on Base UI, initialize it with:
+The UI Kit is two things that share one engine:
+
+- **Highlights** — select text in an article, snap the selection to whole
+  words, paint it with a hue, and keep the marks in sync with your own store.
+- **Quote studio** — turn the selected words into a shareable image, with
+  layouts, colours and text you can edit.
+
+Both are distributed through the shadcn CLI. There is no package to version and
+no runtime to adapt: the files land in your app and you own them.
+
+## Built on Radix
+
+The kit composes Radix primitives. Projects on Base UI must initialize shadcn
+with the Radix base first:
 
 ```bash
 npx shadcn@latest init -b radix
 ```
 
-Then install one item:
+## Install an item
 
 ```bash
 npx shadcn@latest add https://ui.souravinsights.com/r/highlight.json
 ```
 
-The source lives in `packages/registry`. Install it, then edit it.
+The highlight item pulls the palette, the anchors, the selection hook, the
+toolbar, the rail and its Radix dependencies. The quote studio pulls the
+carousel, the card, the canvas, the options and the actions.
+
+Start with [Installation](/docs/installation), then browse the
+[Components](/docs/components).

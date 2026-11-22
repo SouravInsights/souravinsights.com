@@ -8,6 +8,8 @@ the files land in your app and you own them.
 
 ## Initialize
 
+Run shadcn init once, on the Radix base:
+
 ```bash
 npx shadcn@latest init -b radix
 ```
@@ -18,12 +20,30 @@ npx shadcn@latest init -b radix
 npx shadcn@latest add https://ui.souravinsights.com/r/highlight.json
 ```
 
+This pulls the palette, anchors, the text-selection hook, the toolbar, the rail
+and their Radix dependencies. It is the smallest item that gives you a working
+highlight.
+
 ## Add the quote studio
 
 ```bash
 npx shadcn@latest add https://ui.souravinsights.com/r/quote-share-dialog.json
 ```
 
-The highlight item pulls the palette, anchors, selection hook, toolbar, rail and
-Radix dependencies. The quote item pulls the carousel, card, canvas, options,
-variant picker and actions.
+This pulls the carousel, the card, the canvas, the options, the variant picker
+and the actions.
+
+## Or add a block
+
+The blocks wire everything together, and are the fastest way to see the whole
+thing running:
+
+```bash
+npx shadcn@latest add https://ui.souravinsights.com/r/article-highlights.json
+```
+
+## Manual install
+
+Every item page has a **Manual** tab. It lists the npm dependencies and each
+file's full source, so you can copy the files in yourself and update the import
+paths to match your project.

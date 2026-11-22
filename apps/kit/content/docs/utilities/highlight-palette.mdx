@@ -1,0 +1,44 @@
+---
+title: "Highlight palette"
+description: "Shared hues, ink and wash values for highlight marks."
+---
+
+<ComponentPreview name="highlight-palette-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add https://ui.souravinsights.com/r/highlight-palette.json
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="highlight-palette" />
+
+<Step>Update the import paths to match your project setup.</Step>
+</Steps>
+
+</TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import { HUES, paint } from "@/lib/highlight-palette"
+```
+
+```tsx
+const { ink, wash } = paint(2, false) // amber, light theme
+```

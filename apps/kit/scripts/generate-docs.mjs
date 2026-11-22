@@ -39,24 +39,16 @@ const demos = {
   swatch: "swatch-demo",
 };
 
-const sources = {};
-
-const base = join(root, "content", "docs", "components");
-rmSync(base, { recursive: true, force: true });
-mkdirSync(base, { recursive: true });
-
-const groups = [
+/**
+ * The docs tree, mirroring shadcn: one flat, alphabetical list of components,
+ * then the blocks and the utilities. Nothing nests a component under the
+ * component it belongs to.
+ */
+const sections = [
   {
-    folder: "highlight",
-    title: "Highlight",
-    match: (item) =>
-      item.type === "registry:ui" && item.name.startsWith("highlight"),
-  },
-  {
-    folder: "quote",
-    title: "Quote",
-    match: (item) =>
-      item.type === "registry:ui" && item.name.startsWith("quote"),
+    folder: "components",
+    title: "Components",
+    match: (item) => item.type === "registry:ui",
   },
   {
     folder: "blocks",
@@ -64,29 +56,27 @@ const groups = [
     match: (item) => item.type === "registry:block",
   },
   {
-    folder: "primitives",
-    title: "Primitives",
-    match: (item) =>
-      item.type === "registry:ui" &&
-      !item.name.startsWith("highlight") &&
-      !item.name.startsWith("quote"),
-  },
-  {
-    folder: "libs",
-    title: "Libs and hooks",
-    match: (item) =>
-      item.type === "registry:lib" || item.type === "registry:hook",
+    folder: "utilities",
+    title: "Utilities",
+    match: (item) => item.type === "registry:lib" || item.type === "registry:hook",
   },
 ];
 
-const folders = [];
+const sources = {};
+const docs = join(root, "content", "docs");
 
-for (const group of groups) {
-  const items = registry.items.filter(group.match);
-  if (!items.length) continue;
-  folders.push(group.folder);
-  const dir = join(base, group.folder);
+for (const section of sections) {
+  const dir = join(docs, section.folder);
+  rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
+}
+
+for (const section of sections) {
+  const items = registry.items
+    .filter(section.match)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  if (!items.length) continue;
+  const dir = join(docs, section.folder);
 
   for (const item of items) {
     const fileEntries = (item.files ?? []).map((file) => {
@@ -120,11 +110,14 @@ for (const group of groups) {
     const usage = authored.usage ? `\n## Usage\n\n${authored.usage}\n` : "";
 
     const examples = (authored.examples ?? [])
-      .map((name) => `<ComponentPreview name="${name}" />`)
+      .map(
+        (example) =>
+          `### ${example.title}\n\n${
+            example.description ? `${example.description}\n\n` : ""
+          }<ComponentPreview name="${example.name}" />`
+      )
       .join("\n\n");
-    const examplesSection = examples
-      ? `\n## Examples\n\n${examples}\n`
-      : "";
+    const examplesSection = examples ? `\n## Examples\n\n${examples}\n` : "";
 
     const depsStep = npmDeps.length
       ? `<Step>Install the following dependencies:</Step>
@@ -176,7 +169,7 @@ ${usage}${examplesSection}`
   writeFileSync(
     join(dir, "meta.json"),
     JSON.stringify(
-      { title: group.title, pages: items.map((item) => item.name).sort() },
+      { title: section.title, pages: items.map((item) => item.name) },
       null,
       2
     )
@@ -184,8 +177,22 @@ ${usage}${examplesSection}`
 }
 
 writeFileSync(
-  join(base, "meta.json"),
-  JSON.stringify({ title: "Components", pages: folders }, null, 2)
+  join(docs, "meta.json"),
+  JSON.stringify(
+    {
+      title: "Documentation",
+      pages: [
+        "index",
+        "installation",
+        "examples",
+        "components",
+        "blocks",
+        "utilities",
+      ],
+    },
+    null,
+    2
+  )
 );
 
 mkdirSync(join(root, "src", "generated"), { recursive: true });

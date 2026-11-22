@@ -1,0 +1,13 @@
+{
+  "title": "Utilities",
+  "pages": [
+    "highlight-anchor",
+    "highlight-palette",
+    "highlight-wave",
+    "quote-presets",
+    "quote-render",
+    "quote-themes",
+    "use-reduced-motion",
+    "use-text-selection"
+  ]
+}

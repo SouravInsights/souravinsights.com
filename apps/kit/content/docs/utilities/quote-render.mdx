@@ -1,0 +1,45 @@
+---
+title: "Quote render"
+description: "Canvas layout, card drawing and PNG export."
+---
+
+<ComponentPreview name="quote-render-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add https://ui.souravinsights.com/r/quote-render.json
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="quote-render" />
+
+<Step>Update the import paths to match your project setup.</Step>
+</Steps>
+
+</TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import { cardToBlob, resolveOptions } from "@/components/quote/render"
+```
+
+```tsx
+const options = resolveOptions(theme, variant, overrides, content)
+const blob = await cardToBlob("story", theme, options)
+```

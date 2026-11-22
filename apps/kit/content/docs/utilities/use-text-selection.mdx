@@ -1,0 +1,49 @@
+---
+title: "Use text selection"
+description: "Read a selection as word-snapped paragraph offsets."
+---
+
+<ComponentPreview name="use-text-selection-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add https://ui.souravinsights.com/r/use-text-selection.json
+```
+
+</TabsContent>
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="use-text-selection" />
+
+<Step>Update the import paths to match your project setup.</Step>
+</Steps>
+
+</TabsContent>
+</Tabs>
+
+## Usage
+
+```tsx
+import { useTextSelection } from "@/hooks/use-text-selection"
+```
+
+```tsx
+const read = useTextSelection({ containerRef, paragraphs, wordSelect })
+const selection = read()
+
+if (selection) {
+  const { para, start, end } = selection
+}
+```

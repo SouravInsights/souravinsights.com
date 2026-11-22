@@ -1,50 +1,67 @@
 ---
 title: Examples
-description: Four starting points.
+description: Four starting points for the highlight engine and the quote studio.
 ---
 
 ## Minimal article
 
+The engine takes a container of paragraphs and reports marks as plain anchors.
+Keep the marks in React state until you have somewhere to store them.
+
 ```tsx
-"use client";
+"use client"
 
-import { useRef, useState } from "react";
-import { Highlight, type HighlightMark } from "@/components/highlight/highlight";
-import { ShareQuoteDialog } from "@/components/quote/dialog";
+import { useRef, useState } from "react"
+import { Highlight, type HighlightMark } from "@/components/highlight/highlight"
+import { ShareQuoteDialog } from "@/components/quote/dialog"
 
-const ref = useRef<HTMLDivElement>(null);
-const [marks, setMarks] = useState<HighlightMark[]>([]);
-const [quote, setQuote] = useState(null);
+function Article({ title, publication }: { title: string; publication: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [marks, setMarks] = useState<HighlightMark[]>([])
+  const [quote, setQuote] = useState<{ quote: string; context: string } | null>(null)
 
-<div ref={ref}>{content}</div>
+  return (
+    <>
+      <div ref={ref}>
+        <p>The best interfaces disappear.</p>
+      </div>
 
-<Highlight
-  containerRef={ref}
-  marks={marks}
-  onMarksChange={setMarks}
-  onShareQuote={setQuote}
-/>
+      <Highlight
+        containerRef={ref}
+        editable
+        marks={marks}
+        onMarksChange={setMarks}
+        onShareQuote={setQuote}
+      />
 
-<ShareQuoteDialog
-  open={!!quote}
-  onOpenChange={(open) => !open && setQuote(null)}
-  quote={quote?.quote ?? ""}
-  context={quote?.context ?? ""}
-  title={title}
-  publication={publication}
-/>
+      <ShareQuoteDialog
+        open={quote !== null}
+        onOpenChange={(open) => !open && setQuote(null)}
+        quote={quote?.quote ?? ""}
+        context={quote?.context ?? ""}
+        title={title}
+        publication={publication}
+      />
+    </>
+  )
+}
 ```
 
 ## Custom toolbar
 
+`Highlight` renders the default toolbar unless you pass children. Every part is
+exported, so you can keep the palette and the list and drop the rest.
+
 ```tsx
-<Highlight containerRef={ref} marks={marks} onMarksChange={setMarks}>
+<Highlight
+  containerRef={ref}
+  editable
+  marks={marks}
+  onMarksChange={setMarks}
+  onShareQuote={setQuote}
+>
   <HighlightToolbar>
     <HighlightColors />
-    <HighlightActions>
-      <HighlightShare onShare={setQuote} />
-      <HighlightRemove />
-    </HighlightActions>
     <HighlightList />
   </HighlightToolbar>
 </Highlight>
@@ -52,27 +69,30 @@ const [quote, setQuote] = useState(null);
 
 ## Persisted marks
 
+Pass `initialMarks` to restore stored anchors, and the callbacks to write them
+back. `onCreate` returns the row id, so a recolor or delete can target it.
+
 ```tsx
 <Highlight
   containerRef={ref}
+  editable
   initialMarks={saved}
-  onCreate={async (anchor) => api.create(anchor)}
-  onRecolor={(id, hue) => api.recolor(id, hue)}
-  onDelete={(id) => api.remove(id)}
+  onCreate={async (anchor) => api.createHighlight(anchor)}
+  onRecolor={(id, hue) => api.recolorHighlight(id, hue)}
+  onDelete={(id) => api.deleteHighlight(id)}
   onShareQuote={setQuote}
 />
 ```
 
-## Quote card only
+## The whole thing
+
+`article-highlights` is the block that wires the engine, the rail and the
+studio together. Start there, then peel pieces off as you need to.
 
 ```tsx
-import { QuoteCard } from "@/components/quote/quote-card";
-import { THEMES } from "@/components/quote/themes";
+import { ArticleHighlights } from "@/components/blocks/article-highlights"
 
-<QuoteCard
-  theme={THEMES[0]}
-  variant={THEMES[0].variants[0]}
-  mode="post"
-  content={{ quote, title, publication, context }}
-/>
+<ArticleHighlights title={title} publication={publication}>
+  {content}
+</ArticleHighlights>
 ```
