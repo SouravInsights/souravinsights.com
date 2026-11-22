@@ -21,8 +21,10 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "dev:site": "turbo run dev --filter=site",
+    "dev:kit": "turbo run dev --filter=kit",
     "build": "turbo run build",
     "build:site": "turbo run build --filter=site",
+    "build:kit": "turbo run build --filter=kit",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "registry:build": "cd packages/registry && npx shadcn@latest build && rm -rf ../../apps/kit/public/r && cp -R public/r ../../apps/kit/public/r"

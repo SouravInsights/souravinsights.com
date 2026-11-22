@@ -91,7 +91,11 @@ Done in this refactor:
 - `shadcn build` generates `public/r/*.json`
 - `cards.ts` split into presets, themes and render; fills live with themes
 
-## Remaining foundation work
+## Foundation
+
+All three landed. The kit is documented on `ui.souravinsights.com`; deployment
+lives in `docs/plans/monorepo.md`. The notes below stay as the contract the
+code was built against.
 
 ### 1. Highlights
 
