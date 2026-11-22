@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import styles from "./page.module.css";
@@ -81,7 +82,8 @@ export default function Page() {
       })}
 
       <footer className={styles.footer}>
-        Source lives in <code>packages/registry</code>. Install, then edit.
+        Source lives in <code>packages/registry</code>. Install, then edit.{" "}
+        <Link href="/examples">See examples →</Link>
       </footer>
     </main>
   );

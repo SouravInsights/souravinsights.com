@@ -218,3 +218,20 @@
   flex: none;
   color: var(--faint, #71717a);
 }
+
+.example {
+  margin-top: 40px;
+}
+
+.example h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.example p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
