@@ -36,15 +36,23 @@ export async function register(): Promise<void> {
     return;
   }
 
-  // Imported here instead of at the top of the file because Next.js bundles
-  // everything it sees at the top, and the Neatlogs package uses parts of Node
-  // that cannot be bundled. `webpackIgnore` tells Next to leave this line alone
-  // and let Node load the package normally at runtime.
-  const { init } = await import(/* webpackIgnore: true */ "neatlogs");
+  // `neatlogs` is in `serverExternalPackages`, so Next leaves it external but
+  // still traces it into the serverless function. Do not add `webpackIgnore`:
+  // that hides the import from the tracer, and the package is then missing at
+  // runtime ("Cannot find package 'neatlogs'"), which crashes the hook and
+  // every dynamic route with it.
+  //
+  // Tracing must never take the site down: if the import fails for any reason,
+  // the app keeps serving without it.
+  try {
+    const { init } = await import("neatlogs");
 
-  await init({
-    apiKey,
-    // A label that groups this app's traces in the Neatlogs dashboard.
-    workflowName: "insights-agent",
-  });
+    await init({
+      apiKey,
+      // A label that groups this app's traces in the Neatlogs dashboard.
+      workflowName: "insights-agent",
+    });
+  } catch (error) {
+    console.error("[neatlogs] init failed — tracing disabled", error);
+  }
 }
