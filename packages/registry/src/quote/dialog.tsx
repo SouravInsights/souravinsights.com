@@ -236,7 +236,7 @@ export function ShareQuoteDialog({
         @keyframes qs-palette-out { to { opacity: 0; scale: .98 } }
       `}</style>
 
-      <DialogContent className="flex w-auto max-w-[96vw] flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-card p-0 text-foreground shadow-2xl data-[state=open]:!animate-[qs-palette-in_200ms_cubic-bezier(0.32,0.72,0,1)_backwards] data-[state=closed]:!animate-[qs-palette-out_150ms_ease-in_forwards] [&>button]:z-30 [&>button]:right-3 [&>button]:top-3.5 [&>button]:text-muted-foreground [&>button]:hover:text-foreground">
+      <DialogContent className="flex w-auto !max-w-[96vw] flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-card p-0 text-foreground shadow-2xl data-[state=open]:!animate-[qs-palette-in_200ms_cubic-bezier(0.32,0.72,0,1)_backwards] data-[state=closed]:!animate-[qs-palette-out_150ms_ease-in_forwards] [&>button]:z-30 [&>button]:right-3 [&>button]:top-3.5 [&>button]:text-muted-foreground [&>button]:hover:text-foreground">
         <DialogTitle className="sr-only">Share quote</DialogTitle>
 
         <div className="relative flex">
