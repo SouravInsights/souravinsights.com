@@ -34,6 +34,7 @@ export function ArticleHighlights({
       <div ref={articleRef}>{children}</div>
       <Highlight
         containerRef={articleRef}
+        editable
         marks={marks}
         onMarksChange={setMarks}
         onShareQuote={setShare}

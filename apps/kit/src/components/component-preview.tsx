@@ -1,7 +1,6 @@
-import * as React from "react";
 import { demos } from "@/lib/demos";
-import { PreviewTabs, type PreviewFile } from "@/components/preview-tabs";
-import sources from "@/generated/sources.json";
+import { ComponentSource } from "@/components/component-source";
+import { PreviewTabs } from "@/components/preview-tabs";
 
 export function ComponentPreview({
   name,
@@ -20,13 +19,11 @@ export function ComponentPreview({
     );
   }
 
-  const files = (sources as Record<string, PreviewFile[]>)[name] ?? [];
-
   return (
     <PreviewTabs
       className={className}
       preview={<Demo />}
-      files={files}
+      source={<ComponentSource name={name} />}
     />
   );
 }

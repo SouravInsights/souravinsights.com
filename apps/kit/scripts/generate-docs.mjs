@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { registryDocs } from "./registry-docs.mjs";
 
 const root = process.cwd();
 const registry = JSON.parse(
@@ -11,7 +12,31 @@ const registryRoot = join(root, "..", "..", "packages", "registry");
 /** registry items that have a live demo in src/components/demos */
 const demos = {
   highlight: "highlight-demo",
+  "highlight-anchor": "highlight-anchor-demo",
+  "highlight-palette": "highlight-palette-demo",
+  "highlight-wave": "highlight-wave-demo",
+  "use-text-selection": "use-text-selection-demo",
+  "use-reduced-motion": "use-reduced-motion-demo",
   "quote-share-dialog": "quote-dialog-demo",
+  "quote-actions": "quote-actions-demo",
+  "quote-carousel": "quote-carousel-demo",
+  "quote-options": "quote-options-demo",
+  "quote-card": "quote-card-demo",
+  "quote-variant-picker": "quote-variant-picker-demo",
+  "quote-presets": "quote-presets-demo",
+  "quote-themes": "quote-themes-demo",
+  "quote-render": "quote-render-demo",
+  "article-highlights": "article-highlights-demo",
+  "quote-share": "quote-share-demo",
+  "anchored-panel": "anchored-panel-demo",
+  canvas: "canvas-demo",
+  "color-field": "color-field-demo",
+  "color-picker": "color-picker-demo",
+  "inline-edit-field": "inline-edit-field-demo",
+  "marker-rail": "marker-rail-demo",
+  "side-panel": "side-panel-demo",
+  "snap-carousel": "snap-carousel-demo",
+  swatch: "swatch-demo",
 };
 
 const sources = {};
@@ -21,9 +46,23 @@ rmSync(base, { recursive: true, force: true });
 mkdirSync(base, { recursive: true });
 
 const groups = [
-  { folder: "highlight", title: "Highlight", match: (item) => item.name.startsWith("highlight") },
-  { folder: "quote", title: "Quote", match: (item) => item.name.startsWith("quote") },
-  { folder: "blocks", title: "Blocks", match: (item) => item.type === "registry:block" },
+  {
+    folder: "highlight",
+    title: "Highlight",
+    match: (item) =>
+      item.type === "registry:ui" && item.name.startsWith("highlight"),
+  },
+  {
+    folder: "quote",
+    title: "Quote",
+    match: (item) =>
+      item.type === "registry:ui" && item.name.startsWith("quote"),
+  },
+  {
+    folder: "blocks",
+    title: "Blocks",
+    match: (item) => item.type === "registry:block",
+  },
   {
     folder: "primitives",
     title: "Primitives",
@@ -50,15 +89,6 @@ for (const group of groups) {
   mkdirSync(dir, { recursive: true });
 
   for (const item of items) {
-    const deps = [
-      ...(item.dependencies ?? []),
-      ...(item.registryDependencies ?? []).map((dep) =>
-        dep
-          .replace("https://ui.souravinsights.com/r/", "")
-          .replace(".json", "")
-      ),
-    ];
-
     const fileEntries = (item.files ?? []).map((file) => {
       let content = "";
       try {
@@ -68,22 +98,42 @@ for (const group of groups) {
       }
       return { path: file.path, content };
     });
-
     sources[item.name] = fileEntries;
 
     const demo = demos[item.name];
-    const preview = demo ? `<ComponentPreview name="${demo}" />\n\n` : "";
+    if (demo) {
+      sources[demo] = [
+        {
+          path: `src/components/demos/${demo}.tsx`,
+          content: readFileSync(
+            join(root, "src", "components", "demos", `${demo}.tsx`),
+            "utf8"
+          ),
+        },
+      ];
+    }
 
-    const manual = fileEntries
-      .map(
-        (file) =>
-          "### `" +
-          file.path +
-          "`\n\n```tsx\n" +
-          file.content.replace(/```/g, "'''") +
-          "\n```\n"
-      )
-      .join("\n");
+    const npmDeps = item.dependencies ?? [];
+    const authored = registryDocs[item.name] ?? {};
+
+    const preview = demo ? `<ComponentPreview name="${demo}" />\n\n` : "";
+    const usage = authored.usage ? `\n## Usage\n\n${authored.usage}\n` : "";
+
+    const examples = (authored.examples ?? [])
+      .map((name) => `<ComponentPreview name="${name}" />`)
+      .join("\n\n");
+    const examplesSection = examples
+      ? `\n## Examples\n\n${examples}\n`
+      : "";
+
+    const depsStep = npmDeps.length
+      ? `<Step>Install the following dependencies:</Step>
+
+\`\`\`bash
+npm install ${npmDeps.join(" ")}
+\`\`\`
+`
+      : "";
 
     writeFileSync(
       join(dir, `${item.name}.mdx`),
@@ -94,22 +144,32 @@ description: ${JSON.stringify(item.description ?? "")}
 
 ${preview}## Installation
 
+<Tabs defaultValue="cli">
+<TabsList>
+<TabsTrigger value="cli">Command</TabsTrigger>
+<TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+<TabsContent value="cli">
+
 \`\`\`bash
 npx shadcn@latest add https://ui.souravinsights.com/r/${item.name}.json
 \`\`\`
 
-## Dependencies
+</TabsContent>
+<TabsContent value="manual">
 
-${deps.length ? deps.map((dep) => `- \`${dep}\``).join("\n") : "None."}
+<Steps>
+${depsStep}
+<Step>Copy and paste the following code into your project.</Step>
 
-## Files
+<ComponentSource name="${item.name}" />
 
-${(item.files ?? []).map((file) => `- \`${file.path}\``).join("\n")}
+<Step>Update the import paths to match your project setup.</Step>
+</Steps>
 
-## Source
-
-${manual}
-`
+</TabsContent>
+</Tabs>
+${usage}${examplesSection}`
     );
   }
 

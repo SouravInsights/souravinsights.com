@@ -131,6 +131,12 @@ type HighlightMark = {
 - `shadcn build` → `public/r/*.json`.
 - Docs are on Fumadocs. Hand-written index, installation and examples pages;
   one generated MDX page per registry item. Search and sidebar are Fumadocs'.
+- Each item page follows shadcn: a centred `<ComponentPreview>` with the demo
+  source behind View Code, Installation with Command and Manual tabs (Steps +
+  `<ComponentSource>`), then an authored Usage and any examples.
+- Every item has a demo (`src/components/demos/<name>-demo.tsx`); the generator
+  reads the demo source and the registry source into `src/generated`.
+- Authored Usage and examples live in `scripts/registry-docs.mjs`.
 
 ## Naming
 

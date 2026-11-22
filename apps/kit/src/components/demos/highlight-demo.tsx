@@ -18,17 +18,18 @@ export function HighlightDemo() {
   useEffect(() => setReady(true), []);
 
   return (
-    <>
-      <div ref={containerRef} className="max-w-prose text-[15px] leading-7">
-        <p>
-          The best interfaces disappear. You stop noticing the buttons and the
-          panels and the type, and you are left with the thing you came to do.
-        </p>
-        <p>
-          Select any sentence here. The palette opens on the words, and the
-          highlight stays for as long as the page is open.
-        </p>
-      </div>
+    <div
+      ref={containerRef}
+      className="w-full max-w-prose text-[15px] leading-7"
+    >
+      <p>
+        The best interfaces disappear. You stop noticing the buttons and the
+        panels and the type, and you are left with the thing you came to do.
+      </p>
+      <p className="mt-4">
+        Select any sentence here. The palette opens on the words, and the
+        highlight stays for as long as the page is open.
+      </p>
 
       {ready && (
         <Highlight
@@ -54,6 +55,6 @@ export function HighlightDemo() {
           publication="souravinsights.com"
         />
       )}
-    </>
+    </div>
   );
 }

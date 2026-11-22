@@ -11,7 +11,7 @@ export function QuoteDialogDemo() {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
+    <div>
       <Button variant="outline" onClick={() => setOpen(true)}>
         Share quote
       </Button>
@@ -23,6 +23,6 @@ export function QuoteDialogDemo() {
         title="Disappearing interfaces"
         publication="souravinsights.com"
       />
-    </>
+    </div>
   );
 }

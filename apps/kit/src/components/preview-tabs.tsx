@@ -1,66 +1,68 @@
 "use client";
 
 import * as React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export interface PreviewFile {
   path: string;
   content: string;
 }
 
+/**
+ * A demo with its source underneath. The source is clipped behind a
+ * "View Code" button until the reader asks for it, like the shadcn docs.
+ */
 export function PreviewTabs({
   preview,
-  files,
+  source,
   className,
 }: {
   preview: React.ReactNode;
-  files: PreviewFile[];
+  source: React.ReactNode;
   className?: string;
 }) {
-  const [value, setValue] = React.useState("preview");
+  const [showCode, setShowCode] = React.useState(false);
 
   return (
     <div
       data-slot="component-preview"
       className={cn(
-        "group relative my-4 overflow-hidden rounded-xl border",
+        "group relative my-6 flex flex-col overflow-hidden rounded-xl border",
         className
       )}
     >
-      <Tabs value={value} onValueChange={setValue}>
-        <div className="flex items-center justify-between border-b bg-muted/40 px-2 py-1.5">
-          <TabsList className="h-7 bg-transparent p-0">
-            <TabsTrigger value="preview" className="h-6 px-2 text-xs">
-              Preview
-            </TabsTrigger>
-            <TabsTrigger value="code" className="h-6 px-2 text-xs">
-              Code
-            </TabsTrigger>
-          </TabsList>
-        </div>
+      <div className="flex min-h-72 w-full items-center justify-center p-10">
+        {preview}
+      </div>
 
-        <TabsContent value="preview" className="m-0">
-          <div className="flex min-h-[220px] items-center justify-center p-6">
-            {preview}
+      <div className="relative border-t">
+        {showCode ? (
+          <div className="[&_[data-slot=component-source]]:m-0 [&_[data-slot=component-source]]:rounded-none [&_[data-slot=component-source]]:border-0">
+            {source}
           </div>
-        </TabsContent>
-
-        <TabsContent value="code" className="m-0">
-          <div className="max-h-[420px] overflow-auto">
-            {files.map((file) => (
-              <div key={file.path}>
-                <div className="sticky top-0 border-b bg-muted/60 px-3 py-1.5 font-mono text-[11px] text-muted-foreground">
-                  {file.path}
-                </div>
-                <pre className="overflow-x-auto px-3 py-3 text-[12px] leading-5">
-                  <code>{file.content}</code>
-                </pre>
-              </div>
-            ))}
+        ) : (
+          <div className="relative">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none max-h-52 overflow-hidden"
+            >
+              {source}
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-background via-background/85 to-transparent">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="relative z-10"
+                onClick={() => setShowCode(true)}
+              >
+                View Code
+              </Button>
+            </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
     </div>
   );
 }
