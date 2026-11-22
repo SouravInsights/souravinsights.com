@@ -3,6 +3,33 @@
 Goal: highlights + quote cards as shadcn-style registry items. Copy the source,
 own it, edit it. Docs at `ui.souravinsights.com`.
 
+## One copy, two apps
+
+`packages/registry` is the only source. Both apps alias it from `tsconfig.json`;
+neither keeps an installed copy:
+
+| Alias | Target |
+| :--- | :--- |
+| `@/components/highlight/*` | `packages/registry/src/highlight` |
+| `@/components/quote/*` | `packages/registry/src/quote` |
+| `@/components/blocks/*` | `packages/registry/src/blocks` |
+| `@/components/ui/*` (custom primitives) | `packages/registry/src/ui` |
+| `@/hooks/*`, `@/lib/highlight-*` | `packages/registry/src/hooks`, `.../lib` |
+
+shadcn built-ins (`button`, `popover`, `tooltip`, `dialog`, `tabs`, …) stay
+installed per app.
+
+### React versions
+
+The site runs Next 14 + React 18; the kit runs Next 16 + React 19. Yarn 1 would
+otherwise hoist one version and nest the other, mixing `@types/react` inside a
+single TS program. Two guards keep them apart:
+
+- root `workspaces.nohoist` pins `react`, `react-dom`, `@types/react` and
+  `@types/react-dom` inside `kit` and `site`;
+- each app maps `react`, `react/*`, `react-dom`, `react-dom/*` to its own
+  `@types`, so registry source compiled by that app sees one React.
+
 ## The design is locked
 
 The current highlight palette, quote studio, carousel, variant swatches, colour

@@ -8,7 +8,7 @@ import { copyPassageLink } from "../utils/passage";
 /** The studio is the heaviest part and only opens on demand. */
 const ShareQuoteDialog = dynamic(
   () =>
-    import("@/components/share-quote/dialog").then((m) => m.ShareQuoteDialog),
+    import("@/components/quote/dialog").then((m) => m.ShareQuoteDialog),
   { ssr: false }
 );
 

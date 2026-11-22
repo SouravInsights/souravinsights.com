@@ -23,7 +23,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ArticleBody } from "./ArticleBody";
 import { HighlightRail, type HighlightRailItem } from "@/components/highlight/highlight-rail";
 import { CoReader, type Tab } from "./CoReader";
-import { ShareQuoteDialog } from "@/components/share-quote/dialog";
+import { ShareQuoteDialog } from "@/components/quote/dialog";
 import {
   APPEARANCE_DEFAULT,
   ReaderAppearance,

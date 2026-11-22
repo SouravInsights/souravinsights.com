@@ -6,7 +6,6 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from "@/components/ui/popover";
-import { Arrow } from "@radix-ui/react-popover";
 import {
   useAnchoredPanel,
   type AnchoredPanelAnchor,
@@ -68,17 +67,26 @@ const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(
           event.preventDefault();
           onCloseAutoFocus?.(event);
         }}
-        className={cn("w-auto p-3", className)}
+        className={cn("group w-auto p-3", className)}
         {...props}
       >
         {children}
         {arrow && (
-          <Arrow asChild width={20} height={10}>
+          <span
+            data-slot="anchored-panel-arrow"
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none absolute flex w-5 justify-center",
+              "group-data-[side=top]:-bottom-2.5 group-data-[side=top]:left-1/2 group-data-[side=top]:-translate-x-1/2",
+              "group-data-[side=bottom]:-top-2.5 group-data-[side=bottom]:left-1/2 group-data-[side=bottom]:-translate-x-1/2 group-data-[side=bottom]:rotate-180",
+              "group-data-[side=left]:top-1/2 group-data-[side=left]:-right-2.5 group-data-[side=left]:-translate-y-1/2 group-data-[side=left]:-rotate-90",
+              "group-data-[side=right]:top-1/2 group-data-[side=right]:-left-2.5 group-data-[side=right]:-translate-y-1/2 group-data-[side=right]:rotate-90"
+            )}
+          >
             <svg
-              width={20}
-              height={10}
+              width="20"
+              height="10"
               viewBox="0 0 20 10"
-              aria-hidden="true"
               className="overflow-visible"
             >
               <path d="M1 -1 L10 9 L19 -1 Z" fill="hsl(var(--background))" />
@@ -90,7 +98,7 @@ const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(
                 strokeLinejoin="round"
               />
             </svg>
-          </Arrow>
+          </span>
         )}
       </PopoverContent>
     </Popover>

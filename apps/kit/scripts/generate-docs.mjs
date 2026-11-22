@@ -6,6 +6,16 @@ const registry = JSON.parse(
   readFileSync(join(root, "public", "r", "registry.json"), "utf8")
 );
 
+const registryRoot = join(root, "..", "..", "packages", "registry");
+
+/** registry items that have a live demo in src/components/demos */
+const demos = {
+  highlight: "highlight-demo",
+  "quote-share-dialog": "quote-dialog-demo",
+};
+
+const sources = {};
+
 const base = join(root, "content", "docs", "components");
 rmSync(base, { recursive: true, force: true });
 mkdirSync(base, { recursive: true });
@@ -48,8 +58,31 @@ for (const group of groups) {
           .replace(".json", "")
       ),
     ];
-    const files = (item.files ?? [])
-      .map((file) => `- \`${file.path}\``)
+
+    const fileEntries = (item.files ?? []).map((file) => {
+      let content = "";
+      try {
+        content = readFileSync(join(registryRoot, file.path), "utf8");
+      } catch {
+        content = "";
+      }
+      return { path: file.path, content };
+    });
+
+    sources[item.name] = fileEntries;
+
+    const demo = demos[item.name];
+    const preview = demo ? `<ComponentPreview name="${demo}" />\n\n` : "";
+
+    const manual = fileEntries
+      .map(
+        (file) =>
+          "### `" +
+          file.path +
+          "`\n\n```tsx\n" +
+          file.content.replace(/```/g, "'''") +
+          "\n```\n"
+      )
       .join("\n");
 
     writeFileSync(
@@ -58,6 +91,8 @@ for (const group of groups) {
 title: ${JSON.stringify(item.title ?? item.name)}
 description: ${JSON.stringify(item.description ?? "")}
 ---
+
+${preview}## Installation
 
 \`\`\`bash
 npx shadcn@latest add https://ui.souravinsights.com/r/${item.name}.json
@@ -69,7 +104,11 @@ ${deps.length ? deps.map((dep) => `- \`${dep}\``).join("\n") : "None."}
 
 ## Files
 
-${files}
+${(item.files ?? []).map((file) => `- \`${file.path}\``).join("\n")}
+
+## Source
+
+${manual}
 `
     );
   }
@@ -87,4 +126,10 @@ ${files}
 writeFileSync(
   join(base, "meta.json"),
   JSON.stringify({ title: "Components", pages: folders }, null, 2)
+);
+
+mkdirSync(join(root, "src", "generated"), { recursive: true });
+writeFileSync(
+  join(root, "src", "generated", "sources.json"),
+  JSON.stringify(sources, null, 2)
 );

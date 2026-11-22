@@ -2,10 +2,22 @@
   "name": "souravinsights",
   "private": true,
   "version": "0.1.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "kit/react",
+      "kit/react-dom",
+      "kit/@types/react",
+      "kit/@types/react-dom",
+      "site/react",
+      "site/react-dom",
+      "site/@types/react",
+      "site/@types/react-dom"
+    ]
+  },
   "scripts": {
     "dev": "turbo run dev --parallel",
     "dev:site": "turbo run dev --filter=site",
