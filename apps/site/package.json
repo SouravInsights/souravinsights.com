@@ -10,7 +10,7 @@
     "start": "next start",
     "inspect": "tsx scripts/kb-inspect.ts",
     "trace": "tsx scripts/kb-trace.ts",
-    "typecheck": "oxlint --type-aware --type-check .",
+    "typecheck": "next typegen && oxlint --type-aware --type-check .",
     "typecheck:tsc": "tsc --noEmit"
   },
   "dependencies": {
