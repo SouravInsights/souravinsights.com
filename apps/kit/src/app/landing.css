@@ -426,6 +426,25 @@
   flex: 1;
 }
 
+/* The one reveal: a single wipe on clip-path, left to right, so the hues are
+   uncovered rather than stretched. Armed before paint; shown on first sight. */
+.landing .foot-palette[data-armed] {
+  clip-path: inset(0 100% 0 0);
+}
+
+.landing .foot-palette[data-shown] {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 720ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing .foot-palette,
+  .landing .foot-palette[data-armed] {
+    clip-path: none;
+    transition: none;
+  }
+}
+
 .landing .foot-bar {
   display: flex;
   align-items: center;
