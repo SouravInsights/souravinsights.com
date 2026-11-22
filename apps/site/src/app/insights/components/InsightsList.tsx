@@ -5,7 +5,25 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion";
 import { useFeedback } from "@/hooks/useFeedback";
 import { useTheme } from "@/context/ThemeContext";
-import { ArrowUp, ArrowsDownUp, Check, CaretDown, Clock, ArrowSquareOut, Heart, ClockCounterClockwise, SquaresFour, LinkSimple, List as ListIcon, CircleNotch, MagnifyingGlass, Shuffle, Tag, Trash, X } from "@phosphor-icons/react";
+import {
+  ArrowUp,
+  ArrowsDownUp,
+  Check,
+  CaretDown,
+  Clock,
+  ArrowSquareOut,
+  Heart,
+  ClockCounterClockwise,
+  SquaresFour,
+  LinkSimple,
+  List as ListIcon,
+  CircleNotch,
+  MagnifyingGlass,
+  Shuffle,
+  Tag,
+  Trash,
+  X,
+} from "@phosphor-icons/react";
 import type { InsightsGroup } from "../utils/links-data";
 import type { InsightsClientLink } from "../utils/links-data";
 import {
@@ -24,10 +42,7 @@ import { CATEGORY_ORDER, categoryLabel } from "../utils/categories";
 import { LikeButton } from "@/components/LikeButton";
 import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
-import {
-  PreviewCardProvider,
-  PreviewCardTrigger,
-} from "@/components/ui/PreviewCard";
+import { PreviewCardProvider, PreviewCardTrigger } from "@/components/ui/PreviewCard";
 import { PreviewLoader } from "@/components/ui/PreviewLoader";
 import { ReaderView } from "./reader/ReaderView";
 import { prefetchArticle } from "./reader/article-query";
@@ -113,16 +128,13 @@ export default function InsightsList({
       groups
         // Only surface categories we have a label/order for. Anything else
         // would leak in as a raw name.
-        .filter(
-          (group) =>
-            (CATEGORY_ORDER as string[]).includes(group.name)
-        )
+        .filter((group) => (CATEGORY_ORDER as string[]).includes(group.name))
         .sort(
           (a, b) =>
             (CATEGORY_ORDER as string[]).indexOf(a.name) -
-            (CATEGORY_ORDER as string[]).indexOf(b.name)
+            (CATEGORY_ORDER as string[]).indexOf(b.name),
         ),
-    [groups]
+    [groups],
   );
 
   /**
@@ -155,7 +167,7 @@ export default function InsightsList({
         label: categoryLabel(group.name),
       })),
     ],
-    [sortedGroups]
+    [sortedGroups],
   );
 
   const activeFilterLabel =
@@ -173,7 +185,7 @@ export default function InsightsList({
     const scope =
       activeCategory === "all"
         ? sortedGroups.flatMap((group) => linkData[group.name] ?? [])
-        : linkData[activeCategory] ?? [];
+        : (linkData[activeCategory] ?? []);
     const counts = new Map<string, number>();
     for (const link of scope) {
       for (const topic of link.topics ?? []) {
@@ -189,7 +201,7 @@ export default function InsightsList({
    */
   const topicOptions = useMemo(() => {
     const all = Array.from(topicCounts.entries()).sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
     );
     const query = topicQuery.trim().toLowerCase();
     if (query) return all.filter(([topic]) => topic.includes(query)).slice(0, 60);
@@ -206,15 +218,13 @@ export default function InsightsList({
         .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
         .slice(0, 10)
         .map(([topic, count]) => ({ topic, count })),
-    [topicCounts]
+    [topicCounts],
   );
 
   const toggleTopic = (topic: string) => {
     feedback.select();
     setSelectedTopics((current) =>
-      current.includes(topic)
-        ? current.filter((t) => t !== topic)
-        : [...current, topic]
+      current.includes(topic) ? current.filter((t) => t !== topic) : [...current, topic],
     );
   };
 
@@ -226,7 +236,7 @@ export default function InsightsList({
             (linkData[group.name] || []).map((link) => ({
               ...link,
               category: group.name,
-            }))
+            })),
           )
         : (linkData[activeCategory] || []).map((link) => ({
             ...link,
@@ -246,7 +256,7 @@ export default function InsightsList({
       (linkData[group.name] || []).map((link) => ({
         ...link,
         category: group.name,
-      }))
+      })),
     );
     return dedupeByUrl(sortByNewest(source));
   }, [sortedGroups, linkData]);
@@ -258,7 +268,7 @@ export default function InsightsList({
     // topics this small; category and search stay strict.
     if (selectedTopics.length > 0) {
       result = result.filter((link) =>
-        selectedTopics.some((topic) => (link.topics ?? []).includes(topic))
+        selectedTopics.some((topic) => (link.topics ?? []).includes(topic)),
       );
     }
 
@@ -268,7 +278,7 @@ export default function InsightsList({
       (link) =>
         link.title.toLowerCase().includes(query) ||
         link.url.toLowerCase().includes(query) ||
-        (link.topics ?? []).some((topic) => topic.includes(query))
+        (link.topics ?? []).some((topic) => topic.includes(query)),
     );
   }, [links, searchTerm, selectedTopics]);
 
@@ -277,9 +287,7 @@ export default function InsightsList({
     if (sort === "newest") return filteredLinks;
     if (sort === "oldest") return sortByOldest(filteredLinks);
     if (sort === "shuffle") return seededShuffle(filteredLinks, shuffleSeed);
-    return [...filteredLinks].sort(
-      (a, b) => (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0)
-    );
+    return [...filteredLinks].sort((a, b) => (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0));
   }, [filteredLinks, sort, likeCounts, shuffleSeed]);
 
   useEffect(() => {
@@ -336,9 +344,7 @@ export default function InsightsList({
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       const typing =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.isContentEditable;
+        target?.tagName === "INPUT" || target?.tagName === "TEXTAREA" || target?.isContentEditable;
 
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
@@ -372,11 +378,7 @@ export default function InsightsList({
     // Versioned key: the old key held "newest" written by the previous
     // default, which would otherwise keep overriding the new one.
     const storedSort = window.localStorage.getItem("insights:sort-v2");
-    if (
-      storedSort === "liked" ||
-      storedSort === "newest" ||
-      storedSort === "shuffle"
-    ) {
+    if (storedSort === "liked" || storedSort === "newest" || storedSort === "shuffle") {
       setSort(storedSort);
     }
   }, []);
@@ -468,22 +470,14 @@ export default function InsightsList({
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const loadPreview = async (
-    url: string,
-    refresh: boolean,
-    attempt = 0
-  ): Promise<void> => {
+  const loadPreview = async (url: string, refresh: boolean, attempt = 0): Promise<void> => {
     let responded = false;
     try {
       const response = await fetch(
-        `/api/link-preview?url=${encodeURIComponent(url)}${
-          refresh ? "&refresh=1" : ""
-        }&json=1`
+        `/api/link-preview?url=${encodeURIComponent(url)}${refresh ? "&refresh=1" : ""}&json=1`,
       );
       responded = true;
-      const data = response.ok
-        ? ((await response.json()) as { preview?: string })
-        : null;
+      const data = response.ok ? ((await response.json()) as { preview?: string }) : null;
       if (!data?.preview) throw new Error("no preview");
       const preview = data.preview;
       setPreviewMap((prev) => ({ ...prev, [url]: preview }));
@@ -580,7 +574,7 @@ export default function InsightsList({
       const entering: string[] = [];
 
       for (const element of Array.from(
-        container.querySelectorAll<HTMLElement>("[data-warm-url]")
+        container.querySelectorAll<HTMLElement>("[data-warm-url]"),
       )) {
         const url = element.dataset.warmUrl;
         if (!url) continue;
@@ -613,9 +607,7 @@ export default function InsightsList({
 
   // Everything the current filter/search shows, minus what we've hidden this
   // session. `visibleLinks` is just the current page of it.
-  const selectableLinks = sortedLinks.filter(
-    (link) => !hiddenKeys.has(normalizeUrl(link.url))
-  );
+  const selectableLinks = sortedLinks.filter((link) => !hiddenKeys.has(normalizeUrl(link.url)));
   const visibleLinks = selectableLinks.slice(0, visibleItems);
 
   // --- Clean-up (batch delete) -------------------------------------------
@@ -633,8 +625,7 @@ export default function InsightsList({
 
   const clearSelection = () => setSelected(new Set());
 
-  const selectAllShown = () =>
-    setSelected(new Set(selectableLinks.map((link) => link.url)));
+  const selectAllShown = () => setSelected(new Set(selectableLinks.map((link) => link.url)));
 
   const toggleCleanup = () => {
     feedback.select();
@@ -663,8 +654,8 @@ export default function InsightsList({
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ urls: batch }),
-        })
-      )
+        }),
+      ),
     );
   };
 
@@ -726,510 +717,496 @@ export default function InsightsList({
   return (
     <PreviewCardProvider>
       <div>
-      {/* App bar — the collection's categories on the left; view, sort and the
+        {/* App bar — the collection's categories on the left; view, sort and the
           command trigger on the right. Sticks to the top of the panel: the
           frame is a rail on the left and a tab bar at the bottom, so nothing is
           above it to fight for the edge (the floating navbar used to duck out
           of the way for this). */}
-      <StickyBar>
-        {/* Category filter — the dropdown the page has always used. */}
-        <div className="flex min-w-0 flex-1 items-center">
-          <FilterMenu
-            label={activeFilterLabel}
-            value={activeCategory}
-            options={filters.map((filter) => ({
-              value: filter.name,
-              label: filter.label,
-            }))}
-            onChange={setActiveCategory}
-            ariaLabel="Filter"
-            align="left"
-          />
+        <StickyBar>
+          {/* Category filter — the dropdown the page has always used. */}
+          <div className="flex min-w-0 flex-1 items-center">
+            <FilterMenu
+              label={activeFilterLabel}
+              value={activeCategory}
+              options={filters.map((filter) => ({
+                value: filter.name,
+                label: filter.label,
+              }))}
+              onChange={setActiveCategory}
+              ariaLabel="Filter"
+              align="left"
+            />
 
-          {/* Topics — a picker, not a cloud: the head is listed, the long
+            {/* Topics — a picker, not a cloud: the head is listed, the long
               tail is a search away. Either-of semantics. */}
-          <div ref={topicsMenuRef} className="relative ml-2">
-            <button
-              type="button"
-              onClick={() => setTopicsOpen((open) => !open)}
-              aria-haspopup="dialog"
-              aria-expanded={topicsOpen}
-              aria-label="Filter by topic"
-              className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
-            >
-              <Tag className="h-4 w-4 shrink-0 sm:hidden" />
-              <span className="hidden sm:inline">Topics</span>
-              {selectedTopics.length > 0 && (
-                <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
-                  {selectedTopics.length}
-                </span>
-              )}
-              <CaretDown
-                className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
-                  topicsOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {topicsOpen && (
-              <div className="absolute left-0 top-full z-30 mt-1 flex max-h-[min(55svh,18rem)] w-[min(72vw,11.5rem)] flex-col overflow-hidden overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5">
-                <div className="p-1">
-                  <input
-                    type="text"
-                    value={topicQuery}
-                    onChange={(event) => setTopicQuery(event.target.value)}
-                    placeholder="Find a topic"
-                    spellCheck={false}
-                    aria-label="Find a topic"
-                    className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
-                  />
-                </div>
-                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-                  {topicOptions.length === 0 ? (
-                    <p className="px-3 py-2 type-caption text-muted-foreground">
-                      No topics match “{topicQuery}”.
-                    </p>
-                  ) : (
-                    topicOptions.map(([topic, count]) => {
-                      const active = selectedTopics.includes(topic);
-                      return (
-                        <button
-                          key={topic}
-                          type="button"
-                          role="option"
-                          aria-selected={active}
-                          onClick={() => toggleTopic(topic)}
-                          className={`flex w-full items-center justify-between gap-1.5 rounded-[3px] px-2 py-1.5 text-left type-caption transition-colors ${
-                            active
-                              ? "bg-foreground/[0.06] text-foreground"
-                              : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
-                          }`}
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span
-                              className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] border ${
-                                active
-                                  ? "border-foreground bg-foreground text-background"
-                                  : "border-muted-foreground/40"
-                              }`}
-                            >
-                              {active && <Check className="h-2.5 w-2.5" />}
+            <div ref={topicsMenuRef} className="relative ml-2">
+              <button
+                type="button"
+                onClick={() => setTopicsOpen((open) => !open)}
+                aria-haspopup="dialog"
+                aria-expanded={topicsOpen}
+                aria-label="Filter by topic"
+                className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
+              >
+                <Tag className="h-4 w-4 shrink-0 sm:hidden" />
+                <span className="hidden sm:inline">Topics</span>
+                {selectedTopics.length > 0 && (
+                  <span className="rounded-full bg-foreground/10 px-1.5 text-[11px] tabular-nums">
+                    {selectedTopics.length}
+                  </span>
+                )}
+                <CaretDown
+                  className={`h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform ${
+                    topicsOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {topicsOpen && (
+                <div className="absolute left-0 top-full z-30 mt-1 flex max-h-[min(55svh,18rem)] w-[min(72vw,11.5rem)] flex-col overflow-hidden overscroll-contain rounded-lg [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:border-0 [&::-webkit-scrollbar]:w-1.5 border border-border bg-background p-1 shadow-lg shadow-black/5">
+                  <div className="p-1">
+                    <input
+                      type="text"
+                      value={topicQuery}
+                      onChange={(event) => setTopicQuery(event.target.value)}
+                      placeholder="Find a topic"
+                      spellCheck={false}
+                      aria-label="Find a topic"
+                      className="h-8 w-full rounded-md border border-border bg-transparent px-2.5 text-sm outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30"
+                    />
+                  </div>
+                  <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                    {topicOptions.length === 0 ? (
+                      <p className="px-3 py-2 type-caption text-muted-foreground">
+                        No topics match “{topicQuery}”.
+                      </p>
+                    ) : (
+                      topicOptions.map(([topic, count]) => {
+                        const active = selectedTopics.includes(topic);
+                        return (
+                          <button
+                            key={topic}
+                            type="button"
+                            role="option"
+                            aria-selected={active}
+                            onClick={() => toggleTopic(topic)}
+                            className={`flex w-full items-center justify-between gap-1.5 rounded-[3px] px-2 py-1.5 text-left type-caption transition-colors ${
+                              active
+                                ? "bg-foreground/[0.06] text-foreground"
+                                : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                            }`}
+                          >
+                            <span className="flex min-w-0 items-center gap-2">
+                              <span
+                                className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[4px] border ${
+                                  active
+                                    ? "border-foreground bg-foreground text-background"
+                                    : "border-muted-foreground/40"
+                                }`}
+                              >
+                                {active && <Check className="h-2.5 w-2.5" />}
+                              </span>
+                              <span className="truncate">{topic}</span>
                             </span>
-                            <span className="truncate">{topic}</span>
-                          </span>
-                          <span className="shrink-0 tabular-nums text-faint-foreground">
-                            {count}
-                          </span>
-                        </button>
-                      );
-                    })
+                            <span className="shrink-0 tabular-nums text-faint-foreground">
+                              {count}
+                            </span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                  {selectedTopics.length > 0 && (
+                    <div className="mt-1 border-t border-border p-1">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTopics([])}
+                        className="w-full rounded-[3px] px-3 py-1.5 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
+                      >
+                        Clear topics
+                      </button>
+                    </div>
                   )}
                 </div>
-                {selectedTopics.length > 0 && (
-                  <div className="mt-1 border-t border-border p-1">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedTopics([])}
-                      className="w-full rounded-[3px] px-3 py-1.5 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/[0.03] hover:text-foreground"
-                    >
-                      Clear topics
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* View, sort, and the command trigger. Batch delete lives in the sort
+          {/* View, sort, and the command trigger. Batch delete lives in the sort
             menu's admin section — it is an admin action, not a view, and on a
             phone the toolbar has no room to spare. */}
-        <div className="flex shrink-0 items-center gap-2">
-          <SegmentedControl
-            options={[
-              { value: "list", label: "List view", icon: ListIcon },
-              { value: "grid", label: "Grid view", icon: SquaresFour },
-            ]}
-            value={view}
-            onChange={setView}
-            layoutId="insights-view-pill"
-          />
+          <div className="flex shrink-0 items-center gap-2">
+            <SegmentedControl
+              options={[
+                { value: "list", label: "List view", icon: ListIcon },
+                { value: "grid", label: "Grid view", icon: SquaresFour },
+              ]}
+              value={view}
+              onChange={setView}
+              layoutId="insights-view-pill"
+            />
 
-          {/* Sort — recency, quality, or a shuffle */}
-              <div ref={sortMenuRef} className="relative">
-                <button
-                  type="button"
-                  onClick={() => setSortMenuOpen((open) => !open)}
-                  aria-haspopup="listbox"
-                  aria-expanded={sortMenuOpen}
-                  aria-label={`Sort: ${SORT_LABELS[sort]}`}
-                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-2.5 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9 sm:px-3"
+            {/* Sort — recency, quality, or a shuffle */}
+            <div ref={sortMenuRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setSortMenuOpen((open) => !open)}
+                aria-haspopup="listbox"
+                aria-expanded={sortMenuOpen}
+                aria-label={`Sort: ${SORT_LABELS[sort]}`}
+                className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-2.5 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9 sm:px-3"
+              >
+                <ArrowsDownUp className="h-3.5 w-3.5 shrink-0 text-faint-foreground" />
+                <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
+                <CaretDown
+                  className={`hidden h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform sm:block ${
+                    sortMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {sortMenuOpen && (
+                <div
+                  role="listbox"
+                  className="absolute right-0 top-full z-30 mt-1 w-44 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
                 >
-                  <ArrowsDownUp className="h-3.5 w-3.5 shrink-0 text-faint-foreground" />
-                  <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
-                  <CaretDown
-                    className={`hidden h-3.5 w-3.5 shrink-0 text-faint-foreground transition-transform sm:block ${
-                      sortMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {sortMenuOpen && (
-                  <div
-                    role="listbox"
-                    className="absolute right-0 top-full z-30 mt-1 w-44 rounded-lg border border-border bg-background p-1 shadow-lg shadow-black/5"
-                  >
-                    {[
-                      { value: "newest" as const, label: "Newest", icon: Clock },
-                      {
-                        value: "liked" as const,
-                        label: "Most liked",
-                        icon: Heart,
-                      },
-                      {
-                        value: "shuffle" as const,
-                        label: "Shuffle",
-                        icon: Shuffle,
-                      },
-                      // Oldest is a clean-up tool, so it only exists for admins.
-                      ...(isAdmin
-                        ? [
-                            {
-                              value: "oldest" as const,
-                              label: "Oldest",
-                              icon: ClockCounterClockwise,
-                            },
-                          ]
-                        : []),
-                    ].map((option) => (
+                  {[
+                    { value: "newest" as const, label: "Newest", icon: Clock },
+                    {
+                      value: "liked" as const,
+                      label: "Most liked",
+                      icon: Heart,
+                    },
+                    {
+                      value: "shuffle" as const,
+                      label: "Shuffle",
+                      icon: Shuffle,
+                    },
+                    // Oldest is a clean-up tool, so it only exists for admins.
+                    ...(isAdmin
+                      ? [
+                          {
+                            value: "oldest" as const,
+                            label: "Oldest",
+                            icon: ClockCounterClockwise,
+                          },
+                        ]
+                      : []),
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="option"
+                      aria-selected={sort === option.value}
+                      onClick={() => {
+                        feedback.select();
+                        setSort(option.value);
+                        setSortMenuOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
+                        sort === option.value
+                          ? "bg-foreground/[0.06] text-foreground"
+                          : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <option.icon className="h-3.5 w-3.5" />
+                        {option.label}
+                      </span>
+                      {sort === option.value && <Check className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
+                  ))}
+
+                  {/* Batch delete is an admin action, so it lives here rather
+                        than taking a slot in the toolbar. */}
+                  {isAdmin && (
+                    <>
+                      <div className="my-1 h-px bg-border" aria-hidden="true" />
                       <button
-                        key={option.value}
                         type="button"
-                        role="option"
-                        aria-selected={sort === option.value}
                         onClick={() => {
                           feedback.select();
-                          setSort(option.value);
                           setSortMenuOpen(false);
+                          toggleCleanup();
                         }}
-                        className={`flex w-full items-center justify-between gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
-                          sort === option.value
-                            ? "bg-foreground/[0.06] text-foreground"
+                        className={`flex w-full items-center gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
+                          cleanup
+                            ? "text-red-600"
                             : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
                         }`}
                       >
-                        <span className="flex items-center gap-2">
-                          <option.icon className="h-3.5 w-3.5" />
-                          {option.label}
-                        </span>
-                        {sort === option.value && (
-                          <Check className="h-3.5 w-3.5 shrink-0" />
+                        {cleanup ? (
+                          <Check className="h-3.5 w-3.5" />
+                        ) : (
+                          <Trash className="h-3.5 w-3.5" />
                         )}
+                        {cleanup ? "Done cleaning up" : "Clean up links"}
                       </button>
-                    ))}
-
-                    {/* Batch delete is an admin action, so it lives here rather
-                        than taking a slot in the toolbar. */}
-                    {isAdmin && (
-                      <>
-                        <div className="my-1 h-px bg-border" aria-hidden="true" />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            feedback.select();
-                            setSortMenuOpen(false);
-                            toggleCleanup();
-                          }}
-                          className={`flex w-full items-center gap-2 rounded-[3px] px-3 py-1.5 text-left type-caption transition-colors sm:py-2 ${
-                            cleanup
-                              ? "text-red-600"
-                              : "text-muted-foreground hover:bg-foreground/[0.03] hover:text-foreground"
-                          }`}
-                        >
-                          {cleanup ? (
-                            <Check className="h-3.5 w-3.5" />
-                          ) : (
-                            <Trash className="h-3.5 w-3.5" />
-                          )}
-                          {cleanup ? "Done cleaning up" : "Clean up links"}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-          {/* Command trigger. The palette is where search, topics and every
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* Command trigger. The palette is where search, topics and every
               other command live; the toolbar just opens the door. It wears the
               same geometry as the sort button beside it — 10/9 height, 3.5px
               glyph, faint icon — so the row reads as one set of controls.
               Desktop wears the label, a phone gets the glyph. */}
-          <button
-            type="button"
-            onClick={() => {
-              feedback.select();
-              setCommandOpen(true);
-            }}
-            aria-label="Search links or run a command"
-            aria-haspopup="dialog"
-            className="group hidden h-10 w-56 items-center gap-2.5 rounded-lg border border-border px-3 text-left transition-colors hover:bg-foreground/[0.03] sm:inline-flex sm:h-9"
-          >
-            <MagnifyingGlass
-              aria-hidden="true"
-              className="h-3.5 w-3.5 shrink-0 text-faint-foreground transition-colors group-hover:text-muted-foreground"
-            />
-            <span className="min-w-0 flex-1 truncate type-caption text-muted-foreground transition-colors group-hover:text-foreground">
-              Search or jump to…
-            </span>
-            {/* The key hint is a chip, and set in the UI face: the mono face has
+            <button
+              type="button"
+              onClick={() => {
+                feedback.select();
+                setCommandOpen(true);
+              }}
+              aria-label="Search links or run a command"
+              aria-haspopup="dialog"
+              className="group hidden h-10 w-56 items-center gap-2.5 rounded-lg border border-border px-3 text-left transition-colors hover:bg-foreground/[0.03] sm:inline-flex sm:h-9"
+            >
+              <MagnifyingGlass
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 text-faint-foreground transition-colors group-hover:text-muted-foreground"
+              />
+              <span className="min-w-0 flex-1 truncate type-caption text-muted-foreground transition-colors group-hover:text-foreground">
+                Search or jump to…
+              </span>
+              {/* The key hint is a chip, and set in the UI face: the mono face has
                 no ⌘ glyph, so it gets substituted at another size and baseline
                 and lands beside the K looking broken. */}
-            <kbd className="inline-flex h-[18px] shrink-0 items-center rounded-[5px] bg-foreground/[0.06] px-1.5 text-[10px] font-medium tracking-wide text-faint-foreground">
-              ⌘K
-            </kbd>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              feedback.select();
-              setCommandOpen(true);
-            }}
-            aria-label="Search links or run a command"
-            aria-haspopup="dialog"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
-          >
-            <MagnifyingGlass className="h-4 w-4" />
-          </button>
-        </div>
+              <kbd className="inline-flex h-[18px] shrink-0 items-center rounded-[5px] bg-foreground/[0.06] px-1.5 text-[10px] font-medium tracking-wide text-faint-foreground">
+                ⌘K
+              </kbd>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                feedback.select();
+                setCommandOpen(true);
+              }}
+              aria-label="Search links or run a command"
+              aria-haspopup="dialog"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground sm:hidden"
+            >
+              <MagnifyingGlass className="h-4 w-4" />
+            </button>
+          </div>
 
-        <div
-          className="rule absolute inset-x-5 bottom-0 w-auto sm:inset-x-6"
-          aria-hidden="true"
-        />
-      </StickyBar>
+          <div
+            className="rule absolute inset-x-5 bottom-0 w-auto sm:inset-x-6"
+            aria-hidden="true"
+          />
+        </StickyBar>
 
-      {/* Add a link. Only for admins, and only inside a real category: you
+        {/* Add a link. Only for admins, and only inside a real category: you
           pick the tab first, then drop. */}
-      {isAdmin && activeCategory !== "all" && (
-        <AddLinkComposer
-          category={activeCategory}
-          onAdded={() => router.refresh()}
-          onUnauthorized={loseAdminSession}
-        />
-      )}
+        {isAdmin && activeCategory !== "all" && (
+          <AddLinkComposer
+            category={activeCategory}
+            onAdded={() => router.refresh()}
+            onUnauthorized={loseAdminSession}
+          />
+        )}
 
-      {/* Active filters: only exist when a filter is on — chips as a receipt,
+        {/* Active filters: only exist when a filter is on — chips as a receipt,
           so the list's contents are never a mystery. */}
-      {(selectedTopics.length > 0 || searchTerm.trim() !== "") && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 px-3">
-          {searchTerm.trim() !== "" && (
-            <button
-              type="button"
-              onClick={() => setSearchTerm("")}
-              className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
-              aria-label={`Clear search for ${searchTerm}`}
-            >
-              “{searchTerm.trim()}”
-              <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
-            </button>
-          )}
-          {selectedTopics.map((topic) => (
-            <button
-              key={topic}
-              type="button"
-              onClick={() => toggleTopic(topic)}
-              className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
-              aria-label={`Remove topic ${topic}`}
-            >
-              {topic}
-              <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedTopics([]);
-              setSearchTerm("");
-            }}
-            className="type-caption text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Clear
-          </button>
-        </div>
-      )}
-
-      {/* Links */}
-      <div className="mt-6">
-        {visibleLinks.length === 0 ? (
-          <p className="px-3 py-10 text-center type-caption">
-            Nothing matches these filters.
+        {(selectedTopics.length > 0 || searchTerm.trim() !== "") && (
+          <div className="mt-4 flex flex-wrap items-center gap-2 px-3">
+            {searchTerm.trim() !== "" && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
+                aria-label={`Clear search for ${searchTerm}`}
+              >
+                “{searchTerm.trim()}”
+                <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
+              </button>
+            )}
+            {selectedTopics.map((topic) => (
+              <button
+                key={topic}
+                type="button"
+                onClick={() => toggleTopic(topic)}
+                className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/[0.03] px-2.5 py-1 type-caption text-foreground transition-colors hover:bg-foreground/[0.07]"
+                aria-label={`Remove topic ${topic}`}
+              >
+                {topic}
+                <X className="h-3 w-3 text-faint-foreground transition-colors group-hover:text-foreground" />
+              </button>
+            ))}
             <button
               type="button"
               onClick={() => {
                 setSelectedTopics([]);
                 setSearchTerm("");
               }}
-              className="ml-2 font-medium text-foreground underline-offset-4 hover:underline"
+              className="type-caption text-muted-foreground transition-colors hover:text-foreground"
             >
-              Clear filters
+              Clear
             </button>
-          </p>
-        ) : view === "list" ? (
-          <>
-            <div className="flex items-center gap-3 px-3 pb-3 type-body text-muted-foreground">
-              <span className="w-5 shrink-0" aria-hidden="true" />
-              <span className="flex-1">Name</span>
-              <span className="hidden w-44 shrink-0 sm:block">Site</span>
-              <span className="w-24 shrink-0 text-right">
-                {cleanup ? "" : "Likes"}
-              </span>
-            </div>
-            <div className="rule" aria-hidden="true" />
+          </div>
+        )}
 
-            <div className="flex flex-col">
+        {/* Links */}
+        <div className="mt-6">
+          {visibleLinks.length === 0 ? (
+            <p className="px-3 py-10 text-center type-caption">
+              Nothing matches these filters.
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedTopics([]);
+                  setSearchTerm("");
+                }}
+                className="ml-2 font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Clear filters
+              </button>
+            </p>
+          ) : view === "list" ? (
+            <>
+              <div className="flex items-center gap-3 px-3 pb-3 type-body text-muted-foreground">
+                <span className="w-5 shrink-0" aria-hidden="true" />
+                <span className="flex-1">Name</span>
+                <span className="hidden w-44 shrink-0 sm:block">Site</span>
+                <span className="w-24 shrink-0 text-right">{cleanup ? "" : "Likes"}</span>
+              </div>
+              <div className="rule" aria-hidden="true" />
+
+              <div className="flex flex-col">
+                {visibleLinks.map((link, index) => {
+                  const href = hrefFor(link);
+
+                  return (
+                    <div key={link.id}>
+                      {index > 0 && <div className="rule" aria-hidden="true" />}
+                      <FadeIn delay={Math.min(index, 12) * 0.03}>
+                        <LinkRow
+                          link={link}
+                          href={href}
+                          onRead={
+                            link.category === "article"
+                              ? (focus?: boolean) => openReader(link, focus)
+                              : undefined
+                          }
+                          previewSrc={
+                            previewMap[link.url] ??
+                            `/api/link-preview?url=${encodeURIComponent(link.url)}`
+                          }
+                          isAdmin={isAdmin}
+                          onHide={() => hideLink(link)}
+                          selectMode={cleanup}
+                          selected={selected.has(link.url)}
+                          onToggle={() => toggleSelected(link.url)}
+                        />
+                      </FadeIn>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div ref={gridRef} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {visibleLinks.map((link, index) => {
                 const href = hrefFor(link);
 
                 return (
-                  <div key={link.id}>
-                    {index > 0 && <div className="rule" aria-hidden="true" />}
-                    <FadeIn delay={Math.min(index, 12) * 0.03}>
-                      <LinkRow
-                        link={link}
-                        href={href}
-                        onRead={
-                          link.category === "article"
-                            ? (focus?: boolean) => openReader(link, focus)
-                            : undefined
-                        }
-                        previewSrc={
-                          previewMap[link.url] ??
-                          `/api/link-preview?url=${encodeURIComponent(link.url)}`
-                        }
-                        isAdmin={isAdmin}
-                        onHide={() => hideLink(link)}
-                        selectMode={cleanup}
-                        selected={selected.has(link.url)}
-                        onToggle={() => toggleSelected(link.url)}
-                      />
-                    </FadeIn>
-                  </div>
+                  <FadeIn key={link.id} className="h-full" delay={Math.min(index, 12) * 0.03}>
+                    <LinkGridCard
+                      link={link}
+                      href={href}
+                      onRead={
+                        link.category === "article"
+                          ? (focus?: boolean) => openReader(link, focus)
+                          : undefined
+                      }
+                      previewSrc={previewMap[link.url]}
+                      isVisible={visibleUrls.has(link.url)}
+                      isFailed={failedUrls.has(link.url)}
+                      onPreviewError={() => refreshPreview(link.url)}
+                      warmUrl={previewMap[link.url] ? undefined : link.url}
+                      isAdmin={isAdmin}
+                      onHide={() => hideLink(link)}
+                      selectMode={cleanup}
+                      selected={selected.has(link.url)}
+                      onToggle={() => toggleSelected(link.url)}
+                    />
+                  </FadeIn>
                 );
               })}
             </div>
-          </>
-        ) : (
-          <div
-            ref={gridRef}
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {visibleLinks.map((link, index) => {
-              const href = hrefFor(link);
-
-              return (
-                <FadeIn
-                  key={link.id}
-                  className="h-full"
-                  delay={Math.min(index, 12) * 0.03}
-                >
-                  <LinkGridCard
-                    link={link}
-                    href={href}
-                    onRead={
-                      link.category === "article"
-                        ? (focus?: boolean) => openReader(link, focus)
-                        : undefined
-                    }
-                    previewSrc={previewMap[link.url]}
-                    isVisible={visibleUrls.has(link.url)}
-                    isFailed={failedUrls.has(link.url)}
-                    onPreviewError={() => refreshPreview(link.url)}
-                    warmUrl={previewMap[link.url] ? undefined : link.url}
-                    isAdmin={isAdmin}
-                    onHide={() => hideLink(link)}
-                    selectMode={cleanup}
-                    selected={selected.has(link.url)}
-                    onToggle={() => toggleSelected(link.url)}
-                  />
-                </FadeIn>
-              );
-            })}
-          </div>
-        )}
-
-        {selectableLinks.length > visibleItems && (
-          <div className="mt-4">
-            <button
-              type="button"
-              onClick={() => {
-                feedback.press();
-                setVisibleItems((prev) => prev + ITEMS_PER_PAGE);
-              }}
-              className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-4 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
-            >
-              Show {Math.min(ITEMS_PER_PAGE, selectableLinks.length - visibleItems)}{" "}
-              more
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Clean-up rail. Sticky so it rides the viewport without entering the
-          document flow — appearing or leaving never shifts the list. Sits above
-          the phone tab bar, and at the bottom edge on desktop. */}
-      {(cleanup || lastHidden) && isAdmin && (
-        <div className="sticky bottom-[var(--tabbar-space)] z-30 mt-4 flex flex-col gap-2">
-          {lastHidden && (
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2 shadow-lg shadow-black/5 backdrop-blur">
-              <span className="type-caption text-muted-foreground">
-                Hidden {lastHidden.length}{" "}
-                {lastHidden.length === 1 ? "link" : "links"}.
-              </span>
-              <button
-                type="button"
-                onClick={undoHide}
-                className="inline-flex h-8 items-center rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
-              >
-                Undo
-              </button>
-            </div>
           )}
 
-          {cleanup && (
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2.5 shadow-lg shadow-black/5 backdrop-blur">
-              <div className="flex items-center gap-3">
-                <span className="type-caption font-medium text-foreground">
-                  {selected.size} selected
-                </span>
-                <button
-                  type="button"
-                  onClick={selectAllShown}
-                  disabled={selectableLinks.length === 0}
-                  className="inline-flex h-8 items-center rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:opacity-40"
-                >
-                  All {selectableLinks.length}
-                </button>
-                <button
-                  type="button"
-                  onClick={clearSelection}
-                  disabled={selected.size === 0}
-                  className="inline-flex h-8 items-center rounded-lg px-2 type-caption font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
-                >
-                  Clear
-                </button>
-              </div>
+          {selectableLinks.length > visibleItems && (
+            <div className="mt-4">
               <button
                 type="button"
-                onClick={hideSelected}
-                disabled={selected.size === 0}
-                aria-label={`Hide ${selected.size} selected`}
-                className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-3 type-caption font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+                onClick={() => {
+                  feedback.press();
+                  setVisibleItems((prev) => prev + ITEMS_PER_PAGE);
+                }}
+                className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-4 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 sm:h-9"
               >
-                <Trash className="h-3.5 w-3.5" />
-                Hide{selected.size > 0 ? ` ${selected.size}` : ""}
+                Show {Math.min(ITEMS_PER_PAGE, selectableLinks.length - visibleItems)} more
               </button>
             </div>
           )}
         </div>
-      )}
 
+        {/* Clean-up rail. Sticky so it rides the viewport without entering the
+          document flow — appearing or leaving never shifts the list. Sits above
+          the phone tab bar, and at the bottom edge on desktop. */}
+        {(cleanup || lastHidden) && isAdmin && (
+          <div className="sticky bottom-[var(--tabbar-space)] z-30 mt-4 flex flex-col gap-2">
+            {lastHidden && (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2 shadow-lg shadow-black/5 backdrop-blur">
+                <span className="type-caption text-muted-foreground">
+                  Hidden {lastHidden.length} {lastHidden.length === 1 ? "link" : "links"}.
+                </span>
+                <button
+                  type="button"
+                  onClick={undoHide}
+                  className="inline-flex h-8 items-center rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5"
+                >
+                  Undo
+                </button>
+              </div>
+            )}
+
+            {cleanup && (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/95 px-3 py-2.5 shadow-lg shadow-black/5 backdrop-blur">
+                <div className="flex items-center gap-3">
+                  <span className="type-caption font-medium text-foreground">
+                    {selected.size} selected
+                  </span>
+                  <button
+                    type="button"
+                    onClick={selectAllShown}
+                    disabled={selectableLinks.length === 0}
+                    className="inline-flex h-8 items-center rounded-lg border border-border px-3 type-caption font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:opacity-40"
+                  >
+                    All {selectableLinks.length}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    disabled={selected.size === 0}
+                    className="inline-flex h-8 items-center rounded-lg px-2 type-caption font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={hideSelected}
+                  disabled={selected.size === 0}
+                  aria-label={`Hide ${selected.size} selected`}
+                  className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-3 type-caption font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Trash className="h-3.5 w-3.5" />
+                  Hide{selected.size > 0 ? ` ${selected.size}` : ""}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <InsightsCommandPalette
@@ -1294,9 +1271,7 @@ function AddLinkComposer({
   const feedback = useFeedback();
   const inputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState("");
-  const [status, setStatus] = useState<"idle" | "adding" | "added" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<"idle" | "adding" | "added" | "error">("idle");
   const [message, setMessage] = useState("");
   const [dragging, setDragging] = useState(false);
 
@@ -1332,7 +1307,7 @@ function AddLinkComposer({
       setMessage(
         data?.data?.queued === false
           ? `Added “${title}”. Reading couldn't be queued, so it will be picked up later.`
-          : `Added “${title}”. It will be summarized in a moment.`
+          : `Added “${title}”. It will be summarized in a moment.`,
       );
       setUrl("");
       onAdded();
@@ -1355,8 +1330,7 @@ function AddLinkComposer({
           event.preventDefault();
           setDragging(false);
           const dropped =
-            event.dataTransfer.getData("text/uri-list") ||
-            event.dataTransfer.getData("text/plain");
+            event.dataTransfer.getData("text/uri-list") || event.dataTransfer.getData("text/plain");
           if (!dropped) return;
           setUrl(dropped);
           void submit(dropped);
@@ -1399,9 +1373,7 @@ function AddLinkComposer({
               setUrl(event.target.value);
               if (status !== "idle") setStatus("idle");
             }}
-            placeholder={
-              dragging ? "Drop to add…" : `Drop or paste a link into ${label}`
-            }
+            placeholder={dragging ? "Drop to add…" : `Drop or paste a link into ${label}`}
             spellCheck={false}
             autoComplete="off"
             aria-label={`Add a link to ${label}`}
@@ -1427,9 +1399,7 @@ function AddLinkComposer({
             transition={{ duration: 0.18, ease: "easeOut" }}
             role={status === "error" ? "alert" : undefined}
             className={`mt-2 px-1 type-caption ${
-              status === "error"
-                ? "text-red-600 dark:text-red-400"
-                : "text-muted-foreground"
+              status === "error" ? "text-red-600 dark:text-red-400" : "text-muted-foreground"
             }`}
           >
             {message}
@@ -1463,13 +1433,7 @@ function CopyLinkButton({ url }: { url: string }) {
 
 /** The clean-up selection mark. Purely visual — the row or card around it owns
  *  the click, so there is one hit target and no double toggle. */
-function SelectBox({
-  selected,
-  className,
-}: {
-  selected: boolean;
-  className?: string;
-}) {
+function SelectBox({ selected, className }: { selected: boolean; className?: string }) {
   return (
     <span
       className={`flex h-4 w-4 items-center justify-center rounded-[4px] border ${
@@ -1708,9 +1672,7 @@ function LinkGridCard({
 
   const footer = (
     <div className="mt-auto flex items-center justify-between gap-2 border-t border-border px-3 py-2.5">
-      <span className="truncate type-caption text-faint-foreground">
-        {shortDomain(link.url)}
-      </span>
+      <span className="truncate type-caption text-faint-foreground">{shortDomain(link.url)}</span>
       <div className="flex shrink-0 items-center gap-2">
         {!selectMode && isAdmin && (
           <button
@@ -1797,9 +1759,7 @@ function LinkGridCard({
               }
             : undefined
         }
-        onMouseEnter={
-          onRead ? () => prefetchArticle(link.urlKey) : undefined
-        }
+        onMouseEnter={onRead ? () => prefetchArticle(link.urlKey) : undefined}
         className="flex flex-1 flex-col"
       >
         {media}

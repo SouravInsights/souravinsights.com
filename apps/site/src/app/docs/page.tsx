@@ -61,9 +61,7 @@ function Section({
   return (
     <section id={id} className="scroll-mt-24">
       <h2 className="type-title">{title}</h2>
-      {description ? (
-        <p className="type-caption mt-2 max-w-2xl">{description}</p>
-      ) : null}
+      {description ? <p className="type-caption mt-2 max-w-2xl">{description}</p> : null}
       <div className="rule mb-6 mt-4" aria-hidden="true" />
       {children}
     </section>
@@ -74,17 +72,9 @@ function Section({
  * A bordered, rounded container. Everything with an edge uses this, so the page
  * has one border language instead of one per block.
  */
-function Card({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div
-      className={`overflow-hidden rounded-xl border border-border bg-card/50 ${className}`}
-    >
+    <div className={`overflow-hidden rounded-xl border border-border bg-card/50 ${className}`}>
       {children}
     </div>
   );
@@ -115,19 +105,14 @@ function Endpoint({
           <span className="rounded-md bg-foreground/[0.06] px-2 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-foreground/80">
             {method}
           </span>
-          <code
-            className="min-w-0 break-all font-mono text-sm text-foreground"
-            translate="no"
-          >
+          <code className="min-w-0 break-all font-mono text-sm text-foreground" translate="no">
             {path}
           </code>
         </div>
         <p className="type-body mt-3 max-w-2xl text-muted-foreground">{children}</p>
       </div>
       {examples ? (
-        <div className="divide-y divide-border/60 border-t border-border/60">
-          {examples}
-        </div>
+        <div className="divide-y divide-border/60 border-t border-border/60">{examples}</div>
       ) : null}
     </Card>
   );
@@ -143,15 +128,7 @@ function Endpoint({
  * given, so the markup handed to `dangerouslySetInnerHTML` is generated, never
  * interpolated user input.
  */
-async function CodePanel({
-  label,
-  lang,
-  code,
-}: {
-  label: string;
-  lang: string;
-  code: string;
-}) {
+async function CodePanel({ label, lang, code }: { label: string; lang: string; code: string }) {
   const html = await highlight(code, lang);
 
   return (
@@ -224,18 +201,18 @@ export default async function DocsPage() {
         <FadeIn y={16} duration={0.35}>
           <div className="type-body max-w-2xl space-y-4 text-muted-foreground">
             <p>
-              The Insights collection is {linkCount} links I decided were worth
-              keeping, and {passageCount} passages of the text inside them. Every page
-              has been read and split up, and the passages are embedded, so search
-              matches what a page says rather than what it is called.
+              The Insights collection is {linkCount} links I decided were worth keeping, and{" "}
+              {passageCount} passages of the text inside them. Every page has been read and split
+              up, and the passages are embedded, so search matches what a page says rather than what
+              it is called.
             </p>
             <p>
               This is the retrieval behind the Ask panel on the{" "}
               <Link href="/insights" className={linkClass}>
                 Insights page
               </Link>
-              , exposed without the chat layer. No model runs, so the same query
-              returns the same ranked list every time, and nothing can be invented.
+              , exposed without the chat layer. No model runs, so the same query returns the same
+              ranked list every time, and nothing can be invented.
             </p>
           </div>
         </FadeIn>
@@ -299,21 +276,19 @@ export default async function DocsPage() {
                   </>
                 }
               >
-                Saved links whose contents match a plain-language query, closest
-                first. <K>channel</K> narrows it to one category, and <K>limit</K> caps
-                the results at 20 and defaults to 8.
+                Saved links whose contents match a plain-language query, closest first.{" "}
+                <K>channel</K> narrows it to one category, and <K>limit</K> caps the results at 20
+                and defaults to 8.
               </Endpoint>
 
               <Note>
-                <K>score</K> is the cosine similarity between your query and the page,
-                so higher is closer. Below roughly 0.45 a match tends to share a topic
-                without answering it, which is the line the Writing Desk uses
-                internally. <K>passage</K> is the text that actually matched, so
-                anything you quote can be attributed.
+                <K>score</K> is the cosine similarity between your query and the page, so higher is
+                closer. Below roughly 0.45 a match tends to share a topic without answering it,
+                which is the line the Writing Desk uses internally. <K>passage</K> is the text that
+                actually matched, so anything you quote can be attributed.
               </Note>
             </Section>
           </FadeIn>
-
 
           <FadeIn y={16} duration={0.35}>
             <Section
@@ -352,8 +327,8 @@ export default async function DocsPage() {
                   </>
                 }
               >
-                A page of links, newest first. Pass <K>?url=</K> for an exact lookup
-                instead, and read the next page from <K>meta.next_cursor</K>.
+                A page of links, newest first. Pass <K>?url=</K> for an exact lookup instead, and
+                read the next page from <K>meta.next_cursor</K>.
               </Endpoint>
 
               <Endpoint method="GET" path="/api/v1/categories">
@@ -365,8 +340,8 @@ export default async function DocsPage() {
                 <Link href="/api/docs" className={linkClass}>
                   /api/docs
                 </Link>
-                . It is generated from the same schemas that validate requests, so
-                it cannot drift from behaviour.
+                . It is generated from the same schemas that validate requests, so it cannot drift
+                from behaviour.
               </p>
             </Section>
           </FadeIn>
@@ -378,14 +353,12 @@ export default async function DocsPage() {
               description="An MCP server, so Cursor or Claude can search the collection mid-conversation."
             >
               <p className="type-body max-w-2xl text-muted-foreground">
-                Point any MCP client at <K>https://www.souravinsights.com/api/mcp</K>.
-                It exposes one tool, <K>search_knowledge</K>, backed by the same
-                retrieval as the{" "}
+                Point any MCP client at <K>https://www.souravinsights.com/api/mcp</K>. It exposes
+                one tool, <K>search_knowledge</K>, backed by the same retrieval as the{" "}
                 <a href="#search" className={linkClass}>
                   search endpoint
                 </a>
-                . A question asked in your editor and one asked on the site find the
-                same links.
+                . A question asked in your editor and one asked on the site find the same links.
               </p>
 
               <Card className="mt-6">
@@ -403,9 +376,9 @@ export default async function DocsPage() {
               </Card>
 
               <Note>
-                Cursor reads that from <K>~/.cursor/mcp.json</K>. The endpoint allows 60
-                requests a minute per IP. To run it against your own copy of the
-                collection instead, the same server speaks stdio from the repository.
+                Cursor reads that from <K>~/.cursor/mcp.json</K>. The endpoint allows 60 requests a
+                minute per IP. To run it against your own copy of the collection instead, the same
+                server speaks stdio from the repository.
               </Note>
             </Section>
           </FadeIn>
@@ -465,4 +438,3 @@ export default async function DocsPage() {
     </div>
   );
 }
-

@@ -47,7 +47,7 @@ export async function PUT(request: NextRequest) {
           message: "Body must be { projects: Project[] }",
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest) {
           message: "Redis is not configured",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -78,7 +78,7 @@ export async function PUT(request: NextRequest) {
   if (!response.ok) {
     return NextResponse.json(
       { error: { code: "save_failed", message: "Failed to save projects" } },
-      { status: 502 }
+      { status: 502 },
     );
   }
 

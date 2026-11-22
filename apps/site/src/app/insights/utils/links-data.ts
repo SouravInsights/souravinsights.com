@@ -32,23 +32,21 @@ export type InsightsClientLink = Pick<
 
 /** Keep only the fields above, so a link's summary never reaches the browser. */
 export function toClientLinks(
-  linkData: Record<string, InsightsLink[]>
+  linkData: Record<string, InsightsLink[]>,
 ): Record<string, InsightsClientLink[]> {
   return Object.fromEntries(
     Object.entries(linkData).map(([category, links]) => [
       category,
-      links.map(
-        ({ id, urlKey, category: linkCategory, topics, url, title, addedAt }) => ({
-          id,
-          urlKey,
-          category: linkCategory,
-          topics,
-          url,
-          title,
-          addedAt: addedAt.getTime(),
-        })
-      ),
-    ])
+      links.map(({ id, urlKey, category: linkCategory, topics, url, title, addedAt }) => ({
+        id,
+        urlKey,
+        category: linkCategory,
+        topics,
+        url,
+        title,
+        addedAt: addedAt.getTime(),
+      })),
+    ]),
   );
 }
 
@@ -75,7 +73,7 @@ export async function getInsightsData(): Promise<{
     name,
   }));
   const linkData: Record<string, InsightsLink[]> = Object.fromEntries(
-    CATEGORY_ORDER.map((name) => [name, [] as InsightsLink[]])
+    CATEGORY_ORDER.map((name) => [name, [] as InsightsLink[]]),
   );
 
   for (const row of rows) {

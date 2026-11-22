@@ -36,27 +36,18 @@ export async function GET() {
           category: label,
           addedAt: row.addedAt.toISOString(),
         }));
-      })
+      }),
     );
 
     const links = groups
       .flat()
-      .sort(
-        (a, b) =>
-          new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime()
-      );
+      .sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
 
     const response = NextResponse.json({ success: true, links });
-    response.headers.set(
-      "Cache-Control",
-      "public, s-maxage=300, stale-while-revalidate=600"
-    );
+    response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
     return response;
   } catch (error) {
     console.error("Error fetching latest curated links:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch latest links" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch latest links" }, { status: 500 });
   }
 }

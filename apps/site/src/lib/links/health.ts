@@ -94,7 +94,7 @@ export async function checkUrlHealth(inputUrl: string): Promise<HealthResult> {
 export async function mapWithConcurrency<T, R>(
   items: T[],
   concurrency: number,
-  fn: (item: T, index: number) => Promise<R>
+  fn: (item: T, index: number) => Promise<R>,
 ): Promise<R[]> {
   const results = new Array<R>(items.length);
   let next = 0;
@@ -104,7 +104,7 @@ export async function mapWithConcurrency<T, R>(
         const i = next++;
         results[i] = await fn(items[i], i);
       }
-    })
+    }),
   );
   return results;
 }

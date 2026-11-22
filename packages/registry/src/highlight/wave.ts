@@ -143,10 +143,10 @@ export function playWave(
   glow: string,
   hold = false,
   under: readonly Under[] = [],
-  maxDuration = 0
+  maxDuration = 0,
 ): number {
   const chars = segmentsOf(para, id).flatMap((segment) =>
-    Array.from(segment.querySelectorAll<HTMLElement>("[data-ch]"))
+    Array.from(segment.querySelectorAll<HTMLElement>("[data-ch]")),
   );
   if (chars.length === 0) return 0;
   const fill = hold ? "both" : "backwards";
@@ -175,9 +175,7 @@ export function playWave(
   const mids = rects.map((r) => r.top + r.height / 2);
   const origin = layer.getBoundingClientRect();
 
-  for (const bar of Array.from(
-    layer.querySelectorAll<HTMLElement>(`[data-bar="${id}"]`)
-  )) {
+  for (const bar of Array.from(layer.querySelectorAll<HTMLElement>(`[data-bar="${id}"]`))) {
     const r = bar.getBoundingClientRect();
     let first = -1;
     let count = 0;
@@ -220,7 +218,7 @@ export function playWave(
           duration: Math.max(((b - a) / r.width) * duration, 1),
           delay: delay + ((a - r.left) / r.width) * duration,
           fill: "both",
-        }
+        },
       );
       cutAway.onfinish = () => old.remove();
     }
@@ -228,10 +226,11 @@ export function playWave(
     bar.style.backgroundColor = CLEAR;
     bar.style.backgroundImage = `linear-gradient(90deg, ${to.wash} 0 45%, ${from.wash} 55% 100%)`;
     bar.style.backgroundSize = "200% 100%";
-    const sweep = bar.animate(
-      [{ backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0" }],
-      { duration, delay, fill }
-    );
+    const sweep = bar.animate([{ backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0" }], {
+      duration,
+      delay,
+      fill,
+    });
     if (!hold) {
       sweep.onfinish = () => {
         bar.style.backgroundImage = "";

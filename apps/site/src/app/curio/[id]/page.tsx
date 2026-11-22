@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CurioShared } from "@/components/curio/CurioShared";
-import {
-  getConversation,
-  withVerifiedSources,
-} from "@/lib/curio/conversations";
+import { getConversation, withVerifiedSources } from "@/lib/curio/conversations";
 import { turnsOf } from "@/lib/curio/turns";
 
 /**

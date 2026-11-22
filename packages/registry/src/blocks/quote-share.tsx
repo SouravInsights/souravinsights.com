@@ -12,12 +12,7 @@ export interface QuoteShareProps {
 }
 
 /** A single share button over the quote studio. */
-export function QuoteShare({
-  quote,
-  context = "",
-  title,
-  publication,
-}: QuoteShareProps) {
+export function QuoteShare({ quote, context = "", title, publication }: QuoteShareProps) {
   const [open, setOpen] = useState(false);
 
   return (

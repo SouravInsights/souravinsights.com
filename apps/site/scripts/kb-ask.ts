@@ -34,9 +34,7 @@ async function main() {
     process.exit(1);
   }
 
-  const model = modelId
-    ? (await import("../src/lib/kb/model")).modelById(modelId)
-    : chatModel();
+  const model = modelId ? (await import("../src/lib/kb/model")).modelById(modelId) : chatModel();
 
   const started = Date.now();
   const result = await generateText({
@@ -54,13 +52,17 @@ async function main() {
     step.toolCalls.map((call) => ({
       name: call.toolName,
       input: JSON.stringify(call.input).slice(0, 120),
-    }))
+    })),
   );
-  console.log(`\n— ${result.steps.length} steps · ${calls.length} tool calls · ${((Date.now() - started) / 1000).toFixed(1)}s`);
+  console.log(
+    `\n— ${result.steps.length} steps · ${calls.length} tool calls · ${((Date.now() - started) / 1000).toFixed(1)}s`,
+  );
   for (const call of calls) console.log(`  ${call.name} ${call.input}`);
 
   const words = result.text.trim().split(/\s+/).filter(Boolean).length;
-  console.log(`  answer length: ${words} words · ${result.usage.outputTokens ?? "?"} output tokens`);
+  console.log(
+    `  answer length: ${words} words · ${result.usage.outputTokens ?? "?"} output tokens`,
+  );
 }
 
 main().catch((error) => {

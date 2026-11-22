@@ -59,7 +59,7 @@ function buildWavePath(amplitude: number, phase: number): string {
   const step = 20;
   let d = `M ${left} 0`;
   for (let x = left; x < right; x += step) {
-    const dir = Math.sin(phase + (x - left) / step * Math.PI) >= 0 ? 1 : -1;
+    const dir = Math.sin(phase + ((x - left) / step) * Math.PI) >= 0 ? 1 : -1;
     d += ` Q ${x + step / 2} ${dir * amplitude} ${x + step} 0`;
   }
   return `${d} L ${right} 80 L ${left} 80 Z`;
@@ -86,8 +86,20 @@ function HeartFace({
       {/* eyes — open with a catchlight, or contented arcs once delighted */}
       {closedEyes ? (
         <>
-          <path d="M18.9 26.2Q22 22 25.1 26.2" fill="none" stroke={ink} strokeWidth="2" strokeLinecap="round" />
-          <path d="M34.9 26.2Q38 22 41.1 26.2" fill="none" stroke={ink} strokeWidth="2" strokeLinecap="round" />
+          <path
+            d="M18.9 26.2Q22 22 25.1 26.2"
+            fill="none"
+            stroke={ink}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M34.9 26.2Q38 22 41.1 26.2"
+            fill="none"
+            stroke={ink}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </>
       ) : (
         <>
@@ -108,13 +120,31 @@ function HeartFace({
 
       {/* mouth — one continuous stroke, growing warmer as it fills */}
       {stage === 0 && (
-        <path d="M26.8 34.6Q30 35.4 33.2 34.6" fill="none" stroke={ink} strokeWidth="1.9" strokeLinecap="round" />
+        <path
+          d="M26.8 34.6Q30 35.4 33.2 34.6"
+          fill="none"
+          stroke={ink}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+        />
       )}
       {stage === 1 && (
-        <path d="M25.6 33.1Q30 36.6 34.4 33.1" fill="none" stroke={ink} strokeWidth="1.9" strokeLinecap="round" />
+        <path
+          d="M25.6 33.1Q30 36.6 34.4 33.1"
+          fill="none"
+          stroke={ink}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+        />
       )}
       {stage === 2 && (
-        <path d="M24.6 32.4Q30 37.8 35.4 32.4" fill="none" stroke={ink} strokeWidth="1.9" strokeLinecap="round" />
+        <path
+          d="M24.6 32.4Q30 37.8 35.4 32.4"
+          fill="none"
+          stroke={ink}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+        />
       )}
       {stage >= 3 && <path d="M24 32Q30 39.6 36 32Q30 34.3 24 32Z" fill={ink} />}
 
@@ -164,10 +194,10 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
   const glint = isDarkMode ? "#2a0a14" : "#ffffff";
 
   const fillPercent = Math.min(1, userLikes / MAX_USER_LIKES);
-  const liquidY =
-    LIQUID_EMPTY_Y - fillPercent * (LIQUID_EMPTY_Y - LIQUID_FULL_Y);
+  const liquidY = LIQUID_EMPTY_Y - fillPercent * (LIQUID_EMPTY_Y - LIQUID_FULL_Y);
   const liquidColor = rampColor(fillPercent, ramp);
-  const stage = userLikes === 0 ? 0 : userLikes >= MAX_USER_LIKES ? 4 : Math.min(3, Math.ceil(fillPercent * 4));
+  const stage =
+    userLikes === 0 ? 0 : userLikes >= MAX_USER_LIKES ? 4 : Math.min(3, Math.ceil(fillPercent * 4));
 
   const isMaxed = userLikes >= MAX_USER_LIKES;
 
@@ -181,10 +211,7 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
   }, []);
 
   // Clear any trailing timers when the button unmounts.
-  React.useEffect(
-    () => () => timeoutsRef.current.forEach(clearTimeout),
-    []
-  );
+  React.useEffect(() => () => timeoutsRef.current.forEach(clearTimeout), []);
 
   const handleLike = useCallback(() => {
     if (isMaxed) {
@@ -220,7 +247,6 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
 
     setPlusKey((k) => k + 1);
     schedule(() => setPlusKey(0), TIMING.count * 1000 + 400);
-
   }, [
     isMaxed,
     slug,
@@ -242,9 +268,7 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
 
   // Heart press: a small, quick compression that eases back with almost no
   // overshoot. Squash-and-stretch only reads as considered when it's subtle.
-  const squash = pressed
-    ? { scaleX: 1.05, scaleY: 0.95 }
-    : { scaleX: 1, scaleY: 1 };
+  const squash = pressed ? { scaleX: 1.05, scaleY: 0.95 } : { scaleX: 1, scaleY: 1 };
   const squashTransition = pressed
     ? { type: "spring" as const, duration: TIMING.press, bounce: 0 }
     : { type: "spring" as const, duration: TIMING.release, bounce: 0.12 };
@@ -261,24 +285,22 @@ const ThreeDLikeButton = ({ slug, compact = false }: ThreeDLikeButtonProps) => {
           className="group relative block transform-gpu rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-rose-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
           aria-label={
-            isMaxed
-              ? "You have reached the maximum likes for this post"
-              : "Like this post"
+            isMaxed ? "You have reached the maximum likes for this post" : "Like this post"
           }
           aria-pressed={userLikes > 0}
           aria-disabled={isMaxed || isLoading}
         >
-          <motion.div animate={squash} transition={squashTransition} className="relative transform-gpu">
+          <motion.div
+            animate={squash}
+            transition={squashTransition}
+            className="relative transform-gpu"
+          >
             {/* soft contact shadow that lifts on hover */}
             <div className="pointer-events-none absolute inset-x-1 -bottom-0.5 h-2 rounded-full bg-rose-600/25 opacity-60 blur-md transition-opacity duration-300 group-hover:opacity-100" />
 
             <svg
               viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
-              className={
-                compact
-                  ? "relative h-8 w-8"
-                  : "relative h-12 w-12 md:h-14 md:w-14"
-              }
+              className={compact ? "relative h-8 w-8" : "relative h-12 w-12 md:h-14 md:w-14"}
               aria-hidden
             >
               <defs>

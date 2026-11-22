@@ -52,9 +52,7 @@ function blocksOf(markdown: string): Block[] {
 
   const currentHeading = () => {
     const levels = headingLevels();
-    return levels.length
-      ? levels.map((l) => headingStack.get(l)).join(" › ")
-      : null;
+    return levels.length ? levels.map((l) => headingStack.get(l)).join(" › ") : null;
   };
 
   const flushProse = () => {
@@ -165,12 +163,8 @@ function windowCode(text: string): string[] {
   return windows;
 }
 
-export function chunkMarkdown(
-  markdown: string,
-  opts: { title: string }
-): ChunkUnit[] {
-  const prefix = (heading: string | null) =>
-    heading ? `${opts.title} › ${heading}` : opts.title;
+export function chunkMarkdown(markdown: string, opts: { title: string }): ChunkUnit[] {
+  const prefix = (heading: string | null) => (heading ? `${opts.title} › ${heading}` : opts.title);
 
   const units: Omit<ChunkUnit, "index">[] = [];
   let carry: Block[] = [];

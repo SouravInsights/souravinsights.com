@@ -33,13 +33,10 @@ const swatchVariants = cva(
       },
     },
     defaultVariants: { variant: "ring" },
-  }
+  },
 );
 
-function SwatchGroup({
-  className,
-  ...props
-}: React.ComponentProps<typeof RadioGroup>) {
+function SwatchGroup({ className, ...props }: React.ComponentProps<typeof RadioGroup>) {
   return (
     <RadioGroup
       data-slot="swatch-group"

@@ -75,9 +75,7 @@ export function splitClaims(draft: string): string[] {
 
   if (claims.length <= MAX_CLAIMS) return claims;
 
-  const keep = new Set(
-    [...claims].sort((a, b) => b.length - a.length).slice(0, MAX_CLAIMS)
-  );
+  const keep = new Set([...claims].sort((a, b) => b.length - a.length).slice(0, MAX_CLAIMS));
   return claims.filter((claim) => keep.has(claim)); // original order
 }
 
@@ -112,9 +110,7 @@ export async function findCitations(draft: string): Promise<DeskResult> {
   const claims = splitClaims(draft);
   if (claims.length === 0) return { claims: [], suggestions: [], dropped: 0 };
 
-  const perClaim = await Promise.all(
-    claims.map((claim) => search(claim, { limit: PER_CLAIM }))
-  );
+  const perClaim = await Promise.all(claims.map((claim) => search(claim, { limit: PER_CLAIM })));
 
   // Merge by link: one link can match several claims, so keep its best match and
   // remember which claim (and passage) produced it.
@@ -159,10 +155,8 @@ export async function findCitations(draft: string): Promise<DeskResult> {
         .array(
           z.object({
             urlKey: z.enum(urlKeys),
-            why: z
-              .string()
-              .describe("One line: what this supports in the draft"),
-          })
+            why: z.string().describe("One line: what this supports in the draft"),
+          }),
         )
         .max(MAX_SUGGESTIONS),
     }),
@@ -172,7 +166,7 @@ export async function findCitations(draft: string): Promise<DeskResult> {
       candidates
         .map(
           (c) =>
-            `- urlKey: ${c.urlKey}\n  title: ${c.title}\n  category: ${c.category}\n  fragment: ${c.passage}`
+            `- urlKey: ${c.urlKey}\n  title: ${c.title}\n  category: ${c.category}\n  fragment: ${c.passage}`,
         )
         .join("\n\n") +
       `\n\nFor each fragment that supports, illustrates or argues with a specific ` +
@@ -191,4 +185,3 @@ export async function findCitations(draft: string): Promise<DeskResult> {
 
   return { claims, suggestions, dropped: candidates.length - suggestions.length };
 }
-

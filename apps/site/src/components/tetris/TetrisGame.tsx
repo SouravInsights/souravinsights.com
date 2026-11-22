@@ -23,7 +23,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Scritto from "@scritto/react";
-import { ArrowLineDown, Flame, Package, Pause, Play, ArrowCounterClockwise, ArrowClockwise } from "@phosphor-icons/react";
+import {
+  ArrowLineDown,
+  Flame,
+  Package,
+  Pause,
+  Play,
+  ArrowCounterClockwise,
+  ArrowClockwise,
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { BoardCanvas, type BoardMetrics } from "./BoardCanvas";
 import { TouchSurface } from "./TouchSurface";
@@ -43,8 +51,7 @@ const keyChip =
   "inline-flex min-w-6 items-center justify-center rounded border border-border/70 bg-secondary px-1.5 py-0.5 font-mono text-[10px] leading-none text-secondary-foreground";
 
 export default function TetrisGame() {
-  const { engine, effects, input, hud, start, togglePause, handleEvents } =
-    useTetrisGame();
+  const { engine, effects, input, hud, start, togglePause, handleEvents } = useTetrisGame();
   const dark = useIsDark();
   const metricsRef = useRef<BoardMetrics>({ cell: 20, ox: 0, oy: 0 });
 
@@ -53,9 +60,7 @@ export default function TetrisGame() {
   // one is a sizing cycle the browser resolves to zero. So we read the
   // free area ourselves and hand the box exact pixels.
   const boardAreaRef = useRef<HTMLDivElement | null>(null);
-  const [boardSize, setBoardSize] = useState<{ w: number; h: number } | null>(
-    null
-  );
+  const [boardSize, setBoardSize] = useState<{ w: number; h: number } | null>(null);
   // The ruler: header and controls borrow the board's exact width, so the
   // whole column — score line, well, thumbs — shares two vertical edges.
   const colStyle = boardSize ? { width: boardSize.w } : undefined;
@@ -70,9 +75,7 @@ export default function TetrisGame() {
       // definite on every breakpoint.
       const h = Math.floor(Math.min(rect.height, 780));
       const w = Math.floor(Math.min(h / 2, window.innerWidth - 24));
-      setBoardSize((prev) =>
-        prev && prev.w === w && prev.h === h ? prev : { w, h }
-      );
+      setBoardSize((prev) => (prev && prev.w === w && prev.h === h ? prev : { w, h }));
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -179,7 +182,11 @@ export default function TetrisGame() {
               {hud.queue.map((piece, i) => (
                 <div
                   key={`${piece.type}-${piece.color}-${i}`}
-                  className={cn("flex h-10 items-center", i === 1 && "opacity-60", i === 2 && "opacity-40")}
+                  className={cn(
+                    "flex h-10 items-center",
+                    i === 1 && "opacity-60",
+                    i === 2 && "opacity-40",
+                  )}
                 >
                   <PiecePreview piece={piece} dark={dark} cell={i === 0 ? 11 : 9} />
                 </div>
@@ -189,7 +196,10 @@ export default function TetrisGame() {
         </motion.aside>
 
         {/* Center column: score header on phones, just the board on desktop */}
-        <motion.div {...enter(0.12)} className="flex min-h-0 flex-1 flex-col items-center md:items-stretch">
+        <motion.div
+          {...enter(0.12)}
+          className="flex min-h-0 flex-1 flex-col items-center md:items-stretch"
+        >
           {/* App bar on the board's ruler (colStyle). Both sides share
               one anatomy: a label line over a fixed-height value line, so
               the two columns always sit on the same baselines no matter
@@ -197,36 +207,36 @@ export default function TetrisGame() {
               starts (dashed placeholders), so the row never shifts; the
               second slot dims to read as "the one after". */}
           <div className="w-full max-w-full md:hidden" style={colStyle}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex flex-col gap-1">
-              <span className="type-label">Score</span>
-              <div className="flex h-7 items-center text-[26px] font-semibold leading-none tracking-[-0.02em] tabular-nums">
-                <Scritto value={hud.score.toLocaleString()} />
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex flex-col gap-1 text-right">
-                <span className="type-label">Next</span>
-                <div className="flex h-7 items-center justify-end gap-2">
-                  {[0, 1].map((i) => (
-                    <PiecePreview
-                      key={`${hud.queue[i]?.type ?? "empty"}-${i}`}
-                      piece={hud.queue[i] ?? null}
-                      dark={dark}
-                      cell={8}
-                      dim={i === 1}
-                    />
-                  ))}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <span className="type-label">Score</span>
+                <div className="flex h-7 items-center text-[26px] font-semibold leading-none tracking-[-0.02em] tabular-nums">
+                  <Scritto value={hud.score.toLocaleString()} />
                 </div>
               </div>
-              {/* Bare ghost icon, same family as the site's navbar toggles
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-1 text-right">
+                  <span className="type-label">Next</span>
+                  <div className="flex h-7 items-center justify-end gap-2">
+                    {[0, 1].map((i) => (
+                      <PiecePreview
+                        key={`${hud.queue[i]?.type ?? "empty"}-${i}`}
+                        piece={hud.queue[i] ?? null}
+                        dark={dark}
+                        cell={8}
+                        dim={i === 1}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {/* Bare ghost icon, same family as the site's navbar toggles
                   — a bordered box would shout over the type here. */}
-              <PauseToggle status={hud.status} onToggle={togglePause} size="lg" />
+                <PauseToggle status={hud.status} onToggle={togglePause} size="lg" />
+              </div>
             </div>
-          </div>
 
-          {/* Meta line. Always rendered, so its height never shifts. */}
-          <MetaLine hud={hud} dark={dark} className="mt-1.5" />
+            {/* Meta line. Always rendered, so its height never shifts. */}
+            <MetaLine hud={hud} dark={dark} className="mt-1.5" />
           </div>
 
           {/* The board declares its own geometry: height comes from the
@@ -239,80 +249,76 @@ export default function TetrisGame() {
             <div
               className="relative mx-auto"
               style={
-                boardSize
-                  ? { width: boardSize.w, height: boardSize.h }
-                  : { width: 1, height: 2 } // placeholder until the first real read
+                boardSize ? { width: boardSize.w, height: boardSize.h } : { width: 1, height: 2 } // placeholder until the first real read
               }
             >
-            <BoardCanvas
-              engine={engine}
-              effects={effects}
-              input={input}
-              onEvents={handleEvents}
-              metricsRef={metricsRef}
-            />
-            <TouchSurface
-              engine={engine}
-              metricsRef={metricsRef}
-              onEvents={handleEvents}
-              enabled={playing}
-            />
+              <BoardCanvas
+                engine={engine}
+                effects={effects}
+                input={input}
+                onEvents={handleEvents}
+                metricsRef={metricsRef}
+              />
+              <TouchSurface
+                engine={engine}
+                metricsRef={metricsRef}
+                onEvents={handleEvents}
+                enabled={playing}
+              />
 
-            {/* One overlay, the well itself: a quiet veil with bare type,
+              {/* One overlay, the well itself: a quiet veil with bare type,
                 no card chrome — an attract screen, not a modal. On desktop
                 the rails stay sharp behind it, still teaching the keys. */}
-            <AnimatePresence initial={false}>
-              {overlay !== null && (
-                <motion.div
-                  key={overlay}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.18 }}
-                  className="absolute inset-0 z-20 flex items-center justify-center rounded-lg bg-background/70 p-4 backdrop-blur-sm"
-                >
-                  <OverlayCard
-                    kind={overlay}
-                    hud={hud}
-                    onStart={start}
-                    onResume={togglePause}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+              <AnimatePresence initial={false}>
+                {overlay !== null && (
+                  <motion.div
+                    key={overlay}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute inset-0 z-20 flex items-center justify-center rounded-lg bg-background/70 p-4 backdrop-blur-sm"
+                  >
+                    <OverlayCard kind={overlay} hud={hud} onStart={start} onResume={togglePause} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
-        {/* Thumb controls, phones only — pinned to the same ruler as the
+          {/* Thumb controls, phones only — pinned to the same ruler as the
             header above, and kept lean: every pixel the deck doesn't take
             goes to the well. Still ≥44px, still clear of the home bar. */}
-        <div className="mt-2 grid w-full max-w-full grid-cols-3 gap-1.5 pb-[max(env(safe-area-inset-bottom),8px)] md:hidden" style={colStyle}>
-          <ControlButton
-            label="Hold"
-            disabled={!playing || !hud.canHold}
-            onPress={() => handleEvents(engine.swapHold())}
+          <div
+            className="mt-2 grid w-full max-w-full grid-cols-3 gap-1.5 pb-[max(env(safe-area-inset-bottom),8px)] md:hidden"
+            style={colStyle}
           >
-            {hud.held ? (
-              <PiecePreview piece={hud.held} dark={dark} cell={7} />
-            ) : (
-              <Package className="h-[18px] w-[18px]" strokeWidth={1.75} />
-            )}
-          </ControlButton>
-          <ControlButton
-            label="Rotate"
-            disabled={!playing}
-            onPress={() => handleEvents(engine.rotateActive(1))}
-          >
-            <ArrowClockwise className="h-[18px] w-[18px]" strokeWidth={1.75} />
-          </ControlButton>
-          <ControlButton
-            label="Drop"
-            disabled={!playing}
-            onPress={() => handleEvents(engine.hardDrop())}
-          >
-            <ArrowLineDown className="h-[18px] w-[18px]" strokeWidth={1.75} />
-          </ControlButton>
-        </div>
+            <ControlButton
+              label="Hold"
+              disabled={!playing || !hud.canHold}
+              onPress={() => handleEvents(engine.swapHold())}
+            >
+              {hud.held ? (
+                <PiecePreview piece={hud.held} dark={dark} cell={7} />
+              ) : (
+                <Package className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              )}
+            </ControlButton>
+            <ControlButton
+              label="Rotate"
+              disabled={!playing}
+              onPress={() => handleEvents(engine.rotateActive(1))}
+            >
+              <ArrowClockwise className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            </ControlButton>
+            <ControlButton
+              label="Drop"
+              disabled={!playing}
+              onPress={() => handleEvents(engine.hardDrop())}
+            >
+              <ArrowLineDown className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            </ControlButton>
+          </div>
         </motion.div>
 
         {/* Right rail: keys + scoring (desktop) */}
@@ -331,14 +337,12 @@ export default function TetrisGame() {
           <Rule />
           <RailSection label="Scoring">
             <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Single 100, double 300, triple 500, tetris 800. T-spins score 400
-              to 1,600. Combos add 50 each. Back-to-back pays 1.5x.
+              Single 100, double 300, triple 500, tetris 800. T-spins score 400 to 1,600. Combos add
+              50 each. Back-to-back pays 1.5x.
             </p>
           </RailSection>
         </motion.aside>
-
       </div>
-
     </div>
   );
 }
@@ -362,18 +366,15 @@ function enter(delay: number) {
 /** Run vitals as quiet label–value pairs. No separator glyphs: those can
     strand at a line's edge when the rail pinches, so instead each pair
     holds itself apart by spacing and contrast alone. */
-function MetaLine({
-  hud,
-  dark,
-  className,
-}: {
-  hud: HudState;
-  dark: boolean;
-  className?: string;
-}) {
+function MetaLine({ hud, dark, className }: { hud: HudState; dark: boolean; className?: string }) {
   const beatingBest = hud.best > 0 && hud.score > hud.best;
   return (
-    <p className={cn("type-label flex flex-wrap items-baseline gap-x-4 gap-y-1.5 tabular-nums", className)}>
+    <p
+      className={cn(
+        "type-label flex flex-wrap items-baseline gap-x-4 gap-y-1.5 tabular-nums",
+        className,
+      )}
+    >
       {beatingBest ? (
         // Past your record, the meta line says so the moment it happens.
         <span className="text-green-700 dark:text-green-500">new best</span>
@@ -387,8 +388,7 @@ function MetaLine({
       <Meta label="lines" value={String(hud.lines)} />
       {hud.streak >= 2 && (
         <span className="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400">
-          <Flame className="h-3 w-3" strokeWidth={2.25} />
-          x{hud.streak}
+          <Flame className="h-3 w-3" strokeWidth={2.25} />x{hud.streak}
         </span>
       )}
     </p>
@@ -441,14 +441,10 @@ function PauseToggle({
       className={cn(
         size === "lg" ? "h-11 w-11" : "h-9 w-9",
         "text-muted-foreground hover:text-foreground",
-        pressScale
+        pressScale,
       )}
     >
-      {status === "paused" ? (
-        <Play className={icon} />
-      ) : (
-        <Pause className={icon} />
-      )}
+      {status === "paused" ? <Play className={icon} /> : <Pause className={icon} />}
     </Button>
   );
 }
@@ -457,13 +453,7 @@ function Rule() {
   return <div className="rule my-5" aria-hidden="true" />;
 }
 
-function RailSection({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function RailSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <section>
       <h3 className="type-label mb-3">{label}</h3>
@@ -493,7 +483,7 @@ function ControlButton({
         "flex h-12 flex-col items-center justify-center gap-1 rounded-lg border border-border/80 bg-secondary/60 text-secondary-foreground",
         "hover:bg-secondary active:bg-accent",
         "disabled:pointer-events-none disabled:opacity-40",
-        pressScale
+        pressScale,
       )}
     >
       <span className="flex h-5 items-center text-foreground/80">{children}</span>
@@ -644,7 +634,7 @@ const overlayCardClass = "w-full max-w-[236px] md:max-w-[280px]";
 
 const primaryButtonClass = cn(
   "mt-4 w-full bg-foreground text-background hover:opacity-90",
-  pressScale
+  pressScale,
 );
 const secondaryButtonClass = cn("mt-2 w-full", pressScale);
 

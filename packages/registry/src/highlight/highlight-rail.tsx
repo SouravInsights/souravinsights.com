@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HUES } from "@/lib/highlight-palette";
 import { MarkerRail } from "@/components/ui/marker-rail";
 
@@ -68,52 +64,50 @@ export function HighlightRail({
           </div>
         </PopoverTrigger>
 
-          <PopoverContent
-            side="left"
-            align="center"
-            sideOffset={14}
-            className="w-80 overflow-hidden p-0"
-          >
-            <div className="flex items-center justify-between px-4 py-2.5 text-[12px] font-medium text-muted-foreground">
-              <span>
-                {ticks.length} Highlight{ticks.length === 1 ? "" : "s"}
-              </span>
-              {onOpenNotebook && (
+        <PopoverContent
+          side="left"
+          align="center"
+          sideOffset={14}
+          className="w-80 overflow-hidden p-0"
+        >
+          <div className="flex items-center justify-between px-4 py-2.5 text-[12px] font-medium text-muted-foreground">
+            <span>
+              {ticks.length} Highlight{ticks.length === 1 ? "" : "s"}
+            </span>
+            {onOpenNotebook && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onOpenNotebook}
+                className="h-auto p-0 text-[12px] font-medium text-muted-foreground hover:bg-transparent hover:text-foreground"
+              >
+                Open Notes
+              </Button>
+            )}
+          </div>
+          <ul className="max-h-[60vh] overflow-y-auto p-1 [scrollbar-width:none]">
+            {ticks.map((tick) => (
+              <li key={tick.id}>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={onOpenNotebook}
-                  className="h-auto p-0 text-[12px] font-medium text-muted-foreground hover:bg-transparent hover:text-foreground"
+                  onClick={() => onJump(tick.id)}
+                  className="flex h-auto w-full items-start justify-start gap-2.5 whitespace-normal rounded-md px-2.5 py-2 text-left"
                 >
-                  Open Notes
+                  <span
+                    aria-hidden="true"
+                    className="mt-1 h-3 w-0.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: HUES[tick.hue]?.swatch }}
+                  />
+                  <span className="text-[13px] leading-[1.5] text-foreground">{tick.quote}</span>
                 </Button>
-              )}
-            </div>
-            <ul className="max-h-[60vh] overflow-y-auto p-1 [scrollbar-width:none]">
-              {ticks.map((tick) => (
-                <li key={tick.id}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onJump(tick.id)}
-                    className="flex h-auto w-full items-start justify-start gap-2.5 whitespace-normal rounded-md px-2.5 py-2 text-left"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="mt-1 h-3 w-0.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: HUES[tick.hue]?.swatch }}
-                    />
-                    <span className="text-[13px] leading-[1.5] text-foreground">
-                      {tick.quote}
-                    </span>
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </PopoverContent>
-        </Popover>
+              </li>
+            ))}
+          </ul>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

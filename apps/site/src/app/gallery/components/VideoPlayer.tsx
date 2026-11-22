@@ -3,7 +3,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CircleNotch, ArrowsOut, ArrowsIn, Pause, Play, Repeat, SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
+import {
+  CircleNotch,
+  ArrowsOut,
+  ArrowsIn,
+  Pause,
+  Play,
+  Repeat,
+  SpeakerHigh,
+  SpeakerX,
+} from "@phosphor-icons/react";
 
 /** Milliseconds of stillness, while playing, before the chrome fades out. */
 const CONTROLS_IDLE = 2600;
@@ -65,10 +74,7 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
     setControlsVisible(true);
     if (hideTimer.current) window.clearTimeout(hideTimer.current);
     if (!videoRef.current?.paused) {
-      hideTimer.current = window.setTimeout(
-        () => setControlsVisible(false),
-        CONTROLS_IDLE
-      );
+      hideTimer.current = window.setTimeout(() => setControlsVisible(false), CONTROLS_IDLE);
     }
   }, []);
 
@@ -86,7 +92,7 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
     () => () => {
       if (hideTimer.current) window.clearTimeout(hideTimer.current);
     },
-    []
+    [],
   );
 
   // Toggling sound in the editor while the clip is open takes effect at once.
@@ -123,8 +129,7 @@ export function VideoPlayer({ src, poster, sound = true }: VideoPlayerProps) {
     const onFullscreenChange = () =>
       setFullscreen(document.fullscreenElement === containerRef.current);
     document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () =>
-      document.removeEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
 
   const togglePlay = useCallback(() => {

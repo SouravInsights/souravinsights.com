@@ -27,7 +27,7 @@ interface SpotlightClassOptions {
  */
 export function spotlightClass(
   dimmed: boolean,
-  { smooth = false }: SpotlightClassOptions = {}
+  { smooth = false }: SpotlightClassOptions = {},
 ): string {
   const dim = dimmed ? SPOTLIGHT_DIM : SPOTLIGHT_SHARP;
   return smooth ? `${SPOTLIGHT_TRANSITION} ${dim}` : dim;

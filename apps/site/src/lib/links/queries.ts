@@ -64,7 +64,7 @@ const getLinksCached = unstable_cache(
     return rows.map((row) => ({ ...row, addedAt: row.addedAt.getTime() }));
   },
   ["links"],
-  { revalidate: 300, tags: ["links"] }
+  { revalidate: 300, tags: ["links"] },
 );
 
 /**

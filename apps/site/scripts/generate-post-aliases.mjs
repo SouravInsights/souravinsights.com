@@ -43,7 +43,7 @@ function detectRenames() {
         "--",
         POSTS_DIR,
       ],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
     );
 
     const edges = {};
@@ -89,12 +89,10 @@ const merged = flatten({ ...readExisting(), ...detectRenames() });
 const sorted = Object.fromEntries(
   Object.keys(merged)
     .sort()
-    .map((from) => [from, merged[from]])
+    .map((from) => [from, merged[from]]),
 );
 const nextContents = `${JSON.stringify(sorted, null, 2)}\n`;
-const currentContents = existsSync(aliasesPath)
-  ? readFileSync(aliasesPath, "utf8")
-  : "";
+const currentContents = existsSync(aliasesPath) ? readFileSync(aliasesPath, "utf8") : "";
 
 if (nextContents !== currentContents) {
   writeFileSync(aliasesPath, nextContents);

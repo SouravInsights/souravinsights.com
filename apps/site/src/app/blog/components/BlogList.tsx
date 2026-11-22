@@ -20,9 +20,7 @@ interface BlogListProps {
  */
 const formatPostDate = (date: string) => {
   const parsed = new Date(`${date}T00:00:00`);
-  return Number.isNaN(parsed.getTime())
-    ? date
-    : format(parsed, "MMM d, yyyy");
+  return Number.isNaN(parsed.getTime()) ? date : format(parsed, "MMM d, yyyy");
 };
 
 export default function BlogList({ posts }: BlogListProps) {
@@ -68,9 +66,7 @@ export default function BlogList({ posts }: BlogListProps) {
         </div>
       ) : (
         <div className="py-16 text-center">
-          <h3 className="type-title text-muted-foreground">
-            No blog posts yet. Check back soon!
-          </h3>
+          <h3 className="type-title text-muted-foreground">No blog posts yet. Check back soon!</h3>
         </div>
       )}
     </div>

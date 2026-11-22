@@ -66,8 +66,7 @@ export const seedProjects: Project[] = [
     logo: "/projects/safetomerge-logo.png",
     url: "https://www.safetomerge.com/",
     repo: "https://github.com/SouravInsights/safetomerge",
-    tagline:
-      "A handbook for building reliable software when agents write most of the code.",
+    tagline: "A handbook for building reliable software when agents write most of the code.",
     note: "A handbook about the engineering system around AI agents.",
     what: "A practical, research-led handbook about the system that has to exist around AI agents: how intent becomes something an agent can act on and verify, how a change is understood before it merges, how evidence is gathered, and how production feeds back into the next decision. It isn't about agents themselves. It's about everything around them.",
     why: "As a solo developer I leaned on agents to move faster, and learned quickly that writing code is the easy part. The hard part is the system around it: context, boundaries, evidence, recovery. I needed this handbook, so I started writing it. I study teams doing this in production, talk to engineers, and test the patterns on my own projects. The goal is safe velocity: moving fast without losing trust.",

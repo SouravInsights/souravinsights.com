@@ -7,8 +7,7 @@ export const revalidate = 300;
 // frozen at build time.
 export const dynamic = "force-dynamic";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
 
 // A feed reader only needs the recent stuff; the full history lives on the page.
 const MAX_ITEMS = 60;
@@ -27,29 +26,21 @@ export async function GET() {
 
   // Iterated by category: the feed used to walk the retired channel names and
   // emitted nothing once the collection moved to categories.
-  const links = dedupeByUrl(
-    sortByNewest(
-      CATEGORY_ORDER.flatMap((name) => linkData[name] ?? [])
-    )
-  )
+  const links = dedupeByUrl(sortByNewest(CATEGORY_ORDER.flatMap((name) => linkData[name] ?? [])))
     .filter((link) => link.url)
     .slice(0, MAX_ITEMS);
 
   const items = links
     .map((link) => {
       const category = categoryLabel(link.category);
-      const description = [category, link.description]
-        .filter(Boolean)
-        .join(" — ");
+      const description = [category, link.description].filter(Boolean).join(" — ");
 
       return [
         "    <item>",
         `      <title>${escapeXml(link.title)}</title>`,
         `      <link>${escapeXml(link.url)}</link>`,
         `      <guid isPermaLink="false">${escapeXml(link.id)}</guid>`,
-        description
-          ? `      <description>${escapeXml(description)}</description>`
-          : null,
+        description ? `      <description>${escapeXml(description)}</description>` : null,
         `      <pubDate>${link.addedAt.toUTCString()}</pubDate>`,
         "    </item>",
       ]
@@ -75,8 +66,7 @@ ${items}
   return new Response(feed, {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
-      "Cache-Control":
-        "public, max-age=300, s-maxage=300, stale-while-revalidate=3600",
+      "Cache-Control": "public, max-age=300, s-maxage=300, stale-while-revalidate=3600",
     },
   });
 }

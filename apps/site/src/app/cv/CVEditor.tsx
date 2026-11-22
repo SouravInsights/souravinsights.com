@@ -6,7 +6,20 @@ import { EditableField } from "@/components/EditableField";
 import { SavePill } from "@/components/SavePill";
 import { saveCVData } from "./actions";
 import { cn } from "@/lib/utils";
-import { DownloadSimple, Check, CircleNotch, LinkSimple as LinkIcon, Image as ImageIcon, MapPin, Phone, EnvelopeSimple, Globe, LinkedinLogo, ArrowUpRight, CaretDown } from "@phosphor-icons/react";
+import {
+  DownloadSimple,
+  Check,
+  CircleNotch,
+  LinkSimple as LinkIcon,
+  Image as ImageIcon,
+  MapPin,
+  Phone,
+  EnvelopeSimple,
+  Globe,
+  LinkedinLogo,
+  ArrowUpRight,
+  CaretDown,
+} from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CVEditorProps {
@@ -184,13 +197,13 @@ function MetaItem({
         {icon}
       </span>
       <EditableField
-        value={isEditing ? value : displayValue ?? value}
+        value={isEditing ? value : (displayValue ?? value)}
         onChange={onChange}
         isEditing={isEditing}
         href={!isEditing && isLink ? href : undefined}
         className={cn(
           isLink &&
-            "underline decoration-transparent underline-offset-[3px] transition-[color,text-decoration-color] hover:text-foreground hover:decoration-faint-foreground"
+            "underline decoration-transparent underline-offset-[3px] transition-[color,text-decoration-color] hover:text-foreground hover:decoration-faint-foreground",
         )}
       />
     </span>
@@ -287,7 +300,7 @@ function Logo({
     "bg-muted/60 ring-1 ring-inset ring-border/60",
     "transition-[background-color,box-shadow] duration-200",
     "group-hover/entry:bg-muted group-hover/entry:ring-border",
-    FOCUS_RING
+    FOCUS_RING,
   );
 
   const mark = resolved ? (
@@ -369,7 +382,7 @@ function DisclosureTail({
       className={cn(
         "grid transition-[grid-template-rows] duration-300 [transition-timing-function:cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
         open ? "grid-rows-[1fr]" : "grid-rows-[0fr] sm:grid-rows-[1fr]",
-        className
+        className,
       )}
     >
       <div className="overflow-hidden">{children}</div>
@@ -410,14 +423,17 @@ function DisclosureToggle({
         mobileOnly && "sm:hidden",
         inFlow ? "inline-flex items-center" : "flex items-center gap-1.5 pt-2.5",
         FOCUS_RING,
-        className
+        className,
       )}
     >
       {!inFlow && (
         <CaretDown
           aria-hidden="true"
           strokeWidth={2}
-          className={cn("h-3 w-3 transition-transform duration-200 motion-reduce:transition-none", open && "-rotate-180")}
+          className={cn(
+            "h-3 w-3 transition-transform duration-200 motion-reduce:transition-none",
+            open && "-rotate-180",
+          )}
         />
       )}
       {open ? "Show less" : inFlow ? `+ ${hiddenCount} more` : `Show ${hiddenCount} more`}
@@ -471,7 +487,7 @@ function Bullets({
           // the fold, so the reader knows the list continues.
           collapsible &&
             !open &&
-            "max-sm:[-webkit-mask-image:linear-gradient(180deg,black_68%,transparent)] max-sm:[mask-image:linear-gradient(180deg,black_68%,transparent)]"
+            "max-sm:[-webkit-mask-image:linear-gradient(180deg,black_68%,transparent)] max-sm:[mask-image:linear-gradient(180deg,black_68%,transparent)]",
         )}
       >
         {lead.map(renderBullet)}
@@ -483,7 +499,9 @@ function Bullets({
               keeps the 10px rhythm, so tail and toggle read as more bullets,
               not as separate chrome. */}
           <DisclosureTail id={tailId} open={open}>
-            <div className="space-y-2.5">{tail.map((bullet, i) => renderBullet(bullet, i + SHOWN))}</div>
+            <div className="space-y-2.5">
+              {tail.map((bullet, i) => renderBullet(bullet, i + SHOWN))}
+            </div>
           </DisclosureTail>
           <DisclosureToggle
             id={tailId}
@@ -501,7 +519,7 @@ function Bullets({
             onClick={onAdd}
             className={cn(
               "rounded text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground",
-              FOCUS_RING
+              FOCUS_RING,
             )}
           >
             + Add bullet
@@ -521,7 +539,10 @@ function SectionHead({ index, title, span }: { index: string; title: string; spa
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
       <h2 className="flex items-baseline gap-2.5 text-[15px] font-semibold tracking-tight text-foreground">
-        <span aria-hidden="true" className="font-mono text-[11px] tabular-nums tracking-normal text-faint-foreground">
+        <span
+          aria-hidden="true"
+          className="font-mono text-[11px] tabular-nums tracking-normal text-faint-foreground"
+        >
           {index}
         </span>
         {title}
@@ -611,7 +632,11 @@ const SKILL_DOMAINS: Record<string, string> = {
 };
 
 function normalizeSkill(name: string): string {
-  return name.toLowerCase().replace(/\(.*?\)/g, "").replace(/\s+/g, " ").trim();
+  return name
+    .toLowerCase()
+    .replace(/\(.*?\)/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /** A skill's identity mark: its favicon, or a monogram tile when unmapped. */
@@ -637,7 +662,7 @@ function SkillMark({ name }: { name: string }) {
           "h-[15px] w-[15px] select-none object-contain opacity-85 grayscale",
           "transition-[filter,opacity] duration-200 motion-reduce:transition-none",
           "group-hover/mark:grayscale-0 group-hover/mark:opacity-100",
-          FAVICON_PLATE
+          FAVICON_PLATE,
         )}
       />
     );
@@ -699,13 +724,10 @@ function SkillItems({
     .filter(Boolean);
   const collapsible = skills.length > SHOWN;
 
-
-
   // One container for ALL items: tail items hide individually below sm.
   // Splitting lead/tail into two flex containers would break wrap
   // continuity and maroon the last lead item on a row of its own.
   const renderSkill = (skill: string, index: number) => {
-
     // A trailing "(App Router)"-style qualifier is detail, not identity —
     // the mark comes from the base name, and the qualifier reads quieter.
     const parenMatch = skill.match(/^(.*?)(\s*\(.*\))$/);
@@ -762,7 +784,7 @@ function AddSectionButton({
       onClick={onClick}
       className={cn(
         "rounded text-[13px] font-medium text-primary transition-opacity hover:opacity-70",
-        FOCUS_RING
+        FOCUS_RING,
       )}
     >
       {children}
@@ -823,7 +845,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
   const mutateAt = <K extends "workExperience" | "projects" | "education" | "skills">(
     key: K,
     index: number,
-    mutate: (item: CVData[K][number]) => void
+    mutate: (item: CVData[K][number]) => void,
   ) => {
     setData((prev) => {
       const next = [...prev[key]] as CVData[K];
@@ -833,7 +855,9 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
     });
   };
 
-  const [downloadStatus, setDownloadStatus] = useState<"idle" | "preparing" | "done" | "error">("idle");
+  const [downloadStatus, setDownloadStatus] = useState<"idle" | "preparing" | "done" | "error">(
+    "idle",
+  );
 
   /**
    * The PDF is rendered on the server, so there is a real wait. We fetch it here
@@ -841,7 +865,8 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
    * stays an anchor, so modified clicks and "save link as" still behave natively.
    */
   const handleDownload = async (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)
+      return;
 
     event.preventDefault();
     if (downloadStatus === "preparing") return;
@@ -872,7 +897,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
     if (downloadStatus !== "done" && downloadStatus !== "error") return;
     const timer = setTimeout(
       () => setDownloadStatus("idle"),
-      downloadStatus === "error" ? 4000 : 2600
+      downloadStatus === "error" ? 4000 : 2600,
     );
     return () => clearTimeout(timer);
   }, [downloadStatus]);
@@ -993,10 +1018,13 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
               downloadStatus === "error"
                 ? "bg-destructive text-destructive-foreground"
                 : "bg-primary text-primary-foreground hover:opacity-90",
-              FOCUS_RING
+              FOCUS_RING,
             )}
           >
-            <span aria-hidden="true" className="relative flex h-3.5 w-3.5 items-center justify-center">
+            <span
+              aria-hidden="true"
+              className="relative flex h-3.5 w-3.5 items-center justify-center"
+            >
               <AnimatePresence initial={false}>
                 <motion.span
                   key={downloadStatus}
@@ -1050,7 +1078,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     // The gutter column stays desktop-only (a phone can't spare
                     // 60px); mobile carries a bare inline mark instead, glued
                     // to the name it pictures (company / project).
-                    showLogo ? "grid-cols-1 sm:grid-cols-[40px_1fr]" : "grid-cols-1"
+                    showLogo ? "grid-cols-1 sm:grid-cols-[40px_1fr]" : "grid-cols-1",
                   )}
                 >
                   {showLogo && (
@@ -1065,7 +1093,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 sm:items-baseline">
                       <EditableField
                         value={job.role}
-                        onChange={(val) => mutateAt("workExperience", index, (item) => { item.role = val; })}
+                        onChange={(val) =>
+                          mutateAt("workExperience", index, (item) => {
+                            item.role = val;
+                          })
+                        }
                         isEditing={isEditing}
                         className="text-[15px] font-semibold text-foreground"
                       />
@@ -1086,7 +1118,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 sm:items-baseline">
                       <LinkedName
                         value={job.company}
-                        onChange={(val) => mutateAt("workExperience", index, (item) => { item.company = val; })}
+                        onChange={(val) =>
+                          mutateAt("workExperience", index, (item) => {
+                            item.company = val;
+                          })
+                        }
                         isEditing={isEditing}
                         href={job.companyUrl ? withProtocol(job.companyUrl) : undefined}
                         className="text-[15px] text-foreground"
@@ -1098,7 +1134,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                       {job.location && (
                         <EditableField
                           value={job.location}
-                          onChange={(val) => mutateAt("workExperience", index, (item) => { item.location = val; })}
+                          onChange={(val) =>
+                            mutateAt("workExperience", index, (item) => {
+                              item.location = val;
+                            })
+                          }
                           isEditing={isEditing}
                           className={cn(META, "italic")}
                         />
@@ -1111,13 +1151,21 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                           icon={<ImageIcon className="h-3 w-3 text-muted-foreground" />}
                           value={job.logoUrl || ""}
                           placeholder="Paste logo URL..."
-                          onChange={(val) => mutateAt("workExperience", index, (item) => { item.logoUrl = val; })}
+                          onChange={(val) =>
+                            mutateAt("workExperience", index, (item) => {
+                              item.logoUrl = val;
+                            })
+                          }
                         />
                         <EditMetaInput
                           icon={<LinkIcon className="h-3 w-3 text-muted-foreground" />}
                           value={job.companyUrl || ""}
                           placeholder="Paste company URL..."
-                          onChange={(val) => mutateAt("workExperience", index, (item) => { item.companyUrl = val; })}
+                          onChange={(val) =>
+                            mutateAt("workExperience", index, (item) => {
+                              item.companyUrl = val;
+                            })
+                          }
                         />
                       </div>
                     )}
@@ -1125,10 +1173,14 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     <Bullets
                       items={job.bullets}
                       onChange={(bulletIndex, val) =>
-                        mutateAt("workExperience", index, (item) => { item.bullets[bulletIndex] = val; })
+                        mutateAt("workExperience", index, (item) => {
+                          item.bullets[bulletIndex] = val;
+                        })
                       }
                       onAdd={() =>
-                        mutateAt("workExperience", index, (item) => { item.bullets.push("New detail..."); })
+                        mutateAt("workExperience", index, (item) => {
+                          item.bullets.push("New detail...");
+                        })
                       }
                       isEditing={isEditing}
                     />
@@ -1176,7 +1228,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                   key={project.id}
                   className={cn(
                     "group/entry grid gap-x-5",
-                    showLogo ? "grid-cols-1 sm:grid-cols-[40px_1fr]" : "grid-cols-1"
+                    showLogo ? "grid-cols-1 sm:grid-cols-[40px_1fr]" : "grid-cols-1",
                   )}
                 >
                   {showLogo && (
@@ -1193,11 +1245,17 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 sm:items-baseline">
                       <LinkedName
                         value={project.name}
-                        onChange={(val) => mutateAt("projects", index, (item) => { item.name = val; })}
+                        onChange={(val) =>
+                          mutateAt("projects", index, (item) => {
+                            item.name = val;
+                          })
+                        }
                         isEditing={isEditing}
                         href={project.projectUrl ? withProtocol(project.projectUrl) : undefined}
                         className="text-[15px] font-semibold text-foreground"
-                        leadingIcon={<InlineMark imgUrl={project.logoUrl} linkUrl={project.projectUrl} />}
+                        leadingIcon={
+                          <InlineMark imgUrl={project.logoUrl} linkUrl={project.projectUrl} />
+                        }
                       />
                       <Dates
                         value={`${project.startDate} - ${project.endDate}`}
@@ -1216,13 +1274,19 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 sm:items-baseline">
                       <EditableField
                         value={project.role}
-                        onChange={(val) => mutateAt("projects", index, (item) => { item.role = val; })}
+                        onChange={(val) =>
+                          mutateAt("projects", index, (item) => {
+                            item.role = val;
+                          })
+                        }
                         isEditing={isEditing}
                         className={META}
                       />
                     </div>
 
-                    {project.links && project.links.length > 0 && <DestinationLinks links={project.links} />}
+                    {project.links && project.links.length > 0 && (
+                      <DestinationLinks links={project.links} />
+                    )}
 
                     {isEditing && (
                       <div className="flex items-center gap-4 pt-2 opacity-40 transition-opacity focus-within:opacity-100">
@@ -1230,13 +1294,21 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                           icon={<ImageIcon className="h-3 w-3 text-muted-foreground" />}
                           value={project.logoUrl || ""}
                           placeholder="Paste logo URL..."
-                          onChange={(val) => mutateAt("projects", index, (item) => { item.logoUrl = val; })}
+                          onChange={(val) =>
+                            mutateAt("projects", index, (item) => {
+                              item.logoUrl = val;
+                            })
+                          }
                         />
                         <EditMetaInput
                           icon={<LinkIcon className="h-3 w-3 text-muted-foreground" />}
                           value={project.projectUrl || ""}
                           placeholder="Paste project URL..."
-                          onChange={(val) => mutateAt("projects", index, (item) => { item.projectUrl = val; })}
+                          onChange={(val) =>
+                            mutateAt("projects", index, (item) => {
+                              item.projectUrl = val;
+                            })
+                          }
                         />
                       </div>
                     )}
@@ -1244,10 +1316,14 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     <Bullets
                       items={project.bullets}
                       onChange={(bulletIndex, val) =>
-                        mutateAt("projects", index, (item) => { item.bullets[bulletIndex] = val; })
+                        mutateAt("projects", index, (item) => {
+                          item.bullets[bulletIndex] = val;
+                        })
                       }
                       onAdd={() =>
-                        mutateAt("projects", index, (item) => { item.bullets.push("New detail..."); })
+                        mutateAt("projects", index, (item) => {
+                          item.bullets.push("New detail...");
+                        })
                       }
                       isEditing={isEditing}
                     />
@@ -1295,7 +1371,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                   <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 sm:items-baseline">
                     <EditableField
                       value={edu.degree}
-                      onChange={(val) => mutateAt("education", index, (item) => { item.degree = val; })}
+                      onChange={(val) =>
+                        mutateAt("education", index, (item) => {
+                          item.degree = val;
+                        })
+                      }
                       isEditing={isEditing}
                       className="text-[15px] font-semibold text-foreground"
                     />
@@ -1316,14 +1396,22 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                   <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 sm:items-baseline">
                     <EditableField
                       value={edu.institution}
-                      onChange={(val) => mutateAt("education", index, (item) => { item.institution = val; })}
+                      onChange={(val) =>
+                        mutateAt("education", index, (item) => {
+                          item.institution = val;
+                        })
+                      }
                       isEditing={isEditing}
                       className={META}
                     />
                     {edu.location && (
                       <EditableField
                         value={edu.location}
-                        onChange={(val) => mutateAt("education", index, (item) => { item.location = val; })}
+                        onChange={(val) =>
+                          mutateAt("education", index, (item) => {
+                            item.location = val;
+                          })
+                        }
                         isEditing={isEditing}
                         className={cn(META, "italic")}
                       />
@@ -1370,7 +1458,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                 <div className="min-w-0">
                   <EditableField
                     value={skillGroup.category}
-                    onChange={(val) => mutateAt("skills", index, (item) => { item.category = val; })}
+                    onChange={(val) =>
+                      mutateAt("skills", index, (item) => {
+                        item.category = val;
+                      })
+                    }
                     isEditing={isEditing}
                     className="text-[15px] font-semibold text-foreground"
                   />
@@ -1409,7 +1501,7 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                               }
                               className={cn(
                                 "rounded text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground",
-                                FOCUS_RING
+                                FOCUS_RING,
                               )}
                             >
                               + Add item
@@ -1420,7 +1512,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     ) : (
                       <SkillItems
                         items={skillGroup.items}
-                        onChange={(val) => mutateAt("skills", index, (item) => { item.items = val; })}
+                        onChange={(val) =>
+                          mutateAt("skills", index, (item) => {
+                            item.items = val;
+                          })
+                        }
                         isEditing={isEditing}
                       />
                     )}
@@ -1436,7 +1532,11 @@ export function CVEditor({ initialData, isEditing: isUserAuthenticated }: CVEdit
                     ...prev,
                     skills: [
                       ...prev.skills,
-                      { id: Math.random().toString(), category: "New category", items: "Skill, Skill" },
+                      {
+                        id: Math.random().toString(),
+                        category: "New category",
+                        items: "Skill, Skill",
+                      },
                     ],
                   }))
                 }

@@ -61,8 +61,7 @@ function LiteralCredit() {
             className="block opacity-90 dark:hidden"
           />
           <p className="type-caption max-w-md">
-            I use Literal Club to track my reading. They have a nice API that
-            powers this page.
+            I use Literal Club to track my reading. They have a nice API that powers this page.
           </p>
         </div>
         <a
@@ -90,18 +89,13 @@ export default function BookshelfPage() {
             title="Library"
             description="A running list of books worth reading: what I'm reading now, what's next, and everything I've finished."
             action={
-              <CoverToggle
-                checked={showGenerativeCovers}
-                onChange={setShowGenerativeCovers}
-              />
+              <CoverToggle checked={showGenerativeCovers} onChange={setShowGenerativeCovers} />
             }
           />
         </FadeIn>
 
         {totalBooks !== null && (
-          <p className="type-caption mb-6 text-faint-foreground">
-            {totalBooks} books
-          </p>
+          <p className="type-caption mb-6 text-faint-foreground">{totalBooks} books</p>
         )}
 
         <BookshelfContent

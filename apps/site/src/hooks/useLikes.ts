@@ -1,9 +1,5 @@
 import { useCallback } from "react";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiJson } from "@/lib/query/api";
 import { qk } from "@/lib/query/keys";
 
@@ -56,8 +52,7 @@ export function useLikes({
   const { data, isLoading, isError } = useQuery({
     queryKey: key,
     enabled: Boolean(id),
-    queryFn: () =>
-      apiJson<LikeState>(`${endpoint}?${param}=${encodeURIComponent(id)}`),
+    queryFn: () => apiJson<LikeState>(`${endpoint}?${param}=${encodeURIComponent(id)}`),
   });
 
   // The server-rendered counts stand in until the first read lands.

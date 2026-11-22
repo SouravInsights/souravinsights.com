@@ -37,14 +37,11 @@ async function fetchWeatherAtDeploy(
   baseUrl: string,
   apiKey: string,
   query: string,
-  deployedAtMs: number | null
+  deployedAtMs: number | null,
 ): Promise<WeatherInfo | null> {
   const q = encodeURIComponent(query);
 
-  const toInfo = (
-    row: WeatherHour,
-    location: { name?: string }
-  ): WeatherInfo => ({
+  const toInfo = (row: WeatherHour, location: { name?: string }): WeatherInfo => ({
     description: row?.condition?.text ?? "",
     temperature: Number(row?.temp_c ?? 0),
     city: location?.name ?? String(query),
@@ -55,10 +52,9 @@ async function fetchWeatherAtDeploy(
   });
 
   if (deployedAtMs === null) {
-    const response = await fetch(
-      `${baseUrl}/current.json?key=${apiKey}&q=${q}&aqi=no`,
-      { cache: "no-store" }
-    );
+    const response = await fetch(`${baseUrl}/current.json?key=${apiKey}&q=${q}&aqi=no`, {
+      cache: "no-store",
+    });
     if (!response.ok) return null;
     const json = await response.json();
     return toInfo(json.current, json.location);
@@ -68,23 +64,18 @@ async function fetchWeatherAtDeploy(
   const utcDate = new Date(deployedAtMs).toISOString().slice(0, 10);
 
   const dayOn = async (date: string) => {
-    const response = await fetch(
-      `${baseUrl}/history.json?key=${apiKey}&q=${q}&dt=${date}`,
-      { cache: "no-store" }
-    );
+    const response = await fetch(`${baseUrl}/history.json?key=${apiKey}&q=${q}&dt=${date}`, {
+      cache: "no-store",
+    });
     if (!response.ok) return null;
     const json = await response.json();
-    const hours: WeatherHour[] =
-      json?.forecast?.forecastday?.[0]?.hour ?? [];
+    const hours: WeatherHour[] = json?.forecast?.forecastday?.[0]?.hour ?? [];
     return hours.length ? { hours, location: json.location } : null;
   };
 
   const nearest = (hours: WeatherHour[]) =>
     hours.reduce((best, row) =>
-      Math.abs(row.time_epoch - deployEpoch) <
-      Math.abs(best.time_epoch - deployEpoch)
-        ? row
-        : best
+      Math.abs(row.time_epoch - deployEpoch) < Math.abs(best.time_epoch - deployEpoch) ? row : best,
     );
 
   let day = await dayOn(utcDate);
@@ -96,7 +87,7 @@ async function fetchWeatherAtDeploy(
   if (Math.abs(hour.time_epoch - deployEpoch) > 3600) {
     const after = deployEpoch > day.hours[day.hours.length - 1].time_epoch;
     const adjacent = new Date(
-      Date.parse(`${utcDate}T00:00:00Z`) + (after ? 86_400_000 : -86_400_000)
+      Date.parse(`${utcDate}T00:00:00Z`) + (after ? 86_400_000 : -86_400_000),
     )
       .toISOString()
       .slice(0, 10);
@@ -135,16 +126,19 @@ export async function GET() {
           {
             headers: { Authorization: `Bearer ${vercelToken}` },
             cache: "no-store",
-          }
+          },
         );
 
         if (!deploymentRes.ok) {
           const errorText = await deploymentRes.text();
-          console.error(`Failed to fetch deployment data from Vercel: ${deploymentRes.status}`, errorText);
+          console.error(
+            `Failed to fetch deployment data from Vercel: ${deploymentRes.status}`,
+            errorText,
+          );
         } else {
           const deploymentJson = await deploymentRes.json();
           latest = deploymentJson.deployments?.[0];
-          
+
           // Prefer the "ready" timestamp (when it went live), then fallback
           deployedAtMs = latest?.ready ?? latest?.readyAt ?? latest?.created ?? null;
         }
@@ -164,7 +158,7 @@ export async function GET() {
             "https://api.weatherapi.com/v1",
             weatherApiKey,
             weatherQ,
-            deployedAtMs
+            deployedAtMs,
           )
         : null;
 
@@ -184,9 +178,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching status data:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch status data" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch status data" }, { status: 500 });
   }
 }

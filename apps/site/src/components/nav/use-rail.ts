@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { useCallback, useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
 
 /**
@@ -35,8 +30,7 @@ const OPEN_KEY = "railOpen";
  */
 const ICON_WIDTH_VAR = "--rail-icon-user";
 
-const clampWidth = (px: number) =>
-  Math.min(RAIL_MAX, Math.max(RAIL_ICON, Math.round(px)));
+const clampWidth = (px: number) => Math.min(RAIL_MAX, Math.max(RAIL_ICON, Math.round(px)));
 
 /** One writer, so the drag and the effect below can never disagree. */
 function writeRailWidth(px: number | null) {
@@ -206,10 +200,7 @@ export function useRail() {
           window.removeEventListener("click", swallow, true);
         };
         window.addEventListener("click", swallow, true);
-        window.setTimeout(
-          () => window.removeEventListener("click", swallow, true),
-          350
-        );
+        window.setTimeout(() => window.removeEventListener("click", swallow, true), 350);
 
         if (next > RAIL_LABELS_FROM) {
           setWidth(next);
@@ -227,7 +218,7 @@ export function useRail() {
       window.addEventListener("pointerup", onUp);
       window.addEventListener("pointercancel", onUp);
     },
-    [open, setOpen, width]
+    [open, setOpen, width],
   );
 
   return { onResizeStart };

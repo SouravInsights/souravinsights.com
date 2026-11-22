@@ -59,14 +59,11 @@ type LegacyMovieEntry = Partial<MovieEntry> & {
 
 // The old empty-state copy was written into every saved record. It is not the
 // user's writing, so it is dropped rather than folded into `notes`.
-const LEGACY_NOTES_PLACEHOLDER =
-  "What did this film make you feel? Why does it stay with you?";
+const LEGACY_NOTES_PLACEHOLDER = "What did this film make you feel? Why does it stay with you?";
 const LEGACY_QUOTE_PLACEHOLDER = "A line that stayed with you...";
 
 export function normalizeMovieEntry(raw: LegacyMovieEntry): MovieEntry {
-  const merged =
-    raw.notes ??
-    [raw.personalNote, raw.longNote].filter(Boolean).join("\n\n");
+  const merged = raw.notes ?? [raw.personalNote, raw.longNote].filter(Boolean).join("\n\n");
   const notes = merged.trim() === LEGACY_NOTES_PLACEHOLDER ? "" : merged;
 
   return {
@@ -75,11 +72,7 @@ export function normalizeMovieEntry(raw: LegacyMovieEntry): MovieEntry {
     posterData: raw.posterData,
     notes,
     quotes: (raw.quotes ?? [])
-      .filter(
-        (quote) =>
-          quote?.text?.trim() &&
-          quote.text.trim() !== LEGACY_QUOTE_PLACEHOLDER
-      )
+      .filter((quote) => quote?.text?.trim() && quote.text.trim() !== LEGACY_QUOTE_PLACEHOLDER)
       .map((quote) => ({
         id: quote.id || generateId(),
         text: quote.text,
@@ -94,8 +87,6 @@ export function normalizeMoviesData(raw: MoviesData): MoviesData {
       title: raw.header?.title ?? defaultMoviesHeader.title,
       description: raw.header?.description ?? defaultMoviesHeader.description,
     },
-    movies: (raw.movies ?? []).map((movie) =>
-      normalizeMovieEntry(movie as LegacyMovieEntry)
-    ),
+    movies: (raw.movies ?? []).map((movie) => normalizeMovieEntry(movie as LegacyMovieEntry)),
   };
 }

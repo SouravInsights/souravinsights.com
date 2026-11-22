@@ -23,10 +23,7 @@ export async function GET() {
   const user = process.env.LASTFM_USERNAME;
 
   if (!apiKey || !user) {
-    return NextResponse.json(
-      { error: "Missing Last.fm configuration" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Missing Last.fm configuration" }, { status: 500 });
   }
 
   const url = new URL("https://ws.audioscrobbler.com/2.0/");
@@ -38,10 +35,7 @@ export async function GET() {
 
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) {
-    return NextResponse.json(
-      { error: `Last.fm error: ${response.status}` },
-      { status: 502 }
-    );
+    return NextResponse.json({ error: `Last.fm error: ${response.status}` }, { status: 502 });
   }
 
   const data = await response.json();
@@ -62,7 +56,7 @@ export async function GET() {
       // Last.fm has no Spotify id, so the banner's Spotify icon points at a
       // search for the track instead.
       url: `https://open.spotify.com/search/${encodeURIComponent(
-        `${artist} ${track.name}`.trim()
+        `${artist} ${track.name}`.trim(),
       )}`,
     },
   });

@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "bun.lock",
+    "**/*.md",
+    "**/*.mdx",
+    "apps/kit/public/r/**",
+    "apps/kit/content/docs/**"
+  ]
+}

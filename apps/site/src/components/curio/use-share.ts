@@ -25,14 +25,10 @@ import {
  *   accounts here to remember them for you.
  */
 export function useShareConversation(messages: UIMessage[]) {
-  const [shareState, setShareState] = useState<
-    "idle" | "working" | "copied" | "failed"
-  >("idle");
+  const [shareState, setShareState] = useState<"idle" | "working" | "copied" | "failed">("idle");
   const [shareFailure, setShareFailure] = useState("");
   /** The link this conversation already has, if it was shared at this length. */
-  const [shared, setShared] = useState<{ id: string; count: number } | null>(
-    null
-  );
+  const [shared, setShared] = useState<{ id: string; count: number } | null>(null);
   /** The links this browser has made, newest first. */
   const [shares, setShares] = useState<RememberedShare[]>([]);
 
@@ -81,12 +77,10 @@ export function useShareConversation(messages: UIMessage[]) {
       if (!response.ok) {
         // Keep the reason rather than swallowing it: a 503 here has meant the
         // storage was not ready, which is worth being able to see.
-        const detail = (await response.json().catch(() => null)) as
-          | { error?: { message?: string } }
-          | null;
-        setShareFailure(
-          detail?.error?.message ?? `Request failed (${response.status})`
-        );
+        const detail = (await response.json().catch(() => null)) as {
+          error?: { message?: string };
+        } | null;
+        setShareFailure(detail?.error?.message ?? `Request failed (${response.status})`);
         setShareState("failed");
         return;
       }
@@ -105,7 +99,7 @@ export function useShareConversation(messages: UIMessage[]) {
           id: data.id,
           title: data.title,
           createdAt: new Date().toISOString(),
-        })
+        }),
       );
       posthog.capture("curio_shared", { messages: messages.length });
       await copy(`${window.location.origin}/curio/${data.id}`);

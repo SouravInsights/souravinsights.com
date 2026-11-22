@@ -2,22 +2,16 @@
 
 import { useState, type ReactNode } from "react";
 import Image from "next/image";
-import {
-  ArrowUpRight,
-  CaretDown,
-  GithubLogo,
-  ImageSquare,
-} from "@phosphor-icons/react";
+import { ArrowUpRight, CaretDown, GithubLogo, ImageSquare } from "@phosphor-icons/react";
 import { EditableField } from "@/components/EditableField";
 import type { Project } from "./projects-data";
 import { DeadMark } from "./DeadMark";
 import dynamic from "next/dynamic";
 
 // Edit-only, so it is a separate chunk: a visitor never downloads it.
-const ProjectFields = dynamic(
-  () => import("./ProjectFields").then((mod) => mod.ProjectFields),
-  { ssr: false }
-);
+const ProjectFields = dynamic(() => import("./ProjectFields").then((mod) => mod.ProjectFields), {
+  ssr: false,
+});
 
 /**
  * One row of the main list — the row the page shows, not a representation of it.
@@ -121,9 +115,7 @@ export function ProjectRow({
               title={open ? "Hide fields" : "Edit fields"}
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
             >
-              <CaretDown
-                className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
-              />
+              <CaretDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
             </button>
             {dragHandle}
           </>
@@ -142,9 +134,7 @@ export function ProjectRow({
                   {isDead && <DeadMark />}
                 </h2>
                 {project.tagline && (
-                  <p className="type-body mt-0.5 text-muted-foreground">
-                    {project.tagline}
-                  </p>
+                  <p className="type-body mt-0.5 text-muted-foreground">{project.tagline}</p>
                 )}
               </div>
               <ArrowUpRight className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-green-700 dark:group-hover:text-green-500" />
@@ -166,11 +156,7 @@ export function ProjectRow({
 
       {editable && open && (
         <div className="mt-4">
-          <ProjectFields
-            project={project}
-            onChange={patch}
-            onRemove={onRemove}
-          />
+          <ProjectFields project={project} onChange={patch} onRemove={onRemove} />
         </div>
       )}
     </article>

@@ -16,20 +16,17 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Shipstack",
-  description:
-    "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
+  description: "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
   openGraph: {
     title: "Shipstack",
-    description:
-      "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
+    description: "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
     url: "https://souravinsights.com/play",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Shipstack",
-    description:
-      "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
+    description: "Just Tetris. Fill rows, clear them, chase tetrises. Plays best on a phone.",
   },
 };
 

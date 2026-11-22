@@ -54,6 +54,6 @@ export function useFeedback() {
         sound.playDeny();
       },
     }),
-    [haptics, sound]
+    [haptics, sound],
   );
 }

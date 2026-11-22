@@ -3,9 +3,7 @@ import { join } from "node:path";
 import { registryDocs } from "./registry-docs.mjs";
 
 const root = process.cwd();
-const registry = JSON.parse(
-  readFileSync(join(root, "public", "r", "registry.json"), "utf8")
-);
+const registry = JSON.parse(readFileSync(join(root, "public", "r", "registry.json"), "utf8"));
 
 const registryRoot = join(root, "..", "..", "packages", "registry");
 
@@ -72,9 +70,7 @@ for (const section of sections) {
 }
 
 for (const section of sections) {
-  const items = registry.items
-    .filter(section.match)
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const items = registry.items.filter(section.match).sort((a, b) => a.name.localeCompare(b.name));
   if (!items.length) continue;
   const dir = join(docs, section.folder);
 
@@ -95,10 +91,7 @@ for (const section of sections) {
       sources[demo] = [
         {
           path: `src/components/demos/${demo}.tsx`,
-          content: readFileSync(
-            join(root, "src", "components", "demos", `${demo}.tsx`),
-            "utf8"
-          ),
+          content: readFileSync(join(root, "src", "components", "demos", `${demo}.tsx`), "utf8"),
         },
       ];
     }
@@ -114,7 +107,7 @@ for (const section of sections) {
         (example) =>
           `### ${example.title}\n\n${
             example.description ? `${example.description}\n\n` : ""
-          }<ComponentPreview name="${example.name}" />`
+          }<ComponentPreview name="${example.name}" />`,
       )
       .join("\n\n");
     const examplesSection = examples ? `\n## Examples\n\n${examples}\n` : "";
@@ -162,17 +155,13 @@ ${depsStep}
 
 </TabsContent>
 </Tabs>
-${usage}${examplesSection}`
+${usage}${examplesSection}`,
     );
   }
 
   writeFileSync(
     join(dir, "meta.json"),
-    JSON.stringify(
-      { title: section.title, pages: items.map((item) => item.name) },
-      null,
-      2
-    )
+    JSON.stringify({ title: section.title, pages: items.map((item) => item.name) }, null, 2),
   );
 }
 
@@ -181,22 +170,12 @@ writeFileSync(
   JSON.stringify(
     {
       title: "Documentation",
-      pages: [
-        "index",
-        "installation",
-        "examples",
-        "components",
-        "blocks",
-        "utilities",
-      ],
+      pages: ["index", "installation", "examples", "components", "blocks", "utilities"],
     },
     null,
-    2
-  )
+    2,
+  ),
 );
 
 mkdirSync(join(root, "src", "generated"), { recursive: true });
-writeFileSync(
-  join(root, "src", "generated", "sources.json"),
-  JSON.stringify(sources, null, 2)
-);
+writeFileSync(join(root, "src", "generated", "sources.json"), JSON.stringify(sources, null, 2));

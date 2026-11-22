@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest) {
           message: "Body must be { id, title?, notes?, tags?, sound? }",
         },
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

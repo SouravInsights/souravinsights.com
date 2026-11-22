@@ -28,7 +28,7 @@ export function useChipDrift(
     playing,
     direction = 1,
     wrap = false,
-  }: { playing: boolean; direction?: 1 | -1; wrap?: boolean }
+  }: { playing: boolean; direction?: 1 | -1; wrap?: boolean },
 ) {
   // Pausing tears this effect down and rebuilds it, so anything with a side
   // effect in its body happens again on every hover-out. Two things must not:

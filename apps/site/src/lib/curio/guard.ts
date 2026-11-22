@@ -28,7 +28,10 @@ export function trimHistory(messages: UIMessage[]): UIMessage[] {
     parts: message.parts.map((part) => {
       const text = part as { type: string; text?: string };
       return text.type === "text" && typeof text.text === "string"
-        ? ({ ...part, text: text.text.slice(0, MAX_TEXT_PER_MESSAGE) } as UIMessage["parts"][number])
+        ? ({
+            ...part,
+            text: text.text.slice(0, MAX_TEXT_PER_MESSAGE),
+          } as UIMessage["parts"][number])
         : part;
     }),
   }));
@@ -44,11 +47,8 @@ export function trimHistory(messages: UIMessage[]): UIMessage[] {
  * security: a header is trivial to forge. It makes casual scripting not worth
  * the trouble, which is all it is for.
  */
-export function isFromOurOwnPages(request: {
-  headers: Headers;
-}): boolean {
-  const source =
-    request.headers.get("origin") ?? request.headers.get("referer") ?? "";
+export function isFromOurOwnPages(request: { headers: Headers }): boolean {
+  const source = request.headers.get("origin") ?? request.headers.get("referer") ?? "";
   if (!source) return false;
   try {
     const from = new URL(source).host;

@@ -17,9 +17,7 @@ export async function GET(request: NextRequest) {
     // `scroll` is the tall capture the hover preview pans through; anything
     // else is the original viewport crop.
     const variant =
-      request.nextUrl.searchParams.get("variant") === "scroll"
-        ? "scroll"
-        : "viewport";
+      request.nextUrl.searchParams.get("variant") === "scroll" ? "scroll" : "viewport";
 
     // Cached links resolve instantly; misses capture once and are stored.
     const refresh = request.nextUrl.searchParams.get("refresh") === "1";

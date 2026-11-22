@@ -1,11 +1,7 @@
 "use client";
 
 import { Minus, Plus, TextAa } from "@phosphor-icons/react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 /**
  * The reader's Appearance panel: the three things a reader actually changes
@@ -41,13 +37,7 @@ export function appearanceStyle(value: Appearance): React.CSSProperties {
   };
 }
 
-function Row({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex h-9 items-center justify-between gap-3">
       <span className="text-[13px] text-muted-foreground">{label}</span>
@@ -119,9 +109,7 @@ export function ReaderAppearance({
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" sideOffset={8} className="w-64 p-3">
-        <h2 className="mb-1.5 text-[13px] font-semibold text-foreground">
-          Appearance
-        </h2>
+        <h2 className="mb-1.5 text-[13px] font-semibold text-foreground">Appearance</h2>
 
         <Row label="Font">
           <Segmented<Appearance["font"]>

@@ -6,7 +6,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { BookOpen, BookOpenText, BookmarkSimple, Stack, BracketsCurly, FilmSlate, FilmStrip, GameController, GithubLogo, House, LinkedinLogo, EnvelopeSimple, DotsThree, SidebarSimple, Sparkle, XLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
+import {
+  BookOpen,
+  BookOpenText,
+  BookmarkSimple,
+  Stack,
+  BracketsCurly,
+  FilmSlate,
+  FilmStrip,
+  GameController,
+  GithubLogo,
+  House,
+  LinkedinLogo,
+  EnvelopeSimple,
+  DotsThree,
+  SidebarSimple,
+  Sparkle,
+  XLogo,
+  type Icon as PhosphorIcon,
+} from "@phosphor-icons/react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { SoundToggle } from "@/components/SoundToggle";
 import Oneko from "@/components/oneko";
@@ -124,8 +142,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
    * somebody else's site around it is noise. `/curio` itself keeps the shell,
    * since that is the app screen for asking.
    */
-  const isSharedConversation =
-    pathname !== "/curio" && Boolean(pathname?.startsWith("/curio/"));
+  const isSharedConversation = pathname !== "/curio" && Boolean(pathname?.startsWith("/curio/"));
 
   if (isSharedConversation) return <>{children}</>;
 
@@ -200,7 +217,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onClose={() => setMenuOpen(false)}
         onNavigate={press}
       />
-
     </>
   );
 }
@@ -255,12 +271,7 @@ function SocialButton({ social }: { social: Social }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          asChild
-          variant="ghost"
-          size="icon-sm"
-          className="text-muted-foreground"
-        >
+        <Button asChild variant="ghost" size="icon-sm" className="text-muted-foreground">
           <a
             href={social.href}
             target="_blank"
@@ -287,12 +298,7 @@ function SocialButton({ social }: { social: Social }) {
         className="flex items-center gap-2 !py-1 data-[state=closed]:!animate-none"
       >
         <span>{social.label}</span>
-        <CopyButton
-          value={social.copy}
-          label={social.label}
-          iconOnly
-          onCopied={feedback.press}
-        />
+        <CopyButton value={social.copy} label={social.label} iconOnly onCopied={feedback.press} />
       </TooltipContent>
     </Tooltip>
   );
@@ -313,10 +319,7 @@ function SocialButton({ social }: { social: Social }) {
  */
 function BrandMark({ index, reduce }: { index: number; reduce: boolean }) {
   return (
-    <span
-      className="relative h-11 w-11 shrink-0"
-      aria-hidden="true"
-    >
+    <span className="relative h-11 w-11 shrink-0" aria-hidden="true">
       {STICKERS.map((sticker, i) => (
         <motion.span
           key={sticker.src}
@@ -327,11 +330,7 @@ function BrandMark({ index, reduce }: { index: number; reduce: boolean }) {
             scale: i === index ? 1 : 0.4,
             rotate: i === index ? 0 : -8,
           }}
-          transition={
-            reduce
-              ? { duration: 0 }
-              : { type: "spring", stiffness: 700, damping: 26 }
-          }
+          transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 700, damping: 26 }}
         >
           <Image
             src={sticker.src}
@@ -346,13 +345,7 @@ function BrandMark({ index, reduce }: { index: number; reduce: boolean }) {
   );
 }
 
-function SiteRail({
-  pathname,
-  onNavigate,
-}: {
-  pathname: string | null;
-  onNavigate: () => void;
-}) {
+function SiteRail({ pathname, onNavigate }: { pathname: string | null; onNavigate: () => void }) {
   const rail = useRail();
   const { open, toggleSidebar } = useSidebar();
   const reduce = useReducedMotion();
@@ -363,10 +356,7 @@ function SiteRail({
   // Reduced motion settles on one face instead of cycling.
   useEffect(() => {
     if (!hovering || reduce) return;
-    const id = window.setInterval(
-      () => setFace((current) => (current + 1) % STICKERS.length),
-      400
-    );
+    const id = window.setInterval(() => setFace((current) => (current + 1) % STICKERS.length), 400);
     return () => window.clearInterval(id);
   }, [hovering, reduce]);
 
@@ -424,12 +414,7 @@ function SiteRail({
           <SidebarGroupContent>
             <SidebarMenu>
               {destinations.map((item) => (
-                <RailItem
-                  key={item.path}
-                  item={item}
-                  pathname={pathname}
-                  onNavigate={onNavigate}
-                />
+                <RailItem key={item.path} item={item} pathname={pathname} onNavigate={onNavigate} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -442,12 +427,7 @@ function SiteRail({
           <SidebarGroupContent>
             <SidebarMenu>
               {elsewhere.map((item) => (
-                <RailItem
-                  key={item.path}
-                  item={item}
-                  pathname={pathname}
-                  onNavigate={onNavigate}
-                />
+                <RailItem key={item.path} item={item} pathname={pathname} onNavigate={onNavigate} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -579,9 +559,7 @@ function TabBar({
             aria-current={active ? "page" : undefined}
             className={cn(
               "group flex flex-1 flex-col items-center justify-center gap-1 font-mono text-[10px] outline-none transition-colors focus-visible:bg-accent",
-              active
-                ? "text-green-700 dark:text-green-500"
-                : "text-muted-foreground"
+              active ? "text-green-700 dark:text-green-500" : "text-muted-foreground",
             )}
           >
             <item.icon
@@ -601,7 +579,7 @@ function TabBar({
         aria-haspopup="dialog"
         className={cn(
           "group flex flex-1 flex-col items-center justify-center gap-1 font-mono text-[10px] outline-none transition-colors focus-visible:bg-accent",
-          menuOpen ? "text-foreground" : "text-muted-foreground"
+          menuOpen ? "text-foreground" : "text-muted-foreground",
         )}
       >
         <DotsThree
@@ -660,7 +638,7 @@ function MoreSheet({
                     "group flex items-center gap-2.5 rounded-lg px-3 py-2.5 font-mono text-sm transition-colors",
                     active
                       ? "bg-secondary text-green-700 dark:text-green-500"
-                      : "text-foreground hover:bg-accent"
+                      : "text-foreground hover:bg-accent",
                   )}
                 >
                   <item.icon
@@ -720,9 +698,7 @@ function MoreSheet({
           </div>
 
           <div className="mt-1 flex items-center justify-between border-t border-border px-2 pt-2.5">
-            <span className="type-caption text-faint-foreground">
-              Theme &amp; sound
-            </span>
+            <span className="type-caption text-faint-foreground">Theme &amp; sound</span>
             <div className="flex items-center gap-1">
               <SoundToggle />
               <DarkModeToggle />
@@ -733,4 +709,3 @@ function MoreSheet({
     </Sheet>
   );
 }
-

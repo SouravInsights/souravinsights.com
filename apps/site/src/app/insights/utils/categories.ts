@@ -1,9 +1,4 @@
-import {
-  CATEGORIES,
-  CATEGORY_BLURBS,
-  isCategory,
-  type Category,
-} from "@/lib/kb/categories";
+import { CATEGORIES, CATEGORY_BLURBS, isCategory, type Category } from "@/lib/kb/categories";
 
 export { CATEGORY_BLURBS };
 

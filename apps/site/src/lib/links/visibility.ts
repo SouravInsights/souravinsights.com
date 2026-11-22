@@ -8,10 +8,7 @@ import { normalizeUrl } from "@/app/insights/utils/urlUtils";
  * feeds and API); restoring clears it. Never a hard delete.
  * Returns false when no row matches the URL.
  */
-export async function setLinkHidden(
-  url: string,
-  hidden: boolean
-): Promise<boolean> {
+export async function setLinkHidden(url: string, hidden: boolean): Promise<boolean> {
   const urlKey = normalizeUrl(url);
   const updated = await db
     .update(links)
@@ -25,10 +22,7 @@ export async function setLinkHidden(
  * Batch form of the above, for clean-up. One UPDATE for the whole selection.
  * Returns how many rows actually matched — unknown URLs are simply skipped.
  */
-export async function setLinksHidden(
-  urls: string[],
-  hidden: boolean
-): Promise<number> {
+export async function setLinksHidden(urls: string[], hidden: boolean): Promise<number> {
   const urlKeys = urls.map(normalizeUrl).filter(Boolean);
   if (urlKeys.length === 0) return 0;
 

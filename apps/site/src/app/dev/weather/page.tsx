@@ -16,11 +16,10 @@ import { WEATHER_SLUGS, weatherSlug } from "@/lib/weather";
  * on the WeatherAPI response.
  */
 const ALL_CODES = [
-  1000, 1003, 1006, 1009, 1012, 1015, 1018, 1021, 1024, 1027, 1030, 1033, 1036,
-  1039, 1042, 1045, 1048, 1063, 1066, 1069, 1072, 1087, 1114, 1117, 1135, 1147,
-  1150, 1153, 1168, 1171, 1180, 1183, 1186, 1189, 1192, 1195, 1198, 1201, 1204,
-  1207, 1210, 1213, 1216, 1219, 1222, 1225, 1237, 1240, 1243, 1246, 1249, 1252,
-  1255, 1258, 1261, 1264, 1273, 1276, 1279, 1282,
+  1000, 1003, 1006, 1009, 1012, 1015, 1018, 1021, 1024, 1027, 1030, 1033, 1036, 1039, 1042, 1045,
+  1048, 1063, 1066, 1069, 1072, 1087, 1114, 1117, 1135, 1147, 1150, 1153, 1168, 1171, 1180, 1183,
+  1186, 1189, 1192, 1195, 1198, 1201, 1204, 1207, 1210, 1213, 1216, 1219, 1222, 1225, 1237, 1240,
+  1243, 1246, 1249, 1252, 1255, 1258, 1261, 1264, 1273, 1276, 1279, 1282,
 ];
 
 const codesFor = (slug: (typeof WEATHER_SLUGS)[number], isDay: boolean) =>
@@ -78,8 +77,8 @@ export default function WeatherPlayground() {
     <main className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="type-label">Weather — dev</h1>
       <p className="type-caption mt-2">
-        The exact banner copy, then the icons: animated against the static twin,
-        then at the banner&apos;s real 24px.
+        The exact banner copy, then the icons: animated against the static twin, then at the
+        banner&apos;s real 24px.
       </p>
 
       <h2 className="type-label mt-12">Banner copy</h2>
@@ -120,9 +119,7 @@ export default function WeatherPlayground() {
           />
         </li>
         <li className="p-4">
-          <div className="type-label text-faint-foreground">
-            deploy + weather — nothing playing
-          </div>
+          <div className="type-label text-faint-foreground">deploy + weather — nothing playing</div>
           <DeployStatusLine
             deploymentInfo={DEPLOY}
             songInfo={null}
@@ -143,21 +140,12 @@ export default function WeatherPlayground() {
           const day = codesFor(slug, true);
           const night = codesFor(slug, false);
           return (
-            <li
-              key={slug}
-              className="flex items-center gap-5 rounded-lg border border-border p-4"
-            >
+            <li key={slug} className="flex items-center gap-5 rounded-lg border border-border p-4">
               <div className="flex items-end gap-3">
                 <WeatherIcon slug={slug} size={48} />
                 {/* eslint-disable-next-line @next/next/no-img-element -- the
                     static twin, shown beside the animated one for comparison. */}
-                <img
-                  src={METEOCONS[slug].still}
-                  alt=""
-                  width={48}
-                  height={48}
-                  aria-hidden
-                />
+                <img src={METEOCONS[slug].still} alt="" width={48} height={48} aria-hidden />
                 <WeatherIcon slug={slug} size={24} />
               </div>
               <div className="min-w-0">

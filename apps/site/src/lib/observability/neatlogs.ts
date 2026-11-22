@@ -14,15 +14,8 @@ import { wrapAISDK } from "neatlogs/ai";
  *
  * Docs: https://docs.neatlogs.com/integrations/vercel-ai
  */
-export const {
-  generateText,
-  streamText,
-  generateObject,
-  streamObject,
-  embed,
-  embedMany,
-  rerank,
-} = wrapAISDK(ai);
+export const { generateText, streamText, generateObject, streamObject, embed, embedMany, rerank } =
+  wrapAISDK(ai);
 
 /**
  * Send any recorded spans that are still waiting in memory.

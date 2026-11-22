@@ -1,8 +1,6 @@
 import React from "react";
 
-export const CodeBlockMazeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
-  props
-) => (
+export const CodeBlockMazeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     width="32"
     height="32"

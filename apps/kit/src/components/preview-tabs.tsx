@@ -29,12 +29,10 @@ export function PreviewTabs({
       data-slot="component-preview"
       className={cn(
         "group relative my-6 flex flex-col overflow-hidden rounded-xl border",
-        className
+        className,
       )}
     >
-      <div className="flex min-h-72 w-full items-center justify-center p-10">
-        {preview}
-      </div>
+      <div className="flex min-h-72 w-full items-center justify-center p-10">{preview}</div>
 
       <div className="relative border-t">
         {showCode ? (
@@ -43,10 +41,7 @@ export function PreviewTabs({
           </div>
         ) : (
           <div className="relative">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none max-h-52 overflow-hidden"
-            >
+            <div aria-hidden="true" className="pointer-events-none max-h-52 overflow-hidden">
               {source}
             </div>
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-background via-background/85 to-transparent">

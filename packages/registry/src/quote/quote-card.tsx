@@ -2,10 +2,7 @@
 
 import * as React from "react";
 import { Canvas } from "@/components/ui/canvas";
-import {
-  MODES,
-  type Mode,
-} from "./presets";
+import { MODES, type Mode } from "./presets";
 import { drawCard, resolveOptions, type Overrides } from "./render";
 import type { ShareTheme, Variant } from "./themes";
 
@@ -43,7 +40,7 @@ function QuoteCard({
   const dims = MODES.find((item) => item.id === mode) ?? MODES[0];
   const options = React.useMemo(
     () => resolveOptions(theme, variant, overrides, content),
-    [theme, variant, overrides, content]
+    [theme, variant, overrides, content],
   );
 
   return (

@@ -28,8 +28,7 @@ const containerRef = useRef<HTMLElement>(null)
       {
         title: "Article, rail and studio",
         name: "article-highlights-demo",
-        description:
-          "The palette, the highlight rail and the quote dialog wired to local marks.",
+        description: "The palette, the highlight rail and the quote dialog wired to local marks.",
       },
     ],
   },

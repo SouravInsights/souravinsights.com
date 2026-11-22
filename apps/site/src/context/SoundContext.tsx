@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type SoundContextType = {
   /** Volume, 0–1. Zero is muted — there is no separate on/off flag. */
@@ -25,8 +19,7 @@ const DEFAULT_VOLUME = 0.7;
  */
 function systemPrefersQuiet() {
   return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }
 
@@ -61,11 +54,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  return (
-    <SoundContext.Provider value={{ volume, setVolume }}>
-      {children}
-    </SoundContext.Provider>
-  );
+  return <SoundContext.Provider value={{ volume, setVolume }}>{children}</SoundContext.Provider>;
 }
 
 export function useSoundSettings() {

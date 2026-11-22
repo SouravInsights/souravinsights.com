@@ -22,10 +22,7 @@ interface UsePostViewsReturn {
  * server answers, so the caller keeps its placeholder while the count is unknown.
  * https://tanstack.com/query/v5/docs/framework/react/guides/mutations
  */
-export function usePostViews({
-  slug,
-  initialViews = 0,
-}: UsePostViewsProps): UsePostViewsReturn {
+export function usePostViews({ slug, initialViews = 0 }: UsePostViewsProps): UsePostViewsReturn {
   const posted = useRef<string | null>(null);
 
   const mutation = useMutation({

@@ -20,8 +20,7 @@ import { traceQuestion } from "../src/lib/kb/inspect";
  */
 
 const useColor = process.stdout.isTTY && !process.env.NO_COLOR;
-const paint = (code: string, s: string) =>
-  useColor ? `\x1b[${code}m${s}\x1b[0m` : s;
+const paint = (code: string, s: string) => (useColor ? `\x1b[${code}m${s}\x1b[0m` : s);
 const bold = (s: string) => paint("1", s);
 const dim = (s: string) => paint("2", s);
 const red = (s: string) => paint("31", s);
@@ -51,9 +50,7 @@ async function main() {
 
   const question = positional.join(" ").trim();
   if (!question) {
-    console.error(
-      'Usage: yarn trace "your question" [--limit N] [--no-scores] [--json]'
-    );
+    console.error('Usage: yarn trace "your question" [--limit N] [--no-scores] [--json]');
     process.exit(1);
   }
 
@@ -73,8 +70,8 @@ async function main() {
   for (const step of result.steps) {
     console.log(
       `\n${bold(`STEP ${step.stepNumber + 1}`)} ${dim(
-        `finish: ${step.finishReason} · ${num(step.tokens.total)} tokens`
-      )}`
+        `finish: ${step.finishReason} · ${num(step.tokens.total)} tokens`,
+      )}`,
     );
 
     if (step.toolCalls.length === 0) {
@@ -88,20 +85,12 @@ async function main() {
     for (const tr of step.toolResults) {
       if (tr.matches) {
         if (tr.matches.length === 0) {
-          console.log(
-            `  ${yellow("←")} ${tr.name}: ${yellow("no matches")} ${dim(
-              tr.note ?? ""
-            )}`
-          );
+          console.log(`  ${yellow("←")} ${tr.name}: ${yellow("no matches")} ${dim(tr.note ?? "")}`);
           continue;
         }
         console.log(`  ${dim(`←`)} ${tr.name}: ${tr.matches.length} links handed over`);
         for (const m of tr.matches) {
-          console.log(
-            `      ${m.urlKey.padEnd(38)} ${dim(
-              `${num(m.passageChars)} char passage`
-            )}`
-          );
+          console.log(`      ${m.urlKey.padEnd(38)} ${dim(`${num(m.passageChars)} char passage`)}`);
           console.log(`      ${dim(m.title.slice(0, 70))}`);
         }
       } else if (tr.name === "fetch_link") {
@@ -110,8 +99,8 @@ async function main() {
         } else {
           console.log(
             `  ${dim("←")} fetch_link: read ${cyan(tr.url ?? "")} ${dim(
-              `${num(tr.textChars ?? 0)} chars`
-            )}`
+              `${num(tr.textChars ?? 0)} chars`,
+            )}`,
           );
         }
       }
@@ -124,7 +113,7 @@ async function main() {
           .trim()
           .split("\n")
           .map((line) => `  ${line}`)
-          .join("\n")
+          .join("\n"),
       );
     }
   }
@@ -132,25 +121,22 @@ async function main() {
   if (result.scored.length) {
     console.log(`\n${dim("─".repeat(66))}`);
     console.log(
-      bold("SCORES") +
-        dim("  (re-run wider — the ranks and scores the model never saw)")
+      bold("SCORES") + dim("  (re-run wider — the ranks and scores the model never saw)"),
     );
 
     for (const q of result.scored) {
       console.log(
-        `\n  ${cyan(`"${q.query}"`)}${q.category ? dim(`  category=${q.category}`) : ""}`
+        `\n  ${cyan(`"${q.query}"`)}${q.category ? dim(`  category=${q.category}`) : ""}`,
       );
       for (const h of q.handedOver) {
         const band = h.score >= 0.45 ? green : h.score >= 0.35 ? yellow : red;
-        console.log(
-          `   ${String(h.rank).padStart(2)}  ${band(h.score.toFixed(3))}  ${h.urlKey}`
-        );
+        console.log(`   ${String(h.rank).padStart(2)}  ${band(h.score.toFixed(3))}  ${h.urlKey}`);
       }
       if (q.cut.length) {
         console.log(`      ${dim("── cut ──")}`);
         for (const c of q.cut.slice(0, 6)) {
           console.log(
-            `   ${String(c.rank).padStart(2)}  ${dim(c.score.toFixed(3))}  ${dim(c.urlKey)}`
+            `   ${String(c.rank).padStart(2)}  ${dim(c.score.toFixed(3))}  ${dim(c.urlKey)}`,
           );
         }
         if (q.cut.length > 6) {
@@ -161,15 +147,15 @@ async function main() {
     console.log(
       dim(
         "\n  Bands: green ≥ 0.45 (the Writing Desk's support floor) · " +
-          "yellow ≥ 0.35 (today's eval cutoff) · red below that"
-      )
+          "yellow ≥ 0.35 (today's eval cutoff) · red below that",
+      ),
     );
   }
 
   console.log(
     `\n${bold("TOTALS")}  ${result.totals.steps} steps · ` +
       `${num(result.totals.inputTokens)} in / ${num(result.totals.outputTokens)} out tokens · ` +
-      `${(result.totals.ms / 1000).toFixed(1)}s\n`
+      `${(result.totals.ms / 1000).toFixed(1)}s\n`,
   );
 }
 

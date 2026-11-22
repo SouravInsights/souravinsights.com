@@ -28,12 +28,7 @@ export function HighlightAnchorDemo() {
       </p>
       <div className="flex gap-2">
         {RANGES.map((value, index) => (
-          <Button
-            key={index}
-            variant="outline"
-            size="sm"
-            onClick={() => setRange(value)}
-          >
+          <Button key={index} variant="outline" size="sm" onClick={() => setRange(value)}>
             Range {index + 1}
           </Button>
         ))}

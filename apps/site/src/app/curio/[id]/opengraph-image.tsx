@@ -35,10 +35,10 @@ async function loadFonts(): Promise<LoadedFont[]> {
   try {
     const [regular, semibold] = await Promise.all([
       fetch(
-        "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-400-normal.woff"
+        "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-400-normal.woff",
       ).then((response) => response.arrayBuffer()),
       fetch(
-        "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-600-normal.woff"
+        "https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-600-normal.woff",
       ).then((response) => response.arrayBuffer()),
     ]);
     return [
@@ -61,7 +61,16 @@ const BODY =
   "M 25 10 L 39 10 C 47.64 10 51 13.36 51 22 L 51 32 C 51 43.52 46.52 48 35 48 " +
   "L 29 48 C 17.48 48 13 43.52 13 32 L 13 22 C 13 13.36 16.36 10 25 10 Z";
 
-const limb = (x: number, y: number, w: number, h: number, r: number, angle: number, cx: number, cy: number) =>
+const limb = (
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+  angle: number,
+  cx: number,
+  cy: number,
+) =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${GREEN}" transform="rotate(${angle} ${cx} ${cy})"/>`;
 
 const eye = (x: number) =>
@@ -107,10 +116,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
   const conversation = await getConversation(id);
   const turns = conversation ? turnsOf(conversation.messages) : [];
 
-  const question = clamp(
-    conversation?.title || turns[0]?.question || "A question for Curio",
-    120
-  );
+  const question = clamp(conversation?.title || turns[0]?.question || "A question for Curio", 120);
   // Two lines at most, cut at a word: enough of the answer to show what kind of
   // thing is inside, without turning the card into a paragraph. A stub would be
   // worse than nothing, so this leans generous.
@@ -119,77 +125,75 @@ export default async function Image({ params }: { params: Promise<{ id: string }
   const shared = conversation ? dateLabel(conversation.createdAt) : "";
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+        padding: "64px 96px",
+        backgroundColor: BACKGROUND,
+        fontFamily: FONT,
+      }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={MASCOT_SRC} width={150} height={120} alt="" />
+
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          padding: "64px 96px",
-          backgroundColor: BACKGROUND,
-          fontFamily: FONT,
+          marginTop: "44px",
+          fontSize: questionSize(question.length),
+          lineHeight: 1.16,
+          fontWeight: 600,
+          letterSpacing: "-0.015em",
+          color: INK,
+          textAlign: "center",
+          maxWidth: "940px",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={MASCOT_SRC} width={150} height={120} alt="" />
-
-        <div
-          style={{
-            display: "flex",
-            marginTop: "44px",
-            fontSize: questionSize(question.length),
-            lineHeight: 1.16,
-            fontWeight: 600,
-            letterSpacing: "-0.015em",
-            color: INK,
-            textAlign: "center",
-            maxWidth: "940px",
-          }}
-        >
-          {question}
-        </div>
-
-        {answer ? (
-          <div
-            style={{
-              display: "flex",
-              marginTop: "26px",
-              fontSize: "26px",
-              lineHeight: 1.4,
-              color: MUTED,
-              textAlign: "center",
-              maxWidth: "900px",
-            }}
-          >
-            {answer}
-          </div>
-        ) : null}
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "18px",
-            marginTop: "48px",
-            fontSize: "23px",
-            color: FAINT,
-          }}
-        >
-          {shared ? <span>{shared}</span> : null}
-          {shared && sources ? (
-            <span style={{ width: "1px", height: "18px", backgroundColor: RULE }} />
-          ) : null}
-          {sources ? (
-            <span>
-              {sources} {sources === 1 ? "source" : "sources"}
-            </span>
-          ) : null}
-        </div>
+        {question}
       </div>
-    ),
-    { ...size, fonts: await loadFonts() }
+
+      {answer ? (
+        <div
+          style={{
+            display: "flex",
+            marginTop: "26px",
+            fontSize: "26px",
+            lineHeight: 1.4,
+            color: MUTED,
+            textAlign: "center",
+            maxWidth: "900px",
+          }}
+        >
+          {answer}
+        </div>
+      ) : null}
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "18px",
+          marginTop: "48px",
+          fontSize: "23px",
+          color: FAINT,
+        }}
+      >
+        {shared ? <span>{shared}</span> : null}
+        {shared && sources ? (
+          <span style={{ width: "1px", height: "18px", backgroundColor: RULE }} />
+        ) : null}
+        {sources ? (
+          <span>
+            {sources} {sources === 1 ? "source" : "sources"}
+          </span>
+        ) : null}
+      </div>
+    </div>,
+    { ...size, fonts: await loadFonts() },
   );
 }

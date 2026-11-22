@@ -15,9 +15,7 @@ export interface GotPage {
 }
 
 /** A fetch that failed, and why — so a run log can name the cause. */
-export type GetResult =
-  | ({ ok: true } & GotPage)
-  | { ok: false; reason: string };
+export type GetResult = ({ ok: true } & GotPage) | { ok: false; reason: string };
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
@@ -25,8 +23,7 @@ const TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
 const MAX_BYTES = 5 * 1024 * 1024;
 
-export const isHtml = (contentType: string) =>
-  /text\/html|application\/xhtml/i.test(contentType);
+export const isHtml = (contentType: string) => /text\/html|application\/xhtml/i.test(contentType);
 
 /** Read a response body, stopping at `max` bytes so a huge page can't OOM us. */
 async function readCapped(res: Response, max: number): Promise<string> {

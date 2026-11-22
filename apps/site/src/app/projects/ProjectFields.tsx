@@ -27,9 +27,7 @@ function Field({
     "w-full rounded-lg border border-border bg-transparent text-sm text-foreground outline-none transition-colors placeholder:text-faint-foreground focus:border-input focus:ring-2 focus:ring-ring/30";
   return (
     <label className="block">
-      <span className="type-label mb-1.5 block text-faint-foreground">
-        {label}
-      </span>
+      <span className="type-label mb-1.5 block text-faint-foreground">{label}</span>
       {multiline ? (
         <textarea
           value={value}

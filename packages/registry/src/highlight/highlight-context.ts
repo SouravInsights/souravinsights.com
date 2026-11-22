@@ -43,9 +43,7 @@ export interface HighlightContextValue {
   textOf: (para: number) => string;
 }
 
-export const HighlightContext = createContext<HighlightContextValue | null>(
-  null
-);
+export const HighlightContext = createContext<HighlightContextValue | null>(null);
 
 export function useHighlight() {
   const context = useContext(HighlightContext);

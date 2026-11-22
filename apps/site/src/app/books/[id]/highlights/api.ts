@@ -3,7 +3,7 @@ const READWISE_API_TOKEN = process.env.READWISE_API_TOKEN;
 export async function getHighlights(
   bookId: string,
   page: number = 1,
-  sort: "date" | "location" = "date"
+  sort: "date" | "location" = "date",
 ) {
   // Construct the API URL with query parameters
   let url = `https://readwise.io/api/v2/highlights/?book_id=${bookId}&page=${page}`;

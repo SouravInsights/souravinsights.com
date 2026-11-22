@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   if (!rate.success) {
     return NextResponse.json(
       { error: { code: "rate_limited", message: "Too many requests" } },
-      { status: 429, headers: rateHeaders }
+      { status: 429, headers: rateHeaders },
     );
   }
 
@@ -32,6 +32,6 @@ export async function GET(request: NextRequest) {
         ...rateHeaders,
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       },
-    }
+    },
   );
 }

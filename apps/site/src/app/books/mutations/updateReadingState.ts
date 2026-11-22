@@ -1,10 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const UPDATE_READING_STATE = gql`
-  mutation updateReadingState(
-    $bookId: String!
-    $readingStatus: ReadingStatus!
-  ) {
+  mutation updateReadingState($bookId: String!, $readingStatus: ReadingStatus!) {
     updateReadingState(bookId: $bookId, readingStatus: $readingStatus) {
       ...ReadingStateParts
       book {

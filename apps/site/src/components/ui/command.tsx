@@ -26,7 +26,7 @@ const Command = React.forwardRef<
     ref={ref}
     className={cn(
       "flex h-full w-full flex-col overflow-hidden bg-background text-foreground",
-      className
+      className,
     )}
     {...props}
   />
@@ -45,18 +45,20 @@ function CommandDialog({
         aria-describedby={undefined}
         className={cn(
           "flex max-h-[min(80svh,34rem)] w-[min(92vw,34rem)] max-w-none flex-col gap-0 overflow-hidden rounded-[14px] border border-border bg-background p-0 shadow-2xl [&>button]:hidden",
-          className
+          className,
         )}
       >
         <DialogTitle className="sr-only">{label}</DialogTitle>
-        <Command className="
+        <Command
+          className="
           [&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2.5
           [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[11px]
           [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase
           [&_[cmdk-group-heading]]:tracking-[0.14em] [&_[cmdk-group-heading]]:text-muted-foreground
           [&_[cmdk-input-wrapper]_svg]:h-4 [&_[cmdk-input-wrapper]_svg]:w-4
           [&_[cmdk-input]]:h-11
-        ">
+        "
+        >
           {children}
         </Command>
       </DialogContent>
@@ -72,15 +74,12 @@ const CommandInput = React.forwardRef<
     className="flex h-11 shrink-0 items-center gap-2.5 border-b border-border px-4"
     cmdk-input-wrapper=""
   >
-    <MagnifyingGlass
-      aria-hidden="true"
-      className="h-4 w-4 shrink-0 text-faint-foreground"
-    />
+    <MagnifyingGlass aria-hidden="true" className="h-4 w-4 shrink-0 text-faint-foreground" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
         "min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-faint-foreground disabled:cursor-not-allowed disabled:opacity-50",
-        className
+        className,
       )}
       {...props}
     />
@@ -97,7 +96,7 @@ const CommandList = React.forwardRef<
     ref={ref}
     className={cn(
       "max-h-[min(56svh,20rem)] overflow-y-auto overflow-x-hidden overscroll-contain p-1.5",
-      className
+      className,
     )}
     {...props}
   />
@@ -110,10 +109,7 @@ const CommandEmpty = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className={cn(
-      "px-3 py-10 text-center type-caption text-muted-foreground",
-      className
-    )}
+    className={cn("px-3 py-10 text-center type-caption text-muted-foreground", className)}
     {...props}
   />
 ));
@@ -154,23 +150,17 @@ const CommandItem = React.forwardRef<
       "data-[selected=true]:bg-foreground/[0.06] data-[selected=true]:text-foreground",
       "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
       "[&_svg]:pointer-events-none [&_svg]:shrink-0",
-      className
+      className,
     )}
     {...props}
   />
 ));
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
-function CommandShortcut({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) {
+function CommandShortcut({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
-      className={cn(
-        "ml-auto shrink-0 tabular-nums text-[12px] text-faint-foreground",
-        className
-      )}
+      className={cn("ml-auto shrink-0 tabular-nums text-[12px] text-faint-foreground", className)}
       {...props}
     />
   );

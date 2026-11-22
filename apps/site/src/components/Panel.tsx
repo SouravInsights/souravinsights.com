@@ -26,14 +26,7 @@ interface PanelProps {
  * Labels are terse on purpose. The description belongs on the page the panel
  * points at, not in the frame you are reading it from.
  */
-export function Panel({
-  title,
-  href,
-  action,
-  className,
-  bodyClassName,
-  children,
-}: PanelProps) {
+export function Panel({ title, href, action, className, bodyClassName, children }: PanelProps) {
   const label = (
     <span className="inline-flex items-center gap-1.5">
       {title}
@@ -56,7 +49,7 @@ export function Panel({
         // casts one, and the flex gap, because this header is a rule rather
         // than a margin.
         "group/panel flex min-h-0 flex-col gap-0 overflow-hidden py-0 shadow-none",
-        className
+        className,
       )}
     >
       <CardHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-b border-border px-4 py-2.5">
@@ -77,9 +70,7 @@ export function Panel({
         {action}
       </CardHeader>
 
-      <CardContent className={cn("min-h-0 flex-1 p-4", bodyClassName)}>
-        {children}
-      </CardContent>
+      <CardContent className={cn("min-h-0 flex-1 p-4", bodyClassName)}>{children}</CardContent>
     </Card>
   );
 }

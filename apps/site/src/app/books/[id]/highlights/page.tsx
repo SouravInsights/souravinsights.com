@@ -7,10 +7,7 @@ interface PageProps {
   searchParams: Promise<{ page?: string; sort?: "date" | "location" }>;
 }
 
-export default async function BookHighlightsPage({
-  params,
-  searchParams,
-}: PageProps) {
+export default async function BookHighlightsPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { page: pageParam, sort: sortParam } = await searchParams;
   const page = pageParam ? parseInt(pageParam) : 1;

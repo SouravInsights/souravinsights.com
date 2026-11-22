@@ -41,8 +41,7 @@ export async function readDailyUsage(): Promise<DailyUsage> {
     return {
       questions: asked,
       tokens: spent,
-      exhausted:
-        asked >= DAILY_QUESTION_CEILING || spent >= DAILY_TOKEN_BUDGET,
+      exhausted: asked >= DAILY_QUESTION_CEILING || spent >= DAILY_TOKEN_BUDGET,
     };
   } catch (error) {
     // Redis unreachable. Answer anyway and say so: refusing every question

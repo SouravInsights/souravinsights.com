@@ -3,22 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Check, Copy, LinkSimple, DotsThree, Plus } from "@phosphor-icons/react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import { CurioComposer } from "./CurioComposer";
-import {
-  CurioIntro,
-  CurioTranscript,
-  transcriptAsMarkdown,
-} from "./CurioConversation";
+import { CurioIntro, CurioTranscript, transcriptAsMarkdown } from "./CurioConversation";
 import { SuggestionRows } from "./SuggestionRows";
 import { shuffled, useCurioChat } from "./use-curio-chat";
 import { useShareConversation } from "./use-share";
@@ -158,29 +150,27 @@ export function CurioHome({
                         </button>
 
                         <button
-                            type="button"
-                            onClick={share}
-                            disabled={shareState === "working"}
-                            title={
-                              shareState === "failed" ? shareFailure : undefined
-                            }
-                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
-                          >
-                            {shareState === "copied" ? (
-                              <Check className="h-3.5 w-3.5" />
-                            ) : (
-                              <LinkSimple className="h-3.5 w-3.5" />
-                            )}
-                            {shareState === "working"
-                              ? "Creating link…"
-                              : shareState === "copied"
-                                ? "Link copied"
-                                : shareState === "failed"
-                                  ? "Try again"
-                                  : alreadyShared
-                                    ? "Copy link"
-                                    : "Share conversation"}
-                          </button>
+                          type="button"
+                          onClick={share}
+                          disabled={shareState === "working"}
+                          title={shareState === "failed" ? shareFailure : undefined}
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
+                        >
+                          {shareState === "copied" ? (
+                            <Check className="h-3.5 w-3.5" />
+                          ) : (
+                            <LinkSimple className="h-3.5 w-3.5" />
+                          )}
+                          {shareState === "working"
+                            ? "Creating link…"
+                            : shareState === "copied"
+                              ? "Link copied"
+                              : shareState === "failed"
+                                ? "Try again"
+                                : alreadyShared
+                                  ? "Copy link"
+                                  : "Share conversation"}
+                        </button>
 
                         {/* The links this browser made, so they can be found
                             again without an account and without a listing on
@@ -188,14 +178,9 @@ export function CurioHome({
                         {shares.length > 0 && (
                           <>
                             <div className="my-1 h-px bg-border" />
-                            <p className="px-3 pb-0.5 pt-1.5 type-label">
-                              Your links
-                            </p>
+                            <p className="px-3 pb-0.5 pt-1.5 type-label">Your links</p>
                             {shares.slice(0, 5).map((share) => (
-                              <div
-                                key={share.id}
-                                className="flex items-center gap-1"
-                              >
+                              <div key={share.id} className="flex items-center gap-1">
                                 <Link
                                   href={`/curio/${share.id}`}
                                   target="_blank"
@@ -317,29 +302,27 @@ export function CurioHome({
                         </button>
 
                         <button
-                            type="button"
-                            onClick={share}
-                            disabled={shareState === "working"}
-                            title={
-                              shareState === "failed" ? shareFailure : undefined
-                            }
-                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
-                          >
-                            {shareState === "copied" ? (
-                              <Check className="h-3.5 w-3.5" />
-                            ) : (
-                              <LinkSimple className="h-3.5 w-3.5" />
-                            )}
-                            {shareState === "working"
-                              ? "Creating link…"
-                              : shareState === "copied"
-                                ? "Link copied"
-                                : shareState === "failed"
-                                  ? "Try again"
-                                  : alreadyShared
-                                    ? "Copy link"
-                                    : "Share conversation"}
-                          </button>
+                          type="button"
+                          onClick={share}
+                          disabled={shareState === "working"}
+                          title={shareState === "failed" ? shareFailure : undefined}
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left type-caption text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground disabled:opacity-60"
+                        >
+                          {shareState === "copied" ? (
+                            <Check className="h-3.5 w-3.5" />
+                          ) : (
+                            <LinkSimple className="h-3.5 w-3.5" />
+                          )}
+                          {shareState === "working"
+                            ? "Creating link…"
+                            : shareState === "copied"
+                              ? "Link copied"
+                              : shareState === "failed"
+                                ? "Try again"
+                                : alreadyShared
+                                  ? "Copy link"
+                                  : "Share conversation"}
+                        </button>
 
                         {/* The links this browser made, so they can be found
                             again without an account and without a listing on
@@ -347,14 +330,9 @@ export function CurioHome({
                         {shares.length > 0 && (
                           <>
                             <div className="my-1 h-px bg-border" />
-                            <p className="px-3 pb-0.5 pt-1.5 type-label">
-                              Your links
-                            </p>
+                            <p className="px-3 pb-0.5 pt-1.5 type-label">Your links</p>
                             {shares.slice(0, 5).map((share) => (
-                              <div
-                                key={share.id}
-                                className="flex items-center gap-1"
-                              >
+                              <div key={share.id} className="flex items-center gap-1">
                                 <Link
                                   href={`/curio/${share.id}`}
                                   target="_blank"

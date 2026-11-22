@@ -22,10 +22,7 @@ export default function DraftPostIndicator({
     setIsAdmin(hasAdminHint());
   }, []);
 
-  const visibleContent = React.Children.toArray(children).slice(
-    0,
-    previewParagraphs
-  );
+  const visibleContent = React.Children.toArray(children).slice(0, previewParagraphs);
 
   return (
     <div className="relative">
@@ -36,10 +33,7 @@ export default function DraftPostIndicator({
         className="mb-6 lg:mb-8 flex justify-center"
       >
         <div className="bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/50 rounded-full px-4 py-2 inline-flex items-center gap-2 shadow-sm">
-          <Warning
-            size={16}
-            className="text-amber-700 dark:text-amber-400"
-          />
+          <Warning size={16} className="text-amber-700 dark:text-amber-400" />
           <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
             Draft Post - Preview Only
           </span>
@@ -65,9 +59,7 @@ export default function DraftPostIndicator({
           <div className="draft-preview-fade">{visibleContent}</div>
 
           <div className="mt-2 p-6 border border-dashed border-border rounded-lg text-center bg-muted/50">
-            <h4 className="type-heading mb-2">
-              This post is still being drafted
-            </h4>
+            <h4 className="type-heading mb-2">This post is still being drafted</h4>
             <p className="type-body text-muted-foreground">
               Check back later for the complete article!
             </p>

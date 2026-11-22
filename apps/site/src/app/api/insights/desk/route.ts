@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   if (!rate.success) {
     return NextResponse.json(
       { error: "rate_limited", message: "Too many requests — try again shortly." },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: "invalid_body", message: "Body must be { draft: string } (20–8000 chars)." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -50,10 +50,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "desk_failed",
-        message:
-          error instanceof Error ? error.message : "Could not search the collection.",
+        message: error instanceof Error ? error.message : "Could not search the collection.",
       },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

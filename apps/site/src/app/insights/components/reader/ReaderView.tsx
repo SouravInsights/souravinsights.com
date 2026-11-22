@@ -99,9 +99,7 @@ function ArticleImage({ src, alt }: { src: string; alt?: string }) {
         className="mx-auto max-h-[70vh] w-auto max-w-full rounded-lg border border-border/60 object-contain"
       />
       {alt?.trim() ? (
-        <span className="mt-2 block text-center type-caption text-faint-foreground">
-          {alt}
-        </span>
+        <span className="mt-2 block text-center type-caption text-faint-foreground">{alt}</span>
       ) : null}
     </span>
   );
@@ -125,13 +123,9 @@ export function ReaderView({
   const [fullscreen, setFullscreen] = useState(initialFullscreen);
   const [resizing, setResizing] = useState(false);
   const [coReader, setCoReader] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1024px)").matches
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches,
   );
-  const [share, setShare] = useState<{ quote: string; context: string } | null>(
-    null
-  );
+  const [share, setShare] = useState<{ quote: string; context: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [coReaderTab, setCoReaderTab] = useState<Tab>("reader");
   const [ticks, setTicks] = useState<HighlightRailItem[]>([]);
@@ -173,10 +167,7 @@ export function ReaderView({
 
   const updateAppearance = useCallback((next: Appearance) => {
     setAppearance(next);
-    window.localStorage.setItem(
-      "insights:reader-appearance",
-      JSON.stringify(next)
-    );
+    window.localStorage.setItem("insights:reader-appearance", JSON.stringify(next));
   }, []);
 
   // Fullscreen gets one step wider, because the canvas is bigger.
@@ -191,9 +182,7 @@ export function ReaderView({
   // so the real answer is available before the first paint and the rail never
   // flashes as an overlay on a desktop.
   const [desktop, setDesktop] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1024px)").matches
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches,
   );
 
   useEffect(() => {
@@ -246,9 +235,7 @@ export function ReaderView({
 
       const move = (e: globalThis.PointerEvent) => {
         const next = startWidth + (startX - e.clientX);
-        setWidth(
-          Math.round(Math.min(window.innerWidth * 0.97, Math.max(MIN_WIDTH, next)))
-        );
+        setWidth(Math.round(Math.min(window.innerWidth * 0.97, Math.max(MIN_WIDTH, next))));
       };
       const up = (e: globalThis.PointerEvent) => {
         target.releasePointerCapture(e.pointerId);
@@ -263,7 +250,7 @@ export function ReaderView({
       target.addEventListener("pointermove", move);
       target.addEventListener("pointerup", up);
     },
-    [width]
+    [width],
   );
 
   /** Double-click the grip: default width ↔ wide. */
@@ -286,9 +273,7 @@ export function ReaderView({
       setWidth((current) => {
         const base = current ?? Math.min(window.innerWidth * 0.94, 42 * 16);
         if (base >= WIDTH_WITH_RAIL) return current;
-        const widened = Math.round(
-          Math.min(window.innerWidth * 0.97, WIDTH_WITH_RAIL)
-        );
+        const widened = Math.round(Math.min(window.innerWidth * 0.97, WIDTH_WITH_RAIL));
         window.localStorage.setItem(WIDTH_KEY, String(widened));
         return widened;
       });
@@ -302,7 +287,7 @@ export function ReaderView({
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1600);
       },
-      () => undefined
+      () => undefined,
     );
   }, [article]);
 
@@ -313,7 +298,7 @@ export function ReaderView({
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1600);
       },
-      () => undefined
+      () => undefined,
     );
   }, [article]);
 
@@ -331,7 +316,7 @@ export function ReaderView({
   if (coReader && desktop && !fullscreen) {
     const current = width ?? Math.min(window.innerWidth * 0.94, 42 * 16);
     styleWidth = `${Math.round(
-      Math.min(window.innerWidth * 0.97, Math.max(current, WIDTH_WITH_RAIL))
+      Math.min(window.innerWidth * 0.97, Math.max(current, WIDTH_WITH_RAIL)),
     )}px`;
   }
 
@@ -481,9 +466,7 @@ export function ReaderView({
                   aria-pressed={coReader}
                   title="Co-Reader"
                   className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-foreground/5 ${
-                    coReader
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                    coReader ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <SidebarSimple className="h-4 w-4 -scale-x-100" />
@@ -510,83 +493,83 @@ export function ReaderView({
                 onScroll={onArticleScroll}
                 className="h-full overflow-y-auto overscroll-contain"
               >
-              <div
-                className={`mx-auto pb-24 pl-5 pt-[4.75rem] sm:pl-7 ${
-                  ticks.length > 0 ? "pr-10 sm:pr-12" : "pr-5 sm:pr-7"
-                } ${measure}`}
-              >
-                {failed && (
-                  <p className="mt-16 text-center type-body text-muted-foreground">
-                    Couldn’t open this article.{" "}
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="font-medium text-green-700 underline-offset-4 hover:underline dark:text-green-500"
-                    >
-                      Back to the collection
-                    </button>
-                  </p>
-                )}
-
-                {!article && !failed && (
-                  <div className="mt-12 space-y-4">
-                    {[64, 40, 90].map((w, i) => (
-                      <div
-                        key={i}
-                        className="h-4 animate-pulse rounded bg-foreground/10"
-                        style={{ width: `${w}%` }}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {article && (
-                  <ArticleBody
-                    urlKey={article.urlKey}
-                    isAdmin={isAdmin}
-                    initialHighlights={article.marks}
-                    onShareQuote={setShare}
-                    onOpenNotebook={() => {
-                      setCoReaderTab("notebook");
-                      setCoReader(true);
-                    }}
-                    onTicks={setTicks}
-                  >
-                    <header className="mt-6 border-b border-border/60 pb-7">
-                      <h1 className="text-[1.375rem] font-medium leading-[1.3] tracking-[-0.015em] text-foreground">
-                        {article.title}
-                      </h1>
-                      <a
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 inline-flex items-center gap-2 type-caption font-medium text-green-700 underline-offset-4 hover:underline dark:text-green-500"
+                <div
+                  className={`mx-auto pb-24 pl-5 pt-[4.75rem] sm:pl-7 ${
+                    ticks.length > 0 ? "pr-10 sm:pr-12" : "pr-5 sm:pr-7"
+                  } ${measure}`}
+                >
+                  {failed && (
+                    <p className="mt-16 text-center type-body text-muted-foreground">
+                      Couldn’t open this article.{" "}
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="font-medium text-green-700 underline-offset-4 hover:underline dark:text-green-500"
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`https://www.google.com/s2/favicons?domain=${host}&sz=32`}
-                          alt=""
-                          width={14}
-                          height={14}
-                          className="h-3.5 w-3.5"
-                        />
-                        {host}
-                      </a>
-                      <p className="mt-2 type-caption text-faint-foreground">
-                        {readingMinutes ? `${readingMinutes} min read — ` : ""}saved{" "}
-                        {new Date(article.addedAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </header>
+                        Back to the collection
+                      </button>
+                    </p>
+                  )}
 
-                    {/* Left-aligned on purpose. A justified paragraph forces every
+                  {!article && !failed && (
+                    <div className="mt-12 space-y-4">
+                      {[64, 40, 90].map((w, i) => (
+                        <div
+                          key={i}
+                          className="h-4 animate-pulse rounded bg-foreground/10"
+                          style={{ width: `${w}%` }}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {article && (
+                    <ArticleBody
+                      urlKey={article.urlKey}
+                      isAdmin={isAdmin}
+                      initialHighlights={article.marks}
+                      onShareQuote={setShare}
+                      onOpenNotebook={() => {
+                        setCoReaderTab("notebook");
+                        setCoReader(true);
+                      }}
+                      onTicks={setTicks}
+                    >
+                      <header className="mt-6 border-b border-border/60 pb-7">
+                        <h1 className="text-[1.375rem] font-medium leading-[1.3] tracking-[-0.015em] text-foreground">
+                          {article.title}
+                        </h1>
+                        <a
+                          href={article.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-4 inline-flex items-center gap-2 type-caption font-medium text-green-700 underline-offset-4 hover:underline dark:text-green-500"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`https://www.google.com/s2/favicons?domain=${host}&sz=32`}
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="h-3.5 w-3.5"
+                          />
+                          {host}
+                        </a>
+                        <p className="mt-2 type-caption text-faint-foreground">
+                          {readingMinutes ? `${readingMinutes} min read — ` : ""}saved{" "}
+                          {new Date(article.addedAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </header>
+
+                      {/* Left-aligned on purpose. A justified paragraph forces every
                         line to one right edge, and the browser's greedy line-breaker
                         cannot fill it without rivers — the even edge reads as a cut.
                         The ragged right is the honest one. */}
-                    <div
-                      className="prose prose-green mt-8 max-w-none dark:prose-invert
+                      <div
+                        className="prose prose-green mt-8 max-w-none dark:prose-invert
                         prose-headings:font-semibold
                         prose-a:text-green-700 dark:prose-a:text-green-500
                         prose-p:text-gray-700 dark:prose-p:text-muted-foreground
@@ -595,49 +578,45 @@ export function ReaderView({
                         prose-h3:mt-[1.75em] prose-h3:mb-[0.5em] prose-h3:[font-variant-numeric:lining-nums]
                         prose-blockquote:border-green-500 dark:prose-blockquote:border-green-500
                         prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
-                      style={appearanceStyle(appearance)}
-                    >
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeHighlight]}
-                        components={{
-                          a: (props) => (
-                            <a
-                              {...props}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            />
-                          ),
-                          img: ({ src, alt }) => {
-                            if (typeof src !== "string") return null;
-                            let resolved: string;
-                            try {
-                              resolved = new URL(src, article.url).toString();
-                            } catch {
-                              return null;
-                            }
-                            return <ArticleImage src={resolved} alt={alt} />;
-                          },
-                          table: (props) => (
-                            <div className="my-6 overflow-x-auto rounded-lg border border-border/60">
-                              <table className="!my-0 min-w-full text-sm [&_td]:px-3 [&_td]:py-2 [&_th]:bg-foreground/[0.04] [&_th]:px-3 [&_th]:py-2 [&_th]:text-left">
-                                {props.children}
-                              </table>
-                            </div>
-                          ),
-                          pre: (props) => (
-                            <pre className="!my-6 overflow-x-auto rounded-xl border border-border/50 !bg-[#0d1117] p-4 text-[13px] leading-6">
-                              {props.children}
-                            </pre>
-                          ),
-                        }}
+                        style={appearanceStyle(appearance)}
                       >
-                        {article.markdown}
-                      </ReactMarkdown>
-                    </div>
-                  </ArticleBody>
-                )}
-              </div>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeHighlight]}
+                          components={{
+                            a: (props) => (
+                              <a {...props} target="_blank" rel="noopener noreferrer" />
+                            ),
+                            img: ({ src, alt }) => {
+                              if (typeof src !== "string") return null;
+                              let resolved: string;
+                              try {
+                                resolved = new URL(src, article.url).toString();
+                              } catch {
+                                return null;
+                              }
+                              return <ArticleImage src={resolved} alt={alt} />;
+                            },
+                            table: (props) => (
+                              <div className="my-6 overflow-x-auto rounded-lg border border-border/60">
+                                <table className="!my-0 min-w-full text-sm [&_td]:px-3 [&_td]:py-2 [&_th]:bg-foreground/[0.04] [&_th]:px-3 [&_th]:py-2 [&_th]:text-left">
+                                  {props.children}
+                                </table>
+                              </div>
+                            ),
+                            pre: (props) => (
+                              <pre className="!my-6 overflow-x-auto rounded-xl border border-border/50 !bg-[#0d1117] p-4 text-[13px] leading-6">
+                                {props.children}
+                              </pre>
+                            ),
+                          }}
+                        >
+                          {article.markdown}
+                        </ReactMarkdown>
+                      </div>
+                    </ArticleBody>
+                  )}
+                </div>
               </div>
               {/* The rail belongs to the panel, not the column, so it sits in the
                   margin. Hidden while the Co-Reader is docked — there is no

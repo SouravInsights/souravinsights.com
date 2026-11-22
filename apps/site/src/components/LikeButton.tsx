@@ -1,22 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useAnimationControls,
-  useReducedMotion,
-} from "framer-motion";
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion";
 import { Heart } from "@phosphor-icons/react";
 import Scritto from "@scritto/react";
 import { useLikes } from "@/hooks/useLikes";
 import { useTheme } from "@/context/ThemeContext";
 import { useFeedback } from "@/hooks/useFeedback";
-import {
-  LikeBurst,
-  LOVE_RAMP_DARK,
-  LOVE_RAMP_LIGHT,
-  useLikeBurst,
-} from "@/components/like-burst";
+import { LikeBurst, LOVE_RAMP_DARK, LOVE_RAMP_LIGHT, useLikeBurst } from "@/components/like-burst";
 
 /** How many times a visitor may like a single item. */
 const MAX_USER_LIKES = 10;
@@ -118,9 +109,7 @@ export function LikeButton({
   };
 
   // Squash-and-stretch only reads as considered when it's subtle.
-  const squash = pressed
-    ? { scaleX: 1.05, scaleY: 0.95 }
-    : { scaleX: 1, scaleY: 1 };
+  const squash = pressed ? { scaleX: 1.05, scaleY: 0.95 } : { scaleX: 1, scaleY: 1 };
 
   return (
     <button
@@ -135,19 +124,13 @@ export function LikeButton({
           : "bg-foreground/5 text-faint-foreground hover:bg-rose-600/10 hover:text-rose-600"
       }`}
     >
-      <motion.span
-        animate={controls}
-        className="relative flex transform-gpu items-center"
-      >
+      <motion.span animate={controls} className="relative flex transform-gpu items-center">
         <motion.span
           animate={squash}
           transition={{ duration: pressed ? PRESS : RELEASE, ease: "easeOut" }}
           className="relative flex transform-gpu items-center"
         >
-          <Heart
-            className="h-3.5 w-3.5"
-            weight={liked ? "fill" : "regular"}
-          />
+          <Heart className="h-3.5 w-3.5" weight={liked ? "fill" : "regular"} />
           {!reduceMotion && <LikeBurst particles={particles} />}
         </motion.span>
       </motion.span>

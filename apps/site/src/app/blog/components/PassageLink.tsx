@@ -5,14 +5,7 @@ import { createPortal } from "react-dom";
 import { Check, LinkSimple } from "@phosphor-icons/react";
 import { paint } from "@/lib/highlight-palette";
 import { useTheme } from "@/context/ThemeContext";
-import {
-  CONTAINER_ID,
-  blockAt,
-  blocksOf,
-  copyText,
-  parseHash,
-  type Span,
-} from "../utils/passage";
+import { CONTAINER_ID, blockAt, blocksOf, copyText, parseHash, type Span } from "../utils/passage";
 
 /**
  * Passage permalinks.
@@ -41,8 +34,7 @@ const HIGHLIGHT = "passage";
 /** The reader's amber, so a mark reads the same on both surfaces. */
 const PASSAGE_HUE = 2;
 
-const canHighlight =
-  typeof CSS !== "undefined" && typeof CSS.highlights !== "undefined";
+const canHighlight = typeof CSS !== "undefined" && typeof CSS.highlights !== "undefined";
 
 export default function PassageLink() {
   const [menu, setMenu] = useState<{
@@ -193,7 +185,7 @@ export default function PassageLink() {
       if (timer.current) window.clearTimeout(timer.current);
       if (out.current) window.clearTimeout(out.current);
     },
-    []
+    [],
   );
 
   const copy = useCallback(async () => {
@@ -223,13 +215,9 @@ export default function PassageLink() {
       aria-label={copied ? "Link copied" : "Copy link to this passage"}
       className="passage-chip absolute z-50 flex h-8 items-center gap-1.5 rounded-full bg-foreground px-3 text-sm font-medium text-background shadow-lg"
     >
-      {copied ? (
-        <Check size={14} weight="bold" />
-      ) : (
-        <LinkSimple size={14} weight="bold" />
-      )}
+      {copied ? <Check size={14} weight="bold" /> : <LinkSimple size={14} weight="bold" />}
       <span>{copied ? "Copied" : "Copy link"}</span>
     </button>,
-    document.body
+    document.body,
   );
 }

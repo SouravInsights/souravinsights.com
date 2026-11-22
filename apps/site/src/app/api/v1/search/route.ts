@@ -10,12 +10,8 @@ import { flushTraces } from "@/lib/observability/neatlogs";
 // An embedding call plus a vector query — not an edge route.
 export const runtime = "nodejs";
 
-const err = (
-  code: string,
-  message: string,
-  status: number,
-  headers?: HeadersInit
-) => NextResponse.json({ error: { code, message } }, { status, headers });
+const err = (code: string, message: string, status: number, headers?: HeadersInit) =>
+  NextResponse.json({ error: { code, message } }, { status, headers });
 
 /**
  * Semantic search over the knowledge base — the retrieval half of the Ask agent
@@ -37,17 +33,13 @@ export async function GET(request: NextRequest) {
     return err("rate_limited", "Too many requests", 429, rateHeaders);
   }
 
-  const parsed = searchQuerySchema.safeParse(
-    Object.fromEntries(request.nextUrl.searchParams)
-  );
+  const parsed = searchQuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
   if (!parsed.success) {
     return err(
       "invalid_query",
-      parsed.error.issues
-        .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-        .join("; "),
+      parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; "),
       400,
-      rateHeaders
+      rateHeaders,
     );
   }
 
@@ -62,7 +54,7 @@ export async function GET(request: NextRequest) {
     if (hits.length === 0) {
       return NextResponse.json(
         { data: [], meta: { query: q, count: 0 } },
-        { headers: rateHeaders }
+        { headers: rateHeaders },
       );
     }
 
@@ -79,8 +71,8 @@ export async function GET(request: NextRequest) {
       .where(
         inArray(
           links.urlKey,
-          hits.map((hit) => hit.urlKey)
-        )
+          hits.map((hit) => hit.urlKey),
+        ),
       );
     const extras = new Map(rows.map((row) => [row.urlKey, row]));
 
@@ -107,7 +99,7 @@ export async function GET(request: NextRequest) {
           ...rateHeaders,
           "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
         },
-      }
+      },
     );
   } catch {
     // Embedding provider down, or the database. Neither is the caller's fault.

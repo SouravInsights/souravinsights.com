@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  clientIp,
-  shareDailyLimiter,
-  shareLimiter,
-} from "@/lib/links/ratelimit";
+import { clientIp, shareDailyLimiter, shareLimiter } from "@/lib/links/ratelimit";
 import { getConversation, saveConversation } from "@/lib/curio/conversations";
 import type { UIMessage } from "ai";
 
@@ -67,7 +63,7 @@ export async function POST(request: NextRequest) {
           message: "Sharing is not available right now.",
         },
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }
@@ -86,6 +82,6 @@ export async function GET(request: NextRequest) {
         messages: conversation.messages,
       },
     },
-    { headers: { "Cache-Control": "public, s-maxage=300" } }
+    { headers: { "Cache-Control": "public, s-maxage=300" } },
   );
 }

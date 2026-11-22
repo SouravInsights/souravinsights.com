@@ -12,10 +12,7 @@ interface BookCardProps {
  * A single cover on the shelf. The status lives in the section heading, so the
  * card is just the artwork — outlined, no shadow, no badge.
  */
-export const BookCard: React.FC<BookCardProps> = ({
-  book,
-  forceGenerativeCover = false,
-}) => {
+export const BookCard: React.FC<BookCardProps> = ({ book, forceGenerativeCover = false }) => {
   const [imageError, setImageError] = useState(false);
   const hasCover = book.cover && !imageError;
   const showGenerative = forceGenerativeCover || !hasCover;
@@ -33,10 +30,7 @@ export const BookCard: React.FC<BookCardProps> = ({
           onError={() => setImageError(true)}
         />
       ) : (
-        <BookCoverFallback
-          title={book.title}
-          author={book.authors?.[0]?.name}
-        />
+        <BookCoverFallback title={book.title} author={book.authors?.[0]?.name} />
       )}
     </div>
   );

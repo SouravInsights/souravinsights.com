@@ -9,10 +9,9 @@ import { DeadMark } from "./DeadMark";
 import dynamic from "next/dynamic";
 
 // Edit-only, so it is a separate chunk: a visitor never downloads it.
-const ProjectFields = dynamic(
-  () => import("./ProjectFields").then((mod) => mod.ProjectFields),
-  { ssr: false }
-);
+const ProjectFields = dynamic(() => import("./ProjectFields").then((mod) => mod.ProjectFields), {
+  ssr: false,
+});
 
 /**
  * Host and path, without the protocol or `www.`.
@@ -118,19 +117,13 @@ export function ProjectSmallRow({
             title={open ? "Hide fields" : "Edit fields"}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
           >
-            <CaretDown
-              className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
-            />
+            <CaretDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
           </button>
           {dragHandle}
         </div>
         {open && (
           <div className="mt-4">
-            <ProjectFields
-              project={project}
-              onChange={patch}
-              onRemove={onRemove}
-            />
+            <ProjectFields project={project} onChange={patch} onRemove={onRemove} />
           </div>
         )}
       </div>
@@ -150,16 +143,12 @@ export function ProjectSmallRow({
           {project.name}
           {isDead && <DeadMark />}
         </span>
-        <span className="type-caption block text-faint-foreground">
-          {shortLabel(project.url)}
-        </span>
+        <span className="type-caption block text-faint-foreground">{shortLabel(project.url)}</span>
         {isDead && project.epitaph && (
           // Held back until you look at the stone: a headstone you have to
           // read, not a caption you scan past.
           <span className="block max-h-0 overflow-hidden opacity-0 transition-all duration-500 group-hover:max-h-12 group-hover:opacity-100">
-            <span className="mt-1 block type-caption text-muted-foreground">
-              {project.epitaph}
-            </span>
+            <span className="mt-1 block type-caption text-muted-foreground">{project.epitaph}</span>
           </span>
         )}
       </span>

@@ -20,8 +20,7 @@ export async function initAudioEngine(): Promise<AudioContext> {
     // Fallback for older Safari browsers.
     const AudioContextClass =
       window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     audioCtx = new AudioContextClass();
   }
 

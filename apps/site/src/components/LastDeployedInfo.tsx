@@ -95,10 +95,7 @@ export function DeployStatusLine({
        * 13px italic muted is the least legible text on the page.
        */}
       <p>
-        <RocketLaunch
-          aria-hidden="true"
-          className="mr-1.5 inline-block h-4 w-4 align-middle"
-        />
+        <RocketLaunch aria-hidden="true" className="mr-1.5 inline-block h-4 w-4 align-middle" />
         {deploymentInfo && (
           <>
             This site was last deployed on{" "}
@@ -122,9 +119,7 @@ export function DeployStatusLine({
               {Math.round(weatherInfo.temperature)}°C
             </span>
             {" in "}
-            <span className="font-medium text-muted-foreground">
-              {weatherInfo.city}
-            </span>
+            <span className="font-medium text-muted-foreground">{weatherInfo.city}</span>
             {"."}
           </>
         )}
@@ -152,9 +147,7 @@ export function DeployStatusLine({
 }
 
 export default function DeploymentStatus() {
-  const [deploymentInfo, setDeploymentInfo] = useState<DeploymentInfo | null>(
-    null
-  );
+  const [deploymentInfo, setDeploymentInfo] = useState<DeploymentInfo | null>(null);
   const [songInfo, setSongInfo] = useState<SongInfo | null>(null);
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -195,11 +188,7 @@ export default function DeploymentStatus() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="type-caption mt-4 animate-pulse">
-        Loading latest site info...
-      </div>
-    );
+    return <div className="type-caption mt-4 animate-pulse">Loading latest site info...</div>;
   }
 
   return (

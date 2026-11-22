@@ -58,50 +58,50 @@
     color-scheme: dark;
     /* Base background: #0D0F11 - User's chosen dark background */
     --background: 216 20% 6%;
-    
+
     /* Primary text: Off-white for comfortable reading (contrast ratio: 15.8:1) */
     --foreground: 210 20% 95%;
-    
+
     /* Card/Surface: Lighter than background for elevation (Material Design principle) */
     --card: 216 18% 10%;
     --card-foreground: 210 20% 95%;
-    
+
     /* Popover: Slightly elevated surface */
     --popover: 216 18% 12%;
     --popover-foreground: 210 20% 95%;
-    
+
     /* Primary: High contrast for important elements */
     --primary: 210 20% 92%;
     --primary-foreground: 216 20% 8%;
-    
+
     /* Secondary: Subtle elevated surface */
     --secondary: 216 16% 14%;
     --secondary-foreground: 210 18% 90%;
-    
+
     /* Muted: For less prominent content, still WCAG AA compliant */
     --muted: 216 16% 14%;
     --muted-foreground: 210 15% 70%;
 
     /* The faded tier, tuned to ~5:1 on the dark page. */
     --faint-foreground: 210 14% 52%;
-    
+
     /* Accent: Slightly elevated, for hover states and highlights */
     --accent: 216 16% 16%;
     --accent-foreground: 210 18% 92%;
-    
+
     /* Destructive: Desaturated red to avoid vibration on dark background */
     --destructive: 0 50% 45%;
     --destructive-foreground: 210 20% 95%;
-    
+
     /* Border: Subtle but visible (contrast ratio: 3.2:1) */
     --border: 216 14% 20%;
-    
+
     /* Input: Slightly lighter than border for distinction */
     --input: 216 14% 22%;
-    
+
     /* Ring: For focus states, needs to be clearly visible */
     --ring: 210 60% 70%;
-    
+
     /* Charts: Desaturated colors that work well on dark backgrounds */
     --chart-1: 220 60% 55%;
     --chart-2: 160 50% 50%;
@@ -259,16 +259,8 @@
      need one gradient per theme. The stops are anchored in rem so the fade
      spans roughly the final two paragraphs regardless of preview length. */
   .draft-preview-fade {
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black calc(100% - 12rem),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      black calc(100% - 12rem),
-      transparent 100%
-    );
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 12rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, black calc(100% - 12rem), transparent 100%);
   }
 
   /* The suggestion chips auto-scroll and are clipped at both edges, so both
@@ -299,7 +291,6 @@
       overscroll-behavior: none;
     }
   }
-
 }
 /*
   The app shell
@@ -435,7 +426,6 @@ html[data-resizing="true"] .app-shell * {
     animation: none;
   }
 }
-
 
 /*
   Shipstack screen geometry
@@ -799,11 +789,7 @@ html[data-resizing="true"] .app-shell * {
 @keyframes passage-chip-in {
   from {
     opacity: 0;
-    transform: translate(
-        -50%,
-        calc(var(--chip-shift) + var(--chip-enter))
-      )
-      scale(0.96);
+    transform: translate(-50%, calc(var(--chip-shift) + var(--chip-enter))) scale(0.96);
   }
   to {
     opacity: 1;

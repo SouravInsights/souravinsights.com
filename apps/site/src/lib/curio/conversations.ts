@@ -85,9 +85,7 @@ function trimForStorage(messages: UIMessage[]): UIMessage[] {
   });
 }
 
-export async function saveConversation(
-  messages: UIMessage[]
-): Promise<SharedConversation> {
+export async function saveConversation(messages: UIMessage[]): Promise<SharedConversation> {
   const id = randomUUID().replace(/-/g, "").slice(0, 12);
   const trimmed = trimForStorage(messages);
   const [row] = await db
@@ -97,15 +95,9 @@ export async function saveConversation(
   return row as SharedConversation;
 }
 
-export async function getConversation(
-  id: string
-): Promise<SharedConversation | null> {
+export async function getConversation(id: string): Promise<SharedConversation | null> {
   if (!/^[a-z0-9]{6,32}$/.test(id)) return null;
-  const [row] = await db
-    .select()
-    .from(conversations)
-    .where(eq(conversations.id, id))
-    .limit(1);
+  const [row] = await db.select().from(conversations).where(eq(conversations.id, id)).limit(1);
   return (row as SharedConversation) ?? null;
 }
 
@@ -118,18 +110,14 @@ export async function getConversation(
  * table and anything unknown is dropped, so a shared conversation can only
  * point at pages this collection actually holds.
  */
-export async function withVerifiedSources(
-  messages: UIMessage[]
-): Promise<UIMessage[]> {
+export async function withVerifiedSources(messages: UIMessage[]): Promise<UIMessage[]> {
   const urls = new Set<string>();
 
   for (const message of messages) {
     for (const part of message.parts) {
       const tool = part as { type: string; output?: unknown };
       if (!tool.type.startsWith("tool-") || !tool.output) continue;
-      const output = tool.output as
-        | { matches?: { url?: string }[]; url?: string }
-        | undefined;
+      const output = tool.output as { matches?: { url?: string }[]; url?: string } | undefined;
       for (const match of output?.matches ?? []) {
         if (match?.url) urls.add(match.url);
       }
@@ -147,10 +135,10 @@ export async function withVerifiedSources(
         .where(
           inArray(
             links.urlKey,
-            Array.from(urls).map((url) => normalizeUrl(url))
-          )
+            Array.from(urls).map((url) => normalizeUrl(url)),
+          ),
         )
-    ).map((row) => row.urlKey)
+    ).map((row) => row.urlKey),
   );
 
   return messages.map((message) => ({
@@ -171,7 +159,7 @@ export async function withVerifiedSources(
           output: {
             ...output,
             matches: output.matches.filter(
-              (match) => match.url && known.has(normalizeUrl(match.url))
+              (match) => match.url && known.has(normalizeUrl(match.url)),
             ),
           },
         } as UIMessage["parts"][number];

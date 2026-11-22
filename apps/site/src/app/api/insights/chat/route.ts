@@ -6,11 +6,7 @@ import { links } from "@/db/schema";
 import { runAgent } from "@/lib/kb/agent";
 import { chatDailyLimiter, chatLimiter, clientIp } from "@/lib/links/ratelimit";
 import { readDailyUsage, recordQuestion } from "@/lib/curio/budget";
-import {
-  MAX_MESSAGES,
-  isFromOurOwnPages,
-  trimHistory,
-} from "@/lib/curio/guard";
+import { MAX_MESSAGES, isFromOurOwnPages, trimHistory } from "@/lib/curio/guard";
 
 // The agent runs a few model round-trips per question; give the route room.
 export const runtime = "nodejs";
@@ -28,20 +24,17 @@ export async function POST(request: NextRequest) {
   if (!isFromOurOwnPages(request)) {
     return NextResponse.json(
       { error: "forbidden", message: "Ask from the site itself." },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
   const ip = clientIp(request.headers);
 
-  const [minute, day] = await Promise.all([
-    chatLimiter.limit(ip),
-    chatDailyLimiter.limit(ip),
-  ]);
+  const [minute, day] = await Promise.all([chatLimiter.limit(ip), chatDailyLimiter.limit(ip)]);
   if (!minute.success || !day.success) {
     return NextResponse.json(
       { error: "rate_limited", message: "Too many questions — try again later." },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
@@ -52,7 +45,7 @@ export async function POST(request: NextRequest) {
         error: "budget_spent",
         message: "Curio has answered plenty today. Try again tomorrow.",
       },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
@@ -63,13 +56,13 @@ export async function POST(request: NextRequest) {
   if (!Array.isArray(body?.messages)) {
     return NextResponse.json(
       { error: "invalid_body", message: "Body must be { messages: UIMessage[] }" },
-      { status: 400 }
+      { status: 400 },
     );
   }
   if (body.messages.length > MAX_MESSAGES) {
     return NextResponse.json(
       { error: "too_many_messages", message: "That conversation is too long." },
-      { status: 413 }
+      { status: 413 },
     );
   }
 
@@ -87,11 +80,7 @@ export async function POST(request: NextRequest) {
       .limit(1);
     if (link) {
       return (
-        await runAgent(
-          messages,
-          { linkId: link.id, title: link.title, url: link.url },
-          hooks
-        )
+        await runAgent(messages, { linkId: link.id, title: link.title, url: link.url }, hooks)
       ).toUIMessageStreamResponse();
     }
     // Unknown linkId: fall through to the unscoped agent rather than fail.

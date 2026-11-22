@@ -53,8 +53,7 @@ export function useTextSelection({
   return useCallback((): TextSelection | null => {
     const container = containerRef.current;
     const sel = window.getSelection();
-    if (!container || !sel || sel.rangeCount === 0 || sel.isCollapsed)
-      return null;
+    if (!container || !sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
     const range = sel.getRangeAt(0);
 
     // The paragraph the selection touches, not one that contains both ends.
@@ -86,8 +85,8 @@ export function useTextSelection({
       const box = el.getBoundingClientRect();
       return unionRect(
         Array.from(range.getClientRects()).filter(
-          (rect) => rect.bottom > box.top && rect.top < box.bottom
-        )
+          (rect) => rect.bottom > box.top && rect.top < box.bottom,
+        ),
       );
     };
 

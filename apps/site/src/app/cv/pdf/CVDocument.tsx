@@ -139,10 +139,7 @@ export function CVDocument({ data }: { data: CVData }) {
           // The name itself carries the primary link (projectUrl), the same
           // rule as the web page; links[] holds only extra destinations.
           <View key={project.id} style={styles.entry} wrap={false}>
-            <EntryHead
-              role={project.role}
-              dates={`${project.startDate} - ${project.endDate}`}
-            />
+            <EntryHead role={project.role} dates={`${project.startDate} - ${project.endDate}`} />
             <Text style={styles.org}>
               {project.projectUrl ? (
                 <Link src={withProtocol(project.projectUrl)} style={styles.link}>

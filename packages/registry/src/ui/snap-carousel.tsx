@@ -71,7 +71,7 @@ function SnapCarousel({
   const centerOf = React.useCallback((id: string) => {
     const content = contentRef.current;
     const item = content?.querySelector<HTMLElement>(
-      `[data-slot="snap-carousel-item"][data-value="${id}"]`
+      `[data-slot="snap-carousel-item"][data-value="${id}"]`,
     );
     if (!content || !item) return null;
     // offset metrics, not client rects: a peeking item is scaled.
@@ -131,7 +131,7 @@ function SnapCarousel({
       };
       glide.raf = requestAnimationFrame(step);
     },
-    [centerOf, reduce, spring, stopGlide]
+    [centerOf, reduce, spring, stopGlide],
   );
 
   const select = React.useCallback(
@@ -140,7 +140,7 @@ function SnapCarousel({
       suppressGlide.current = null;
       onValueChange(next);
     },
-    [onValueChange, value]
+    [onValueChange, value],
   );
 
   const selectFromScroll = React.useCallback(
@@ -149,7 +149,7 @@ function SnapCarousel({
       suppressGlide.current = next;
       onValueChange(next);
     },
-    [onValueChange, value]
+    [onValueChange, value],
   );
 
   // A caller-driven change glides. One that came from the rail's own scroll does not.
@@ -207,137 +207,125 @@ function SnapCarousel({
   );
 }
 
-export interface SnapCarouselContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+export interface SnapCarouselContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-const SnapCarouselContent = React.forwardRef<
-  HTMLDivElement,
-  SnapCarouselContentProps
->(function SnapCarouselContent(
-  { className, style, onScroll, ...props },
-  forwardedRef
-) {
-  const {
-    value,
-    items,
-    gap,
-    select,
-    selectFromScroll,
-    stopGlide,
-    contentRef,
-    lastScrollAt,
-    gliding,
-  } = useSnapCarousel();
-  const scrollRaf = React.useRef(0);
-  const wheelGate = React.useRef(0);
+const SnapCarouselContent = React.forwardRef<HTMLDivElement, SnapCarouselContentProps>(
+  function SnapCarouselContent({ className, style, onScroll, ...props }, forwardedRef) {
+    const {
+      value,
+      items,
+      gap,
+      select,
+      selectFromScroll,
+      stopGlide,
+      contentRef,
+      lastScrollAt,
+      gliding,
+    } = useSnapCarousel();
+    const scrollRaf = React.useRef(0);
+    const wheelGate = React.useRef(0);
 
-  const onRailScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    lastScrollAt.current = performance.now();
-    const content = contentRef.current;
-    if (!content) return;
-    cancelAnimationFrame(scrollRaf.current);
-    scrollRaf.current = requestAnimationFrame(() => {
-      if (gliding.current) return;
-      const center = content.scrollLeft + content.clientWidth / 2;
-      let nearest = value;
-      let best = Number.POSITIVE_INFINITY;
-      content
-        .querySelectorAll<HTMLElement>('[data-slot="snap-carousel-item"]')
-        .forEach((item) => {
-          const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-          const distance = Math.abs(itemCenter - center);
-          if (distance < best) {
-            best = distance;
-            nearest = item.dataset.value ?? nearest;
-          }
-        });
-      if (nearest !== value && items.includes(nearest)) {
-        selectFromScroll(nearest);
-      }
-    });
-    onScroll?.(event);
-  };
-
-  React.useEffect(() => {
-    const content = contentRef.current;
-    if (!content) return;
-    const onWheel = (event: WheelEvent) => {
-      const steps =
-        event.deltaMode === 1 ||
-        (Math.abs(event.deltaY) >= 50 && event.deltaX === 0);
-      if (!steps) {
-        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) stopGlide();
-        return;
-      }
-      if (event.ctrlKey) return;
-      event.preventDefault();
-      const now = performance.now();
-      if (now < wheelGate.current) return;
-      wheelGate.current = now + 200;
-      const next = items[items.indexOf(value) + Math.sign(event.deltaY)];
-      if (next) select(next);
+    const onRailScroll = (event: React.UIEvent<HTMLDivElement>) => {
+      lastScrollAt.current = performance.now();
+      const content = contentRef.current;
+      if (!content) return;
+      cancelAnimationFrame(scrollRaf.current);
+      scrollRaf.current = requestAnimationFrame(() => {
+        if (gliding.current) return;
+        const center = content.scrollLeft + content.clientWidth / 2;
+        let nearest = value;
+        let best = Number.POSITIVE_INFINITY;
+        content
+          .querySelectorAll<HTMLElement>('[data-slot="snap-carousel-item"]')
+          .forEach((item) => {
+            const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+            const distance = Math.abs(itemCenter - center);
+            if (distance < best) {
+              best = distance;
+              nearest = item.dataset.value ?? nearest;
+            }
+          });
+        if (nearest !== value && items.includes(nearest)) {
+          selectFromScroll(nearest);
+        }
+      });
+      onScroll?.(event);
     };
-    content.addEventListener("wheel", onWheel, { passive: false });
-    return () => content.removeEventListener("wheel", onWheel);
-  }, [contentRef, items, select, stopGlide, value]);
 
-  return (
-    <div
-      ref={(node) => {
-        contentRef.current = node;
-        if (typeof forwardedRef === "function") forwardedRef(node);
-        else if (forwardedRef) forwardedRef.current = node;
-      }}
-      data-slot="snap-carousel-content"
-      onScroll={onRailScroll}
-      onTouchStart={stopGlide}
-      style={{ gap, ...style }}
-      className={cn(
-        "no-scrollbar relative flex items-center overflow-x-auto overflow-y-hidden outline-none [overscroll-behavior-x:contain]",
-        className
-      )}
-      {...props}
-    />
-  );
-});
+    React.useEffect(() => {
+      const content = contentRef.current;
+      if (!content) return;
+      const onWheel = (event: WheelEvent) => {
+        const steps = event.deltaMode === 1 || (Math.abs(event.deltaY) >= 50 && event.deltaX === 0);
+        if (!steps) {
+          if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) stopGlide();
+          return;
+        }
+        if (event.ctrlKey) return;
+        event.preventDefault();
+        const now = performance.now();
+        if (now < wheelGate.current) return;
+        wheelGate.current = now + 200;
+        const next = items[items.indexOf(value) + Math.sign(event.deltaY)];
+        if (next) select(next);
+      };
+      content.addEventListener("wheel", onWheel, { passive: false });
+      return () => content.removeEventListener("wheel", onWheel);
+    }, [contentRef, items, select, stopGlide, value]);
+
+    return (
+      <div
+        ref={(node) => {
+          contentRef.current = node;
+          if (typeof forwardedRef === "function") forwardedRef(node);
+          else if (forwardedRef) forwardedRef.current = node;
+        }}
+        data-slot="snap-carousel-content"
+        onScroll={onRailScroll}
+        onTouchStart={stopGlide}
+        style={{ gap, ...style }}
+        className={cn(
+          "no-scrollbar relative flex items-center overflow-x-auto overflow-y-hidden outline-none [overscroll-behavior-x:contain]",
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
 SnapCarouselContent.displayName = "SnapCarouselContent";
 
-export interface SnapCarouselItemProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface SnapCarouselItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
 }
 
-const SnapCarouselItem = React.forwardRef<
-  HTMLDivElement,
-  SnapCarouselItemProps
->(function SnapCarouselItem(
-  { value, className, children, ...props },
-  forwardedRef
-) {
-  const { value: active, items } = useSnapCarousel();
-  const index = items.indexOf(value);
-  const activeIndex = items.indexOf(active);
-  const peek = value === active ? "on" : index < activeIndex ? "before" : "after";
+const SnapCarouselItem = React.forwardRef<HTMLDivElement, SnapCarouselItemProps>(
+  function SnapCarouselItem({ value, className, children, ...props }, forwardedRef) {
+    const { value: active, items } = useSnapCarousel();
+    const index = items.indexOf(value);
+    const activeIndex = items.indexOf(active);
+    const peek = value === active ? "on" : index < activeIndex ? "before" : "after";
 
-  return (
-    <div
-      ref={(node) => {
-        if (typeof forwardedRef === "function") forwardedRef(node);
-        else if (forwardedRef) forwardedRef.current = node;
-      }}
-      data-slot="snap-carousel-item"
-      data-value={value}
-      data-peek={peek}
-      role="group"
-      aria-roledescription="slide"
-      aria-current={peek === "on" || undefined}
-      className={cn("relative flex-none", className)}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+    return (
+      <div
+        ref={(node) => {
+          if (typeof forwardedRef === "function") forwardedRef(node);
+          else if (forwardedRef) forwardedRef.current = node;
+        }}
+        data-slot="snap-carousel-item"
+        data-value={value}
+        data-peek={peek}
+        role="group"
+        aria-roledescription="slide"
+        aria-current={peek === "on" || undefined}
+        className={cn("relative flex-none", className)}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  },
+);
 SnapCarouselItem.displayName = "SnapCarouselItem";
 
 export { SnapCarousel, SnapCarouselContent, SnapCarouselItem, useSnapCarousel };

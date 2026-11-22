@@ -95,12 +95,8 @@
           "name": "link_chunks_link_id_links_id_fk",
           "tableFrom": "link_chunks",
           "tableTo": "links",
-          "columnsFrom": [
-            "link_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["link_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -110,10 +106,7 @@
         "link_chunks_link_chunk_unique": {
           "name": "link_chunks_link_chunk_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "link_id",
-            "chunk_index"
-          ]
+          "columns": ["link_id", "chunk_index"]
         }
       },
       "policies": {},
@@ -293,16 +286,12 @@
         "links_discord_id_unique": {
           "name": "links_discord_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "discord_id"
-          ]
+          "columns": ["discord_id"]
         },
         "links_url_key_unique": {
           "name": "links_url_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "url_key"
-          ]
+          "columns": ["url_key"]
         }
       },
       "policies": {},

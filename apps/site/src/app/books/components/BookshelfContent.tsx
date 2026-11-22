@@ -26,47 +26,37 @@ export const BookshelfContent: React.FC<BookshelfContentProps> = ({
     variables: { handle: "sourav" },
   });
 
-  const { loading: loadingReading, data: dataReading } = useQuery(
-    GET_BOOKS_BY_STATUS,
-    {
-      variables: {
-        limit: 50,
-        offset: 0,
-        readingStatus: "IS_READING",
-        profileId: profileData?.profile?.id,
-      },
-      skip: !profileData?.profile?.id,
-    }
-  );
+  const { loading: loadingReading, data: dataReading } = useQuery(GET_BOOKS_BY_STATUS, {
+    variables: {
+      limit: 50,
+      offset: 0,
+      readingStatus: "IS_READING",
+      profileId: profileData?.profile?.id,
+    },
+    skip: !profileData?.profile?.id,
+  });
 
-  const { loading: loadingWantToRead, data: dataWantToRead } = useQuery(
-    GET_BOOKS_BY_STATUS,
-    {
-      variables: {
-        limit: 50,
-        offset: 0,
-        readingStatus: "WANTS_TO_READ",
-        profileId: profileData?.profile?.id,
-      },
-      skip: !profileData?.profile?.id,
-    }
-  );
+  const { loading: loadingWantToRead, data: dataWantToRead } = useQuery(GET_BOOKS_BY_STATUS, {
+    variables: {
+      limit: 50,
+      offset: 0,
+      readingStatus: "WANTS_TO_READ",
+      profileId: profileData?.profile?.id,
+    },
+    skip: !profileData?.profile?.id,
+  });
 
-  const { loading: loadingFinished, data: dataFinished } = useQuery(
-    GET_BOOKS_BY_STATUS,
-    {
-      variables: {
-        limit: 50,
-        offset: 0,
-        readingStatus: "FINISHED",
-        profileId: profileData?.profile?.id,
-      },
-      skip: !profileData?.profile?.id,
-    }
-  );
+  const { loading: loadingFinished, data: dataFinished } = useQuery(GET_BOOKS_BY_STATUS, {
+    variables: {
+      limit: 50,
+      offset: 0,
+      readingStatus: "FINISHED",
+      profileId: profileData?.profile?.id,
+    },
+    skip: !profileData?.profile?.id,
+  });
 
-  const loading =
-    profileLoading || loadingReading || loadingWantToRead || loadingFinished;
+  const loading = profileLoading || loadingReading || loadingWantToRead || loadingFinished;
 
   const groups = [
     {
@@ -113,9 +103,7 @@ export const BookshelfContent: React.FC<BookshelfContentProps> = ({
   }
 
   if (!profileData?.profile) {
-    return (
-      <p className="type-caption py-10 text-center">Profile not found.</p>
-    );
+    return <p className="type-caption py-10 text-center">Profile not found.</p>;
   }
 
   if (total === 0) {
@@ -130,17 +118,12 @@ export const BookshelfContent: React.FC<BookshelfContentProps> = ({
         <section key={group.key}>
           <SectionHeader
             title={group.title}
-            description={`${group.books.length} ${
-              group.books.length === 1 ? "book" : "books"
-            }`}
+            description={`${group.books.length} ${group.books.length === 1 ? "book" : "books"}`}
           />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {group.books.map((book: any, index: number) => (
               <FadeIn key={book.id} delay={Math.min(index, 12) * 0.03}>
-                <BookCard
-                  book={book}
-                  forceGenerativeCover={showGenerativeCovers}
-                />
+                <BookCard book={book} forceGenerativeCover={showGenerativeCovers} />
               </FadeIn>
             ))}
           </div>

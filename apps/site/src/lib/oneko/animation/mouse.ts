@@ -9,7 +9,10 @@ import type { CatRuntimeState, ObstacleRect, PathPoint } from "../types";
 import type { CatAnimationDeps } from "./deps";
 
 /** A control's box holds still while the page does; re-read it when the page moves. */
-const controlRects = new WeakMap<Element, { rect: ObstacleRect; scrollX: number; scrollY: number }>();
+const controlRects = new WeakMap<
+  Element,
+  { rect: ObstacleRect; scrollX: number; scrollY: number }
+>();
 
 /**
  * The point the cat is allowed to stand on when it answers the pointer.

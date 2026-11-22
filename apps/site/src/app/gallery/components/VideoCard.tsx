@@ -138,9 +138,7 @@ export function VideoCard({
       <div className="mt-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="type-heading truncate">{video.title}</h3>
-          <p className="type-caption mt-0.5 text-faint-foreground">
-            {project.name}
-          </p>
+          <p className="type-caption mt-0.5 text-faint-foreground">{project.name}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2.5 pt-0.5 type-caption tabular-nums text-faint-foreground">
           <span className="inline-flex items-center gap-1" title="Likes">

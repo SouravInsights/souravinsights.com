@@ -167,10 +167,7 @@ export async function readPageFresh(url: string): Promise<FetchedPage> {
   // request stays a cache hit even if the page starts redirecting elsewhere.
   const key = `kb:fetch:${createHash("sha256").update(url).digest("hex")}`;
 
-  const hit = (await redis.get(key).catch(() => null)) as Omit<
-    FetchedPage,
-    "cached"
-  > | null;
+  const hit = (await redis.get(key).catch(() => null)) as Omit<FetchedPage, "cached"> | null;
   if (hit?.text) {
     return { url: hit.url, title: hit.title, text: hit.text, cached: true };
   }

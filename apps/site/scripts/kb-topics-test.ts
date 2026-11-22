@@ -1,8 +1,4 @@
-import {
-  cleanTopics,
-  buildTopicVocabulary,
-  buildLetterCanonical,
-} from "../src/lib/kb/topics";
+import { cleanTopics, buildTopicVocabulary, buildLetterCanonical } from "../src/lib/kb/topics";
 import type { LanguageModel } from "ai";
 
 /**
@@ -35,7 +31,15 @@ type Case = { name: string; input: string[]; want: string[]; winners?: Record<st
 const CASES: Case[] = [
   {
     name: "the worked example from topics.ts",
-    input: ["Agents", "ai agents", "Design", "web design", "pricing", "react", "our full guide to modern frontend infrastructure"],
+    input: [
+      "Agents",
+      "ai agents",
+      "Design",
+      "web design",
+      "pricing",
+      "react",
+      "our full guide to modern frontend infrastructure",
+    ],
     want: ["ai agents", "web design", "react"],
   },
   {
@@ -99,8 +103,13 @@ async function main() {
   // The vocabulary build's deterministic half (letters round; the mini
   // collection skips the LLM round by design).
   const rows: string[][] = [
-    ["open source"], ["open source"], ["open-source"],
-    ["front-end"], ["frontend"], ["agents"], ["agents"],
+    ["open source"],
+    ["open source"],
+    ["open-source"],
+    ["front-end"],
+    ["frontend"],
+    ["agents"],
+    ["agents"],
   ];
   const { vocabulary, winningSpellings } = await buildTopicVocabulary(rows, dummyModel);
   check("letters pick the winning spelling", winningSpellings, {
@@ -118,8 +127,12 @@ async function main() {
   // no model needed.
   check(
     "settle pass merges letter-proven variants",
-    buildLetterCanonical([["data-visualization"], ["data visualization", "research"], ["data visualization"]]),
-    { "data-visualization": "data visualization" }
+    buildLetterCanonical([
+      ["data-visualization"],
+      ["data visualization", "research"],
+      ["data visualization"],
+    ]),
+    { "data-visualization": "data visualization" },
   );
 
   console.log(failures ? `\n${failures} FAILURES` : `\nall ${CASES.length + 2} cases pass`);

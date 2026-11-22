@@ -12,9 +12,7 @@ export function UseTextSelectionDemo() {
 
   useEffect(() => {
     if (containerRef.current) {
-      paragraphs.current = Array.from(
-        containerRef.current.querySelectorAll("p")
-      );
+      paragraphs.current = Array.from(containerRef.current.querySelectorAll("p"));
     }
   }, []);
 
@@ -23,10 +21,7 @@ export function UseTextSelectionDemo() {
   return (
     <div className="flex w-full max-w-prose flex-col items-start gap-4">
       <div ref={containerRef} className="text-[15px] leading-7">
-        <p>
-          The best interfaces disappear. Select a few words here, then read the
-          selection.
-        </p>
+        <p>The best interfaces disappear. Select a few words here, then read the selection.</p>
       </div>
       <Button
         variant="outline"

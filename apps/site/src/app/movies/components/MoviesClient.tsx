@@ -26,24 +26,15 @@ interface MoviesClientProps {
   isEditing: boolean;
 }
 
-export function MoviesClient({
-  initialData,
-  isEditing: isUserAuthenticated,
-}: MoviesClientProps) {
-  const [data, setData] = useState<MoviesData>(() =>
-    normalizeMoviesData(initialData)
-  );
+export function MoviesClient({ initialData, isEditing: isUserAuthenticated }: MoviesClientProps) {
+  const [data, setData] = useState<MoviesData>(() => normalizeMoviesData(initialData));
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
-    "idle"
-  );
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isFirstRender = useRef(true);
 
   const isEditing = isUserAuthenticated;
-  const selectedMovie = selectedId
-    ? data.movies.find((m) => m.id === selectedId) ?? null
-    : null;
+  const selectedMovie = selectedId ? (data.movies.find((m) => m.id === selectedId) ?? null) : null;
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -98,10 +89,7 @@ export function MoviesClient({
     setSelectedId(id);
   };
 
-  const handleDragEnd = (event: {
-    operation: { source: DraggableType };
-    canceled: boolean;
-  }) => {
+  const handleDragEnd = (event: { operation: { source: DraggableType }; canceled: boolean }) => {
     if (event.canceled) return;
     const { source } = event.operation;
     if (isSortable(source)) {
@@ -133,9 +121,7 @@ export function MoviesClient({
               />
               {data.movies.length > 0 && (
                 <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-foreground/5 px-3 py-1.5 type-caption tabular-nums">
-                  <span className="font-medium text-foreground">
-                    {data.movies.length}
-                  </span>
+                  <span className="font-medium text-foreground">{data.movies.length}</span>
                   <span className="text-faint-foreground">
                     {data.movies.length === 1 ? "film" : "films"}
                   </span>
@@ -158,9 +144,7 @@ export function MoviesClient({
           {data.movies.length === 0 && !isEditing ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <FilmStrip className="w-8 h-8 text-faint-foreground mb-3" />
-              <p className="text-sm text-faint-foreground">
-                No films here yet.
-              </p>
+              <p className="text-sm text-faint-foreground">No films here yet.</p>
             </div>
           ) : (
             <DragDropProvider onDragEnd={handleDragEnd}>

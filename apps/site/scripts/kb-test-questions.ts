@@ -27,12 +27,7 @@ import { CATEGORIES, CATEGORY_DEFS } from "../src/lib/kb/categories";
  * Written to eval/test-questions.json.
  */
 
-const OUT = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "eval",
-  "test-questions.json"
-);
+const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "eval", "test-questions.json");
 
 /** Links sampled per category, newest first, to write questions from. */
 const SAMPLE_PER_CATEGORY = 14;
@@ -42,9 +37,7 @@ const SUMMARY_CHARS = 260;
 const PER_CATEGORY = 16;
 
 const QuestionSchema = z.object({
-  questions: z.array(
-    z.string().describe("One question, as a visitor would type it")
-  ),
+  questions: z.array(z.string().describe("One question, as a visitor would type it")),
 });
 
 const SYSTEM = [
@@ -85,10 +78,7 @@ async function main() {
       summary: linkChunks.content,
     })
     .from(links)
-    .leftJoin(
-      linkChunks,
-      and(eq(linkChunks.linkId, links.id), eq(linkChunks.chunkIndex, 0))
-    )
+    .leftJoin(linkChunks, and(eq(linkChunks.linkId, links.id), eq(linkChunks.chunkIndex, 0)))
     .where(and(isNull(links.hiddenAt), ne(links.health, "dead")));
 
   const groups: Record<string, string[]> = {};
@@ -112,7 +102,7 @@ async function main() {
           (item.topics?.length ? `\n  topics: ${item.topics.join(", ")}` : "") +
           (item.summary
             ? `\n  summary: ${item.summary.replace(/\s+/g, " ").slice(0, SUMMARY_CHARS)}`
-            : "")
+            : ""),
       )
       .join("\n");
 
@@ -154,8 +144,8 @@ async function main() {
         groups,
       },
       null,
-      2
-    )}\n`
+      2,
+    )}\n`,
   );
   console.log(`\n${total} questions → ${OUT}`);
 }

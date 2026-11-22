@@ -1,9 +1,4 @@
-import {
-  convertToModelMessages,
-  stepCountIs,
-  tool,
-  type UIMessage,
-} from "ai";
+import { convertToModelMessages, stepCountIs, tool, type UIMessage } from "ai";
 import { z } from "zod";
 import { CATEGORIES } from "./categories";
 import { chatModel } from "./model";
@@ -58,7 +53,7 @@ export const searchKnowledge = tool({
       .optional()
       .describe(
         "How many links to return (default 6). Ask for more when the question " +
-          "wants a set — every tool for a job, every person worth following."
+          "wants a set — every tool for a job, every person worth following.",
       ),
     category: z
       .enum(CATEGORIES)
@@ -66,7 +61,7 @@ export const searchKnowledge = tool({
       .describe(
         "Restrict the search to one kind of saved link. Use it when the " +
           "question is about a kind — people to follow, tools for a job, " +
-          "publications, galleries, courses."
+          "publications, galleries, courses.",
       ),
   }),
   execute: async ({ query, category, limit }) => {
@@ -138,7 +133,7 @@ const scopedPrompt = (scope: AgentScope) =>
     "",
     "",
     `Scoped mode: the visitor has one article open — "${scope.title}" (${scope.url}).`,
-    "Answer about THAT article only, from its passages. If the question goes", 
+    "Answer about THAT article only, from its passages. If the question goes",
     "beyond what the article covers, say so; do not roam the collection.",
   ].join("\n");
 
@@ -148,20 +143,14 @@ export interface AgentHooks {
 }
 
 /** Stream an answer for the given conversation. */
-export async function runAgent(
-  messages: UIMessage[],
-  scope?: AgentScope,
-  hooks: AgentHooks = {}
-) {
+export async function runAgent(messages: UIMessage[], scope?: AgentScope, hooks: AgentHooks = {}) {
   return streamText({
     model: chatModel(),
     // The AI SDK's tracing (which Neatlogs uses) drops a prompt passed as
     // `system`. Passed as `instructions`, it appears in the trace.
     instructions: scope ? scopedPrompt(scope) : SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
-    tools: scope
-      ? { search_knowledge: scopedSearchKnowledge(scope.linkId) }
-      : agentTools(),
+    tools: scope ? { search_knowledge: scopedSearchKnowledge(scope.linkId) } : agentTools(),
     stopWhen: stepCountIs(MAX_STEPS),
     onFinish: async (event) => {
       // The number that matters for the daily budget. Field names have moved
@@ -170,9 +159,7 @@ export async function runAgent(
         totalUsage?: { totalTokens?: number };
         usage?: { totalTokens?: number };
       };
-      hooks.onFinish?.(
-        usage.totalUsage?.totalTokens ?? usage.usage?.totalTokens ?? 0
-      );
+      hooks.onFinish?.(usage.totalUsage?.totalTokens ?? usage.usage?.totalTokens ?? 0);
       // The answer is complete, so the recorded spans are all here. Send them
       // now rather than waiting for Neatlogs' next batch (see flushTraces).
       await flushTraces();
@@ -217,9 +204,7 @@ export function fetchLinkTool() {
       const [saved] = await db
         .select({ id: links.id })
         .from(links)
-        .where(
-          and(eq(links.urlKey, normalizeUrl(url)), isNull(links.hiddenAt))
-        )
+        .where(and(eq(links.urlKey, normalizeUrl(url)), isNull(links.hiddenAt)))
         .limit(1);
       if (!saved) {
         return {
@@ -235,8 +220,7 @@ export function fetchLinkTool() {
         return { url: page.url, title: page.title, text: page.text };
       } catch (error) {
         return {
-          error:
-            error instanceof Error ? error.message : "Could not read that page.",
+          error: error instanceof Error ? error.message : "Could not read that page.",
         };
       }
     },

@@ -46,12 +46,8 @@ const serialize = (row: Row) => ({
 
 const VISIBLE = () => and(isNull(links.hiddenAt), ne(links.health, "dead"));
 
-const err = (
-  code: string,
-  message: string,
-  status: number,
-  headers?: HeadersInit
-) => NextResponse.json({ error: { code, message } }, { status, headers });
+const err = (code: string, message: string, status: number, headers?: HeadersInit) =>
+  NextResponse.json({ error: { code, message } }, { status, headers });
 
 function decodeCursor(raw: string): { a: string; i: number } | null {
   try {
@@ -76,17 +72,13 @@ export async function GET(request: NextRequest) {
     return err("rate_limited", "Too many requests", 429, rateHeaders);
   }
 
-  const parsed = linksQuerySchema.safeParse(
-    Object.fromEntries(request.nextUrl.searchParams)
-  );
+  const parsed = linksQuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
   if (!parsed.success) {
     return err(
       "invalid_query",
-      parsed.error.issues
-        .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-        .join("; "),
+      parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; "),
       400,
-      rateHeaders
+      rateHeaders,
     );
   }
 
@@ -104,7 +96,7 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json(
       { data: [serialize(rows[0])], meta: { next_cursor: null } },
-      { headers: rateHeaders }
+      { headers: rateHeaders },
     );
   }
 
@@ -120,8 +112,8 @@ export async function GET(request: NextRequest) {
     conditions.push(
       or(
         lt(links.addedAt, cursorDate),
-        and(eq(links.addedAt, cursorDate), lt(links.id, decoded.i))
-      )
+        and(eq(links.addedAt, cursorDate), lt(links.id, decoded.i)),
+      ),
     );
   }
 
@@ -137,9 +129,9 @@ export async function GET(request: NextRequest) {
   const last = page[page.length - 1];
   const nextCursor =
     rows.length > limit && last
-      ? Buffer.from(
-          JSON.stringify({ a: last.addedAt.toISOString(), i: last.id })
-        ).toString("base64url")
+      ? Buffer.from(JSON.stringify({ a: last.addedAt.toISOString(), i: last.id })).toString(
+          "base64url",
+        )
       : null;
 
   return NextResponse.json(
@@ -149,7 +141,7 @@ export async function GET(request: NextRequest) {
         ...rateHeaders,
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       },
-    }
+    },
   );
 }
 
@@ -166,9 +158,7 @@ export async function POST(request: NextRequest) {
     return err("rate_limited", "Too many requests", 429);
   }
 
-  const parsed = addLinkRequestSchema.safeParse(
-    await request.json().catch(() => null)
-  );
+  const parsed = addLinkRequestSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return err("invalid_body", "Body must be { url, category }", 400);
   }

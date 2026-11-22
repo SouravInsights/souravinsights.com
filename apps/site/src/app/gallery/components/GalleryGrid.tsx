@@ -53,8 +53,7 @@ export function GalleryGrid({
 
   const projectOfKey = useMemo(() => {
     const map = new Map(projects.map((project) => [project.key, project]));
-    return (key: string): GalleryProject =>
-      map.get(key) ?? { key, name: key };
+    return (key: string): GalleryProject => map.get(key) ?? { key, name: key };
   }, [projects]);
 
   const filters = useMemo(() => {
@@ -76,17 +75,11 @@ export function GalleryGrid({
 
   // Shuffle once, then filter. Filtering a shuffled list keeps each project's
   // order stable when you switch between tabs.
-  const ordered = useMemo(
-    () => seededShuffle(videos, shuffleSeed),
-    [videos, shuffleSeed]
-  );
+  const ordered = useMemo(() => seededShuffle(videos, shuffleSeed), [videos, shuffleSeed]);
 
   const visible = useMemo(
-    () =>
-      category === "all"
-        ? ordered
-        : ordered.filter((video) => video.project === category),
-    [ordered, category]
+    () => (category === "all" ? ordered : ordered.filter((video) => video.project === category)),
+    [ordered, category],
   );
 
   const active = videos.find((video) => video.id === activeId) ?? null;
@@ -100,15 +93,11 @@ export function GalleryGrid({
   // Identical values return the same reference, so reporting a total that has
   // not changed cannot spin a render loop.
   const setLikeTotal = useCallback((id: string, total: number) => {
-    setLikes((current) =>
-      current[id] === total ? current : { ...current, [id]: total }
-    );
+    setLikes((current) => (current[id] === total ? current : { ...current, [id]: total }));
   }, []);
 
   const setViewTotal = useCallback((id: string, total: number) => {
-    setViews((current) =>
-      current[id] === total ? current : { ...current, [id]: total }
-    );
+    setViews((current) => (current[id] === total ? current : { ...current, [id]: total }));
   }, []);
 
   return (
@@ -130,9 +119,7 @@ export function GalleryGrid({
                 }}
                 aria-pressed={selected}
                 className={`relative flex h-full shrink-0 items-center gap-1.5 rounded-[5px] px-3 text-sm font-medium transition-colors ${
-                  selected
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                  selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {selected && (

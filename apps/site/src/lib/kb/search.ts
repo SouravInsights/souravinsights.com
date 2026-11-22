@@ -73,16 +73,13 @@ export async function search(
     passagesPerLink?: number;
     /** Scope the search to one link's passages (the reader's per-article ask). */
     linkId?: number;
-  } = {}
+  } = {},
 ): Promise<SearchHit[]> {
   const limit = opts.limit ?? DEFAULT_LINKS;
   const passagesPerLink = opts.passagesPerLink ?? DEFAULT_PASSAGES_PER_LINK;
 
   const queryVector = await embedOne(query);
-  const distance = sql<number>`${cosineDistance(
-    linkChunks.embedding,
-    queryVector
-  )}`;
+  const distance = sql<number>`${cosineDistance(linkChunks.embedding, queryVector)}`;
 
   const conditions = [isNull(links.hiddenAt), ne(links.health, "dead")];
   if (opts.category) conditions.push(eq(links.category, opts.category));
@@ -105,12 +102,7 @@ export async function search(
       .select(columns)
       .from(linkChunks)
       .innerJoin(links, eq(links.id, linkChunks.linkId))
-      .where(
-        and(
-          ...conditions,
-          ...(onlySummaries ? [eq(linkChunks.unitType, "summary")] : [])
-        )
-      )
+      .where(and(...conditions, ...(onlySummaries ? [eq(linkChunks.unitType, "summary")] : [])))
       .orderBy(asc(distance))
       .limit(take) as Promise<CandidateRow[]>;
 
@@ -122,10 +114,7 @@ export async function search(
 
   // Group by link. A link's score is its best passage from either race, and
   // its cited passages are the best few from its own pool.
-  const grouped = new Map<
-    number,
-    { hit: SearchHit; best: number; passages: CandidateRow[] }
-  >();
+  const grouped = new Map<number, { hit: SearchHit; best: number; passages: CandidateRow[] }>();
 
   const consider = (row: CandidateRow) => {
     let entry = grouped.get(row.linkId);

@@ -36,7 +36,7 @@ const GOLDEN_PATH = join(HERE, "..", "eval", "category-golden.json");
 
 const flag = (name: string) => {
   const i = process.argv.indexOf(`--${name}`);
-  return i === -1 ? undefined : process.argv[i + 1] ?? true;
+  return i === -1 ? undefined : (process.argv[i + 1] ?? true);
 };
 
 const CONCURRENCY = 8;
@@ -71,13 +71,7 @@ async function main() {
       wordCount: links.wordCount,
     })
     .from(links)
-    .where(
-      and(
-        isNull(links.hiddenAt),
-        ne(links.health, "dead"),
-        isNotNull(links.markdown)
-      )
-    )
+    .where(and(isNull(links.hiddenAt), ne(links.health, "dead"), isNotNull(links.markdown)))
     .orderBy(links.id);
 
   // The leash, built through the same policy production uses (topics.ts) —
@@ -86,11 +80,10 @@ async function main() {
     .select({ topics: links.topics })
     .from(links)
     .where(isNull(links.hiddenAt));
-  const { vocabulary: knownTopics, winningSpellings } =
-    await buildTopicVocabulary(
-      topicRows.map((r) => r.topics),
-      modelById(modelId)
-    );
+  const { vocabulary: knownTopics, winningSpellings } = await buildTopicVocabulary(
+    topicRows.map((r) => r.topics),
+    modelById(modelId),
+  );
 
   // scored rows = golden ∪ holdout, each with its truth source recorded.
   const seen = new Set<string>();
@@ -106,8 +99,7 @@ async function main() {
 
   for (const row of rows) {
     const g = expectedByKey.get(row.urlKey);
-    const truth =
-      g?.expected ?? (row.category && isCategory(row.category) ? row.category : null);
+    const truth = g?.expected ?? (row.category && isCategory(row.category) ? row.category : null);
     if (!truth) continue;
     seen.add(row.urlKey);
     scored.push({
@@ -129,7 +121,7 @@ async function main() {
     `probe · model ${modelId} · ${work.length} links ` +
       `(${work.filter((w) => w.source === "golden").length} golden, ` +
       `${work.filter((w) => w.source === "holdout").length} holdout) · ` +
-      `vocabulary ${knownTopics.length} topics`
+      `vocabulary ${knownTopics.length} topics`,
   );
   if (missing.length) {
     console.log(`skipped (no markdown / not in collection): ${missing.length}`);
@@ -163,8 +155,7 @@ async function main() {
         knownTopics,
       });
       // The production rule: low confidence files the link for review.
-      const predicted =
-        object.confidence === "low" ? "other" : object.category;
+      const predicted = object.confidence === "low" ? "other" : object.category;
 
       // --with-describe adds the second call: summary + topics, exactly as
       // production's understand would write them.
@@ -215,7 +206,7 @@ async function main() {
     if (++done % 25 === 0 || done === work.length) {
       const hits = results.filter((r) => r.ok).length;
       console.log(
-        `  ${done}/${work.length} · agreement ${((hits / results.length) * 100).toFixed(1)}%`
+        `  ${done}/${work.length} · agreement ${((hits / results.length) * 100).toFixed(1)}%`,
       );
     }
   };
@@ -223,29 +214,30 @@ async function main() {
   await Promise.all(
     Array.from({ length: CONCURRENCY }, async (_, worker) => {
       for (let i = worker; i < work.length; i += CONCURRENCY) await one(work[i]);
-    })
+    }),
   );
 
-  const by = (s: "golden" | "holdout") =>
-    results.filter((r) => r.source === s && !r.boundary);
+  const by = (s: "golden" | "holdout") => results.filter((r) => r.source === s && !r.boundary);
   const pct = (rs: typeof results) =>
     rs.length ? ((rs.filter((r) => r.ok).length / rs.length) * 100).toFixed(1) : "—";
 
   console.log("\n== RESULT ==");
   console.log(
-    `golden   ${pct(by("golden"))}%  (${by("golden").filter((r) => r.ok).length}/${by("golden").length})`
+    `golden   ${pct(by("golden"))}%  (${by("golden").filter((r) => r.ok).length}/${by("golden").length})`,
   );
   console.log(
-    `holdout  ${pct(by("holdout"))}%  (${by("holdout").filter((r) => r.ok).length}/${by("holdout").length})`
+    `holdout  ${pct(by("holdout"))}%  (${by("holdout").filter((r) => r.ok).length}/${by("holdout").length})`,
   );
   console.log(
-    `overall  ${pct(results)}%  (${results.filter((r) => r.ok).length}/${results.length}) · ${failed} errors`
+    `overall  ${pct(results)}%  (${results.filter((r) => r.ok).length}/${results.length}) · ${failed} errors`,
   );
 
   const conf = new Map<string, number>();
   for (const r of results) conf.set(r.confidence, (conf.get(r.confidence) ?? 0) + 1);
   console.log(
-    `confidence: ${Array.from(conf.entries()).map(([k, n]) => `${k} ${n}`).join(" · ")}`
+    `confidence: ${Array.from(conf.entries())
+      .map(([k, n]) => `${k} ${n}`)
+      .join(" · ")}`,
   );
 
   const misses = results.filter((r) => !r.ok && !r.boundary);
@@ -253,7 +245,7 @@ async function main() {
     console.log(`\n== MISMATCHES (${misses.length}) ==`);
     for (const m of misses.sort((a, b) => a.source.localeCompare(b.source))) {
       console.log(
-        `  [${m.source}] ${m.urlKey}\n      expected ${m.truth} · predicted ${m.predicted} (${m.confidence})`
+        `  [${m.source}] ${m.urlKey}\n      expected ${m.truth} · predicted ${m.predicted} (${m.confidence})`,
       );
     }
   }
@@ -266,7 +258,7 @@ async function main() {
     "..",
     "eval",
     "probe-runs",
-    `${modelId.replace(/[/:]/g, "-")}-v${PROMPT_VERSION}${withDescribe ? "-full" : ""}.json`
+    `${modelId.replace(/[/:]/g, "-")}-v${PROMPT_VERSION}${withDescribe ? "-full" : ""}.json`,
   );
   writeFileSync(
     dumpPath,
@@ -289,8 +281,8 @@ async function main() {
         })),
       },
       null,
-      2
-    )
+      2,
+    ),
   );
   if (withDescribe) console.log(`summaries written: ${summaries}`);
   console.log(`\nfull result: ${dumpPath}`);

@@ -2,12 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export interface Marker {
@@ -34,13 +29,7 @@ const END = 2;
  * Data in, no popover: the caller decides where the rail sits and what its
  * surrounding control does. Each marker is a tooltip-backed hit target.
  */
-function MarkerRail({
-  markers,
-  onSelect,
-  ariaLabel,
-  height = 200,
-  className,
-}: MarkerRailProps) {
+function MarkerRail({ markers, onSelect, ariaLabel, height = 200, className }: MarkerRailProps) {
   const [hot, setHot] = React.useState<number | null>(null);
 
   return (
@@ -52,7 +41,7 @@ function MarkerRail({
         aria-label={ariaLabel}
         className={cn(
           "group h-auto cursor-pointer rounded-lg px-0 py-4 pl-3 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring",
-          className
+          className,
         )}
       >
         <span className="relative block w-3.5" style={{ height }}>

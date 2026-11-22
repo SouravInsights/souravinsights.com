@@ -23,13 +23,10 @@ export const LiteralShoutout: React.FC = () => {
             height={50}
             className="mb-4"
           />
-          <h2 className="text-2xl font-bold mb-4 text-foreground">
-            Powered by Literal Club
-          </h2>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">Powered by Literal Club</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            This bookshelf is brought to life using Literal Club's amazing
-            GraphQL API. Literal Club offers a beautiful UI and robust API for
-            book lovers and developers alike.
+            This bookshelf is brought to life using Literal Club's amazing GraphQL API. Literal Club
+            offers a beautiful UI and robust API for book lovers and developers alike.
           </p>
           <a
             href="https://literal.club"

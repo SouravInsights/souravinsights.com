@@ -28,10 +28,7 @@ export function parseHash(hash: string): Span | null {
 
 export function blockAt(root: HTMLElement, node: Node | null): number | null {
   if (!node) return null;
-  const element =
-    node.nodeType === Node.ELEMENT_NODE
-      ? (node as Element)
-      : node.parentElement;
+  const element = node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement;
   const top = element?.closest(`#${CONTAINER_ID} > *`);
   if (!top) return null;
   const index = blocksOf(root).indexOf(top as HTMLElement);
@@ -71,9 +68,7 @@ export async function copyText(text: string): Promise<boolean> {
 export async function copyPassageLink(range: Range | null): Promise<boolean> {
   const live =
     range ??
-    (window.getSelection()?.rangeCount
-      ? window.getSelection()?.getRangeAt(0) ?? null
-      : null);
+    (window.getSelection()?.rangeCount ? (window.getSelection()?.getRangeAt(0) ?? null) : null);
   const span = spanOfSelection(live);
   if (!span) return false;
   const { origin, pathname } = window.location;

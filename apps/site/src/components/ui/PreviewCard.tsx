@@ -28,9 +28,7 @@ const PreviewCardContext = createContext<PreviewCardContextValue | null>(null);
 function usePreviewCardContext() {
   const context = useContext(PreviewCardContext);
   if (!context) {
-    throw new Error(
-      "usePreviewCardContext must be used within a PreviewCardProvider"
-    );
+    throw new Error("usePreviewCardContext must be used within a PreviewCardProvider");
   }
   return context;
 }
@@ -52,7 +50,7 @@ function PreviewFallback() {
  */
 function PreviewImage({ src, name }: { src: string; name: string }) {
   const [status, setStatus] = useState<"loading" | "loaded" | "error">(() =>
-    loadedImages.has(src) ? "loaded" : "loading"
+    loadedImages.has(src) ? "loaded" : "loading",
   );
 
   useEffect(() => {
@@ -102,9 +100,7 @@ function PreviewCardBody({ payload }: { payload: PreviewCardPayload }) {
         <PreviewFallback />
       )}
       <div className="border-t border-border px-3 py-2.5">
-        <div className="truncate font-mono text-xs font-medium text-foreground">
-          {payload.name}
-        </div>
+        <div className="truncate font-mono text-xs font-medium text-foreground">{payload.name}</div>
       </div>
     </div>
   );
@@ -132,7 +128,7 @@ export function useIsTouchDevice() {
   return useSyncExternalStore(
     subscribeTouchDevice,
     getSnapshotTouchDevice,
-    getServerSnapshotTouchDevice
+    getServerSnapshotTouchDevice,
   );
 }
 
@@ -160,11 +156,7 @@ interface PreviewCardTriggerProps {
   className?: string;
 }
 
-export function PreviewCardTrigger({
-  payload,
-  children,
-  className,
-}: PreviewCardTriggerProps) {
+export function PreviewCardTrigger({ payload, children, className }: PreviewCardTriggerProps) {
   const { isTouchDevice } = usePreviewCardContext();
   // Horizontal position of the cursor inside the row, so the card follows it
   // across the row (Radix exposes this as `alignOffset`).
@@ -175,7 +167,7 @@ export function PreviewCardTrigger({
     () => () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     },
-    []
+    [],
   );
 
   if (isTouchDevice) {
@@ -209,7 +201,7 @@ export function PreviewCardTrigger({
             "origin-[var(--radix-tooltip-content-transform-origin)]",
             "data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95",
             "data-[state=instant-open]:animate-in data-[state=instant-open]:fade-in-0 data-[state=instant-open]:zoom-in-95",
-            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           )}
         >
           <PreviewCardBody payload={payload} />

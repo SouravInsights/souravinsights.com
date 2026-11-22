@@ -48,9 +48,7 @@ export function SegmentedControl<T extends string>({
               aria-label={label}
               aria-pressed={active}
               className={`relative flex h-full aspect-square items-center justify-center rounded-[5px] transition-colors after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] ${
-                active
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {active && (

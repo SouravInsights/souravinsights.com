@@ -69,10 +69,7 @@ function normalizeComments(items: AlgoliaItem[] | undefined): HnComment[] {
   return comments;
 }
 
-function collectAuthors(
-  comments: HnComment[],
-  authors = new Set<string>()
-): Set<string> {
+function collectAuthors(comments: HnComment[], authors = new Set<string>()): Set<string> {
   for (const comment of comments) {
     authors.add(comment.author);
     collectAuthors(comment.children, authors);
@@ -80,11 +77,7 @@ function collectAuthors(
   return authors;
 }
 
-async function withConcurrency<T>(
-  items: T[],
-  limit: number,
-  worker: (item: T) => Promise<void>
-) {
+async function withConcurrency<T>(items: T[], limit: number, worker: (item: T) => Promise<void>) {
   for (let index = 0; index < items.length; index += limit) {
     await Promise.all(items.slice(index, index + limit).map(worker));
   }
@@ -96,9 +89,7 @@ async function withConcurrency<T>(
  * Best-effort: a failed lookup yields `karma: null` rather than breaking the
  * thread. Missing users return HTTP 500 from Algolia, which we treat as null.
  */
-async function fetchAuthorInfo(
-  usernames: string[]
-): Promise<Record<string, HnAuthorInfo>> {
+async function fetchAuthorInfo(usernames: string[]): Promise<Record<string, HnAuthorInfo>> {
   const authors: Record<string, HnAuthorInfo> = {};
   const missing: string[] = [];
 
@@ -111,14 +102,12 @@ async function fetchAuthorInfo(
       } catch {
         missing.push(username);
       }
-    })
+    }),
   );
 
   await withConcurrency(missing, AUTHOR_FETCH_CONCURRENCY, async (username) => {
     try {
-      const response = await fetch(
-        `${ALGOLIA_USER_URL}/${encodeURIComponent(username)}`
-      );
+      const response = await fetch(`${ALGOLIA_USER_URL}/${encodeURIComponent(username)}`);
       if (!response.ok) throw new Error(`Algolia responded ${response.status}`);
 
       const data = (await response.json()) as { karma?: number } | null;
@@ -149,10 +138,7 @@ export async function GET(request: NextRequest) {
   const id = Number(idParam);
 
   if (!idParam || !Number.isInteger(id) || id <= 0) {
-    return NextResponse.json(
-      { error: "A valid Hacker News item id is required" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "A valid Hacker News item id is required" }, { status: 400 });
   }
 
   try {
@@ -186,9 +172,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Failed to fetch Hacker News thread:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch Hacker News comments" },
-      { status: 502 }
-    );
+    return NextResponse.json({ error: "Failed to fetch Hacker News comments" }, { status: 502 });
   }
 }

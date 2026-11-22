@@ -14,11 +14,7 @@ import PassageLink from "./PassageLink";
 import BlogHighlights from "./BlogHighlights";
 import HackerNewsButton from "./HackerNewsButton";
 import HackerNewsComments from "./HackerNewsComments";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface BlogPostContentProps {
   post: PostData;
@@ -31,10 +27,7 @@ interface TOCItem {
   level: number;
 }
 
-export default function BlogPostContent({
-  post,
-  content,
-}: BlogPostContentProps) {
+export default function BlogPostContent({ post, content }: BlogPostContentProps) {
   const [tableOfContents, setTableOfContents] = useState<TOCItem[]>([]);
   const [activeHeading, setActiveHeading] = useState<string>("");
   // Compact TOC popover for the mobile toolbar.
@@ -51,16 +44,11 @@ export default function BlogPostContent({
       const contentContainer = document.getElementById("mdx-content-container");
       if (!contentContainer) return;
 
-      const headingElements = contentContainer.querySelectorAll(
-        "h1, h2, h3, h4, h5, h6"
-      );
+      const headingElements = contentContainer.querySelectorAll("h1, h2, h3, h4, h5, h6");
       const headings: TOCItem[] = [];
 
       headingElements.forEach((heading) => {
-        const id =
-          heading.id ||
-          heading.textContent?.toLowerCase().replace(/\s+/g, "-") ||
-          "";
+        const id = heading.id || heading.textContent?.toLowerCase().replace(/\s+/g, "-") || "";
 
         // Set id if it doesn't exist
         if (!heading.id) {
@@ -86,9 +74,7 @@ export default function BlogPostContent({
     const handleScroll = () => {
       if (tableOfContents.length === 0) return;
 
-      const headingElements = tableOfContents.map((heading) =>
-        document.getElementById(heading.id)
-      );
+      const headingElements = tableOfContents.map((heading) => document.getElementById(heading.id));
 
       const scrollPosition = window.scrollY + 100;
 
@@ -118,24 +104,16 @@ export default function BlogPostContent({
 
   // Indent headings relative to the shallowest one in the post, so a post that
   // only uses h3s doesn't push every row in for no reason.
-  const tocMinLevel = tableOfContents.length
-    ? Math.min(...tableOfContents.map((h) => h.level))
-    : 1;
+  const tocMinLevel = tableOfContents.length ? Math.min(...tableOfContents.map((h) => h.level)) : 1;
 
   // Detect headings from the raw MDX up front (not just the post-render DOM)
   // so posts without any headings skip the sidebar layout without a flicker.
-  const hasTOC = /^#{1,6}\s|<h[1-6][\s>]/m.test(
-    post.content.replace(/```[\s\S]*?```/g, "")
-  );
+  const hasTOC = /^#{1,6}\s|<h[1-6][\s>]/m.test(post.content.replace(/```[\s\S]*?```/g, ""));
 
   return (
     <div className="max-w-7xl mx-auto">
       {/* Navigation - aligns with the article column in both layouts */}
-      <div
-        className={`mb-6 px-4 lg:px-0 ${
-          hasTOC ? "" : "hidden lg:block lg:w-2/3 lg:mx-auto"
-        }`}
-      >
+      <div className={`mb-6 px-4 lg:px-0 ${hasTOC ? "" : "hidden lg:block lg:w-2/3 lg:mx-auto"}`}>
         <Link
           href="/blog"
           className="inline-flex items-center text-green-700 dark:text-green-500 hover:underline"
@@ -179,9 +157,7 @@ export default function BlogPostContent({
                         <li
                           key={heading.id}
                           style={{
-                            paddingLeft: `${
-                              (heading.level - tocMinLevel) * 0.6
-                            }rem`,
+                            paddingLeft: `${(heading.level - tocMinLevel) * 0.6}rem`,
                           }}
                         >
                           <a
@@ -207,9 +183,7 @@ export default function BlogPostContent({
                   </ul>
                 </nav>
               ) : (
-                <p className="px-2 pb-1.5 type-caption">
-                  No headings in this post.
-                </p>
+                <p className="px-2 pb-1.5 type-caption">No headings in this post.</p>
               )}
             </PopoverContent>
           </Popover>
@@ -250,16 +224,12 @@ export default function BlogPostContent({
             transition={{ duration: 0.5 }}
           >
             <header className="mb-5">
-              <h1 className="type-display mb-2">
-                {post.title}
-              </h1>
+              <h1 className="type-display mb-2">{post.title}</h1>
 
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 type-caption">
                 <div className="flex items-center">
                   <CalendarBlank className="mr-1 h-4 w-4" />
-                  <time dateTime={post.date}>
-                    {format(new Date(post.date), "MMMM d, yyyy")}
-                  </time>
+                  <time dateTime={post.date}>{format(new Date(post.date), "MMMM d, yyyy")}</time>
                 </div>
 
                 <div className="flex items-center">
@@ -302,17 +272,13 @@ export default function BlogPostContent({
               prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-muted/50"
             >
               {isDraft ? (
-                <DraftPostIndicator previewParagraphs={10}>
-                  {content}
-                </DraftPostIndicator>
+                <DraftPostIndicator previewParagraphs={10}>{content}</DraftPostIndicator>
               ) : (
                 content
               )}
             </motion.div>
 
-            {!isDraft && (
-              <BlogHighlights containerRef={proseRef} title={post.title} />
-            )}
+            {!isDraft && <BlogHighlights containerRef={proseRef} title={post.title} />}
           </div>
 
           {/* Hacker News discussion thread */}
@@ -325,34 +291,32 @@ export default function BlogPostContent({
 
         {/* Right Sidebar - only rendered when the post actually has headings */}
         {hasTOC && (
-        <aside
-          className={`hidden lg:flex flex-col transition-all duration-500 ease-in-out ${
-            isTOCCollapsed ? "lg:w-[10%]" : "lg:w-1/3"
-          }`}
-        >
-          <div className="sticky top-32 space-y-8 w-full flex flex-col items-center">
-            {/* Collapsible Table of Contents */}
-            <CollapsibleTOC
-              tableOfContents={tableOfContents}
-              activeHeading={activeHeading}
-              onCollapseChange={handleTOCCollapse}
-            />
+          <aside
+            className={`hidden lg:flex flex-col transition-all duration-500 ease-in-out ${
+              isTOCCollapsed ? "lg:w-[10%]" : "lg:w-1/3"
+            }`}
+          >
+            <div className="sticky top-32 space-y-8 w-full flex flex-col items-center">
+              {/* Collapsible Table of Contents */}
+              <CollapsibleTOC
+                tableOfContents={tableOfContents}
+                activeHeading={activeHeading}
+                onCollapseChange={handleTOCCollapse}
+              />
 
-            {/* Like Button - Always visible */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className={`flex ${
-                isTOCCollapsed
-                  ? "justify-center mt-8"
-                  : "justify-center pr-8 w-full"
-              }`}
-            >
-              <ThreeDLikeButton slug={post.slug} />
-            </motion.div>
-          </div>
-        </aside>
+              {/* Like Button - Always visible */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className={`flex ${
+                  isTOCCollapsed ? "justify-center mt-8" : "justify-center pr-8 w-full"
+                }`}
+              >
+                <ThreeDLikeButton slug={post.slug} />
+              </motion.div>
+            </div>
+          </aside>
         )}
       </div>
     </div>

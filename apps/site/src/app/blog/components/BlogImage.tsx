@@ -2,12 +2,7 @@
 
 import React from "react";
 import { ArrowsOut } from "@phosphor-icons/react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface BlogImageProps {
   src?: string;
@@ -65,9 +60,7 @@ export default function BlogImage({ src, alt = "", title }: BlogImageProps) {
           />
         </DialogContent>
       </Dialog>
-      {title && (
-        <span className="type-caption mt-3 block text-center">{title}</span>
-      )}
+      {title && <span className="type-caption mt-3 block text-center">{title}</span>}
     </span>
   );
 }

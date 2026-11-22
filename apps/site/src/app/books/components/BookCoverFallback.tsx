@@ -5,10 +5,7 @@ interface BookCoverFallbackProps {
   author?: string;
 }
 
-export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
-  title,
-  author,
-}) => {
+export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({ title, author }) => {
   // Deterministic hash from string
   const hash = (str: string) => {
     let h = 0;
@@ -76,36 +73,10 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <pattern
-                id={patternId}
-                width="60"
-                height="60"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle
-                  cx="30"
-                  cy="30"
-                  r="28"
-                  fill="none"
-                  stroke={text}
-                  strokeWidth="0.5"
-                />
-                <circle
-                  cx="30"
-                  cy="30"
-                  r="20"
-                  fill="none"
-                  stroke={text}
-                  strokeWidth="0.5"
-                />
-                <circle
-                  cx="30"
-                  cy="30"
-                  r="12"
-                  fill="none"
-                  stroke={text}
-                  strokeWidth="0.5"
-                />
+              <pattern id={patternId} width="60" height="60" patternUnits="userSpaceOnUse">
+                <circle cx="30" cy="30" r="28" fill="none" stroke={text} strokeWidth="0.5" />
+                <circle cx="30" cy="30" r="20" fill="none" stroke={text} strokeWidth="0.5" />
+                <circle cx="30" cy="30" r="12" fill="none" stroke={text} strokeWidth="0.5" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill={`url(#${patternId})`} />
@@ -118,12 +89,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <pattern
-                id={patternId}
-                width="4"
-                height="4"
-                patternUnits="userSpaceOnUse"
-              >
+              <pattern id={patternId} width="4" height="4" patternUnits="userSpaceOnUse">
                 <rect x="0" y="0" width="4" height="1" fill={text} />
               </pattern>
             </defs>
@@ -137,12 +103,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <pattern
-                id={patternId}
-                width="16"
-                height="16"
-                patternUnits="userSpaceOnUse"
-              >
+              <pattern id={patternId} width="16" height="16" patternUnits="userSpaceOnUse">
                 <circle cx="8" cy="8" r="1" fill={text} />
               </pattern>
             </defs>
@@ -156,18 +117,8 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <pattern
-                id={patternId}
-                width="20"
-                height="20"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M0 10 L20 10 M10 0 L10 20"
-                  stroke={text}
-                  strokeWidth="0.5"
-                  fill="none"
-                />
+              <pattern id={patternId} width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M0 10 L20 10 M10 0 L10 20" stroke={text} strokeWidth="0.5" fill="none" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill={`url(#${patternId})`} />
@@ -186,15 +137,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
       case 0: // Simple line with diamond
         return (
           <svg width={w} height="12" viewBox={`0 0 ${w} 12`} className="my-3">
-            <line
-              x1="0"
-              y1="6"
-              x2={w}
-              y2="6"
-              stroke={accent}
-              strokeWidth="0.75"
-              opacity="0.6"
-            />
+            <line x1="0" y1="6" x2={w} y2="6" stroke={accent} strokeWidth="0.75" opacity="0.6" />
             <rect
               x={w / 2 - 3}
               y="3"
@@ -217,15 +160,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
       case 2: // Small ornamental line
         return (
           <svg width={w} height="12" viewBox={`0 0 ${w} 12`} className="my-3">
-            <line
-              x1="8"
-              y1="6"
-              x2={w - 8}
-              y2="6"
-              stroke={accent}
-              strokeWidth="0.5"
-              opacity="0.5"
-            />
+            <line x1="8" y1="6" x2={w - 8} y2="6" stroke={accent} strokeWidth="0.5" opacity="0.5" />
             <line
               x1="14"
               y1="4"
@@ -252,10 +187,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
   };
 
   return (
-    <div
-      className="relative w-full h-full overflow-hidden"
-      style={{ backgroundColor: bg }}
-    >
+    <div className="relative w-full h-full overflow-hidden" style={{ backgroundColor: bg }}>
       {/* Subtle linen / paper texture via noise */}
       <div
         className="absolute inset-0 opacity-[0.03]"
@@ -310,10 +242,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-5 py-6 text-center">
         {/* Top accent line */}
-        <div
-          className="w-8 h-[1px] mb-4 opacity-30"
-          style={{ backgroundColor: accent }}
-        />
+        <div className="w-8 h-[1px] mb-4 opacity-30" style={{ backgroundColor: accent }} />
 
         {/* Title */}
         <h3
@@ -342,10 +271,7 @@ export const BookCoverFallback: React.FC<BookCoverFallbackProps> = ({
         )}
 
         {/* Bottom accent line */}
-        <div
-          className="w-8 h-[1px] mt-4 opacity-30"
-          style={{ backgroundColor: accent }}
-        />
+        <div className="w-8 h-[1px] mt-4 opacity-30" style={{ backgroundColor: accent }} />
       </div>
 
       {/* Subtle vignette for depth */}

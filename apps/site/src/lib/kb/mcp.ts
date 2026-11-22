@@ -44,7 +44,7 @@ export function createCollectionServer(): McpServer {
           .optional()
           .describe(
             "Restrict the search to one kind of saved link — people to " +
-              "follow, tools for a job, publications, galleries, courses"
+              "follow, tools for a job, publications, galleries, courses",
           ),
         limit: z
           .number()
@@ -97,7 +97,7 @@ export function createCollectionServer(): McpServer {
           },
         ],
       };
-    }
+    },
   );
 
   return server;

@@ -16,12 +16,7 @@
  * locked pieces land with a fall-and-squish, the stack dips under a merge.
  * State is always instant — motion is the narration, never the blocker.
  */
-import {
-  useEffect,
-  useRef,
-  type MutableRefObject,
-  type ReactElement,
-} from "react";
+import { useEffect, useRef, type MutableRefObject, type ReactElement } from "react";
 import {
   COLS,
   HIDDEN_ROWS,
@@ -61,9 +56,7 @@ interface ThemePalette {
 }
 
 function readCssVar(name: string, fallback: string): string {
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim();
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   return value ? `hsl(${value})` : fallback;
 }
 
@@ -97,12 +90,7 @@ class SpriteCache {
     this.map.clear();
   }
 
-  block(
-    color: string,
-    cell: number,
-    dpr: number,
-    white: string
-  ): HTMLCanvasElement {
+  block(color: string, cell: number, dpr: number, white: string): HTMLCanvasElement {
     const key = `b:${color}:${cell}@${dpr}`;
     let sprite = this.map.get(key);
     if (sprite) return sprite;
@@ -200,7 +188,7 @@ function buildWellSprite(
   ox: number,
   oy: number,
   dpr: number,
-  palette: ThemePalette
+  palette: ThemePalette,
 ): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(cssW * dpr));
@@ -354,8 +342,20 @@ export function BoardCanvas({
         const freshWellPaint = paintedForWellKey !== key;
         if (well && (!idle || effects.busy || freshWellPaint)) {
           paint(
-            ctx, canvas, well, cell, ox, oy, dt, now, dpr,
-            engine, effects, palette, sprites, poseRef.current
+            ctx,
+            canvas,
+            well,
+            cell,
+            ox,
+            oy,
+            dt,
+            now,
+            dpr,
+            engine,
+            effects,
+            palette,
+            sprites,
+            poseRef.current,
           );
           paintedForWellKey = key;
         }
@@ -399,7 +399,7 @@ function paint(
   effects: EffectsPool,
   palette: ThemePalette,
   sprites: SpriteCache,
-  pose: VisualPose
+  pose: VisualPose,
 ) {
   const cssW = canvas.width / dpr;
   const cssH = canvas.height / dpr;
@@ -569,12 +569,11 @@ function paint(
   }
 
   // Particles and floating text ride above everything.
-  effects.draw(
-    ctx,
-    (x, y) => [x * cell, (y - HIDDEN_ROWS) * cell],
-    cell,
-    { text: palette.text, accent: palette.accent, white: palette.white }
-  );
+  effects.draw(ctx, (x, y) => [x * cell, (y - HIDDEN_ROWS) * cell], cell, {
+    text: palette.text,
+    accent: palette.accent,
+    white: palette.white,
+  });
 
   ctx.restore(); // board clip
   if (needsBoardTransform || shakeX !== 0 || shakeY !== 0) ctx.restore();
@@ -586,7 +585,7 @@ function roundedRect(
   y: number,
   w: number,
   h: number,
-  r: number
+  r: number,
 ) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);

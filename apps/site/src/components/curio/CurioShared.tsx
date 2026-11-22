@@ -48,9 +48,7 @@ export function CurioShared({
   messages: UIMessage[];
 }) {
   const chat = useCurioChat({ id, messages });
-  const { share, copy, shareState, alreadyShared } = useShareConversation(
-    chat.messages
-  );
+  const { share, copy, shareState, alreadyShared } = useShareConversation(chat.messages);
 
   // The snapshot renders on the server; the live copy takes over once the tab has
   // been seeded. Without this the server would send an empty page and the
@@ -95,9 +93,7 @@ export function CurioShared({
           <CurioWordmark size="lg" />
         </span>
         {createdAt ? (
-          <span className="type-caption text-faint-foreground">
-            Shared {dateLabel(createdAt)}
-          </span>
+          <span className="type-caption text-faint-foreground">Shared {dateLabel(createdAt)}</span>
         ) : null}
       </header>
 

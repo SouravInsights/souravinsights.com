@@ -16,7 +16,7 @@ const probe = async (path, width, height) => {
   await new Promise((r) => setTimeout(r, 800));
   const result = await page.evaluate(() => {
     const nav = [...document.querySelectorAll("nav.fixed")].find(
-      (el) => getComputedStyle(el).display !== "none"
+      (el) => getComputedStyle(el).display !== "none",
     );
     const navBottom = nav ? Math.round(nav.getBoundingClientRect().bottom) : null;
     const header = document.querySelector("header");
@@ -39,10 +39,6 @@ const probe = async (path, width, height) => {
 };
 
 console.log(
-  JSON.stringify(
-    [await probe("/curio", 390, 844), await probe("/curio", 1440, 900)],
-    null,
-    2
-  )
+  JSON.stringify([await probe("/curio", 390, 844), await probe("/curio", 1440, 900)], null, 2),
 );
 await browser.close();

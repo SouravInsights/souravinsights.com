@@ -86,8 +86,6 @@ interface Props {
   children?: ReactNode;
 }
 
-
-
 const isDark = () => document.documentElement.classList.contains("dark");
 
 export function Highlight({
@@ -128,16 +126,19 @@ export function Highlight({
   const textOf = (para: number) => paras.current[para]?.textContent ?? "";
 
   /** A live box for a mark, unioned across its inline segments. */
-  const anchorForMark = useCallback((id: number) => {
-    return () => {
-      const container = containerRef.current;
-      if (!container) return null;
-      const rects = Array.from(
-        container.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`)
-      ).flatMap((span) => Array.from(span.getClientRects()));
-      return unionRect(rects);
-    };
-  }, [containerRef]);
+  const anchorForMark = useCallback(
+    (id: number) => {
+      return () => {
+        const container = containerRef.current;
+        if (!container) return null;
+        const rects = Array.from(
+          container.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`),
+        ).flatMap((span) => Array.from(span.getClientRects()));
+        return unionRect(rects);
+      };
+    },
+    [containerRef],
+  );
 
   // Theme flips repaint every mark's ink/wash.
   useEffect(() => {
@@ -179,9 +180,7 @@ export function Highlight({
 
   /** unwrap a mark back to plain text, keeping its characters */
   const unmark = (para: HTMLElement, id: number) => {
-    for (const segment of Array.from(
-      para.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`)
-    )) {
+    for (const segment of Array.from(para.querySelectorAll<HTMLElement>(`[data-hl="${id}"]`))) {
       segment.replaceWith(document.createTextNode(segment.textContent ?? ""));
     }
     para.normalize();
@@ -288,10 +287,7 @@ export function Highlight({
       const rect = span.getBoundingClientRect();
       next.push({
         id: m.id,
-        at: Math.max(
-          0,
-          Math.min(1, (rect.top - box.top + rect.height / 2) / box.height)
-        ),
+        at: Math.max(0, Math.min(1, (rect.top - box.top + rect.height / 2) / box.height)),
         hue: m.hue,
         quote: textOf(m.para).slice(m.start, m.end),
       });
@@ -320,7 +316,16 @@ export function Highlight({
     const p = mark ? paras.current[mark.para] : null;
     const layer = mark ? layers.current[mark.para] : null;
     if (!mark || !p || !layer) return;
-    playWave(p, layer, mark.id, wave.from, paint(wave.hue, dark), HUES[wave.hue].swatch, false, wave.under);
+    playWave(
+      p,
+      layer,
+      mark.id,
+      wave.from,
+      paint(wave.hue, dark),
+      HUES[wave.hue].swatch,
+      false,
+      wave.under,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [marks, wave, dark]);
 
@@ -397,9 +402,7 @@ export function Highlight({
     const next = marks.map((mark) => {
       const quote = textOf(mark.para).slice(mark.start, mark.end);
       const startGlobal =
-        paras.current
-          .slice(0, mark.para)
-          .reduce((n, _, i) => n + textOf(i).length, 0) + mark.start;
+        paras.current.slice(0, mark.para).reduce((n, _, i) => n + textOf(i).length, 0) + mark.start;
       return {
         id: mark.id,
         quote,
@@ -427,7 +430,7 @@ export function Highlight({
     const { para, start, end, anchor } = selection;
 
     const same = live.current.marks.find(
-      (m) => m.para === para && m.start === start && m.end === end
+      (m) => m.para === para && m.start === start && m.end === end,
     );
     if (same)
       return {
@@ -497,9 +500,7 @@ export function Highlight({
     const was = live.current.open;
     setOpen(null);
     if (restore && was?.kind === "edit" && was.viaKey) {
-      paras.current[
-        live.current.marks.find((m) => m.id === was.id)?.para ?? -1
-      ]
+      paras.current[live.current.marks.find((m) => m.id === was.id)?.para ?? -1]
         ?.querySelector<HTMLElement>(`[data-hl="${was.id}"]`)
         ?.focus({ preventScroll: true });
     }
@@ -532,9 +533,7 @@ export function Highlight({
       // article-wide occurrence, for the stored anchor
       const full = paras.current.map((_, i) => textOf(i)).join("");
       const startGlobal =
-        paras.current
-          .slice(0, para)
-          .reduce((n, _, i) => n + textOf(i).length, 0) + start;
+        paras.current.slice(0, para).reduce((n, _, i) => n + textOf(i).length, 0) + start;
       const occurrence = full.slice(0, startGlobal).split(quote).length - 1;
 
       window.getSelection()?.removeAllRanges();
@@ -548,12 +547,10 @@ export function Highlight({
       // Persistence never blocks the wave; the row id lands when it lands.
       const before = text.slice(Math.max(0, start - 40), start);
       const after = text.slice(end, end + 40);
-      onCreate?.({ quote, prefix: before, suffix: after, occurrence, hue })?.then(
-        (rowId) => {
-          if (rowId === null || rowId === undefined) return;
-          setMarks((all) => all.map((m) => (m.id === id ? { ...m, rowId } : m)));
-        }
-      );
+      onCreate?.({ quote, prefix: before, suffix: after, occurrence, hue })?.then((rowId) => {
+        if (rowId === null || rowId === undefined) return;
+        setMarks((all) => all.map((m) => (m.id === id ? { ...m, rowId } : m)));
+      });
     } else {
       const mark = live.current.marks.find((m) => m.id === current.id);
       if (!mark) return;
@@ -586,7 +583,7 @@ export function Highlight({
       HUES[mark.hue].swatch,
       true,
       [],
-      REMOVE_MS
+      REMOVE_MS,
     );
     window.setTimeout(drop, ms);
   };
@@ -613,9 +610,7 @@ export function Highlight({
     if (sel && !sel.isCollapsed && sel.rangeCount) return sel.getRangeAt(0);
     const current = live.current.open;
     if (current?.kind !== "edit") return null;
-    const span = containerRef.current?.querySelector<HTMLElement>(
-      `[data-hl="${current.id}"]`
-    );
+    const span = containerRef.current?.querySelector<HTMLElement>(`[data-hl="${current.id}"]`);
     if (!span) return null;
     const range = document.createRange();
     range.selectNode(span);
@@ -672,20 +667,14 @@ export function Highlight({
   // Dim non-focused paragraphs while a palette is open.
   useEffect(() => {
     paras.current.forEach((p, i) => {
-      p.classList.toggle(
-        "opacity-35",
-        focusPara !== null && focusPara !== i
-      );
+      p.classList.toggle("opacity-35", focusPara !== null && focusPara !== i);
       p.classList.toggle("transition-opacity", true);
       p.classList.toggle("duration-200", true);
     });
   }, [focusPara]);
 
-  const current =
-    open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
-  const ordered = [...marks].sort(
-    (a, b) => a.para - b.para || a.start - b.start
-  );
+  const current = open?.kind === "edit" ? marks.find((m) => m.id === open.id) : undefined;
+  const ordered = [...marks].sort((a, b) => a.para - b.para || a.start - b.start);
 
   if (!editable && ordered.length === 0) return null;
 

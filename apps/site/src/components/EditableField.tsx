@@ -43,14 +43,17 @@ export function EditableField({
           {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           className={cn(
             "rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            className
+            className,
           )}
           dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }}
         />
       );
     }
     return (
-      <Component className={className} dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }} />
+      <Component
+        className={className}
+        dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br />") }}
+      />
     );
   }
 
@@ -72,7 +75,7 @@ export function EditableField({
           "outline-none transition-all rounded-[4px] px-1 -mx-1",
           "focus:bg-muted/80 focus:ring-1 focus:ring-border",
           "hover:bg-muted/50 cursor-text",
-          className
+          className,
         )}
         onBlur={(e: React.FocusEvent<HTMLElement>) => {
           onChange(e.currentTarget.innerText);

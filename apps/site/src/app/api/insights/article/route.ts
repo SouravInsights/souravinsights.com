@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   if (!urlKey) {
     return NextResponse.json(
       { error: { code: "missing_param", message: "urlKey is required" } },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -34,15 +34,15 @@ export async function GET(request: NextRequest) {
         eq(links.urlKey, urlKey),
         eq(links.category, "article"),
         isNull(links.hiddenAt),
-        ne(links.health, "dead")
-      )
+        ne(links.health, "dead"),
+      ),
     )
     .limit(1);
 
   if (!row || !row.markdown) {
     return NextResponse.json(
       { error: { code: "not_found", message: "No readable article for this key" } },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -59,6 +59,6 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json(
     { data: { ...row, marks } },
-    { headers: { "cache-control": "public, max-age=60" } }
+    { headers: { "cache-control": "public, max-age=60" } },
   );
 }

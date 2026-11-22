@@ -23,9 +23,7 @@ export interface PageMetadata {
 
 /** A code point only if it is valid; a malformed entity must not throw. */
 const codePoint = (value: number) =>
-  Number.isFinite(value) && value >= 0 && value <= 0x10ffff
-    ? String.fromCodePoint(value)
-    : "";
+  Number.isFinite(value) && value >= 0 && value <= 0x10ffff ? String.fromCodePoint(value) : "";
 
 const decodeEntities = (value: string) =>
   value
@@ -38,8 +36,7 @@ const decodeEntities = (value: string) =>
     .replace(/&#(\d+);/g, (_, n) => codePoint(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => codePoint(parseInt(h, 16)));
 
-const clean = (value: string) =>
-  decodeEntities(value).replace(/\s+/g, " ").trim();
+const clean = (value: string) => decodeEntities(value).replace(/\s+/g, " ").trim();
 
 /** First regex whose capture group is non-empty. */
 function firstMatch(html: string, patterns: RegExp[]): string {

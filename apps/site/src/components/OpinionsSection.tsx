@@ -25,31 +25,29 @@ export function OpinionsSection() {
 
   return (
     <div className="flex flex-col gap-1" onClick={clear}>
-        {OPINIONS.map((opinion, index) => {
-          const isActive = active === index;
+      {OPINIONS.map((opinion, index) => {
+        const isActive = active === index;
 
-          return (
-            <button
-              key={index}
-              type="button"
-              {...getItemProps(index)}
-              className={`flex cursor-pointer items-start gap-4 text-left ${spotlightClass(
-                isDimmed(index)
-              )}`}
+        return (
+          <button
+            key={index}
+            type="button"
+            {...getItemProps(index)}
+            className={`flex cursor-pointer items-start gap-4 text-left ${spotlightClass(
+              isDimmed(index),
+            )}`}
+          >
+            <span
+              className={`mt-1 w-6 shrink-0 font-mono text-[13px] font-medium tabular-nums text-green-700 transition-colors dark:text-green-500 ${
+                isActive ? "opacity-100" : "opacity-70"
+              }`}
             >
-              <span
-                className={`mt-1 w-6 shrink-0 font-mono text-[13px] font-medium tabular-nums text-green-700 transition-colors dark:text-green-500 ${
-                  isActive ? "opacity-100" : "opacity-70"
-                }`}
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <p className="type-body italic text-muted-foreground">
-                {opinion}
-              </p>
-            </button>
-          );
-        })}
-      </div>
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <p className="type-body italic text-muted-foreground">{opinion}</p>
+          </button>
+        );
+      })}
+    </div>
   );
 }

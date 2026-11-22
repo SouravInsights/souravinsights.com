@@ -63,20 +63,14 @@ export async function renderHtml(url: string): Promise<Rendered> {
   let page: Page | null = null;
   try {
     page = await (await browser()).newPage();
-    return await withTimeout(
-      loadPage(page, url),
-      RENDER_TIMEOUT_MS,
-      "render timed out"
-    );
+    return await withTimeout(loadPage(page, url), RENDER_TIMEOUT_MS, "render timed out");
   } catch (error) {
     // The browser itself can die mid-run (a page crash takes the process with
     // it). A cached promise then hands the same corpse to every later page
     // and the run wedges: drop it so the next call relaunches.
     if (
       error instanceof Error &&
-      /Target closed|Session closed|Connection closed|Protocol error/i.test(
-        error.message
-      )
+      /Target closed|Session closed|Connection closed|Protocol error/i.test(error.message)
     ) {
       shared = null;
     }
@@ -93,11 +87,7 @@ export async function renderHtml(url: string): Promise<Rendered> {
 }
 
 /** Reject if `promise` hasn't settled within `ms`, so one page can't hang a run. */
-function withTimeout<T>(
-  promise: Promise<T>,
-  ms: number,
-  message: string
-): Promise<T> {
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(message)), ms);
     promise.then(
@@ -108,7 +98,7 @@ function withTimeout<T>(
       (error) => {
         clearTimeout(timer);
         reject(error);
-      }
+      },
     );
   });
 }
