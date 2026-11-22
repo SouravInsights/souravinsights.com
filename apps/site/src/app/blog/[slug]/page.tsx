@@ -5,7 +5,7 @@ import { getPostBySlug, getBlogPosts } from "../utils/blogUtils";
 import { generateOGImageUrl } from "../utils/ogUtils";
 import { generateBlogMetadata } from "../utils/ogUtils";
 import BlogPostContent from "../components/BlogPostContent";
-import dynamic from "next/dynamic";
+import Playground from "../components/PlaygroundClient";
 import GistLink from "../components/GistLink";
 import SideBySide from "../components/SideBySide";
 import HtmlNestingVisualizer from "../components/HtmlNestingVisualizer";
@@ -14,17 +14,10 @@ import VideoPlayer from "../components/VideoPlayer";
 import BlogImage from "../components/BlogImage";
 import TweetEmbed from "../components/TweetEmbed";
 
-const Playground = dynamic(() => import("../components/Playground"), {
-  ssr: false,
-  loading: () => (
-    <div className="my-8 h-[350px] w-full rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse border border-gray-200 dark:border-gray-700" />
-  ),
-});
-
 interface PostPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -35,7 +28,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PostPageProps) {
-  const post = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -45,7 +39,7 @@ export async function generateMetadata({ params }: PostPageProps) {
   }
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://www.souravinsights.com";
-  return generateBlogMetadata(post, params.slug, baseUrl);
+  return generateBlogMetadata(post, slug, baseUrl);
 }
 
 const prettyCodeOptions = {
@@ -53,8 +47,9 @@ const prettyCodeOptions = {
   keepBackground: false,
 };
 
-export default function PostPage({ params }: PostPageProps) {
-  const post = getPostBySlug(params.slug);
+export default async function PostPage({ params }: PostPageProps) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -89,7 +84,7 @@ export default function PostPage({ params }: PostPageProps) {
       "@type": "Person",
       name: "SouravInsights",
     },
-    url: `${baseUrl}/blog/${params.slug}`,
+    url: `${baseUrl}/blog/${slug}`,
   };
 
   return (

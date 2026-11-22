@@ -35,7 +35,7 @@ const bodySchema = z.object({
 });
 
 export async function PUT(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
@@ -84,7 +84,7 @@ export async function PUT(request: NextRequest) {
 
   // The public pages are cached from `getProjectsData`; this is what makes a
   // reorder visible without waiting for the revalidate window.
-  revalidateTag("projects");
+  revalidateTag("projects", "max");
 
   return NextResponse.json({ data: { count: parsed.data.projects.length } });
 }

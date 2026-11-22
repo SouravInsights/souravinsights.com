@@ -19,8 +19,8 @@ const VISITOR_COOKIE = "visitor_id";
 const VIEWS_HASH = "gallery:views";
 const VIEW_TTL_SECONDS = 60 * 60 * 24;
 
-function getVisitorId(): { id: string; isNew: boolean } {
-  const existing = cookies().get(VISITOR_COOKIE)?.value;
+async function getVisitorId(): Promise<{ id: string; isNew: boolean }> {
+  const existing = (await cookies()).get(VISITOR_COOKIE)?.value;
   if (existing) return { id: existing, isNew: false };
   return { id: uuidv4(), isNew: true };
 }
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "videoId is required" }, { status: 400 });
     }
 
-    const { id: visitorId, isNew } = getVisitorId();
+    const { id: visitorId, isNew } = await getVisitorId();
     const marker = `gallery:viewed:${visitorId}:${videoId}`;
     const seen = await redis.get(marker);
 

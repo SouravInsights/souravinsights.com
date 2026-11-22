@@ -31,7 +31,8 @@ until there is a second consumer of the same compiled components.
 
 ## Workspace tooling
 
-- Keep Yarn 1 workspaces. Do not migrate package managers in the same change.
+- bun workspaces. The package-manager migration shipped separately in
+  `docs/plans/deployment.md`.
 - Turborepo at the root.
 - Root scripts: `dev`, `dev:site`, `dev:kit`, `build`, `lint`, `typecheck`.
 - Each app owns its `next.config`, Tailwind config and `tsconfig`.
@@ -86,7 +87,7 @@ point to.
    `ui.souravinsights.com` aliases its production deployment. The site project
    no longer serves that host.
 3. **Registry package.** Done: source lives in `packages/registry`, the site maps
-   its old aliases there, and `yarn registry:build` writes
+   its old aliases there, and `bun run registry:build` writes
    `apps/kit/public/r`. The site's Tailwind config scans the package.
 4. **Docs.** Done on Fumadocs: index, installation, examples and generated item
    pages. Every item has a demo, a Usage snippet and a copyable source. The
@@ -101,7 +102,7 @@ Two Vercel projects, both on the `souravinsights-projects` team:
 | `souravinsights-com` | `www.souravinsights.com` | `apps/site` | Production branch |
 | `souravinsights-kit` | `ui.souravinsights.com` | `apps/kit` | Production branch |
 
-Both build from the repo root install (Yarn workspaces) and only their app's
+Both build from the repo root install (bun workspaces) and only their app's
 `build` script. The kit's build runs `node scripts/generate-docs.mjs && next
 build`, so `apps/kit/public/r` must be committed; `src/generated` and
 `content/docs/{components,blocks,utilities}` are regenerated and ignored.

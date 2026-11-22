@@ -35,7 +35,7 @@ const toCounts = (raw: Record<string, number> | null): Record<string, number> =>
  * the write below still checks the session for real.
  */
 export async function GET() {
-  const isAdmin = isAdminAuthenticated();
+  const isAdmin = await isAdminAuthenticated();
 
   const [projects, videos, likes, views] = await Promise.all([
     db

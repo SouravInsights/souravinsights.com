@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function LoginPage() {
-  const isAdmin = isAdminAuthenticated();
+export default async function LoginPage() {
+  const isAdmin = await isAdminAuthenticated();
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-5">

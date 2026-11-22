@@ -20,7 +20,7 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
 /** Recolor an existing mark (palette pick on an edit). */
 export async function PATCH(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const parsed = z
@@ -76,7 +76,7 @@ export async function PATCH(request: NextRequest) {
 
 /** Erase a mark. */
 export async function DELETE(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const id = Number(request.nextUrl.searchParams.get("id"));

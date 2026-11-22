@@ -102,8 +102,9 @@ const questionSize = (length: number): string => {
   return "54px";
 };
 
-export default async function Image({ params }: { params: { id: string } }) {
-  const conversation = await getConversation(params.id);
+export default async function Image({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const conversation = await getConversation(id);
   const turns = conversation ? turnsOf(conversation.messages) : [];
 
   const question = clamp(

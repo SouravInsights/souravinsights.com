@@ -8,9 +8,6 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
@@ -75,18 +72,6 @@
       ],
       "@/*": [
         "./src/*"
-      ],
-      "react": [
-        "./node_modules/@types/react"
-      ],
-      "react-dom": [
-        "./node_modules/@types/react-dom"
-      ],
-      "react/*": [
-        "./node_modules/@types/react/*"
-      ],
-      "react-dom/*": [
-        "./node_modules/@types/react-dom/*"
       ]
     },
     "plugins": [

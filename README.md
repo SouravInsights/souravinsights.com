@@ -78,10 +78,10 @@ The agent answers only from what it retrieves, so it cannot cite a link that doe
 ## Working on it
 
 ```bash
-yarn install
+bun install
 cp .env.example .env        # fill DATABASE_URL and OPENROUTER_API_KEY first
 npx drizzle-kit push        # create the schema
-yarn dev
+bun dev
 ```
 
 The collection has its own small toolbox, all run by hand:

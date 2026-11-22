@@ -2,21 +2,9 @@
   "name": "souravinsights",
   "private": true,
   "version": "0.1.0",
-  "workspaces": {
-    "packages": [
-      "apps/*",
-      "packages/*"
-    ],
-    "nohoist": [
-      "kit/react",
-      "kit/react-dom",
-      "kit/@types/react",
-      "kit/@types/react-dom",
-      "site/react",
-      "site/react-dom",
-      "site/@types/react",
-      "site/@types/react-dom"
-    ]
+  "packageManager": "bun@1.4.0",
+  "engines": {
+    "node": "22.x"
   },
   "scripts": {
     "dev": "turbo run dev --parallel",
@@ -32,8 +20,15 @@
   "devDependencies": {
     "turbo": "^2.5.8"
   },
-  "engines": {
-    "node": "22.x"
-  },
-  "packageManager": "yarn@1.22.21"
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "trustedDependencies": [
+    "@sparticuz/chromium",
+    "@tailwindcss/oxide",
+    "esbuild",
+    "sharp",
+    "unrs-resolver"
+  ]
 }

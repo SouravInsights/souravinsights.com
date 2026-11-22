@@ -23,7 +23,7 @@ const bodySchema = z.object({
 });
 
 export async function PATCH(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));

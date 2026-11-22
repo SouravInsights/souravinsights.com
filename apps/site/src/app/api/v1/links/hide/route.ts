@@ -10,7 +10,7 @@ const err = (code: string, message: string, status: number) =>
   NextResponse.json({ error: { code, message } }, { status });
 
 export async function POST(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const rate = await adminLimiter.limit(clientIp(request.headers));
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const count = await setLinksHidden(urls, true);
     revalidatePath("/insights");
     revalidatePath("/api/insights/latest");
-    revalidateTag("links");
+    revalidateTag("links", "max");
     return NextResponse.json({
       data: { urls: urls.map(normalizeUrl), hidden: true, count },
     });
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   // Bust the ISR caches that could still show the link.
   revalidatePath("/insights");
   revalidatePath("/api/insights/latest");
-  revalidateTag("links");
+  revalidateTag("links", "max");
 
   return NextResponse.json({
     data: { id: normalizeUrl(url), hidden: true },

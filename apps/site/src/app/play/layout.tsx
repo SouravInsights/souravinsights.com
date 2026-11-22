@@ -1,7 +1,7 @@
+import PostHogPageView from "@/components/PostHogPageViewClient";
 import React from "react";
 import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
-import dynamic from "next/dynamic";
 
 const DESCRIPTION =
   "Play Shipstack. Just Tetris. Fill rows, clear them, chase tetrises.";
@@ -22,9 +22,6 @@ export const metadata: Metadata = {
   },
 };
 
-const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
-  ssr: false,
-});
 
 export default function PlayLayout({
   children,

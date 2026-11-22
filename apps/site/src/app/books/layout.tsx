@@ -1,7 +1,7 @@
+import PostHogPageView from "@/components/PostHogPageViewClient";
 import React from "react";
 import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
-import dynamic from "next/dynamic";
 
 const DESCRIPTION =
   "A running list of books worth reading: what I'm reading now, what's next, and everything I've finished.";
@@ -34,9 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
-  ssr: false,
-});
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

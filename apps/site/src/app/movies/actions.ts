@@ -37,7 +37,7 @@ export async function getMoviesData(): Promise<MoviesData> {
 export async function saveMoviesData(
   data: MoviesData
 ): Promise<{ success: boolean; error?: string }> {
-  if (!isAdminAuthenticated()) {
+  if (!(await isAdminAuthenticated())) {
     return { success: false, error: "Unauthorized" };
   }
 
@@ -51,7 +51,7 @@ export async function saveMoviesData(
 }
 
 export async function uploadPoster(formData: FormData): Promise<{ success: boolean; url?: string; error?: string }> {
-  if (!isAdminAuthenticated()) {
+  if (!(await isAdminAuthenticated())) {
     return { success: false, error: "Unauthorized" };
   }
 

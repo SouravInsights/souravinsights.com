@@ -1,6 +1,4 @@
 import { readFileSync } from "node:fs";
-import createMDX from "@next/mdx";
-import rehypePrettyCode from "rehype-pretty-code";
 
 // Renamed posts: the old URL must keep working (an HN thread still points at
 // it). Same map the stats routes read, so the file and the redirect can't
@@ -9,61 +7,27 @@ const postAliases = JSON.parse(
   readFileSync(new URL("./src/content/post-aliases.json", import.meta.url), "utf8")
 );
 
-/** @type {import('rehype-pretty-code').Options} */
-const prettyCodeOptions = {
-  theme: "github-dark",
-  keepBackground: true,
-  grid: true,
-
-  onVisitLine(node) {
-    if (node.children.length === 0) {
-      node.children = [{ type: "text", value: " " }];
-    }
-  },
-
-  onVisitHighlightedLine(node) {
-    node.properties.className = ["line--highlighted"];
-  },
-
-  onVisitHighlightedWord(node) {
-    node.properties.className = ["word--highlighted"];
-  },
-};
-
-// Custom function to bypass sensitive content filters
-const bypassContentFilter = () => {
-  return (tree) => {
-    // This is a no-op transformer that ensures content isn't filtered
-    return tree;
-  };
-};
-
-const withMDX = createMDX({
-  options: {
-    remarkPlugins: [bypassContentFilter],
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
-    providerImportSource: "@mdx-js/react",
-  },
-});
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: { externalDir: true },
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
 
   images: {
-    domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
     // Gallery posters come from R2. The host is read from the env, never
     // committed — the repo is public and the bucket address is not ours to
     // publish. A checkout without `R2_PUBLIC_URL` simply has no remote pattern.
-    remotePatterns: process.env.R2_PUBLIC_URL
-      ? [
-          {
-            protocol: "https",
-            hostname: new URL(process.env.R2_PUBLIC_URL).hostname,
-          },
-        ]
-      : [],
+    remotePatterns: [
+      { protocol: "https", hostname: "assets.literal.club" },
+      { protocol: "https", hostname: "books.google.com" },
+      { protocol: "https", hostname: "pbs.twimg.com" },
+      ...(process.env.R2_PUBLIC_URL
+        ? [
+            {
+              protocol: "https",
+              hostname: new URL(process.env.R2_PUBLIC_URL).hostname,
+            },
+          ]
+        : []),
+    ],
   },
 
   /**
@@ -108,47 +72,46 @@ const nextConfig = {
     ];
   },
 
+  // The App Router keeps a visited route's RSC payload in the client router
+  // cache. Its dynamic default is 30s, so a link revisited after half a minute
+  // pays the full server render again. The collection itself is revalidated at
+  // 300s, so matching that window keeps repeat navigation instant without
+  // serving anything older than the page already promises.
+  // https://nextjs.org/docs/app/api-reference/next-config-js/staleTimes
   experimental: {
-    // Next 14 gates `instrumentation.ts` behind this flag (stable in 15).
-    // That file is where Neatlogs tracing is switched on at server startup.
-    instrumentationHook: true,
-    // The App Router keeps a visited route's RSC payload in the client router
-    // cache. Its dynamic default is 30s, so a link revisited after half a minute
-    // pays the full server render again. The collection itself is revalidated at
-    // 300s, so matching that window keeps repeat navigation instant without
-    // serving anything older than the page already promises.
-    // https://nextjs.org/docs/app/api-reference/next-config-js/staleTimes
     staleTimes: { dynamic: 300 },
-    // Chromium + puppeteer must stay outside the server bundle and their
-    // binary must be traced into the /api/link-preview function on Vercel.
-    //
-    // defuddle and its DOM stack are here for the same reason: its CJS build
-    // requires the ESM-only css-select through linkedom, which webpack refuses
-    // to bundle ("ESM packages (css-select) need to be imported"). Left
-    // external, Node loads them at runtime — and this runtime is >= 22.12,
-    // where require() can load ESM.
-    serverComponentsExternalPackages: [
-      "@sparticuz/chromium",
-      "puppeteer-core",
-      "defuddle",
-      "linkedom",
-      // Kept outside the server bundle so Next does not make a separate copy
-      // of the tracing packages inside each route.
-      "@ai-sdk/otel",
-      "neatlogs",
+  },
+
+  // Chromium + puppeteer must stay outside the server bundle and their
+  // binary must be traced into the /api/link-preview function on Vercel.
+  //
+  // defuddle and its DOM stack are here for the same reason: its CJS build
+  // requires the ESM-only css-select through linkedom, which refuses to bundle
+  // ("ESM packages (css-select) need to be imported"). Left external, Node
+  // loads them at runtime — and this runtime is >= 22.12, where require() can
+  // load ESM.
+  serverExternalPackages: [
+    "@sparticuz/chromium",
+    "puppeteer-core",
+    "defuddle",
+    "linkedom",
+    // Kept outside the server bundle so Next does not make a separate copy
+    // of the tracing packages inside each route.
+    "@ai-sdk/otel",
+    "neatlogs",
+  ],
+
+  // pdfkit (used by @react-pdf/renderer) loads its standard fonts through a
+  // dynamic path, so the serverless file tracer never sees them. Without this
+  // the /cv/pdf route crashes on Vercel with "Cannot find module
+  // /var/task/node_modules/pdfkit/js/standard-fonts/Helvetica.cjs".
+  outputFileTracingIncludes: {
+    "/cv/pdf": [
+      "./node_modules/pdfkit/js/standard-fonts/**/*",
+      "./node_modules/pdfkit/js/data/**/*",
     ],
-    // pdfkit (used by @react-pdf/renderer) loads its standard fonts through a
-    // dynamic path, so the serverless file tracer never sees them. Without this
-    // the /cv/pdf route crashes on Vercel with "Cannot find module
-    // /var/task/node_modules/pdfkit/js/standard-fonts/Helvetica.cjs".
-    outputFileTracingIncludes: {
-      "/cv/pdf": [
-        "./node_modules/pdfkit/js/standard-fonts/**/*",
-        "./node_modules/pdfkit/js/data/**/*",
-      ],
-      "/api/link-preview": ["./node_modules/@sparticuz/chromium/bin/**/*"],
-    },
+    "/api/link-preview": ["./node_modules/@sparticuz/chromium/bin/**/*"],
   },
 };
 
-export default withMDX(nextConfig);
+export default nextConfig;

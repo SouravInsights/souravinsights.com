@@ -609,7 +609,7 @@ export function ReaderView({
                             />
                           ),
                           img: ({ src, alt }) => {
-                            if (!src) return null;
+                            if (typeof src !== "string") return null;
                             let resolved: string;
                             try {
                               resolved = new URL(src, article.url).toString();

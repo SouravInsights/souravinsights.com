@@ -3,17 +3,18 @@ import { getHighlights } from "./api";
 import HighlightsList from "./HighlightsList";
 
 interface PageProps {
-  params: { id: string };
-  searchParams: { page?: string; sort?: "date" | "location" };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ page?: string; sort?: "date" | "location" }>;
 }
 
 export default async function BookHighlightsPage({
   params,
   searchParams,
 }: PageProps) {
-  const { id } = params;
-  const page = searchParams.page ? parseInt(searchParams.page) : 1;
-  const sort = searchParams.sort || "date";
+  const { id } = await params;
+  const { page: pageParam, sort: sortParam } = await searchParams;
+  const page = pageParam ? parseInt(pageParam) : 1;
+  const sort = sortParam || "date";
 
   const highlightsData = await getHighlights(id, page, sort);
 

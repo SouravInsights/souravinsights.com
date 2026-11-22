@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
 // Helper to get or set visitor ID
-function getVisitorId(): string {
-  const cookieStore = cookies();
+async function getVisitorId(): Promise<string> {
+  const cookieStore = await cookies();
   let visitorId = cookieStore.get("visitor_id")?.value;
 
   if (!visitorId) {
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     const slugs = getPostSlugsForStats(slug);
-    const visitorId = getVisitorId();
+    const visitorId = await getVisitorId();
 
     const totalLikes = await getTotalLikes(slugs);
     const userLikes = await getUserLikes(slugs, visitorId);
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     const canonical = resolvePostSlug(slug);
     const slugs = getPostSlugsForStats(slug);
-    const visitorId = getVisitorId();
+    const visitorId = await getVisitorId();
 
     // Get current user likes across every slug this post has had
     const currentUserLikes = await getUserLikes(slugs, visitorId);

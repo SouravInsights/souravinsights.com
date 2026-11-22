@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
-// This middleware sets a visitor ID cookie for anonymous analytics
-export function middleware(request: NextRequest) {
+// This proxy sets a visitor ID cookie for anonymous analytics
+export function proxy(request: NextRequest) {
   const response = NextResponse.next();
 
   // Check if the visitor ID cookie already exists
@@ -25,7 +25,7 @@ export function middleware(request: NextRequest) {
   return response;
 }
 
-// Only apply the middleware to blog pages
+// Only apply the proxy to blog pages
 export const config = {
   matcher: ["/blog/:path*"],
 };

@@ -5,8 +5,8 @@ import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
 // Helper to get or set visitor ID
-function getVisitorId(): string {
-  const cookieStore = cookies();
+async function getVisitorId(): Promise<string> {
+  const cookieStore = await cookies();
   let visitorId = cookieStore.get("visitor_id")?.value;
 
   if (!visitorId) {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const canonical = resolvePostSlug(slug);
     const slugs = getPostSlugsForStats(slug);
-    const visitorId = getVisitorId();
+    const visitorId = await getVisitorId();
 
     // Check if this visitor has already viewed this post under any of its slugs
     const hasViewed = await hasViewedAny(slugs, visitorId);

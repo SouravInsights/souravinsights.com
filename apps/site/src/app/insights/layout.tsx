@@ -1,7 +1,7 @@
+import PostHogPageView from "@/components/PostHogPageViewClient";
 import React from "react";
 import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
-import dynamic from "next/dynamic";
 
 /**
  * The route's fallback metadata. The page sets its own title, description and OG
@@ -37,9 +37,6 @@ export const metadata: Metadata = {
   },
 };
 
-const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
-  ssr: false,
-});
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
