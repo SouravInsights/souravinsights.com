@@ -39,9 +39,7 @@
           "target": "components/highlight/wave.ts"
         }
       ],
-      "registryDependencies": [
-        "https://ui.souravinsights.com/r/highlight-palette.json"
-      ]
+      "registryDependencies": ["https://ui.souravinsights.com/r/highlight-palette.json"]
     },
     {
       "name": "use-text-selection",
@@ -54,9 +52,7 @@
           "type": "registry:hook"
         }
       ],
-      "registryDependencies": [
-        "https://ui.souravinsights.com/r/highlight-anchor.json"
-      ]
+      "registryDependencies": ["https://ui.souravinsights.com/r/highlight-anchor.json"]
     },
     {
       "name": "use-reduced-motion",
@@ -81,11 +77,7 @@
           "type": "registry:ui"
         }
       ],
-      "registryDependencies": [
-        "button",
-        "tooltip",
-        "utils"
-      ]
+      "registryDependencies": ["button", "tooltip", "utils"]
     },
     {
       "name": "anchored-panel",
@@ -102,13 +94,8 @@
           "type": "registry:hook"
         }
       ],
-      "registryDependencies": [
-        "popover",
-        "utils"
-      ],
-      "dependencies": [
-        "@radix-ui/react-popover"
-      ]
+      "registryDependencies": ["popover", "utils"],
+      "dependencies": ["@radix-ui/react-popover"]
     },
     {
       "name": "side-panel",
@@ -121,9 +108,7 @@
           "type": "registry:ui"
         }
       ],
-      "registryDependencies": [
-        "utils"
-      ]
+      "registryDependencies": ["utils"]
     },
     {
       "name": "snap-carousel",
@@ -136,10 +121,7 @@
           "type": "registry:ui"
         }
       ],
-      "registryDependencies": [
-        "https://ui.souravinsights.com/r/use-reduced-motion.json",
-        "utils"
-      ]
+      "registryDependencies": ["https://ui.souravinsights.com/r/use-reduced-motion.json", "utils"]
     },
     {
       "name": "swatch",
@@ -152,10 +134,7 @@
           "type": "registry:ui"
         }
       ],
-      "registryDependencies": [
-        "radio-group",
-        "utils"
-      ]
+      "registryDependencies": ["radio-group", "utils"]
     },
     {
       "name": "canvas",
@@ -168,9 +147,7 @@
           "type": "registry:ui"
         }
       ],
-      "registryDependencies": [
-        "utils"
-      ]
+      "registryDependencies": ["utils"]
     },
     {
       "name": "color-picker",
@@ -183,13 +160,8 @@
           "type": "registry:ui"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "registryDependencies": [
-        "button",
-        "utils"
-      ]
+      "dependencies": ["@phosphor-icons/react"],
+      "registryDependencies": ["button", "utils"]
     },
     {
       "name": "color-field",
@@ -202,9 +174,7 @@
           "type": "registry:ui"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
+      "dependencies": ["@phosphor-icons/react"],
       "registryDependencies": [
         "button",
         "https://ui.souravinsights.com/r/color-picker.json",
@@ -222,12 +192,7 @@
           "type": "registry:ui"
         }
       ],
-      "registryDependencies": [
-        "button",
-        "switch",
-        "textarea",
-        "utils"
-      ]
+      "registryDependencies": ["button", "switch", "textarea", "utils"]
     },
     {
       "name": "highlight",
@@ -256,9 +221,7 @@
           "target": "components/highlight/highlight-rail.tsx"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
+      "dependencies": ["@phosphor-icons/react"],
       "registryDependencies": [
         "https://ui.souravinsights.com/r/anchored-panel.json",
         "button",
@@ -298,9 +261,7 @@
           "target": "components/quote/themes.ts"
         }
       ],
-      "registryDependencies": [
-        "https://ui.souravinsights.com/r/quote-presets.json"
-      ]
+      "registryDependencies": ["https://ui.souravinsights.com/r/quote-presets.json"]
     },
     {
       "name": "quote-render",
@@ -331,9 +292,7 @@
           "target": "components/quote/options.tsx"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
+      "dependencies": ["@phosphor-icons/react"],
       "registryDependencies": [
         "button",
         "https://ui.souravinsights.com/r/color-field.json",
@@ -413,14 +372,8 @@
           "target": "components/quote/actions.tsx"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "registryDependencies": [
-        "button",
-        "kbd",
-        "toggle"
-      ]
+      "dependencies": ["@phosphor-icons/react"],
+      "registryDependencies": ["button", "kbd", "toggle"]
     },
     {
       "name": "quote-share-dialog",
@@ -434,9 +387,7 @@
           "target": "components/quote/dialog.tsx"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
+      "dependencies": ["@phosphor-icons/react"],
       "registryDependencies": [
         "dialog",
         "https://ui.souravinsights.com/r/side-panel.json",
@@ -463,9 +414,7 @@
           "target": "components/blocks/article-highlights.tsx"
         }
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
+      "dependencies": ["@phosphor-icons/react"],
       "registryDependencies": [
         "https://ui.souravinsights.com/r/highlight.json",
         "https://ui.souravinsights.com/r/highlight-rail.json",
@@ -484,10 +433,7 @@
           "target": "components/blocks/quote-share.tsx"
         }
       ],
-      "registryDependencies": [
-        "button",
-        "https://ui.souravinsights.com/r/quote-share-dialog.json"
-      ]
+      "registryDependencies": ["button", "https://ui.souravinsights.com/r/quote-share-dialog.json"]
     }
   ]
 }
