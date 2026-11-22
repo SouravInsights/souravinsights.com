@@ -8,10 +8,25 @@ import { InstallCard } from "@/components/landing/install-card";
 import { Demo } from "@/components/landing/demo";
 import { GalleryMarquee } from "@/components/landing/gallery-marquee";
 
+const DESCRIPTION =
+  "A shadcn kit for highlighting text. Save locally. Share as posts. Radix, Tailwind, shadcn CLI.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ui.souravinsights.com"),
   title: "Highlight & Quote — mark a line, keep it as a card",
-  description:
-    "A copy-paste kit for highlighting text and turning the sentence into a designed quote card. Radix, Tailwind, shadcn CLI.",
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "Highlight & Quote",
+    description: DESCRIPTION,
+    siteName: "Highlight & Quote",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Highlight & Quote",
+    description: DESCRIPTION,
+  },
 };
 
 const REPO = "https://github.com/SouravInsights/souravinsights.com";
@@ -23,7 +38,9 @@ export default function Page() {
         <header className="head">
           <PalettePill />
           <h1>Highlight &amp; Quote</h1>
-          <p className="lede">Mark a sentence on any page. Turn it into a designed quote card.</p>
+          <p className="lede">
+            A shadcn kit for highlighting text. Save locally. Share as posts.
+          </p>
           <InstallCard />
         </header>
 
