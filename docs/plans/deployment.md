@@ -1,155 +1,147 @@
 # Deployment Plan
 
-Make a deploy fast (under ~90s) and make a push build only the app it touched.
-No app changes, no broken deploys.
+Make a deploy fast and make one repo one pipeline — without changing what the
+site looks like or how the kit installs.
 
-## Where the 4 minutes go
+## Baseline (measured)
 
-From the kit's production build log
-(`dpl_31og8mrw`, `a2b610f`, 223.8s):
+| | Site | Kit |
+| :--- | ---: | ---: |
+| install | 146s | 171s |
+| compile | **143s** (webpack) | 23s (Turbopack) |
+| other build work | 98s | 15s |
+| cache upload | 718 MB | 680 MB |
+| **total** | **7m** | **3.7m** |
 
-| Phase | Time | Notes |
-| :--- | ---: | :--- |
-| `yarn install` | **171s** | whole monorepo, both apps' deps |
-| `turbo run build` (kit) | 38s | Next 16 + Turbopack |
-| cache upload | ~2m | 680 MB, after deploy |
+Two costs, both independent of the monorepo:
 
-The app build is already fine. The install is the tax. Yarn 1 with `nohoist`
-re-links the whole workspace on every deploy, and Vercel installs from the repo
-root, so **each project installs both apps' dependencies**.
+1. **Install.** Yarn 1 re-links the whole workspace every deploy. Vercel
+   installs from the repo root, so *each project installs both apps*.
+2. **Compile.** The site is Next 14, which still uses webpack (143s). The kit is
+   Next 16 with Turbopack (23s). This is the single biggest build cost.
 
-Durations swing 12s–380s because the 680 MB build cache only sometimes warms
-`node_modules`; when it misses, the install runs cold.
+The build cache only sometimes warms the install — hence 12s one deploy and
+380s the next.
 
-## Decisions
+## What to change
 
-### Keep two projects, both git-connected
+### 1. Unify on Next 16 + React 19
 
-They are two Next apps with two React majors (site: Next 14 + React 18, kit:
-Next 16 + React 19). Vercel builds one framework per project, and merging them
-means moving a React major in one of the apps. Rinze serves three hostnames
-from one project because it is **one** Next app rewriting by hostname.
+Upgrade the site from Next 14/React 18 to Next 16/React 19. This buys
+Turbopack (143s → ~25s of compile) and removes the split that forced
+`nohoist`, the two React majors and the tsconfig `react` mappings.
 
-Both stay connected to git. Disconnecting one means hand-running `vercel --prod`
-or a second CI system, which is more moving parts, not fewer.
+Known migrations, all documented:
 
-### Replace Yarn 1 with pnpm
+- `cookies()` / `headers()` → `await` (9 call sites).
+- `experimental.serverComponentsExternalPackages` → `serverExternalPackages`.
+- `experimental.instrumentationHook` → stable (drop the flag).
+- `images.domains` → `remotePatterns` (already partly done).
+- `experimental.externalDir` → removed; confirm the MDX/registry paths still
+  resolve.
+- `@next/mdx` + `rehype-pretty-code` under Turbopack; verify code blocks.
 
-```mermaid
-flowchart LR
-  subgraph now["now"]
-    P1[push] --> K1[kit project]
-    P1 --> S1[site project]
-    K1 --> I1["yarn install<br/>both apps · 171s"]
-    S1 --> I2["yarn install<br/>both apps · 171s"]
-    I1 --> B1["turbo build kit · 38s"]
-    I2 --> B2["turbo build site · 70s"]
-  end
-  subgraph target["target"]
-    P2[push] --> IG{"changed?"}
-    IG -->|apps/kit| K2["pnpm install kit only · ~20s"]
-    IG -->|apps/site| S2["pnpm install site only · ~25s"]
-    IG -->|neither| SKIP[skip]
-    K2 --> B3["turbo build kit · 38s"]
-    S2 --> B4["turbo build site · 70s"]
-  end
-```
+The site keeps **Tailwind 3**. Tailwind version is independent of Next, so this
+step does not touch styling.
 
-- pnpm's content-addressable store is reused across deploys instead of Yarn 1's
-  full re-link.
-- pnpm's default **isolated `node_modules`** gives each workspace its own React.
-  That removes `workspaces.nohoist` and the duplicate-install cost it creates.
-- Filtered install (`--filter kit...`) installs only the app's subtree.
+### 2. Replace Yarn 1
 
-Bun was considered and rejected: it hoists like Yarn, so the mixed React majors
-would collide again.
+Once both apps are React 19, hoisting is safe again and `nohoist` can go. Two
+options, both modern:
 
-### Build only what changed
+| | Install | Isolation | Notes |
+| :--- | :--- | :--- | :--- |
+| **pnpm** | fast | strict, per-package | safest default; needs `onlyBuiltDependencies` for `sharp`/`esbuild`/`@tailwindcss/oxide` |
+| **bun** | fastest | hoisted | already used by Rinze; needs `trustedDependencies` |
 
-Give each project an **Ignored Build Step** so a push builds one project, not
-two. Run from the app root, skip when neither the app nor the registry changed:
+Pick one after a local install-time measurement; both should land near 20–30s.
+
+### 3. One pipeline, one build per push
+
+Each project gets an **Ignored Build Step** so a push builds only the app it
+touched. Registry changes rebuild both.
 
 ```sh
 [ -z "$VERCEL_GIT_PREVIOUS_SHA" ] && exit 1
 git diff --quiet "$VERCEL_GIT_PREVIOUS_SHA" HEAD -- . ../../packages/registry
 ```
 
-Exit 0 skips, non-zero builds. Registry changes rebuild both apps.
+Exit 0 skips, non-zero builds. Verify whether Vercel runs it from the app root
+or the repo root and adjust the paths.
 
-### Keep the Turbo remote cache
+### 4. Keep the Turbo remote cache
 
-Vercel already enables it (`Remote caching enabled` in the log). Keep it; after
-a filtered pnpm install, a rebuild with no app changes is a cache hit and the
-whole deploy is install-only.
+Vercel already runs it. With a fast install and a cache hit, an unchanged app
+deploys in seconds.
+
+## One project or two?
+
+```mermaid
+flowchart TD
+  Q{One Next app?} -->|yes| M["merge site + kit<br/>one build, one project"]
+  Q -->|no| T["two apps<br/>one project each"]
+  M --> MT["needs Tailwind 3 → 4<br/>two root layouts<br/>hostname routing<br/>every deploy builds both surfaces"]
+  T --> TT["needs an ignored build step<br/>one deploy builds one app"]
+```
+
+The blocker for one app is styling, not React: the kit is **Tailwind 4**
+(Fumadocs 16 requires it) and the site is **Tailwind 3**. One Next build runs one
+PostCSS pipeline, so merging means migrating the whole site to Tailwind 4 first —
+a real project that touches every styled component, which is exactly what
+"without breaking anything" forbids right now.
+
+Merging also makes deploys *slower*, not faster: one app builds both surfaces on
+every push. The speed comes from pnpm + Turbopack + the ignored build step, not
+from the project count.
+
+**Recommendation: stay two apps, one project each, fast.** This is the standard
+Vercel monorepo shape, not a workaround. The two projects become invisible once
+one push builds one app.
+
+**If you want one project anyway**, the order is: Next 16 + React 19 → Tailwind 4
+migration on the site → merge into one app with `(site)` and `(kit)` route groups
+and hostname routing on `apps/site` → delete the kit project. That is a separate
+plan; it is slower per deploy and much riskier.
 
 ## Target
 
 | | Now | After |
 | :--- | ---: | ---: |
-| install | 171s | ~20–25s |
-| build | 38–70s | 38–70s (cached when unchanged) |
+| install | 146–171s | ~20–30s |
+| compile | 143s / 23s | ~25s / ~25s |
 | builds per push | 2 | 1 (or 0) |
-| cache upload | 680 MB | smaller with pnpm's store |
+| site deploy | 7m | ~90s |
+| kit deploy | 3.7m | ~65s |
 
 ## Phases
 
-### 1. Prove pnpm locally (no Vercel change)
+1. **Upgrade the site.** Next 16 + React 19, webpack → Turbopack. No styling or
+   feature changes. Pass: `typecheck`, `build`, and a visual check of the home,
+   blog, insights, books and gallery routes. Record the new compile time.
+2. **Migrate the package manager.** pnpm or bun; remove `nohoist` and the
+   tsconfig `react` mappings. Pass: both apps typecheck and build; record
+   install time.
+3. **Ignored build steps.** One push → one build; a registry change → two.
+4. **Confirm.** One cold deploy per project, timed end to end.
 
-- `corepack enable`, pin `packageManager: "pnpm@9.x"`.
-- Add `pnpm-workspace.yaml`; delete `yarn.lock`.
-- `pnpm install`, then `pnpm typecheck`, `pnpm build`, and the kit docs build.
-- Record the install time and fix whatever pnpm's strict layout breaks
-  (phantom deps, blocked postinstall scripts → `pnpm.onlyBuiltDependencies`).
-
-Pass: both apps typecheck and build; a recorded install time well under Yarn's.
-
-### 2. Land the migration on `main`
-
-- Remove `workspaces.nohoist` from the root `package.json`.
-- Keep the `react`/`react-dom` tsconfig mappings until a clean `pnpm typecheck`
-  proves pnpm's isolation alone is enough; remove them in the same commit if so.
-- Update `AGENTS.md` and the root scripts to pnpm.
-- One commit. No app feature edits.
-
-Pass: a deploy from `main` is green on both projects.
-
-### 3. Set per-project build settings
-
-For each Vercel project, set:
-
-| Setting | kit | site |
-| :--- | :--- | :--- |
-| Install Command | `pnpm install --frozen-lockfile --filter kit...` | `pnpm install --frozen-lockfile --filter site...` |
-| Build Command | `pnpm turbo run build --filter=kit` | `pnpm turbo run build --filter=site` |
-| Ignored Build Step | diff `apps/kit` + registry | diff `apps/site` + registry |
-
-Verify the ignore command actually runs from the app root — if Vercel runs it
-from the repo root, use `apps/kit` / `apps/site` paths instead of `.`.
-
-Pass: a docs-only push builds only kit; a site-only push builds only site; a
-registry push builds both.
-
-### 4. Confirm
-
-- Watch one cold deploy per project end to end; record install vs build.
-- Push a no-op app change and confirm the other project skips.
+Each phase is one PR and is revertible on its own. Phases 1 and 2 are the speed;
+phase 3 is the "one pipeline" feel.
 
 ## Risks
 
-- **Phantom dependencies.** The site may import a package it never declared,
-  hidden by Yarn's flat `node_modules`. Fix by declaring it; do not fall back to
-  `node-linker=hoisted` (that reintroduces the React collision).
-- **Blocked postinstall.** `sharp`, `esbuild`, `@tailwindcss/oxide` need
-  `onlyBuiltDependencies`; the build fails loudly if one is missing.
-- **Cache upload size.** If the 680 MB cache persists, narrow Turbo `outputs`
-  and confirm `.next/cache` stays excluded.
+- **Turbopack + MDX.** `@next/mdx`, `rehype-pretty-code` and the registry aliases
+  must compile. Verify code blocks and the blog before merging phase 1.
+- **Next 16 removals.** `images.domains`, `externalDir` and the experimental
+  flags are the likely build errors; the upgrade codemod handles most.
+- **Strict installs.** pnpm can surface phantom dependencies the site never
+  declared. Fix by declaring them; do not fall back to hoisted linking.
+- **Cache size.** 700 MB uploads persist. Narrow Turbo `outputs` if so.
 
-Rollback is the lockfile: keep `yarn.lock` in the branch history and revert the
-migration commit. Vercel detects the package manager from the lockfile, so a
-revert restores the current flow.
+Rollback is per phase: revert the phase PR. Vercel detects the package manager
+from the lockfile, so reverting phase 2 restores Yarn.
 
 ## Non-goals
 
-- No single-project merge (needs a React major move first).
-- No self-hosted runner or external CI.
-- No Vercel Postgres/Blob changes.
+- No visual redesign, no Tailwind upgrade unless we choose one app.
+- No self-hosted runners or external CI.
+- No change to the registry's public URLs.
