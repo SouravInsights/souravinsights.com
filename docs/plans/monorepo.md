@@ -106,6 +106,9 @@ Both build from the repo root install (Yarn workspaces) and only their app's
 build`, so `apps/kit/public/r` must be committed; `src/generated` and
 `content/docs/{components,blocks,utilities}` are regenerated and ignored.
 
+Both projects stay git-connected. Making the deploys fast (pnpm, filtered
+installs, an ignored build step) is planned in `docs/plans/deployment.md`.
+
 ## Risks
 
 - Moving the Next app breaks aliases, `public/`, MDX content paths and
