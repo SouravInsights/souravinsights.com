@@ -3,9 +3,8 @@ import Link from "next/link";
 import "./landing.css";
 import { PalettePill } from "@/components/landing/palette-pill";
 import { InstallCard } from "@/components/landing/install-card";
-import { MarkDemo } from "@/components/landing/mark-demo";
-import { CardDemo } from "@/components/landing/card-demo";
-import { StudioDemo } from "@/components/landing/studio-demo";
+import { Demo } from "@/components/landing/demo";
+import { GalleryMarquee } from "@/components/landing/gallery-marquee";
 
 export const metadata: Metadata = {
   title: "Highlight & Quote — mark a line, keep it as a card",
@@ -22,34 +21,29 @@ export default function Page() {
         <header className="head">
           <PalettePill />
           <h1>Highlight &amp; Quote</h1>
-          <p className="lede">
-            Mark text on any page, then turn the sentence into a designed quote card.
-          </p>
+          <p className="lede">Mark a sentence on any page. Turn it into a designed quote card.</p>
           <InstallCard />
         </header>
 
-        <section>
-          <p className="note">Select a sentence in the passage below. The palette follows.</p>
-          <MarkDemo />
-        </section>
+        <Demo />
 
-        <section>
-          <p className="note">One sentence, in the design you choose.</p>
-          <CardDemo />
-        </section>
-
-        <section>
-          <p className="note">The studio: layouts, colours, export. The real dialog.</p>
-          <StudioDemo />
-        </section>
+        <GalleryMarquee />
 
         <footer className="foot">
-          <Link href="/docs">Docs</Link>
-          <Link href="/docs/components/highlight">Highlight</Link>
-          <Link href="/docs/components/quote-share-dialog">Studio</Link>
-          <a href={REPO} rel="noreferrer">
-            GitHub
-          </a>
+          <div className="foot-brand">
+            <span className="foot-mark">Highlight &amp; Quote</span>
+            <span className="foot-meta">
+              a shadcn kit by <a href="https://souravinsights.com">souravinsights.com</a>
+            </span>
+          </div>
+          <nav aria-label="Footer" className="foot-links">
+            <Link href="/docs">Docs</Link>
+            <Link href="/docs/components/highlight">Highlight</Link>
+            <Link href="/docs/components/quote-share-dialog">Studio</Link>
+            <a href={REPO} rel="noreferrer">
+              GitHub
+            </a>
+          </nav>
         </footer>
       </main>
     </div>

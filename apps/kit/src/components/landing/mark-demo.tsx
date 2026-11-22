@@ -1,22 +1,38 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Highlight } from "@/components/highlight/highlight";
-import { ShareQuoteDialog } from "@/components/quote/dialog";
+import { Highlight, type HighlightMark } from "@/components/highlight/highlight";
 
-const EMPTY: [] = [];
 const noop = () => undefined;
 const localWrite = async () => null;
 
 const PASSAGE = [
-  "The best interfaces disappear. You stop noticing the buttons, the panels, the type — and you are left with the thing you came to do.",
-  "A line you underlined is worth keeping. Paint it, keep it, and when it deserves an audience, turn it into a card.",
+  "The best interfaces disappear. You stop noticing the buttons, the panels, the type. All that's left is what you came to do.",
+  "You notice a tool only when it fights you: a spinner that won't end, a button that moves, a menu that closes early. The rest of the time it should stay out of the way.",
 ];
 
-/** A passage the engine actually runs on: select a sentence, the palette opens. */
-export function MarkDemo() {
+// The opening line arrives already marked, so the visitor sees the result
+// before they know how to make one.
+const OPENING: HighlightMark = {
+  id: 1,
+  quote: "The best interfaces disappear.",
+  occurrence: 0,
+  hue: 2,
+};
+
+/**
+ * A passage the engine actually runs on.
+ *
+ * The opening line is pre-marked; clicking it opens the palette, and selecting
+ * any other text adds a mark. No caption sits above it: the marked sentence is
+ * the demo, and the affordance for changing it has to come from the sentence.
+ */
+export function MarkDemo({
+  onShare,
+}: {
+  onShare: (payload: { quote: string; context: string }) => void;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [share, setShare] = useState<{ quote: string; context: string } | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => setReady(true), []);
@@ -33,24 +49,11 @@ export function MarkDemo() {
         <Highlight
           containerRef={containerRef}
           editable
-          initialMarks={EMPTY}
+          initialMarks={[OPENING]}
           onCreate={localWrite}
           onRecolor={noop}
           onDelete={noop}
-          onShareQuote={setShare}
-        />
-      )}
-
-      {share && (
-        <ShareQuoteDialog
-          open={share !== null}
-          onOpenChange={(open) => {
-            if (!open) setShare(null);
-          }}
-          quote={share.quote}
-          context={share.context}
-          title="Disappearing interfaces"
-          publication="souravinsights.com"
+          onShareQuote={onShare}
         />
       )}
     </>

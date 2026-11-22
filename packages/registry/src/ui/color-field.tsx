@@ -114,7 +114,7 @@ function ColorField({
                       className={cn(
                         "size-6 flex-none rounded-full p-0 hover:bg-transparent",
                         extra.active &&
-                          "ring-2 ring-[hsl(var(--foreground))] ring-offset-2 ring-offset-background",
+                          "ring-2 ring-foreground ring-offset-2 ring-offset-background",
                       )}
                     />
                   ) : undefined

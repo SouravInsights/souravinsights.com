@@ -385,6 +385,11 @@
           "path": "src/quote/dialog.tsx",
           "type": "registry:ui",
           "target": "components/quote/dialog.tsx"
+        },
+        {
+          "path": "src/quote/studio.tsx",
+          "type": "registry:ui",
+          "target": "components/quote/studio.tsx"
         }
       ],
       "dependencies": ["@phosphor-icons/react"],

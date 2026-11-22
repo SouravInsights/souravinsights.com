@@ -75,11 +75,11 @@ const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(funct
             )}
           >
             <svg width="20" height="10" viewBox="0 0 20 10" className="overflow-visible">
-              <path d="M1 -1 L10 9 L19 -1 Z" fill="hsl(var(--background))" />
+              <path d="M1 -1 L10 9 L19 -1 Z" className="fill-background" />
               <path
                 d="M1 0 L10 9 L19 0"
                 fill="none"
-                stroke="hsl(var(--border))"
+                className="stroke-border"
                 strokeWidth="1"
                 strokeLinejoin="round"
               />
