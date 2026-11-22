@@ -407,12 +407,30 @@
    the nav anchored right, so the footer has two ends instead of a stack. */
 .landing .foot {
   display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* The rule is the palette: eight hues, one hairline, the same source as the
+   pill the page opens on. */
+.landing .foot-palette {
+  display: flex;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.landing .foot-palette span {
+  flex: 1;
+}
+
+.landing .foot-bar {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  width: 100%;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
 }
 
 .landing .foot-brand {
@@ -474,7 +492,7 @@
     padding: 56px 20px 44px;
   }
 
-  .landing .foot {
+  .landing .foot-bar {
     flex-direction: column;
     align-items: center;
     gap: 18px;
