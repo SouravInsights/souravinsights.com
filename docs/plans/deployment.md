@@ -11,17 +11,24 @@ React 19 on bun.
 | compile | 143s (webpack) | 23s (Turbopack) |
 | **total** | **7m** | **3.7m** |
 
-## After (local, cold)
+## After
 
-| | |
-| :--- | ---: |
-| both apps build | **32.5s** |
-| site compile | **9.9s** |
-| site SSG (62 pages) | 20.1s |
-| kit build | 10.8s |
-| warm `bun install` | 43ms |
+Local (cold): both apps build in 32.5s; site compile 143s → 9.9s.
 
-## What changed
+Vercel (preview, build cache warm):
+
+| | Site | Kit |
+| :--- | ---: | ---: |
+| install (`bun --filter`) | 0.6s | 0.6s |
+| compile (Turbopack) | 10s | 7s |
+| full build | 54s | 18s |
+| **deploy** | **75s** | **26s** |
+
+A push that touches neither app is skipped on both projects. The build
+machine is Vercel Hobby's 2 cores / 8 GB, so the remaining site time is
+CPU-bound SSG and page collection, not the toolchain.
+
+### What changed
 
 ### bun replaces Yarn 1
 
@@ -56,9 +63,16 @@ Next 16 compiles the site with Turbopack: 143s → 10s. Migrations:
 
 ### One build per push
 
-Each app has a `vercel.json` with an ignored build step that runs from the repo
-root and skips when neither the app nor `packages/registry` changed. A registry
-change rebuilds both.
+Each app has a `vercel.json`:
+
+- `installCommand`: `bun install --frozen-lockfile --filter <app>` — installs
+  one workspace (site 1213 packages, kit 528) instead of all 1401.
+- `buildCommand`: `bun run build` — the app's own script, so turbo is not in
+  the deploy path.
+- `ignoreCommand`: diffs `apps/<app>` + `packages/registry` from the repo root
+  and skips when nothing changed.
+
+A registry change rebuilds both; anything else builds one.
 
 ## Vercel
 
@@ -71,5 +85,7 @@ Two projects, both git-connected, both on bun:
 
 ## Remaining
 
-- Confirm a preview deploy uses bun and honours the ignored build step.
-- Time one deploy per project end to end on Vercel.
+- A larger build machine (Pro) is the only lever left for the site's 44s of
+  SSG/collection work; on Hobby the machine is fixed at 2 cores.
+- Watch a cold deploy (no build cache) to confirm the cold install is still
+  well under the old 146–171s.
