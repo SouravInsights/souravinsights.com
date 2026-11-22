@@ -492,9 +492,10 @@
   color: var(--muted-foreground);
 }
 
-/* The credit carries the product's own mark: hue 2's ink and wash, read
-   straight off the palette (light #7d5600 on 30% #f2c230; dark lifts the ink
-   to #f9e4a2 on 34%). No underline — the wash is the emphasis. */
+/* The credit carries the product's own mark. The colours are painted on by
+   PaletteCredit, one hue of HUES every 2.6s; these are the amber values that
+   stand in before the script runs and whenever motion is reduced. No
+   underline — the wash is the emphasis. */
 .landing .foot-credit {
   padding: 0 0.3em;
   border-radius: 0.22em;
@@ -504,8 +505,8 @@
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   transition:
-    background-color 150ms var(--ease),
-    color 150ms var(--ease);
+    background-color 520ms var(--ease-out),
+    color 520ms var(--ease-out);
 }
 
 .dark .landing .foot-credit {
@@ -514,11 +515,7 @@
 }
 
 .landing .foot-credit:hover {
-  background-color: rgba(242, 194, 48, 0.5);
-}
-
-.dark .landing .foot-credit:hover {
-  background-color: rgba(242, 194, 48, 0.5);
+  filter: saturate(1.1) brightness(1.06);
 }
 
 @media (max-width: 640px) {

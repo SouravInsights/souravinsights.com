@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./landing.css";
+import { PaletteCredit } from "@/components/landing/palette-credit";
 import { PalettePill } from "@/components/landing/palette-pill";
 import { PaletteRule } from "@/components/landing/palette-rule";
 import { InstallCard } from "@/components/landing/install-card";
@@ -36,10 +37,7 @@ export default function Page() {
             <div className="foot-brand">
               <span className="foot-mark">Highlight &amp; Quote</span>
               <span className="foot-meta">
-                a shadcn kit by{" "}
-                <a className="foot-credit" href="https://souravinsights.com">
-                  souravinsights.com
-                </a>
+                a shadcn kit by <PaletteCredit />
               </span>
             </div>
             <nav aria-label="Footer" className="foot-links">
