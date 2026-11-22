@@ -6,7 +6,7 @@
     "dev": "node scripts/generate-docs.mjs && next dev -p 3001",
     "build": "node scripts/generate-docs.mjs && next build",
     "start": "next start -p 3001",
-    "typecheck": "next typegen && oxlint --type-aware --type-check .",
+    "typecheck": "node scripts/generate-docs.mjs && next typegen && oxlint --type-aware --type-check .",
     "generate:docs": "node scripts/generate-docs.mjs"
   },
   "dependencies": {
