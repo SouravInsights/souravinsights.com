@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
 export default async function CVPage() {
   const data = await getCVData();
-  const isEditing = isAdminAuthenticated();
+  const isEditing = await isAdminAuthenticated();
 
   return (
     <main>

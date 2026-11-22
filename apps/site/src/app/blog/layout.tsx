@@ -1,7 +1,7 @@
+import PostHogPageView from "@/components/PostHogPageViewClient";
 import React from "react";
 import { Metadata } from "next";
 import { PHProvider } from "@/context/PostHogProvider";
-import dynamic from "next/dynamic";
 
 const TITLE = "Notes & Essays";
 const DESC =
@@ -32,9 +32,6 @@ export const metadata: Metadata = {
   },
 };
 
-const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
-  ssr: false,
-});
 
 export default function BlogLayout({
   children,

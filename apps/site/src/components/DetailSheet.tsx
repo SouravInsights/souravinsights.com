@@ -186,11 +186,13 @@ export function DetailSheet({
               className={`relative z-10 shrink-0 overflow-hidden bg-black ${
                 mediaClassName ?? "w-full"
               }`}
-              style={{
-                borderRadius: 0,
-                clipPath: "inset(0 round 0.5rem 0.5rem 0 0)",
-                ...mediaStyle,
-              }}
+              style={
+                {
+                  borderRadius: 0,
+                  clipPath: "inset(0 round 0.5rem 0.5rem 0 0)",
+                  ...mediaStyle,
+                } as React.ComponentProps<typeof motion.div>["style"]
+              }
             >
               {media}
             </motion.div>

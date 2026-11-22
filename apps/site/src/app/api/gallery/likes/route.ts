@@ -21,8 +21,8 @@ const COUNTS_HASH = "gallery:likes";
 
 const userHash = (visitorId: string) => `gallery:user:${visitorId}`;
 
-function getVisitorId(): { id: string; isNew: boolean } {
-  const existing = cookies().get(VISITOR_COOKIE)?.value;
+async function getVisitorId(): Promise<{ id: string; isNew: boolean }> {
+  const existing = (await cookies()).get(VISITOR_COOKIE)?.value;
   if (existing) return { id: existing, isNew: false };
   return { id: uuidv4(), isNew: true };
 }
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "videoId is required" }, { status: 400 });
     }
 
-    const { id: visitorId, isNew } = getVisitorId();
+    const { id: visitorId, isNew } = await getVisitorId();
 
     const [total, mine] = await Promise.all([
       redis.hget<number>(COUNTS_HASH, videoId),
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "videoId is required" }, { status: 400 });
     }
 
-    const { id: visitorId, isNew } = getVisitorId();
+    const { id: visitorId, isNew } = await getVisitorId();
     const key = userHash(visitorId);
     const mine = (await redis.hget<number>(key, videoId)) ?? 0;
 

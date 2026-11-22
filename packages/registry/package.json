@@ -8,5 +8,9 @@
   },
   "peerDependencies": {
     "react": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0"
   }
 }

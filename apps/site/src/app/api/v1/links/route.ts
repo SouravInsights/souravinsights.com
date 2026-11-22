@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
  * the classifier for this row (`source='web'`).
  */
 export async function POST(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const rate = await adminLimiter.limit(clientIp(request.headers));
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
 
   revalidatePath("/insights");
   revalidatePath("/api/insights/latest");
-  revalidateTag("links");
+  revalidateTag("links", "max");
 
   return NextResponse.json({
     data: {

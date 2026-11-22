@@ -1,3 +1,4 @@
+import PostHogPageView from "@/components/PostHogPageViewClient";
 import type { Metadata } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
@@ -8,11 +9,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { AppShell } from "@/components/nav/AppShell";
 import { PHProvider } from "@/context/PostHogProvider";
 import { QueryProvider } from "@/context/QueryProvider";
-import dynamic from "next/dynamic";
 
-const PostHogPageView = dynamic(() => import("@/components/PostHogPageView"), {
-  ssr: false,
-});
 
 const inter = Inter({ subsets: ["latin"] });
 

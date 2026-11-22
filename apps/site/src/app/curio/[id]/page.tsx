@@ -29,9 +29,10 @@ const excerpt = (text: string, length = 155): string => {
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const conversation = await getConversation(params.id);
+  const { id } = await params;
+  const conversation = await getConversation(id);
   if (!conversation) return { title: "Conversation not found | Curio" };
 
   const turns = turnsOf(conversation.messages);
@@ -63,9 +64,10 @@ export async function generateMetadata({
 export default async function SharedConversationPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const conversation = await getConversation(params.id);
+  const { id } = await params;
+  const conversation = await getConversation(id);
   if (!conversation) notFound();
 
   return (

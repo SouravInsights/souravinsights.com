@@ -21,7 +21,7 @@ const bodySchema = z.object({
  * waits until the loop has earned it on a real article.
  */
 export async function POST(request: NextRequest) {
-  const denied = requireAdmin(request);
+  const denied = await requireAdmin(request);
   if (denied) return denied;
 
   const rate = await adminLimiter.limit(clientIp(request.headers));

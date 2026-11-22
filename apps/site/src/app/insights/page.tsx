@@ -38,7 +38,7 @@ const linkClass =
   "font-medium text-green-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm dark:text-green-500 dark:focus-visible:ring-green-500/40";
 
 export default async function CuratedLinksPage() {
-  const isAdmin = isAdminAuthenticated();
+  const isAdmin = await isAdminAuthenticated();
 
   // The collection and the like totals are independent, so they go out together
   // rather than one after the other — the page then waits for the slowest read,

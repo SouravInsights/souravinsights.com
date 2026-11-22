@@ -46,8 +46,8 @@ function verifyToken(token: string | undefined): boolean {
 }
 
 /** True when the current request carries a valid admin session cookie. */
-export function isAdminAuthenticated(): boolean {
-  return verifyToken(cookies().get(SESSION_COOKIE)?.value);
+export async function isAdminAuthenticated(): Promise<boolean> {
+  return verifyToken((await cookies()).get(SESSION_COOKIE)?.value);
 }
 
 /**
@@ -55,26 +55,30 @@ export function isAdminAuthenticated(): boolean {
  * the session cookie. Bearer skips the origin check — a cross-site page can't
  * set that header.
  */
-function isAdminRequest(request: NextRequest): boolean {
+function isAdminRequest(request: NextRequest): Promise<boolean> | boolean {
   const secret = getAdminSecret();
   const header = request.headers.get("authorization");
   if (secret && header && safeEqual(header, `Bearer ${secret}`)) return true;
 
-  if (!isAdminAuthenticated()) return false;
+  return isAdminAuthenticated().then((authenticated) => {
+    if (!authenticated) return false;
 
-  if (request.method === "GET" || request.method === "HEAD") return true;
-  const origin = request.headers.get("origin");
-  if (!origin) return false;
-  try {
-    return new URL(origin).host === request.headers.get("host");
-  } catch {
-    return false;
-  }
+    if (request.method === "GET" || request.method === "HEAD") return true;
+    const origin = request.headers.get("origin");
+    if (!origin) return false;
+    try {
+      return new URL(origin).host === request.headers.get("host");
+    } catch {
+      return false;
+    }
+  });
 }
 
 /** A 401 response for a non-admin write, or null when the caller may proceed. */
-export function requireAdmin(request: NextRequest): NextResponse | null {
-  if (isAdminRequest(request)) return null;
+export async function requireAdmin(
+  request: NextRequest
+): Promise<NextResponse | null> {
+  if (await isAdminRequest(request)) return null;
   return NextResponse.json(
     { error: { code: "unauthorized", message: "Missing or invalid admin key" } },
     { status: 401 }
@@ -88,7 +92,7 @@ export async function loginAdmin(secret: string): Promise<boolean> {
 
   const expiresAt = Date.now() + SESSION_MS;
   const maxAge = SESSION_DAYS * 24 * 60 * 60;
-  const jar = cookies();
+  const jar = await cookies();
   jar.set(SESSION_COOKIE, `${expiresAt}.${sign(expiresAt)}`, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -106,8 +110,8 @@ export async function loginAdmin(secret: string): Promise<boolean> {
   return true;
 }
 
-export function logoutAdmin(): void {
-  const jar = cookies();
+export async function logoutAdmin(): Promise<void> {
+  const jar = await cookies();
   jar.delete(SESSION_COOKIE);
   jar.delete(HINT_COOKIE);
 }

@@ -135,8 +135,8 @@ Two commands run before trusting the wiring. Neither needs the app running:
 
 ```bash
 set -a; . ./.env; set +a
-yarn run neatlogs doctor --local --json   # checks the installed SDK; no network
-yarn run neatlogs doctor --probe --json   # sends one test trace and reads it back
+bun run neatlogs doctor --local --json   # checks the installed SDK; no network
+bun run neatlogs doctor --probe --json   # sends one test trace and reads it back
 ```
 
 `--local` proves the SDK works. `--probe` proves traces go out to Neatlogs and
