@@ -28,14 +28,19 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "public/r/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "public/r/**"
+      ]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "lint": {},
     "typecheck": {}
   }
 }

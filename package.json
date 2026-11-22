@@ -13,11 +13,13 @@
     "build": "turbo run build",
     "build:site": "turbo run build --filter=site",
     "build:kit": "turbo run build --filter=kit",
-    "lint": "turbo run lint",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "typecheck": "turbo run typecheck",
     "registry:build": "cd packages/registry && npx shadcn@latest build && rm -rf ../../apps/kit/public/r && cp -R public/r ../../apps/kit/public/r"
   },
   "devDependencies": {
+    "oxlint": "^1.94.0",
     "turbo": "^2.5.8"
   },
   "workspaces": [

@@ -89,3 +89,23 @@ Two projects, both git-connected, both on bun:
   SSG/collection work; on Hobby the machine is fixed at 2 cores.
 - Watch a cold deploy (no build cache) to confirm the cold install is still
   well under the old 146–171s.
+
+## oxc
+
+oxc is a Rust JS/TS toolchain (parser, linter, transformer, resolver, minifier).
+Only one of its pieces fits this repo:
+
+| oxc piece | Use it? | Why |
+| :--- | :--- | :--- |
+| `oxlint` | **yes** | Lints the whole repo in ~0.3s. Replaces ESLint. |
+| `oxc-transform` / `oxc-minify` | no | Next's Turbopack already transforms and minifies with SWC; there is no hook to swap it. |
+| `oxc-resolver` | transitively | `unrs-resolver` is already in the tree through ESLint's import resolver. |
+| type-checking | no | oxc does not type-check. `tsc` (site) and tsgo (kit) do. |
+
+`oxlint` runs from the root with `.oxlintrc.json` (react, nextjs, jsx-a11y,
+import, unicorn, typescript, oxc) via `bun run lint`. ESLint, `eslint-config-next`
+and the flat config are gone.
+
+It surfaces ~340 findings the old `core-web-vitals` preset never checked
+(jsx-a11y, unused vars, react-hooks, next). They are warnings, matching the old
+passing bar; promoting correctness to errors is a separate cleanup.
