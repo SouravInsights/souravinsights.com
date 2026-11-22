@@ -69,8 +69,9 @@ Each app has a `vercel.json`:
   one workspace (site 1213 packages, kit 528) instead of all 1401.
 - `buildCommand`: `bun run build` — the app's own script, so turbo is not in
   the deploy path.
-- `ignoreCommand`: diffs `apps/<app>` + `packages/registry` from the repo root
-  and skips when nothing changed.
+- `ignoreCommand`: diffs `apps/<app>`, `packages/registry`, the root
+  `package.json` and `bun.lock` from the repo root and skips when nothing
+  changed, so a dependency change still rebuilds both.
 
 A registry change rebuilds both; anything else builds one.
 

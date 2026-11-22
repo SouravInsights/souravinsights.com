@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "bun install --frozen-lockfile --filter kit",
-  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && cd \"$(git rev-parse --show-toplevel)\" && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- apps/kit packages/registry",
+  "ignoreCommand": "[ -n \"$VERCEL_GIT_PREVIOUS_SHA\" ] && cd \"$(git rev-parse --show-toplevel)\" && git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- apps/kit packages/registry package.json bun.lock",
   "buildCommand": "bun run build"
 }
