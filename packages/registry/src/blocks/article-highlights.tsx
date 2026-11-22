@@ -1,7 +1,10 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import { Highlight, type CreatePayload } from "@/components/highlight/highlight";
+import {
+  Highlight,
+  type HighlightMark,
+} from "@/components/highlight/highlight";
 import {
   HighlightRail,
   type HighlightRailItem,
@@ -21,28 +24,18 @@ export function ArticleHighlights({
   children,
 }: ArticleHighlightsProps) {
   const articleRef = useRef<HTMLDivElement>(null);
-  const [marks, setMarks] = useState([]);
+  const [marks, setMarks] = useState<HighlightMark[]>([]);
   const [ticks, setTicks] = useState<HighlightRailItem[]>([]);
   const [share, setShare] = useState<{ quote: string; context: string } | null>(
     null
   );
-  const nextId = useRef(1);
-
-  const create = async (payload: CreatePayload) => {
-    const id = nextId.current++;
-    setMarks((all) => [...all, { id, ...payload }]);
-    return id;
-  };
-
   return (
     <>
       <div ref={articleRef}>{children}</div>
       <Highlight
         containerRef={articleRef}
-        initialMarks={marks}
-        onCreate={create}
-        onRecolor={() => undefined}
-        onDelete={(id) => setMarks((all) => all.filter((mark) => mark.id !== id))}
+        marks={marks}
+        onMarksChange={setMarks}
         onShareQuote={setShare}
         onTicks={setTicks}
       />

@@ -54,16 +54,26 @@ export interface CreatePayload {
   hue: number;
 }
 
+export interface HighlightMark {
+  id: number;
+  quote: string;
+  occurrence: number;
+  hue: number;
+}
+
 interface Props {
   /** the element whose <p> children may be highlighted */
   containerRef: RefObject<HTMLElement | null>;
   /** the palette is offered — the owner in the reader, every visitor on the blog */
   editable: boolean;
   /** marks already stored, located into the paragraphs on mount */
-  initialMarks: { id: number; quote: string; occurrence: number; hue: number }[];
-  onCreate: (payload: CreatePayload) => Promise<number | null>;
-  onRecolor: (rowId: number, hue: number) => void;
-  onDelete: (rowId: number) => void;
+  initialMarks?: HighlightMark[];
+  /** controlled marks; when set, they replace initialMarks */
+  marks?: HighlightMark[];
+  onCreate?: (payload: CreatePayload) => Promise<number | null>;
+  onRecolor?: (rowId: number, hue: number) => void;
+  onDelete?: (rowId: number) => void;
+  onMarksChange?: (marks: HighlightMark[]) => void;
   /** the palette's Share quote tool hands the words (and their paragraph) up */
   onShareQuote: (payload: { quote: string; context: string }) => void;
   /** the discovery popover's way into the Co-Reader's Notes tab */
@@ -83,10 +93,12 @@ const isDark = () => document.documentElement.classList.contains("dark");
 export function Highlight({
   containerRef,
   editable,
-  initialMarks,
+  initialMarks = [],
+  marks: controlledMarks,
   onCreate,
   onRecolor,
   onDelete,
+  onMarksChange,
   onShareQuote,
   onOpenNotebook,
   onTicks,
@@ -343,13 +355,18 @@ export function Highlight({
   /* ---------------- locating stored marks ------------------ */
 
   // Server anchors (quote + occurrence in full article text) → para + offsets.
+  const incoming = controlledMarks ?? initialMarks;
+  const incomingKey = JSON.stringify(incoming);
+  const locatedKey = useRef("");
+
   useEffect(() => {
+    if (incomingKey === locatedKey.current) return;
+    locatedKey.current = incomingKey;
     const full = paras.current.map((_, i) => textOf(i)).join("");
     const located: Mark[] = [];
-    for (const stored of initialMarks) {
+    for (const stored of incoming) {
       const index = nthIndexOf(full, stored.quote, stored.occurrence);
       if (index === -1) continue; // anchor lost — stays hidden, never deleted
-      // which paragraph holds this index
       let acc = 0;
       for (let para = 0; para < paras.current.length; para++) {
         const len = textOf(para).length;
@@ -367,10 +384,34 @@ export function Highlight({
         acc += len;
       }
     }
-    nextId.current = Math.max(1, ...initialMarks.map((m) => m.id)) + 1;
+    nextId.current = Math.max(1, ...incoming.map((m) => m.id)) + 1;
     setMarks(located);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [incomingKey, incoming]);
+
+  // Emit anchors after every internal change. The parent can store them or
+  // feed them back through `marks`; its own echo is ignored by the effect above.
+  const lastEmit = useRef("");
+  useEffect(() => {
+    if (!onMarksChange) return;
+    const full = paras.current.map((_, i) => textOf(i)).join("");
+    const next = marks.map((mark) => {
+      const quote = textOf(mark.para).slice(mark.start, mark.end);
+      const startGlobal =
+        paras.current
+          .slice(0, mark.para)
+          .reduce((n, _, i) => n + textOf(i).length, 0) + mark.start;
+      return {
+        id: mark.id,
+        quote,
+        occurrence: full.slice(0, startGlobal).split(quote).length - 1,
+        hue: mark.hue,
+      };
+    });
+    const key = JSON.stringify(next);
+    if (key === lastEmit.current) return;
+    lastEmit.current = key;
+    onMarksChange(next);
+  }, [marks, onMarksChange]);
 
   /* ---------------- reading a selection ------------------ */
 
@@ -507,9 +548,9 @@ export function Highlight({
       // Persistence never blocks the wave; the row id lands when it lands.
       const before = text.slice(Math.max(0, start - 40), start);
       const after = text.slice(end, end + 40);
-      onCreate({ quote, prefix: before, suffix: after, occurrence, hue }).then(
+      onCreate?.({ quote, prefix: before, suffix: after, occurrence, hue })?.then(
         (rowId) => {
-          if (rowId === null) return;
+          if (rowId === null || rowId === undefined) return;
           setMarks((all) => all.map((m) => (m.id === id ? { ...m, rowId } : m)));
         }
       );
@@ -518,7 +559,7 @@ export function Highlight({
       if (!mark) return;
       setMarks((all) => all.map((m) => (m.id === mark.id ? { ...m, hue } : m)));
       request(mark.id, paint(mark.hue, dark), hue);
-      if (mark.rowId) onRecolor(mark.rowId, hue);
+      if (mark.rowId) onRecolor?.(mark.rowId, hue);
     }
     setSaid(`Highlighted in ${HUES[hue].name}`);
   };
@@ -531,7 +572,7 @@ export function Highlight({
     setSaid("Highlight removed");
     const drop = () => {
       setMarks((all) => all.filter((m) => m.id !== mark.id));
-      if (mark.rowId) onDelete(mark.rowId);
+      if (mark.rowId) onDelete?.(mark.rowId);
     };
     const p = paras.current[mark.para];
     const layer = layers.current[mark.para];
