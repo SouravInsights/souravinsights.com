@@ -492,20 +492,33 @@
   color: var(--muted-foreground);
 }
 
-.landing .foot-meta a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
-  text-underline-offset: 2px;
+/* The credit carries the product's own mark: hue 2's ink and wash, read
+   straight off the palette (light #7d5600 on 30% #f2c230; dark lifts the ink
+   to #f9e4a2 on 34%). No underline — the wash is the emphasis. */
+.landing .foot-credit {
+  padding: 0 0.3em;
+  border-radius: 0.22em;
+  background: rgba(242, 194, 48, 0.3);
+  color: #7d5600;
+  text-decoration: none;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   transition:
-    color 150ms var(--ease),
-    text-decoration-color 150ms var(--ease);
+    background-color 150ms var(--ease),
+    color 150ms var(--ease);
 }
 
-.landing .foot-meta a:hover {
-  color: var(--foreground);
-  text-decoration-color: currentColor;
+.dark .landing .foot-credit {
+  background: rgba(242, 194, 48, 0.34);
+  color: #f9e4a2;
+}
+
+.landing .foot-credit:hover {
+  background-color: rgba(242, 194, 48, 0.5);
+}
+
+.dark .landing .foot-credit:hover {
+  background-color: rgba(242, 194, 48, 0.5);
 }
 
 @media (max-width: 640px) {

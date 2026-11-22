@@ -36,7 +36,10 @@ export default function Page() {
             <div className="foot-brand">
               <span className="foot-mark">Highlight &amp; Quote</span>
               <span className="foot-meta">
-                a shadcn kit by <a href="https://souravinsights.com">souravinsights.com</a>
+                a shadcn kit by{" "}
+                <a className="foot-credit" href="https://souravinsights.com">
+                  souravinsights.com
+                </a>
               </span>
             </div>
             <nav aria-label="Footer" className="foot-links">
