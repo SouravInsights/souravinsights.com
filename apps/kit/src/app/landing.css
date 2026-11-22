@@ -58,6 +58,9 @@
   height: 14px;
   border-radius: 999px;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+  /* the pointer sets the scale; this only smooths the travel between frames */
+  transition: transform 160ms var(--ease-out);
+  will-change: transform;
 }
 
 .landing h1 {
