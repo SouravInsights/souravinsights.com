@@ -53,17 +53,22 @@ const nextConfig = {
 
   images: {
     domains: ["assets.literal.club", "books.google.com", "pbs.twimg.com"],
-    // Gallery posters come from R2. The host is read from the env, never
-    // committed — the repo is public and the bucket address is not ours to
-    // publish. A checkout without `R2_PUBLIC_URL` simply has no remote pattern.
-    remotePatterns: process.env.R2_PUBLIC_URL
-      ? [
-          {
-            protocol: "https",
-            hostname: new URL(process.env.R2_PUBLIC_URL).hostname,
-          },
-        ]
-      : [],
+    // Gallery posters come from Cloudflare R2. Allow the R2 public bucket host
+    // by its domain pattern, not by a build-time env var: `R2_PUBLIC_URL` is a
+    // sensitive, production-only var, so a production build can ship without it
+    // and `_next/image` then returns 400 for every thumbnail. `**.r2.dev`
+    // reveals no bucket address. The env pattern stays for a custom domain.
+    remotePatterns: [
+      { protocol: "https", hostname: "**.r2.dev" },
+      ...(process.env.R2_PUBLIC_URL
+        ? [
+            {
+              protocol: "https",
+              hostname: new URL(process.env.R2_PUBLIC_URL).hostname,
+            },
+          ]
+        : []),
+    ],
   },
 
   /**
