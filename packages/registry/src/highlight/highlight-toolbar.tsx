@@ -30,7 +30,7 @@ function HighlightToolbar({ children }: { children?: ReactNode }) {
       aria-label="Highlight options"
       onPointerDown={(event) => event.preventDefault()}
       onEscapeKeyDown={() => close(true)}
-      className="group z-20 flex select-none flex-col gap-3 !w-auto !rounded-xl !border-border !bg-background !p-3 !shadow-lg max-sm:gap-2 max-sm:!p-2.5"
+      className="group flex select-none flex-col gap-3 !w-auto !rounded-xl !border-border !bg-background !p-3 !shadow-lg max-sm:gap-2 max-sm:!p-2.5"
     >
       {children ?? (
         <>

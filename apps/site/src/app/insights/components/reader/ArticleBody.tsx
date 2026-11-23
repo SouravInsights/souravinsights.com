@@ -8,10 +8,10 @@ import { updateArticleMarks } from "./article-query";
 /**
  * The article body plus the highlight system (docs/spec/insights-rebuild.md).
  *
- * Everyone sees the owner's marks. The owner — recognised by the same admin
- * session as every other write — also gets the palette. Marks render the
- * instant they're made; the write is a background call, and a 401 rolls the
- * mark back and says so plainly.
+ * Everyone sees the owner's marks and everyone gets the palette, exactly like
+ * the blog. Only the owner's marks persist — recognised by the same admin
+ * session as every other write. Marks render the instant they're made; the
+ * write is a background call, and a 401 rolls the mark back and says so plainly.
  */
 
 export interface StoredHighlight {
@@ -97,11 +97,15 @@ export function ArticleBody({
   );
 
   return (
-    <div className="relative" ref={containerRef}>
-      {children}
+    <>
+      <div className="relative" ref={containerRef}>
+        {children}
+      </div>
+      {/* A sibling of the article, as on the blog: the engine's own live region
+          must not end up in the paragraph list it scans. */}
       <Highlight
         containerRef={containerRef}
-        editable={isAdmin}
+        editable
         initialMarks={initialHighlights}
         onCreate={onCreate}
         onRecolor={onRecolor}
@@ -110,6 +114,6 @@ export function ArticleBody({
         onOpenNotebook={onOpenNotebook}
         onTicks={onTicks}
       />
-    </div>
+    </>
   );
 }

@@ -22,6 +22,11 @@ export interface AnchoredPanelProps extends Omit<
  *
  * Radix owns positioning (via a virtual anchor), collision handling, arrow
  * placement, outside dismissal and Escape. The panel only owns its skin.
+ *
+ * It keeps the popover primitive's own layer (`PopoverContent`'s `z-50`) and is
+ * portaled to the body, so it stacks like any other popover. Do not pass a
+ * z-index through `className` — overriding the primitive's layer is what buried
+ * the highlight palette under a `z-50` reader panel.
  */
 const AnchoredPanel = React.forwardRef<HTMLDivElement, AnchoredPanelProps>(function AnchoredPanel(
   {

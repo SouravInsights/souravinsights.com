@@ -157,6 +157,8 @@ structure, and one `content_hash` tells the refresh when a page changed.
   Highlights persist in a
   `highlights` table (`link_id`, quoted text, anchor offsets/prefix-suffix, `created_at`).
   **Only the owner writes; everyone reads** — highlights are visible to any visitor.
+  The palette itself is offered to everyone (the blog's behaviour): a visitor's mark
+  renders for the visit and is dropped, because the write is owner-only.
   Fetchable via API (collected highlights are a personal export). The palette on a mark
   carries the hues, **Copy**, **Share quote** and remove; the reference's *Add note* and
   *Ask Co-Reader* tools are not built (notes would need a table).
