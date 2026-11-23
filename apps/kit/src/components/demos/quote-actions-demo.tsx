@@ -5,6 +5,7 @@ import { QuoteActions } from "@/components/quote/actions";
 
 export function QuoteActionsDemo() {
   const [customize, setCustomize] = useState(false);
+  const [action, setAction] = useState<"save" | "copy" | null>(null);
   const [status, setStatus] = useState<"idle" | "working" | "done" | "error">("idle");
 
   return (
@@ -12,10 +13,17 @@ export function QuoteActionsDemo() {
       <QuoteActions
         customize={customize}
         onCustomizeChange={setCustomize}
+        action={action}
         status={status}
         statusText={status === "done" ? "Image saved" : ""}
-        onSave={() => setStatus("done")}
-        onCopy={() => setStatus("done")}
+        onSave={() => {
+          setAction("save");
+          setStatus("done");
+        }}
+        onCopy={() => {
+          setAction("copy");
+          setStatus("done");
+        }}
       />
     </div>
   );

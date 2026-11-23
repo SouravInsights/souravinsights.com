@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SidePanel } from "@/components/ui/side-panel";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuoteOptions } from "./options";
@@ -66,6 +66,9 @@ export function QuoteStudio({
   const [draftPublication, setDraftPublication] = useState(publication);
   const [status, setStatus] = useState<"idle" | "working" | "done" | "error">("idle");
   const [statusText, setStatusText] = useState("");
+  /** which button the current status belongs to, so feedback lands in it */
+  const [action, setAction] = useState<"save" | "copy" | null>(null);
+  const flashTimer = useRef<number | null>(null);
 
   // Each open — or each new selection on an inline studio — starts from the
   // words as they are now.
@@ -75,6 +78,7 @@ export function QuoteStudio({
     setDraftTitle(title);
     setDraftPublication(publication);
     setStatus("idle");
+    setAction(null);
   }, [active, quote, title, publication]);
 
   // The band: the card's height. The dialog derives it from the viewport so the
@@ -117,11 +121,13 @@ export function QuoteStudio({
   const flash = useCallback((text: string, ok: boolean) => {
     setStatus(ok ? "done" : "error");
     setStatusText(text);
-    window.setTimeout(() => setStatus("idle"), 2000);
+    if (flashTimer.current) window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setStatus("idle"), 2000);
   }, []);
 
   const save = useCallback(async () => {
     if (status === "working") return;
+    setAction("save");
     setStatus("working");
     const blob = await cardToBlob(mode, theme, options);
     if (!blob) return flash("Couldn’t draw the card.", false);
@@ -136,6 +142,7 @@ export function QuoteStudio({
 
   const copy = useCallback(async () => {
     if (status === "working") return;
+    setAction("copy");
     setStatus("working");
     const blob = await cardToBlob(mode, theme, options);
     if (!blob) return flash("Couldn’t draw the card.", false);
@@ -281,6 +288,7 @@ export function QuoteStudio({
       <QuoteActions
         customize={customize}
         onCustomizeChange={setCustomize}
+        action={action}
         status={status}
         statusText={statusText}
         onSave={save}

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import type { ReactNode } from "react";
-import { Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
+import { Check, Copy, Eraser, LinkSimple, Quotes } from "@phosphor-icons/react";
 import { AnchoredPanel } from "@/components/ui/anchored-panel";
 import { Button } from "@/components/ui/button";
 import { Swatch, SwatchGroup } from "@/components/ui/swatch";
@@ -48,9 +48,16 @@ function HighlightToolbar({ children }: { children?: ReactNode }) {
 
 function HighlightActions() {
   const { shareable, close, onShareQuote, setSaid, permalinkRange, onCopyLink } = useHighlight();
+  const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
 
   return (
-    <div className="flex items-center gap-1 border-b border-border pb-2.5">
+    <div className="flex items-center gap-1 border-b border-border pb-2">
       <Button
         type="button"
         variant="ghost"
@@ -61,7 +68,7 @@ function HighlightActions() {
           close(false);
           onShareQuote(payload);
         }}
-        className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+        className="h-auto gap-1.5 px-2 py-0.5 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
       >
         <Quotes aria-hidden="true" className="size-3.5" />
         Share quote
@@ -74,14 +81,24 @@ function HighlightActions() {
           const payload = shareable();
           if (!payload) return;
           void navigator.clipboard.writeText(payload.quote).then(
-            () => setSaid("Quote copied"),
+            () => {
+              setCopied(true);
+              setSaid("Quote copied");
+            },
             () => setSaid("Could not reach the clipboard"),
           );
         }}
-        className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+        className="h-auto gap-1.5 px-2 py-0.5 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
       >
-        <Copy aria-hidden="true" className="size-3.5" />
-        Copy
+        {copied ? (
+          <Check aria-hidden="true" className="size-3.5" />
+        ) : (
+          <Copy aria-hidden="true" className="size-3.5" />
+        )}
+        <span className="grid text-left">
+          <span className={`col-start-1 row-start-1 ${copied ? "invisible" : ""}`}>Copy</span>
+          <span className={`col-start-1 row-start-1 ${copied ? "" : "invisible"}`}>Copied</span>
+        </span>
       </Button>
       {onCopyLink && (
         <Button
@@ -93,7 +110,7 @@ function HighlightActions() {
               setSaid(ok ? "Link copied" : "Could not copy the link"),
             );
           }}
-          className="h-auto gap-1.5 px-2 py-1 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+          className="h-auto gap-1.5 px-2 py-0.5 text-[13px] font-normal leading-[1.5] text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
         >
           <LinkSimple aria-hidden="true" className="size-3.5" />
           Copy link
